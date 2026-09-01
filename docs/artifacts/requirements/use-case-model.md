@@ -403,6 +403,7 @@ stop
 **Alternative Flows:**
 - **AF-1: No events match the filter.** At step 5, the system displays a message that no clocking records match.
 - **AF-2: AD unavailable.** At step 5, events remain viewable from PostgreSQL (they are portal data), but employee display attributes cannot be resolved; the system shows the AD user id and marks display attributes as unavailable. No local fallback exists (CON-006).
+- **AF-3: AD attribute missing (R001) [DERIVED — from FR-001 + the R001 behavioural bar (stakeholder decision, Elaboration Iter 2), awaiting stakeholder confirmation].** At step 5, if a matching employee's AD display attributes are partially populated (e.g., department or office missing), the event row is displayed with the missing display fields blank — the employee is NOT removed from the review and no error is raised. The clocking data itself (event type, timestamp) is always complete: it is portal data from PostgreSQL, never AD data. *Rationale:* the R001 behavioural bar (stakeholder decision, Elaboration Iter 2) governs what the portal does when an attribute is absent — every employee is rendered whether or not their attributes are complete; a missing attribute never removes someone from results; a missing attribute never raises an error — and UC-005 reads the same AD attributes through the same LDAP Query Mechanism as UC-004. The bar's wording names search results; its application to the HR review view is this derivation, submitted for confirmation.
 
 **Exception Flows:**
 - **EF-1: Role denial.** At step 2, if the authenticated session holds only the Employee role, the system denies access to the clocking review page (SEC-006). No clocking data for other employees is revealed.
@@ -423,11 +424,15 @@ if (HR Administrator role in claims?) then (yes)
   :Optionally set filter (employee and/or date range);
   |Portal|
   if (Events match the filter?) then (yes)
-    |Active Directory|
-    :Read employee display attributes on demand\n(read-only - CON-005, CON-006);
-    |Portal|
-    if (AD display attributes resolved?) then (yes)
-      :Display matching events with employee names;
+    if (AD reachable for display attributes?) then (yes)
+      |Active Directory|
+      :Read employee display attributes on demand\n(read-only - CON-005, CON-006);
+      |Portal|
+      if (Some employees have missing AD attributes? - R001) then (yes - AF-3)
+        :Display ALL matching events;\nmissing display fields render blank,\nemployee NOT removed, no error\n(R001 behavioural bar);
+      else (no)
+        :Display matching events with\ncomplete employee display data;
+      endif
     else (no - AF-2)
       :Display events with AD user id only;\ndisplay attributes marked unavailable;
     endif
@@ -464,6 +469,7 @@ stop
 **Alternative Flows:**
 - **AF-1: No events for the month.** At step 3, if no clocking records exist for the selected month, the system informs HR and produces no file.
 - **AF-2: AD unavailable.** At step 4, if AD cannot be reached, the system aborts the export with "Directory temporarily unavailable" — no partial file is produced (a report with unresolved employee identities would be misleading for payroll/records use).
+- **AF-3: AD attribute missing (R001) [DERIVED — from FR-002 + the R001 behavioural bar (stakeholder decision, Elaboration Iter 2), awaiting stakeholder confirmation].** At step 4, if an employee's AD display attributes are partially populated, the export proceeds: every event row is present, and the missing display fields (employee_name, department, office) are written as blank cells — no abort, no error. The row's identity is never in doubt: `ad_user_id` (column 1) is the identifier the portal itself stores (CON-006) and is always present; the clocking columns (event_timestamp, event_type) are portal data and always complete. *Rationale:* the R001 behavioural bar (stakeholder decision, Elaboration Iter 2) governs what the portal does when an attribute is absent — every employee is rendered, a missing attribute never removes someone, a missing attribute never raises an error — and UC-006 reads the same AD attributes through the same LDAP Query Mechanism as UC-004. AF-2 (AD unreachable) and AF-3 (individual attributes missing) are distinct conditions with distinct contracts: AF-2 aborts because NO identity data can be resolved; AF-3 exports because the identity (ad_user_id) is resolved and only display fields are blank.
 
 **CSV column set v1 (Requirements Specifier, Elaboration Iter 1) — one row per clocking event, columns in this order:**
 
@@ -476,7 +482,7 @@ stop
 | 5 | event_timestamp | Event time in ISO-8601 with explicit offset, America/Havana local time (format YYYY-MM-DDThh:mm:ss±hh:mm; the offset is the one in force at the event time per the IANA zone database) | FR-004 recorded timestamp (stored UTC); stakeholder decisions (Elaboration Iter 1) |
 | 6 | event_type | IN or OUT | FR-004 |
 
-**CSV scope notes:** Job title, email, and extension are excluded — they are directory attributes (FR-010), not clocking data. Timestamps are stored in UTC and exported in ISO-8601 with an explicit offset in America/Havana local time (IANA identifier, DST-aware — a fixed offset would silently shift the payroll day boundary when the clocks change); the selected month's boundaries are computed in America/Havana local time — the payroll day is the local calendar day, never the server's (stakeholder decisions, Elaboration Iter 1). All 3 offices share this one timezone (stakeholder-confirmed). Volatility: Medium — downstream payroll/records consumers may reshape the column set; the export format must be encapsulated so column changes do not ripple (Use-Case Survey volatility rationale). AF-2 guarantees every exported row resolves employee display data. Export is HR-only; employees have no export (FR-005 is view-only).
+**CSV scope notes:** Job title, email, and extension are excluded — they are directory attributes (FR-010), not clocking data. Timestamps are stored in UTC and exported in ISO-8601 with an explicit offset in America/Havana local time (IANA identifier, DST-aware — a fixed offset would silently shift the payroll day boundary when the clocks change); the selected month's boundaries are computed in America/Havana local time — the payroll day is the local calendar day, never the server's (stakeholder decisions, Elaboration Iter 1). All 3 offices share this one timezone (stakeholder-confirmed). Volatility: Medium — downstream payroll/records consumers may reshape the column set; the export format must be encapsulated so column changes do not ripple (Use-Case Survey volatility rationale). AF-2 guarantees no partial file when AD is unreachable; AF-3 guarantees every event row is present when individual attributes are missing (blank cells, no abort — the row identity is carried by ad_user_id). Export is HR-only; employees have no export (FR-005 is view-only).
 
 **Activity Diagram:**
 
@@ -489,7 +495,11 @@ if (Clocking events exist for selected month?) then (yes)
   if (AD reachable for employee display attributes?) then (yes)
     :Compile events from PostgreSQL (one row per event);
     :Read employee display attributes from AD on demand (CON-005, CON-006);
-    :Generate CSV file;
+    if (Some employees have missing AD attributes? - R001) then (yes - AF-3)
+      :Generate CSV - every event row present,\nmissing fields as blank cells,\nno abort, no error (R001 behavioural bar;\nad_user_id resolves identity - CON-006);
+    else (no)
+      :Generate CSV file;
+    endif
     :Deliver CSV download to HR;
   else (no - AF-2)
     :Display "Directory temporarily unavailable";
@@ -524,7 +534,8 @@ stop
 
 **Alternative Flows:**
 - **AF-1: Same category re-selected.** At step 5, if the selected category equals the current value, nothing is persisted and no audit entry is written (NFR-005 audits *changes*).
-- **AF-2: AD unavailable.** At step 3, employee lookup is blocked; the system informs HR that the directory is temporarily unavailable. The assignment cannot proceed without AD (the portal holds no employee display data — CON-006).
+- **AF-2: AD unavailable.** At step 3, employee lookup is blocked; the system informs HR that the directory is temporarily unavailable. The assignment cannot proceed without AD (the portal holds no employee display data — CON-006). *(Formalized in Elaboration Iter 2 from prior prose — the flow was already specified in the alternative-flows text; the activity diagram now renders it, closing a prior spec-diagram mismatch.)*
+- **AF-3: AD attribute missing (R001) [DERIVED — from FR-003 + the R001 behavioural bar (stakeholder decision, Elaboration Iter 2), awaiting stakeholder confirmation].** At step 3, if the located employee's AD display attributes are partially populated, the employee remains locatable and selectable: missing display fields render blank, the entry is not hidden, and no error is raised. The assignment target is unambiguous — HR selects the employee by their AD-resolved entry, and the persisted mapping stores the AD user id (CON-006), which is always present. *Rationale:* the R001 behavioural bar (stakeholder decision, Elaboration Iter 2) governs what the portal does when an attribute is absent — every employee is rendered, a missing attribute never removes someone, a missing attribute never raises an error — and UC-007 reads the same AD attributes through the same LDAP Query Mechanism as UC-004. The bar's wording names search results; its application to the category-assignment lookup is this derivation, submitted for confirmation.
 
 **Business rules:** CON-013 — the category list is fixed and externally configured; no create/edit/rename/delete of categories in the portal UI. CON-006 — the portal stores only AD user id → category. NFR-005/AUD-004 — every category change is audited.
 
@@ -535,15 +546,24 @@ stop
 title UC-007 Assign Worker Category - Activity Diagram (FR-003)
 start
 :HR opens worker category page;
-:HR locates employee by AD user id\n(display data read-only from AD);
-:System loads fixed category list from\nexternal configuration (CON-013);
-:HR selects a category and confirms;
-if (Selected category differs from current value?) then (yes)
-  :Persist AD user id -> category\n(two columns only - CON-006);
-  :Append audit entry: actor + timestamp +\nold value + new value (AUD-004, NFR-005);
-  :Confirm assignment to HR;
-else (no - AF-1)
-  :Inform HR: category unchanged;\nnothing persisted, no audit entry;
+if (AD reachable for employee lookup?) then (yes)
+  :HR locates employee by AD user id\n(display data read-only from AD);
+  if (Located employee has missing AD attributes? - R001) then (yes - AF-3)
+    :Show employee with missing fields blank -\nstill locatable, no error\n(R001 behavioural bar);
+  else (no)
+    :Show employee with complete display data;
+  endif
+  :System loads fixed category list from\nexternal configuration (CON-013);
+  :HR selects a category and confirms;
+  if (Selected category differs from current value?) then (yes)
+    :Persist AD user id -> category\n(two columns only - CON-006);
+    :Append audit entry: actor + timestamp +\nold value + new value (AUD-004, NFR-005);
+    :Confirm assignment to HR;
+  else (no - AF-1)
+    :Inform HR: category unchanged;\nnothing persisted, no audit entry;
+  endif
+else (no - AF-2)
+  :Inform HR: directory temporarily unavailable;\nassignment cannot proceed (CON-006);
 endif
 stop
 @enduml
@@ -892,9 +912,9 @@ stop
 |---|---|---|---|---|
 | UC-002 (FR-005) | SCR-02 | Select "My Clocking History" → current-month table (Date, Clock In, Clock Out, Hours, Status) rendered from PostgreSQL | AF-1 empty state; AF-2 queued-not-yet-synced note; EF-1 "History temporarily unavailable" inline | USA-001, USA-008 |
 | UC-003 (FR-007) | SCR-01, SCR-03 | Load → featured banner at top + list newest-first; category chips (All/General/HR/IT/Events) → filtered list | AF-1 "No news in this category"; AF-2 empty state; EF-1 "News temporarily unavailable" inline | USA-001, USA-007 |
-| UC-005 (FR-001) | SCR-05 | Open [HR role] → all-employees table; filter by employee / date range → matching events, names resolved from AD on demand | AF-1 "No clocking records match"; AF-2 AD user id shown, display attributes marked unavailable; EF-1 role denial → SCR-09 | SEC-006, USA-008 |
-| UC-006 (FR-002) | SCR-05 | Select month + "Export CSV" → file download (ISO-8601 with explicit offset, per stakeholder decision) | AF-1 "No clocking records for this month"; AF-2 "Directory temporarily unavailable" — export aborted, no partial file | INT-005, SEC-006 |
-| UC-007 (FR-003) | SCR-06 | Open [HR role] → locate employee (AD display data, read-only) → select category from FIXED list → confirm → mapping persisted + audited | AF-1 same category → "unchanged", nothing persisted, no audit entry; AF-2 "Directory temporarily unavailable" | CON-013, AUD-004 |
+| UC-005 (FR-001) | SCR-05 | Open [HR role] → all-employees table; filter by employee / date range → matching events, names resolved from AD on demand | AF-1 "No clocking records match"; AF-2 AD user id shown, display attributes marked unavailable; AF-3 missing display fields blank, employee NOT removed, no error (R001 behavioural bar); EF-1 role denial → SCR-09 | SEC-006, USA-008 |
+| UC-006 (FR-002) | SCR-05 | Select month + "Export CSV" → file download (ISO-8601 with explicit offset, per stakeholder decision) | AF-1 "No clocking records for this month"; AF-2 "Directory temporarily unavailable" — export aborted, no partial file; AF-3 missing display fields as blank cells, every event row present, no abort (R001 behavioural bar) | INT-005, SEC-006 |
+| UC-007 (FR-003) | SCR-06 | Open [HR role] → locate employee (AD display data, read-only) → select category from FIXED list → confirm → mapping persisted + audited | AF-1 same category → "unchanged", nothing persisted, no audit entry; AF-2 "Directory temporarily unavailable"; AF-3 missing display fields blank, employee still locatable, no error (R001 behavioural bar) | CON-013, AUD-004 |
 | UC-009 (FR-008) | SCR-08 → SCR-07 (edit mode) | Select published item → form loads current version → modify + save → updated, audited (all versions traceable) | AF-1 inline validation; AF-2 "no longer published" notice, edit not applied; EF-1 role denial → SCR-09 | AUD-002, SEC-006 |
 
 #### Design-reference reconciliations (CON-011 — R007 mitigation)
