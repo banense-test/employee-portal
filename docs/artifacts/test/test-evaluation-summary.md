@@ -1,13 +1,14 @@
 ## Document Control
-
 | Field | Value |
 |---|---|
 | Phase | Inception |
 | Status | Draft |
-| Milestone Target | End of Inception |
-| Iteration | 1 (Cycle 1) |
+| Milestone Target | End of Inception (LCO) |
+| Iteration | 2 (Cycle 1) |
 | Date | 2026-09-01 |
-
+| Prior Iteration | 1 (Cycle 1) — 0 findings, artifact preserved |
+| CI Baseline | Green on main (verified iteration 2) |
+| Defect Baseline | 0 open, 0 closed (verified iteration 2) |
 ## Test Scope
 
 ### Evaluation Mission (Inception Iteration 1)
