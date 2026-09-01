@@ -1902,7 +1902,7 @@ Growth: `clockings` ~100K rows/year (SAD sizing) — years of headroom on a sing
 ## Boundary Classes and Navigation Map
 (User Interface Designer — Elaboration Iter 1, evolved Iter 2 (convergence cycle). This section realizes the user-interface-specific parts of the use cases: the boundary classes the user operates, the formal navigation topology, and the UI patterns every implementer follows. Interaction flows per UC are in the Use-Case Model §Use-Case Specifications → UI Flow References; usability criteria are quantified in the Supplementary Specification §Usability.)
 
-**Elaboration Iter 2 evolution (convergence cycle):** (1) **P-05 extended** — the missing-AD-attribute pattern now carries the stakeholder-confirmed R001 behavioural bar across ALL four AD-reading use cases (UC-004/005/006/007), each with its rendering contract; (2) **Salt wireframes added** for the two primary screens — SCR-01 Home (first-use affordance, USA-004) and SCR-04 Directory (10-second lookup, USA-003; the wireframe renders the R001 blank-field contract). All other content is preserved exactly as reviewed at the Elaboration Iter 1 LCA review (zero findings on this artifact).
+**Elaboration Iter 2 evolution (convergence cycle):** (1) **P-05 extended** — the missing-AD-attribute pattern now carries the stakeholder-confirmed R001 behavioural bar across ALL four AD-reading use cases (UC-004/005/006/007), each with its rendering contract; (2) **Salt wireframes added** for the two primary screens — SCR-01 Home (first-use affordance, USA-004) and SCR-04 Directory (10-second lookup, USA-003; the wireframe renders the R001 blank-field contract); (3) **design-reference verification (this revision)** — the authoritative source was read from the repository (docs/inputs/employee-portal-design.html, sha ba1cb26e): every token, component, and state cited in this section is confirmed present in the reference; the SCR-01 wireframe is completed with the reference's live clock element; **reconciliations 4 and 5** are added (directory-footer sync claim contradicts CON-006; hardcoded filter options are sample data, not specification); **P-02 carries a PENDING stakeholder decision** on the rendering contract when more than one news item is featured (escalated in-round this iteration). All other content is preserved exactly as reviewed at the Elaboration Iter 1 LCA review (zero findings on this artifact).
 
 ### Screen Registry
 
@@ -1977,8 +1977,9 @@ CategoryCtl ..> ICAT
 note bottom of HomeView
   Status chip + status-aware button
   (green Clock In / red Clock Out),
-  inline confirmation, featured
-  banner, history preview.
+  live clock element, inline
+  confirmation, featured banner,
+  history preview.
   UC-001, UC-003.
 end note
 
@@ -2100,7 +2101,7 @@ end note
 
 ### Wireframes (Salt) — primary screens (Elaboration Iter 2)
 
-The two primary screens carry the highest usability stakes: **SCR-01 Home** is the single primary affordance for first use (USA-004, AC-001, AC-004 — adoption risk R002) and **SCR-04 Directory** carries the 10-second lookup task (USA-003, AC-003) plus the R001 rendering contract. Both wireframes are drawn from the mandatory design reference (CON-011): topbar (brand-900, user chip, Sign out), sidebar nav (Employee-role view — HR items hidden per P-06), content cards. The Designer details the view classes behind them; the Implementer builds from them.
+The two primary screens carry the highest usability stakes: **SCR-01 Home** is the single primary affordance for first use (USA-004, AC-001, AC-004 — adoption risk R002) and **SCR-04 Directory** carries the 10-second lookup task (USA-003, AC-003) plus the R001 rendering contract. Both wireframes are drawn from the mandatory design reference (CON-011, verified against repository source sha ba1cb26e): topbar (brand-900, user chip, Sign out), sidebar nav (Employee-role view — HR items hidden per P-06), content cards. The Designer details the view classes behind them; the Implementer builds from them.
 
 **SCR-01 Home** — clocked-in state shown (the button toggles green ▶ "Clock In" ↔ red ■ "Clock Out" by status, USA-001; never both visible):
 
@@ -2121,7 +2122,7 @@ Good morning, Maria
 {{Clocking
 --
 Status: Present since 08:02
-[■ Clock Out]
+{08:14 | [■ Clock Out]}
 Last event: Clocked in at 08:02:14}}
 --
 {{Featured news
@@ -2138,7 +2139,7 @@ Today: 08:02 in
 @endsalt
 ```
 
-Wireframe contract: status chip + status-aware button are the ONLY clocking controls (USA-002: ≤ 2 interactions from Home); the confirmation renders inline on the card after press (< 1 s, PRF-002); all displayed times are America/Havana local (USA-008); featured banner uses the warn-tinted style (P-02); history preview links to SCR-02.
+Wireframe contract: status chip + status-aware button are the ONLY clocking controls (USA-002: ≤ 2 interactions from Home); the **live clock element** (reference `.now` — 40 px tabular numerals beside the button) renders the current local time and is presentational only — it is never a data field and never substitutes for the recorded timestamp shown in the confirmation; the confirmation renders inline on the card after press (< 1 s, PRF-002); all displayed times are America/Havana local (USA-008); featured banner uses the warn-tinted style (P-02); history preview links to SCR-02.
 
 **SCR-04 Directory** — search results for "Gomez"; the second and third cards deliberately render the **R001 behavioural bar** (stakeholder-confirmed, Elaboration Iter 2): missing attributes render as blank values (em-dash placeholder), the entry is NOT hidden, no error is raised:
 
@@ -2178,23 +2179,23 @@ Email: m.gomez@cubacorp.example | Ext: —}}
 @endsalt
 ```
 
-Wireframe contract: all six corporate fields render ON the card — no detail view needed (USA-003); a missing attribute renders as an empty value ("—") while the field label remains visible, so the user sees the attribute exists but is unpopulated in AD — never "N/A", never an error, never a hidden card (R001 bar clauses a/b/c; UC-004 AF-2); the same blank-value convention applies to the SCR-05 review table and SCR-06 lookup (P-05). Empty results → "No colleagues found" + refine suggestion (UC-004 AF-1); LDAP failure → "Directory temporarily unavailable", no partial data (UC-004 AF-3, CON-006).
+Wireframe contract: all six corporate fields render ON the card — no detail view needed (USA-003); a missing attribute renders as an empty value ("—") while the field label remains visible, so the user sees the attribute exists but is unpopulated in AD — never "N/A", never an error, never a hidden card (R001 bar clauses a/b/c; UC-004 AF-2); the same blank-value convention applies to the SCR-05 review table and SCR-06 lookup (P-05). Empty results → "No colleagues found" + refine suggestion (UC-004 AF-1); LDAP failure → "Directory temporarily unavailable", no partial data (UC-004 AF-3, CON-006). Filter select options populate from AD on demand — never a hardcoded list (reconciliation 5).
 
 ### UI Patterns
 
-Coordination artifact for the Designer (view-class detailing), the Implementer (screen construction), and the Technical Writer (terminology). All patterns are drawn from the mandatory design reference (CON-011); nothing is invented beyond it.
+Coordination artifact for the Designer (view-class detailing), the Implementer (screen construction), and the Technical Writer (terminology). All patterns are drawn from the mandatory design reference (CON-011, verified against repository source sha ba1cb26e); nothing is invented beyond it.
 
 **P-01 Interaction conventions**
 - Primary action = filled button, brand-500 #1E7FB5, 40 px height (Search, Save, Publish). Clocking button is the exception: 52 px height — green ▶ "Clock In" (accent #17A398) or red ■ "Clock Out" (danger #C0392B), toggled by current status (FR-004; never both visible).
 - Destructive/irreversible-feeling actions require a confirmation modal (M-01 pattern: question + consequence + Confirm/Cancel). Unpublish always states the record is retained (CON-012).
 - Secondary actions = ghost button (white, 1 px line border): Export CSV, Cancel.
-- Filters = chips (999 px radius, 30 px height): All / General / HR / IT / Events; active chip = brand-100 background. Selects for department/office filters.
+- Filters = chips (999 px radius, 30 px height): All / General / HR / IT / Events; active chip = brand-100 background. Selects for department/office filters — options populated from AD on demand (reconciliation 5).
 - Every user action produces visible feedback < 1 s (PRF-002 for clocking; inline confirmation, validation highlight, or modal).
 
 **P-02 Visual hierarchy**
 - Topbar (brand-900) → sidebar nav (role-aware, active item brand-100) → content: page title 28 px, subtitle muted, cards (8 px radius, 1 px line border, soft shadow) on bg #F4F7FA, 1120 px container, 24 px gutters.
 - Section headers: 12 px uppercase, muted, bottom border. Table headers: 12 px uppercase muted. Status values: chips/tags (present = accent-tinted, complete = ok tag).
-- Featured news = warn-tinted banner (#FFF6E2→#FFFBF2 gradient, 4 px warn left border, ★) at the top of News and Home (FR-006/FR-007).
+- Featured news = warn-tinted banner (#FFF6E2→#FFFBF2 gradient, 4 px warn left border, ★) at the top of News and Home (FR-006/FR-007). **Rendering contract when more than one item carries the featured flag: [PENDING — stakeholder decision requested this iteration (Elaboration Iter 2)].** The design reference shows a single banner; FR-006/FR-007 set no limit on how many items may be featured. Until the stakeholder decides, the Implementer must not invent a contract (neither stacking N banners nor silently showing only the newest). Question escalated in-round; the decision will be recorded here and in UC-008/UC-003 when answered.
 
 **P-03 Terminology (exact, from declared scope — never synonyms)**
 - "Clock In" / "Clock Out" (FR-004). "Unpublish" — NEVER "Delete" or "Remove" (CON-012; no hard delete exists). "Worker categories" — NEVER "Manage directory" (CON-007; see reconciliation 1). Categories: General, HR, IT, Events (FR-006/FR-007). "Sign out". Directory fields: name, job title, department, office, email, extension (FR-010). UI language: English (design reference).
@@ -2214,13 +2215,15 @@ Coordination artifact for the Designer (view-class detailing), the Implementer (
 - Hiding is presentation only — every HR screen enforces the role server-side before render (SCR-09 otherwise).
 
 **P-07 Time display (USA-008 — stakeholder decision)**
-- Every displayed clocking time renders in America/Havana local time (IANA, DST-aware): status chip ("Present since 08:02"), confirmation ("Clocked in at 08:58:12"), history tables, HR report. Raw UTC or server time is never shown to users; only the CSV export carries ISO-8601 with explicit offset (UC-006).
+- Every displayed clocking time renders in America/Havana local time (IANA, DST-aware): status chip ("Present since 08:02"), confirmation ("Clocked in at 08:58:12"), history tables, HR report. Raw UTC or server time is never shown to users; only the CSV export carries ISO-8601 with explicit offset (UC-006). The SCR-01 live clock element renders the current local time (presentational).
 
 ### Design-Reference Reconciliations (CON-011 — R007 mitigation)
 
 1. **Sidebar item "Manage directory" → SCR-06 "Worker categories".** CON-007 forbids editing employee fields anywhere in the portal; the only HR management adjacent to the directory is worker category assignment (FR-003). The nav item keeps the reference's position, icon slot, and style; its label reads "Worker categories" (error prevention — a label promising directory management would mislead).
 2. **"Export CSV (HR)" placement.** The mockup shows an HR-only export affordance on the personal history card; UC-006 step 1 places the export in the clocking review area. The control renders on SCR-05 in the reference's ghost-button style, HR role only; SCR-02 carries no export (FR-005 view-only, SEC-007).
 3. **Mockup UC labels.** The reference's internal UC01/UC02/UC03 map to project UC-001/UC-003/UC-004 (Use-Case Model is the UC-ID authority — prevents recurrence of the LCO F1 UC-ID mismatch).
+4. **Directory footer claim "HR keeps the data synchronized with Active Directory" (added Elaboration Iter 2, from the verified repository source).** CON-006 forbids exactly this mechanism: employee data is read from AD on demand, never copied into the portal's database — no sync job, no reconciliation, no conflict resolution. The reference's sentence is dropped from the implemented screen; the footer reads "Corporate data only — read live from Active Directory." The Implementer must not build a sync job from the reference's sentence, and the screen must not claim one exists.
+5. **Hardcoded filter options in the reference's selects (added Elaboration Iter 2, from the verified repository source).** The reference's office select hardcodes Havana / Santiago / Villa Clara and the department select hardcodes Engineering / HR / IT. The declared input names no office locations and no department list; these values are sample data, not specification. The filter options populate from AD on demand (CON-005) — never a hardcoded list. (The reference's sample office names are NOT adopted as declared office locations; the stakeholder has confirmed the declared input names none.)
 ## Capsules, Protocols and Signals
 
 [OMITTED — no capsule-based elements exist in this system. The portal is a request/response web application (ADR-001: layered monolith, single process); it contains no real-time capsules, no signal protocols, and no asynchronous message-passing elements. The only asynchronous behavior is the offline sync replay (CLS-008 → sync endpoint), which is an HTTP request/response exchange specified in SEQ-001 — not a signal protocol.]
