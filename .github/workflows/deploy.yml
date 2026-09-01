@@ -1,13 +1,9 @@
-# Employee Portal — Deploy Workflow Skeleton
-# Inception baseline: structure only. Deploy steps filled in Construction/Transition.
-#
-# Deployment mode: Custom-built (internal Windows Server, no cloud)
-# Target: single-node Windows Server on corporate network (CON-008, CON-009)
-
 name: Deploy Employee Portal
 
 on:
   push:
+    branches:
+      - main
     tags:
       - 'v*'
   workflow_dispatch:
@@ -15,16 +11,30 @@ on:
       environment:
         description: 'Target environment'
         required: true
-        default: 'dev'
         type: choice
         options:
           - dev
-          - pilot
           - production
 
-env:
-  DOTNET_VERSION: '10.0'
-  PROJECT_NAME: 'EmployeePortal'
+# Deployment workflow skeleton — Inception baseline
+# Steps to be populated in Construction phase when:
+# - Build pipeline produces publishable artifacts
+# - Windows Server deployment target is provisioned (R010)
+# - Keycloak client registration is complete (R010)
+# - LDAP service account is configured (R010)
+#
+# Planned stages:
+# 1. build: dotnet publish -c Release -o ./publish
+# 2. test: run unit + integration tests
+# 3. package: create deployment zip
+# 4. deploy-dev: deploy to development Windows Server (Gate 1)
+# 5. deploy-production: deploy to production Windows Server (Gate 2, manual approval)
+#
+# Two-gate acceptance model:
+# - Gate 1 (dev-site): automatic on push to main
+# - Gate 2 (production): manual trigger with environment selection
+#
+# Rollback: re-deploy previous tag, redirect to maintenance page
 
 jobs:
   build:
@@ -32,25 +42,23 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup .NET
+      - name: Setup .NET 10
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-      - name: Restore
+          dotnet-version: '10.0.x'
+      - name: Restore dependencies
         run: dotnet restore
       - name: Build
         run: dotnet build --configuration Release --no-restore
+      - name: Run tests
+        run: dotnet test --configuration Release --no-build --verbosity normal
       - name: Publish
-        run: dotnet publish ${{ env.PROJECT_NAME }} --configuration Release --output ./publish
+        run: dotnet publish --configuration Release --no-build --output ./publish
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: portal-build
+          name: employee-portal-publish
           path: ./publish
 
-  # Deploy steps to be defined in Construction when:
-  # - Windows Server target is provisioned by STK-004
-  # - OIDC client is registered in Keycloak
-  # - LDAP service account is configured
-  # Deploy target: internal Windows Server via Web Deploy or file copy + IIS restart
-  # Rollback: previous artifact redeployed from prior tag
+  # deploy-dev and deploy-production jobs to be added in Construction
+  # when Windows Server target is provisioned by STK-004 (R010)

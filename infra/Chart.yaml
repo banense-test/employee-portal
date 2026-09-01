@@ -1,20 +1,14 @@
-# Employee Portal — IaC Base Skeleton
-# Inception baseline: placeholder for infrastructure-as-code definitions.
-#
-# Deployment target: internal Windows Server (CON-008), no cloud.
-# This file will be evolved in Elaboration/Construction to define:
-# - PostgreSQL instance configuration
-# - IIS application pool settings
-# - HTTPS binding configuration
-# - LDAP connection settings (service account, endpoint)
-# - OIDC client configuration (Keycloak realm, client ID)
-#
-# Note: Windows Server provisioning itself is STK-004's responsibility (CON-008, CON-014).
-# This IaC configures the application on a server that STK-004 has already provisioned.
-
-apiVersion: v1
+apiVersion: v2
 name: employee-portal
-description: Employee Portal infrastructure configuration (internal Windows Server deployment)
+description: Employee Portal — Cuba Corp internal web application
 type: application
 version: 0.1.0
-appVersion: "0.1.0"
+appVersion: '0.1.0'
+
+# IaC base — Inception skeleton
+# Currently single-node Windows Server deployment (CON-008).
+# This Helm chart is a placeholder for future containerized deployment
+# if the architecture evolves. Current deployment target is IIS/Kestrel
+# on Windows Server, not Kubernetes.
+#
+# Values template to be populated in Construction phase.

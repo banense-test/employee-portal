@@ -1,0 +1,38 @@
+# Employee Portal — Infrastructure Configuration Values
+# Inception baseline — to be populated in Construction
+
+# Single-node Windows Server deployment (CON-008)
+# Internal corporate network only (CON-009)
+
+deployment:
+  mode: custom-built
+  target: windows-server
+  internalOnly: true
+
+application:
+  framework: dotnet10
+  frontend: razor-pages
+  port: 5000  # Kestrel default — TBD
+
+database:
+  type: postgresql
+  version: '16'  # TBD — confirm with STK-004
+
+externalSystems:
+  keycloak:
+    url: ''  # TBD — provided by STK-004
+    realm: ''  # TBD
+    clientId: 'employee-portal'
+  activeDirectory:
+    ldapHost: ''  # TBD — provided by STK-004
+    ldapPort: 389
+    serviceAccountDn: ''  # TBD
+
+# Two-gate acceptance environments
+environments:
+  dev:
+    serverHost: ''  # TBD — development Windows Server
+  production:
+    serverHost: ''  # TBD — production Windows Server
+    pilotEnabled: true
+    pilotDuration: '1 week'
