@@ -76,7 +76,6 @@ Measurable criteria per user role. Each criterion is testable; none invents targ
 
 **UI design realization:** the interaction flows that satisfy these criteria are specified as per-UC storyboards in the Use-Case Model §Use-Case Specifications (UI Flow References) and formalized as boundary classes + navigation map + UI patterns in the Design Model §Boundary Classes and Navigation Map (User-Interface Designer, Elaboration Iter 1).
 ## Reliability
-
 | ID | Requirement | Source | Volatility |
 |---|---|---|---|
 | REL-001 | System available during extended working hours: Monday–Friday 7:00–19:00. 24/7 not required. | NFR-003 | Low |
@@ -99,6 +98,66 @@ Measurable criteria per user role. Each criterion is testable; none invents targ
 
 **Stakeholder decision recorded (Elaboration Iter 1 — office local timezone [SCOPE_QUESTION] retired):** The office local timezone is **America/Havana**. The stakeholder specified an IANA identifier, not a fixed offset — Cuba observes DST, so a hardcoded UTC-5 would be wrong for part of the year and would silently shift every payroll day boundary when the clocks change. The zone completes the decided convention (store UTC, display office local, export ISO-8601 with explicit offset, payroll day = local calendar day); all 3 offices share this one timezone (stakeholder-confirmed). The exported offset is the one in force at each event's time per the IANA zone database. No open question remains on the timestamp convention.
 
+### R001 Behavioural Bar — LDAP attribute absence (stakeholder decision, Elaboration Iter 2)
+
+**Stakeholder decision recorded (Elaboration Iter 2 — R001 validation bar):** The R001 validation bar is **behavioural, not statistical**. The prior ">90% of sampled users per office with all six corporate attributes populated" figure is **dropped** — it is invented (the declared R001 names no percentage; the PoC decision names none), and measured against a disposable directory the team seeds itself it cannot fail, so it proves nothing. The architectural risk is what the portal DOES when an attribute is absent, not how many attributes are missing (a property of the real directory nobody can know until STK-004 delivers). **The bar, in the stakeholder's words:** "every employee is rendered whether or not their attributes are complete; a missing attribute never removes someone from search results; a missing attribute never raises an error. Seed the gaps deliberately and prove those three hold. That retires R001 empirically, this phase, without the production directory." The percentage belongs to a different activity — measuring the real AD's data quality once STK-004 delivers — tracked in Construction (R011 residual), kept out of the LCA evidence package.
+
+**Requirements consequence (Requirements Specifier, Elaboration Iter 2):** the bar is a **reliability contract at the LDAP Query Mechanism boundary** — one contract, four consumers. UC-004 (FR-010) is the declared home of the bar (the stakeholder's wording names search results). UC-005 (FR-001), UC-006 (FR-002), and UC-007 (FR-003) read the same AD attributes through the same mechanism, so the same three clauses are specified there as AF-3 alternative flows, each marked **[DERIVED — from FR-00N + the R001 behavioural bar, awaiting stakeholder confirmation]** — the bar's reach beyond the directory wording is the stakeholder's to confirm, not this role's to assume. The three clauses are testable as written: seed gaps deliberately in the disposable directory, exercise each consumer, and verify (a) rendering completeness, (b) no removal, (c) no error. Distinct-condition note: AD-unreachable (UC-005 AF-2, UC-006 AF-2, UC-007 AF-2, UC-004 AF-3) is a different failure mode with a different contract — it is NOT waived by the behavioural bar.
+
+```plantuml
+@startuml
+skinparam componentStyle rectangle
+skinparam fontSize 11
+title R001 Behavioural Bar - One Contract, Four AD-Reading Use Cases\nLDAP Query Mechanism consumers (Elaboration Iter 2)
+
+package "Employee Portal" {
+  component "UC-004 Directory Search\n(FR-010 - declared home of the bar)" as UC004
+  component "UC-005 HR Clocking Review\n(FR-001 - AF-3 [DERIVED])" as UC005
+  component "UC-006 CSV Export\n(FR-002 - AF-3 [DERIVED])" as UC006
+  component "UC-007 Category Assignment\n(FR-003 - AF-3 [DERIVED])" as UC007
+
+  component "LDAP Query Mechanism\n(cross-cutting, <<include>>\nfrom UC-004/005/006/007)" as LDAP <<cross-cutting>>
+}
+
+component "Active Directory (LDAP)" as AD <<external>>
+component "Disposable LDAP Directory\n(deliberately seeded gaps -\nR001 PoC, Elaboration)" as DISPOSABLE <<external>>
+
+LDAP ..> AD : production queries\n(read-only - CON-007)
+LDAP ..> DISPOSABLE : PoC validation queries\n(gaps seeded deliberately)
+
+UC004 ..> LDAP
+UC005 ..> LDAP
+UC006 ..> LDAP
+UC007 ..> LDAP
+
+note bottom of LDAP
+  One behavioural contract at the
+  mechanism boundary (R001 bar,
+  stakeholder decision, Elab Iter 2):
+  (a) every employee is rendered
+  whether or not attributes complete
+  (b) a missing attribute never
+  removes someone from results
+  (c) a missing attribute never
+  raises an error
+  UC-004: declared home (FR-010).
+  UC-005/006/007: [DERIVED - from
+  FR-001/FR-002/FR-003 + the bar,
+  awaiting stakeholder confirmation]
+end note
+
+note bottom of DISPOSABLE
+  The >90% statistical criterion is
+  DROPPED (invented, unsourceable;
+  measured against self-seeded data
+  it cannot fail, so it proves nothing).
+  Real-AD data-quality measurement
+  moves to Construction (R011 residual,
+  STK-004-dependent), excluded from
+  the LCA evidence package.
+end note
+@enduml
+```
 ## Performance
 
 | ID | Requirement | Source | Volatility |
