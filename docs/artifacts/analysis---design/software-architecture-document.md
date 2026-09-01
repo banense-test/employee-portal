@@ -548,21 +548,25 @@ end note
 - **CI** — `.github/workflows/ci.yml` and `deploy.yml` exist (ConfigurationManager); the build gates every push to main.
 - **Design guideline for the Implementer:** dependencies point DOWN only (Pages → Services → Infrastructure); every cross-package reference is an interface, never a concrete class.
 ## Data View
-
 ### Portal Database Schema (PostgreSQL — CON-003)
 
 The portal database stores **only** what is not in Active Directory. Per CON-006, no employee data is copied — the portal stores only `AD user id → worker category` (two columns) plus operational data (clockings, news, audit entries).
 
 | Table | Purpose | Key Columns | Source |
 |---|---|---|---|
-| clockings | Clock in/out events | id, employee_uid, event_type (in/out), timestamp | FR-004, FR-005 |
-| news_items | News articles with lifecycle | id, title, body, category, is_featured, status (published/unpublished), created_by, created_at | FR-006, FR-008, FR-009 |
-| news_audit | Audit trail for news operations | id, news_id, action (publish/edit/unpublish), actor_uid, timestamp, snapshot | NFR-005, AUD-001–003 |
-| worker_categories | AD user id → category mapping | employee_uid, category, assigned_by, assigned_at | FR-003, CON-006 |
-| category_audit | Audit trail for category changes | id, employee_uid, old_category, new_category, actor_uid, timestamp | NFR-005, AUD-004 |
+| clockings | Clock in/out events | id, employee_uid, event_type (in/out), **timestamp_utc**, **idempotency_key (UNIQUE)** | FR-004, FR-005, DAT-001, REL-002 |
+| news_items | News articles with lifecycle | id, title, body, category, is_featured, status (published/unpublished), created_by, created_at | FR-006, FR-008, FR-009, CON-012 |
+| news_audit | Audit trail for news operations | id, news_id, action (publish/edit/unpublish), actor_uid, timestamp_utc, snapshot | NFR-005, AUD-001–003, DAT-002 |
+| worker_categories | AD user id → category mapping | **employee_uid, category** (two columns only), assigned_by, assigned_at | FR-003, CON-006 |
+| category_audit | Audit trail for category changes | id, employee_uid, old_category, new_category, actor_uid, timestamp_utc | NFR-005, AUD-004 |
 
-**Note:** The `employee_uid` column in all tables references the AD user id (e.g., sAMAccountName or objectGUID). No employee name, title, department, or other AD attribute is stored in the portal database. Directory data is always read live from AD via LDAP (COMP-007).
+**Elaboration refinements vs the Inception candidate:**
+1. **`timestamp_utc`** — every clocking timestamp is stored in UTC (stakeholder decision, Elab Iter 1). Display conversion to America/Havana happens at render time via COMP-011; export conversion to ISO-8601 with explicit offset happens in COMP-010. The stored value is never a local time.
+2. **`idempotency_key (UNIQUE)`** — the physical enforcement of the REL-002 conflict policy: an exact duplicate submission (same key) is rejected by the database constraint, never duplicated. This is the synchronization point for the offline sync mechanism (ADR-003).
+3. **`worker_categories` is two data columns** — `employee_uid` + `category` (plus audit metadata `assigned_by`/`assigned_at`). CON-006's "two columns" constraint governs the employee data stored; the audit columns exist because NFR-005 mandates auditing every category change. No other employee attribute is stored.
+4. **Audit tables are append-only** (DAT-002) — no portal function updates or deletes an audit row; the schema grants no UPDATE/DELETE path on `news_audit` / `category_audit`.
 
+**Note:** `employee_uid` in all tables references the AD user id. No employee name, title, department, or other AD attribute is stored in the portal database. Directory data is always read live from AD via LDAP (COMP-007); HR views (UC-005/006/007) resolve display names on demand (CON-005, CON-006).
 ## Size and Performance
 
 | Metric | Target | Source | Architectural Tactic |
