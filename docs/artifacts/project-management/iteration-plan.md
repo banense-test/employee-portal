@@ -2,213 +2,224 @@
 
 | Field | Value |
 |---|---|
-| Phase | Inception |
-| Status | Draft |
-| Milestone Target | End of Inception (LCO) |
-| Iteration | 2 (Cycle 1) — Rework iteration |
+| Phase | Elaboration |
+| Status | Draft — Elaboration Iter 1 plan |
+| Milestone Target | End of Elaboration (LCA) |
+| Iteration | 1 (Cycle 1) |
 | Date | 2026-09-01 |
-| Rework Reason | F1 (Major): UC ID mapping corrected to match Use-Case Model (authority); F2 (Minor): Work item statuses reconciled against repository |
-| Findings Resolved | F1 (Major — UC ID mismatch), F2 (Minor — stale work item statuses) |
+| Prior Version | Inception Iteration Plan (Approved at LCO — F1/F2 resolved); EVOLVED, not recreated |
+| Elaboration Changes | Fine plan replaced: Inception work items closed, Elaboration Iter 1 critical chain added; coarse roadmap re-anchored to MEASURED Inception actuals (phase-level record governs); Construction schedule baselined; PoC work items scheduled per stakeholder decision (R001 disposable LDAP directory, R003 stub issuer, R004 direct); R010 re-scoped off the Elaboration critical path; two active plans declared (Elab Iter 1 tracking, Elab Iter 2 building) |
 
 ## Iteration Objectives
 
-1. **Establish project framework:** Risk List with all identified risks classified by probability × impact = magnitude, with mitigation and contingency plans.
-2. **Define scope and roadmap:** Coarse cross-iteration roadmap with milestone sequence (LCO → LCA → IOC → PR) and iteration boundaries.
-3. **Produce foundational artifacts:** All Inception-phase disciplines produce their initial deliverables — Use-Case Model, Supplementary Specification, SAD draft, Design Model start, project skeleton, test strategy, CM configuration.
-4. **Confront highest-magnitude risks:** R001 (AD LDAP attribute consistency) is HIGH magnitude — the SAD draft and Elaboration plan must include an Architectural PoC to validate LDAP attribute availability across the 3 offices. R003 (OIDC integration) and R004 (offline fault tolerance) are SIGNIFICANT and must be addressed in the SAD draft.
-5. **Assess LCO readiness:** Determine whether the project is viable to proceed to Elaboration — stakeholders agree on scope, initial risks are identified and classified, and the architecture direction is sound.
+1. **Retire the highest-magnitude risks EMPIRICALLY** — R001 (HIGH) via a disposable LDAP directory, R003 (SIGNIFICANT) via a stub OIDC issuer, R004 (SIGNIFICANT) directly. Per the stakeholder decision: the PoC is produced in Elaboration and validated empirically; an LCA that validates a HIGH architectural risk on paper only will not be accepted.
+2. **Correct the architecture baseline to match the stakeholder decision** — the SAD's PoC Plan (analysis-only disposition) and the Development Case's PoC trigger record are superseded; the Architect and Process Engineer own the corrections.
+3. **Baseline the Construction schedule** from MEASURED actuals — all 10 UCs assigned to Construction iterations with corrected UC IDs (LCO F1 lesson), sized from the recorded Inception spend, never from the disproven 185K assumption.
+4. **Engage STK-004 (R010)** with a written deliverables request — response is NOT a condition of Elaboration exit (stakeholder decision); production-instance integration goes to Construction.
+5. **Refine the analysis-level model** — all 10 UCs detailed, timestamp convention (UTC / America/Havana / ISO-8601 offset / local payroll day) incorporated, audit mechanism designed (R006), CON-011 design mapped to Razor Pages (R007).
 
 ## Plan and Milestones
 
 ### Coarse Cross-Iteration Roadmap
 
-The project follows the RUP iterative structure with **7 total iterations** across 4 phases, consistent with the 6 ± 3 rule. The rubber profile starting point (Inception ~5%, Elaboration ~20%, Construction ~65%, Transition ~10%) is adjusted for this project's moderate complexity and risk profile.
+7 total iterations — within the 6 ± 3 rule. Elaboration holds 2 of 7 (~29%, above the ~20% rubber-profile starting point) because the only HIGH-magnitude risk (R001) requires empirical validation this phase; the profile bends to the risk profile, not to the heuristic.
 
 | Phase | Iterations | Milestone | Gate Criteria | Human Gate Queue Time |
 |---|---|---|---|---|
-| Inception | 1 (this) | LCO | Scope agreed; risks identified; architecture direction sound; project viable | [ASSUMPTION — 2 days of stakeholder review queue, basis: single review cycle for a moderate-scope internal project] |
-| Elaboration | 2 | LCA | Architecture baseline stable; R001 PoC resolved; all HIGH/SIGNIFICANT risks mitigated or retired; SAD complete | [ASSUMPTION — 3 days of stakeholder + architectural review queue, basis: architectural review for 2 external integrations] |
-| Construction | 3 | IOC | All 10 FRs implemented and tested; all 5 ACs verified; system deployable on Windows Server | [ASSUMPTION — 3 days of stakeholder review queue, basis: functional acceptance review] |
-| Transition | 1 | PR | System in production; 80% adoption measured; documentation delivered | [ASSUMPTION — 2 days of stakeholder sign-off queue, basis: final delivery review] |
+| Inception | 2 — **CLOSED** | LCO — **ACHIEVED** | Scope agreed; risks identified; architecture direction sound | **MEASURED: 0s** — stakeholder answered in-round (recorded actual) |
+| Elaboration | 2 | LCA | Architecture baselined; R001/R003/R004 retired EMPIRICALLY; Construction viable | [ASSUMPTION — up to 2 days, basis: heavier review than LCO (architecture baseline + PoC evidence); Inception measured 0s with in-round answers] |
+| Construction | 3 | IOC | All 10 FRs implemented and tested; all 5 ACs verified; deployable on Windows Server | [ASSUMPTION — up to 3 days, basis: functional acceptance review] |
+| Transition | 1 | PR | System in production; 80% adoption measured; documentation delivered | [ASSUMPTION — up to 2 days, basis: final delivery review] |
 
-**Iteration count justification:** 7 iterations total — within the 6 ± 3 range. The project has moderate complexity (10 FRs, 2 external integrations, single-server deployment) and 2 declared risks. Elaboration gets 2 iterations to resolve R001 (AD LDAP) and R003 (OIDC) via PoC. Construction gets 3 iterations to implement 10 FRs with testing. Transition gets 1 iteration for deployment and adoption tracking.
+**Measured actuals (recorded, not estimated) — the Inception phase cost:**
+
+| Phase | Iterations | Agent time | Stakeholder queue | Tokens | Agent runs | Artifacts |
+|---|---|---|---|---|---|---|
+| Inception | 2 | 28 min | 0s | 1,347,939 | 11 | 10 |
+
+> **Conflict resolution (recorded):** the Inception Iteration Assessment quotes a 3,550,308-token cumulative across its two cycles; the phase-level record above governs — one row per CLOSED phase, no per-iteration velocity is quoted. All forecasts below are built from the phase-level figure.
+
+**Sizing consequence:** the Inception plan's 185K budget box was ~7× under the measured shape — spend is dominated by reasoning over the accumulated artifact surface, not by output volume. Every assumed share is replaced by the measured figure; where no comparable actual exists (Elaboration, Construction, Transition), the figure is an explicit assumption with its basis named.
 
 ```plantuml
 @startgantt
 !theme plain
-title Employee Portal — Cross-Iteration Roadmap
+title Employee Portal — Iteration Sequence and Human Gates\nUNANCHORED: no project start date, no absolute dates
 
-[Inception Iter 1] lasts 7 days
-[Elaboration Iter 1] lasts 7 days
-[Elaboration Iter 1] starts at [Inception Iter 1]'s end
-[Elaboration Iter 2] lasts 7 days
-[Elaboration Iter 2] starts at [Elaboration Iter 1]'s end
+[Inception Iters 1-2 CLOSED] lasts 7 days
+[Inception Iters 1-2 CLOSED] is colored in lightgreen
+
+[Elaboration Iter 1 CURRENT] lasts 7 days
+[Elaboration Iter 1 CURRENT] starts at [Inception Iters 1-2 CLOSED]'s end
+[Elaboration Iter 1 CURRENT] is colored in lightblue
+
+[Elaboration Iter 2 NEXT] lasts 7 days
+[Elaboration Iter 2 NEXT] starts at [Elaboration Iter 1 CURRENT]'s end
+
 [Construction Iter 1] lasts 7 days
-[Construction Iter 1] starts at [Elaboration Iter 2]'s end
+[Construction Iter 1] starts at [Elaboration Iter 2 NEXT]'s end
+
 [Construction Iter 2] lasts 7 days
 [Construction Iter 2] starts at [Construction Iter 1]'s end
+
 [Construction Iter 3] lasts 7 days
 [Construction Iter 3] starts at [Construction Iter 2]'s end
+
 [Transition Iter 1] lasts 7 days
 [Transition Iter 1] starts at [Construction Iter 3]'s end
 
+[LCA gate review] happens at [Elaboration Iter 2 NEXT]'s end
+[IOC gate review] happens at [Construction Iter 3]'s end
+[PR gate review] happens at [Transition Iter 1]'s end
 @endgantt
 ```
 
-> **Note on the Gantt:** Iteration durations shown as 7-day units are structural placeholders for the roadmap's relative sequencing — NOT measured durations. Actual iteration duration is governed by the token budget box and measured elapsed time, recorded in the Iteration Assessment. Human gate queue times are quoted separately in the milestone table above. The two clocks are never summed.
+> **Two clocks, never summed:** iteration bar lengths are structural sequencing units, NOT measured durations — actual duration is governed by the token budget box and recorded in the Iteration Assessment. Human gates are quoted separately in days of queue time in the milestone table. The Inception gate measured 0s of queue; the LCA/IOC/PR gates are assumptions until measured.
 
-### Fine-Grained Plan — Inception Iteration 1
+### Fine-Grained Plan — Elaboration Iteration 1 (CURRENT, tracking)
 
-This iteration is a **mini-project**: all disciplines produce their initial Inception deliverables. The critical chain below shows the sequential agent stretches from iteration start to the LCO gate, each annotated with its token budget.
+This iteration is a **mini-project**: risk retirement (PoC), analysis refinement, design, implementation of validation code, and test design — not a documentation-only phase. The critical chain below shows the sequential agent stretches from iteration start to gate, each annotated with its token budget.
 
-**Iteration budget box:** [ASSUMPTION — 185K tokens total, basis: 9 active disciplines producing initial artifacts for a moderate-scope project with 10 FRs, 5 NFRs, 14 constraints, and 10 risks. No measured actuals exist yet — this is the first iteration.]
+**Iteration budget box: 1,200K tokens** [ASSUMPTION — scaled from the MEASURED Inception actual (1,347,939 tokens, 11 runs, 28 min for 10 artifacts across 2 iterations); Elaboration Iter 1 activates 9 roles reasoning over a larger accumulated surface PLUS PoC code, but produces fewer net-new artifacts. Basis named; the box does not grow to fit scope — scope that does not fit goes to Elaboration Iter 2.]
 
 ```plantuml
 @startuml
 !theme plain
-title Employee Portal — Inception Iter 1 Critical Chain
+title Employee Portal — Elaboration Iter 1 Critical Chain\nSequential agent stretches from iteration start to gate, each with token budget
 
 |Project Manager|
 start
-:Produce Risk List
-(R001–R010 classified);
-note right: Budget: ~15K tokens
+:Reappraise Risk List\nR001 R003 R004 empirical re-scope\nR010 re-scope, R011 added;
+note right: ~40K tokens
 
 |Process Engineer|
-:Configure Development Case;
-note right: Budget: ~12K tokens
-:Configure tool environment;
-note right: Budget: ~8K tokens
-
-|System Analyst|
-:Draft Vision Document;
-note right: Budget: ~20K tokens
-:Produce Use-Case Model
-(UC-001–UC-010 from FR-001–FR-010);
-note right: Budget: ~25K tokens
-:Produce Supplementary Specification
-(NFR-001–NFR-005, constraints);
-note right: Budget: ~15K tokens
+:Correct Development Case\nPoC trigger per stakeholder decision;
+note right: ~80K tokens
 
 |Software Architect|
-:Draft Software Architecture Document
-(initial layers, AD/LDAP, OIDC, PostgreSQL);
-note right: Budget: ~25K tokens
+:Correct SAD PoC Plan and baseline\n4+1 views, 11 components, ADR-004;
+note right: ~200K tokens
+
+|System Analyst|
+:Refine Use-Case Model and Supp Spec\ntimestamp convention incorporated;
+note right: ~150K tokens
 
 |Designer|
-:Start Design Model
-(analysis classes, key sequences);
-note right: Budget: ~15K tokens
+:Refine Design Model\nanalysis classes, realizations, audit;
+note right: ~150K tokens
+
+|UI Designer|
+:Map mandatory design CON-011\nto Razor Pages components;
+note right: ~80K tokens
 
 |Implementer|
-:Set up project skeleton
-(.NET 10 solution, Razor Pages, PostgreSQL connection);
-note right: Budget: ~15K tokens
+:Build and run PoC validation\ndisposable LDAP dir, stub issuer,\noffline drop simulation;
+note right: ~250K tokens
 
-|Test Manager|
-:Define test strategy
-(acceptance criteria mapping, test approach);
-note right: Budget: ~10K tokens
-
-|ConfigurationManager|
-:Configure repository
-(branch strategy, initial CI pipeline);
-note right: Budget: ~10K tokens
+|Test Designer|
+:Design test cases UC-001 UC-004 UC-010\nplus PoC acceptance criteria;
+note right: ~120K tokens
 
 |Project Manager|
-:Produce Iteration Plan
-(coarse roadmap + fine Gantt);
-note right: Budget: ~15K tokens
-:Assess LCO readiness;
-note right: Budget: ~5K tokens
-
+:Baseline Iteration Plan\nConstruction schedule from actuals;
+note right: ~100K tokens
 stop
-
 @enduml
 ```
 
-### Work Items — Inception Iteration 1
-
-> **Status reconciliation (Iteration 2):** All statuses updated to reflect actual artifact state in the repository. Items previously marked "Pending" or "In progress" have been reconciled against the 10 existing Draft artifacts.
+### Work Items — Elaboration Iteration 1
 
 | # | Work Item | Owner Role | Token Budget | Depends On | Status |
 |---|---|---|---|---|---|
-| 1 | Risk List (R001–R010, classified, mitigated) | Project Manager | ~15K | — | Complete |
-| 2 | Development Case (tailoring, tool assessment) | Process Engineer | ~12K | — | Complete |
-| 3 | Tool environment configuration | Process Engineer | ~8K | Work Item 2 | Complete |
-| 4 | Vision Document (from stakeholder declaration) | System Analyst | ~20K | Work Item 2 | Complete |
-| 5 | Use-Case Model (UC-001–UC-010) | System Analyst | ~25K | Work Item 4 | Complete |
-| 6 | Supplementary Specification (NFRs, constraints) | System Analyst | ~15K | Work Item 5 | Complete |
-| 7 | Software Architecture Document (draft) | Software Architect | ~25K | Work Items 5, 6 | Complete |
-| 8 | Design Model (start — analysis classes) | Designer | ~15K | Work Item 7 | Complete |
-| 9 | Project skeleton (.NET 10, Razor Pages, PG) | Implementer | ~15K | Work Item 7 | Complete |
-| 10 | Test strategy (AC mapping, approach) | Test Manager | ~10K | Work Item 5 | Complete |
-| 11 | Repository configuration (branches, CI) | ConfigurationManager | ~10K | Work Item 2 | Complete |
-| 12 | Iteration Plan (this document) | Project Manager | ~15K | Work Item 1 | Complete |
-| 13 | LCO readiness assessment | Project Manager | ~5K | All above | Complete |
-| **Total** | | | **~185K** | | |
+| 1 | Risk List reappraisal (R001/R003/R004 empirical re-scope, R010 re-scope, R011 added) | Project Manager | ~40K | — | Complete (this iteration) |
+| 2 | Development Case PoC-trigger correction per stakeholder decision | Process Engineer | ~80K | Stakeholder decision | In progress |
+| 3 | SAD PoC Plan correction + 4+1 baseline refinement (COMP-010, COMP-011, ADR-004, timestamp convention) | Software Architect | ~200K | Work Item 2 | In progress |
+| 4 | Use-Case Model + Supplementary Specification refinement (all 10 UCs detailed; timestamp convention) | System Analyst | ~150K | Work Item 3 | In progress |
+| 5 | Design Model refinement (analysis classes, realizations, audit mechanism — R006) | Designer | ~150K | Work Item 4 | In progress |
+| 6 | CON-011 design → Razor Pages component mapping (R007) | UI Designer | ~80K | Work Item 3 | In progress |
+| 7 | **PoC: R001** — disposable LDAP directory, attribute population + query validation | Implementer | ~100K | Work Item 3 | In progress |
+| 8 | **PoC: R003** — stub OIDC issuer, token validation + role-claim extraction | Implementer | ~80K | Work Item 3 | In progress |
+| 9 | **PoC: R004** — 5-minute network-drop simulation, localStorage queue, idempotent sync | Implementer | ~70K | Work Item 3 | In progress |
+| 10 | Test case design: UC-001, UC-004, UC-010 + PoC acceptance criteria | Test Designer | ~120K | Work Items 7–9 | In progress |
+| 11 | Iteration Plan baseline (this document — Construction schedule from measured actuals) | Project Manager | ~100K | Work Items 1–10 | Complete (this iteration) |
+| 12 | STK-004 written deliverables request (R010 mitigation) | Project Manager | ~10K | — | In progress |
+| **Total** | | | **~1,180K** (box: 1,200K) | | |
+
+> **Status discipline (LCO F2 lesson):** statuses reflect actual repository state. Work Items 2–10 are In progress — their artifacts exist as Draft (Use-Case Model, Supplementary Specification, SAD, Design Model per the artifact registry) or are being produced this cycle; they are reconciled to Complete at iteration close in the Iteration Assessment.
+
+### Construction Schedule Baseline (from measured actuals)
+
+All 10 UCs assigned; UC IDs verified against the Use-Case Model authority (LCO F1 lesson — cross-checked before first upsert). Sequencing is risk-driven: the clocking cluster first (highest adoption risk R002 + simplest user value), the news cluster second (shared audit mechanism R006), directory + export third (R001 residual R011 closes with production integration).
+
+| Construction Iteration | Use Cases | FRs | Key Risks Retired |
+|---|---|---|---|
+| Construction Iter 1 | UC-001 (Clock In/Out), UC-002 (Own History), UC-005 (Review Clockings), UC-007 (Assign Category) | FR-004, FR-005, FR-001, FR-003 | R004 residual (AC-005 formal test), R008 (CRUD validation) |
+| Construction Iter 2 | UC-003 (Browse News), UC-008 (Publish), UC-009 (Edit), UC-010 (Unpublish) | FR-007, FR-006, FR-008, FR-009 | R006 (audit mechanism verified end-to-end) |
+| Construction Iter 3 | UC-004 (Directory Search), UC-006 (CSV Export) | FR-010, FR-002 | R011 + R010 (production-instance integration — STK-004 deliverables), R005 (LDAP performance) |
+
+**Construction sizing:** [ASSUMPTION — 3 iterations × ~1,200K tokens each, basis: Elaboration Iter 1 box scaled from the measured Inception actual; Construction adds feature implementation volume but reuses the validated PoC mechanisms. Refined at each Elaboration Iteration Assessment as measured actuals accumulate — no fine-grained Construction plan is produced now (planning beyond the horizon is waste).]
+
+### Next Iteration Preview — Elaboration Iteration 2 (BUILDING)
+
+| Aspect | Plan |
+|---|---|
+| Primary objective | Close residual findings from Iter 1 review; complete any PoC acceptance criteria not met; finalize LCA evidence package |
+| Key risks | Whatever the Iter 1 assessment elevates; R011 monitored; R010 response tracked (not blocking) |
+| Agent roles | Driven by Iter 1 Iteration Assessment variance analysis — not pre-committed |
+| Budget box | [ASSUMPTION — remainder of the Elaboration phase box (~2,400K total, basis: 2 × the Iter 1 box); refined from Iter 1 measured actuals] |
 
 ## Resources
 
-### Agent Role Profile — Inception Iteration 1
+### Agent Role Profile — Elaboration Iteration 1
 
 | Agent Role | Discipline | Intensity | Active This Iteration | Token Budget | Key Deliverable |
 |---|---|---|---|---|---|
-| Project Manager | Project Management | High | Yes | ~35K | Risk List, Iteration Plan |
-| Process Engineer | Environment | High | Yes | ~20K | Development Case, tool config |
-| System Analyst | Requirements | Critical | Yes | ~60K | Vision, Use-Case Model, Supplementary Spec |
-| Software Architect | Analysis & Design | Medium | Yes | ~25K | SAD draft |
-| Designer | Analysis & Design | Medium | Yes | ~15K | Design Model (start) |
-| Implementer | Implementation | Medium | Yes | ~15K | Project skeleton |
-| Test Manager | Test | Low | Yes | ~10K | Test strategy |
-| ConfigurationManager | Configuration & Change Mgmt | Medium | Yes | ~10K | Repository, CI pipeline |
-| UI Designer | Analysis & Design | Medium | Yes | ~5K | UI design mapping (CON-011 review) |
-| **Total** | | | | **~195K** | |
+| Project Manager | Project Management | High | Yes | ~150K | Risk List reappraisal, Iteration Plan baseline, STK-004 request |
+| Process Engineer | Environment | Medium | Yes | ~80K | Development Case PoC-trigger correction |
+| System Analyst | Requirements | High | Yes | ~150K | Use-Case Model + Supp Spec refinement |
+| Software Architect | Analysis & Design | Critical | Yes | ~200K | SAD baseline correction + PoC Plan |
+| Designer | Analysis & Design | High | Yes | ~150K | Design Model refinement (audit, realizations) |
+| UI Designer | Analysis & Design | Medium | Yes | ~80K | CON-011 → Razor Pages mapping |
+| Implementer | Implementation | Critical | Yes | ~250K | R001/R003/R004 PoC validation code |
+| Test Designer | Test | High | Yes | ~120K | Test cases UC-001/004/010 + PoC criteria |
+| **Total** | | | | **~1,180K** | |
 
 ### Budget Split Across Disciplines
 
 | Discipline | Token Share | Rationale |
 |---|---|---|
-| Requirements | ~31% | Critical intensity — Use-Case Model is the primary Inception deliverable; 10 FRs to decompose |
-| Project Management | ~18% | High intensity — Risk List + Iteration Plan + LCO assessment |
-| Analysis & Design | ~23% | Medium intensity — SAD draft + Design Model start + UI mapping |
-| Environment | ~10% | High intensity — Development Case + tool configuration (one-time setup) |
-| Implementation | ~8% | Medium intensity — project skeleton only (not feature implementation) |
-| Test | ~5% | Low intensity — strategy only, no test execution in Inception |
-| Configuration & Change Mgmt | ~5% | Medium intensity — repository setup, initial CI |
+| Analysis & Design | ~36% | Critical intensity — SAD baseline correction + Design Model + UI mapping; the architecture is being baselined for LCA |
+| Implementation | ~21% | Critical intensity — the PoC validation code IS the risk-retirement vehicle this phase |
+| Requirements | ~13% | High intensity — all 10 UCs detailed; timestamp convention incorporated |
+| Project Management | ~13% | High intensity — risk reappraisal, plan baseline, external engagement |
+| Test | ~10% | High intensity — test design against PoC acceptance criteria |
+| Environment | ~7% | Medium intensity — one targeted Development Case correction |
 
-### Next Iteration Preview — Elaboration Iteration 1
+### Two Clocks (never summed)
 
-| Aspect | Plan |
-|---|---|
-| Primary objective | Resolve R001 (AD LDAP PoC) and R003 (OIDC integration validation); stabilize architecture baseline |
-| Key risks to confront | R001 (HIGH), R003 (SIGNIFICANT), R004 (SIGNIFICANT), R010 (SIGNIFICANT — Infra access) |
-| Agent roles | Architect (High), Designer (High), System Analyst (Medium — refine UCs), Implementer (Medium — PoC code), Test Manager (Medium — test design), PM (Medium — monitor risks) |
-| Budget box | [ASSUMPTION — to be refined after Inception Iteration 1 measured actuals are recorded in the Iteration Assessment] |
+| Clock | Elaboration Iter 1 | Basis |
+|---|---|---|
+| Agent work | ~1,180K tokens; elapsed time measured at iteration close | Budget box; actuals recorded in Iteration Assessment |
+| Human gates | LCA review: [ASSUMPTION — up to 2 days queue]; STK-004 response: [ASSUMPTION — up to 5 days queue, external team, low interest per STK-004 profile] | Inception measured 0s gate queue; STK-004 has never been engaged — no measured actual exists |
 
 ## Use Cases and Scenarios Addressed
 
-This iteration addresses ALL 10 declared functional requirements at the analysis and architecture level — none are implemented as running features yet. The Use-Case Model decomposes FR-001 through FR-010 into system use cases. The SAD draft addresses the architectural implications of all FRs.
+**This iteration's use-case scope (risk-driven, per SAD prioritization and Test Evaluation Summary):** UC-001 (Clock In and Clock Out — exercises OIDC, offline resilience, idempotency, timestamp convention), UC-004 (Search Employee Directory — exercises LDAP, graceful degradation, R001), UC-010 (Unpublish News — exercises audit trail, soft delete). These three are the architecturally significant scenarios validated by the PoCs and detailed in test design. All 10 UCs are refined at the analysis level by the System Analyst; none is implemented as a running feature — implementation is Construction.
 
-> **UC ID mapping corrected in Iteration 2 to match the Use-Case Model (authority).** The Use-Case Model assigns UC IDs by architectural significance, not by FR sequence. All FR-to-UC mappings below are copied from the Use-Case Model's Use-Case Survey table.
-
-| FR ID | Use Case ID | Use Case Name | Inception Activity | Implementation Iteration |
+| FR ID | Use Case ID | Use Case Name | Elaboration Iter 1 Activity | Construction Iteration |
 |---|---|---|---|---|
-| FR-001 | UC-005 | Review Employee Clockings | Analyzed in UC Model; architecture noted in SAD | Construction Iter 1 |
-| FR-002 | UC-006 | Export Monthly Clocking Report | Analyzed in UC Model; CSV export design noted | Construction Iter 3 |
-| FR-003 | UC-007 | Assign Worker Category | Analyzed in UC Model; AD user id → category storage in SAD | Construction Iter 1 |
-| FR-004 | UC-001 | Clock In and Clock Out | Analyzed in UC Model; OIDC auth + idempotent clocking in SAD | Construction Iter 1 |
-| FR-005 | UC-002 | View Own Clocking History | Analyzed in UC Model | Construction Iter 1 |
-| FR-006 | UC-008 | Publish News | Analyzed in UC Model; audit trail design in SAD | Construction Iter 2 |
-| FR-007 | UC-003 | Browse News | Analyzed in UC Model | Construction Iter 2 |
-| FR-008 | UC-009 | Edit Published News | Analyzed in UC Model; audit trail for edits in SAD | Construction Iter 2 |
-| FR-009 | UC-010 | Unpublish News | Analyzed in UC Model; soft-delete + audit in SAD | Construction Iter 2 |
-| FR-010 | UC-004 | Search Employee Directory | Analyzed in UC Model; LDAP read-on-demand in SAD; R001 PoC planned for Elaboration | Construction Iter 3 |
+| FR-004 | UC-001 | Clock In and Clock Out | PoC validation (R003 stub issuer, R004 offline drop); test case design | Construction Iter 1 |
+| FR-005 | UC-002 | View Own Clocking History | Analysis refinement | Construction Iter 1 |
+| FR-001 | UC-005 | Review Employee Clockings | Analysis refinement | Construction Iter 1 |
+| FR-003 | UC-007 | Assign Worker Category | Analysis refinement; ADR-004 category file | Construction Iter 1 |
+| FR-007 | UC-003 | Browse News | Analysis refinement | Construction Iter 2 |
+| FR-006 | UC-008 | Publish News | Analysis refinement; audit design | Construction Iter 2 |
+| FR-008 | UC-009 | Edit Published News | Analysis refinement; audit design | Construction Iter 2 |
+| FR-009 | UC-010 | Unpublish News | Audit + soft-delete design; test case design | Construction Iter 2 |
+| FR-010 | UC-004 | Search Employee Directory | PoC validation (R001 disposable LDAP directory); test case design | Construction Iter 3 |
+| FR-002 | UC-006 | Export Monthly Clocking Report | Analysis refinement; COMP-010 column set; timestamp convention | Construction Iter 3 |
 
-**Iteration sequencing rationale (risk-driven):**
-- **Construction Iter 1** addresses FR-004 (UC-001, clocking) and FR-005 (UC-002, history) first — these are the highest-adoption-risk features (R002) and the simplest to implement, providing early user value. FR-001 (UC-005, review clockings) and FR-003 (UC-007, assign category) are also assigned here as they are HR-facing features that complement the clocking workflow.
-- **Construction Iter 2** addresses the news management cluster: FR-006 (UC-008), FR-007 (UC-003), FR-008 (UC-009), FR-009 (UC-010) — these share the audit trail mechanism (R006) and are implemented together for coherence.
-- **Construction Iter 3** addresses FR-010 (UC-004, directory) and FR-002 (UC-006, CSV export) — directory depends on R001 resolution (Elaboration PoC), and CSV export is a downstream reporting feature.
+> UC IDs cross-checked against the Use-Case Model §Use-Case Survey (authority) before first upsert — LCO F1 lesson applied.
 
 ## Evaluation Criteria
 
@@ -216,48 +227,38 @@ This iteration addresses ALL 10 declared functional requirements at the analysis
 
 | AC ID | Description | Addressed This Iteration? | Evidence / Deferral |
 |---|---|---|---|
-| AC-001 | Employee can clock in/out without HR help | Deferred to Construction Iter 1 | UC-001 analyzed; implementation pending |
-| AC-002 | HR can publish news without technical assistance | Deferred to Construction Iter 2 | UC-008 analyzed; implementation pending |
-| AC-003 | Employee finds colleague's phone/email in <10 seconds | Deferred to Construction Iter 3 | UC-004 analyzed; R001 PoC required first (Elaboration) |
-| AC-004 | 80% of employees complete one clocking with no training | Deferred to Transition Iter 1 | Adoption measurement requires deployed system |
-| AC-005 | System works temporarily offline (5-min network drop) | Deferred to Construction Iter 1 | R004 (offline fault tolerance) addressed in SAD draft; implementation pending |
+| AC-001 | Employee can clock in/out without HR help | Deferred to Construction Iter 1 | UC-001 PoC-validated mechanism (offline queue, idempotency); running feature is Construction work |
+| AC-002 | HR can publish news without technical assistance | Deferred to Construction Iter 2 | UC-008 analyzed; audit mechanism designed (R006) |
+| AC-003 | Employee finds colleague's phone/email in <10 seconds | Partial evidence this iteration | R001 PoC validates attribute population + query path against the disposable directory; formal AC closure at Construction Iter 3 (production integration, R010/R011) |
+| AC-004 | 80% of employees complete one clocking with no training | Deferred to Transition Iter 1 | Adoption measurement requires a deployed system (BG-003) |
+| AC-005 | System works temporarily offline (5-min network drop) | Partial evidence this iteration | R004 PoC simulates the 5-minute drop: queue, reconnect, idempotent sync, zero duplicates/losses; formal AC test at Construction Iter 1 |
 
-No AC is absent from this table. All 5 declared acceptance criteria are accounted for with explicit deferral targets.
+No AC is absent from this table. All 5 declared acceptance criteria are accounted for with explicit evidence or deferral targets.
 
-### Layer 2 — Inception Iteration 1 Exit Criteria
+### Layer 2 — Elaboration Iteration 1 Exit Criteria
 
 | # | Exit Criterion | Verification Method |
 |---|---|---|
-| 1 | Risk List produced with all risks classified (P × I = magnitude) and mitigation/contingency defined | Review of Risk List artifact — 10 risks (R001–R010), all with strategy, mitigation, contingency |
-| 2 | Coarse cross-iteration roadmap defined with milestone sequence | Review of this Iteration Plan — 7 iterations, 4 milestones (LCO, LCA, IOC, PR) |
-| 3 | Iteration budget box defined with per-work-item token allocation | Review of Work Items table — 13 items, ~185K total, each with owner and budget |
-| 4 | All 10 FRs traced to planned use cases and implementation iterations | Review of Use Cases and Scenarios Addressed table — FR-001 through FR-010 mapped to UC-001 through UC-010 per Use-Case Model authority |
-| 5 | All 5 ACs accounted for with deferral or closure evidence | Review of Evaluation Criteria Layer 1 — AC-001 through AC-005 all listed |
-| 6 | LCO readiness assessed | PM assessment: scope agreed (stakeholder declaration), risks identified (R001–R010), architecture direction sound (SAD draft produced) |
-
-### Layer 3 — Iteration 2 Rework Criteria
-
-| # | Rework Criterion | Verification Method |
-|---|---|---|
-| R1 | F1 (Major) resolved: All 10 FR-to-UC mappings match the Use-Case Model | Use Cases and Scenarios Addressed table cross-checked against Use-Case Model §Use-Case Survey |
-| R2 | F2 (Minor) resolved: Work item statuses reconciled against repository | Work Items table status column cross-checked against artifact list (all 10 artifacts exist as Draft) |
-| R3 | Construction iteration assignments reference correct UC IDs | Iteration sequencing rationale and Implementation Iteration column verified against corrected UC IDs |
-| R4 | Evaluation Criteria UC references corrected | AC-001→UC-001, AC-002→UC-008, AC-003→UC-004 verified against Use-Case Model |
+| 1 | R001 PoC empirically validated against the disposable LDAP directory | PoC acceptance criteria met (Risk List R001): 6 corporate attributes populated, >90% of sampled users per office; graceful degradation verified |
+| 2 | R003 PoC empirically validated against the stub OIDC issuer | Token validation succeeds; Employee + HR Administrator roles extracted from claims; redirect flow completes |
+| 3 | R004 PoC empirically validated (direct) | 5-minute drop simulated; sync ≤ 60 s; zero duplicates (idempotency key); zero losses; confirmation < 1 s both paths |
+| 4 | SAD PoC Plan corrected to match the stakeholder decision | SAD §Quality no longer carries the analysis-only disposition; empirical validation recorded per risk |
+| 5 | Development Case PoC-trigger record corrected | Process Engineer's correction committed |
+| 6 | Construction schedule baselined from measured actuals | This document — Construction Schedule Baseline section; UC IDs verified against Use-Case Model |
+| 7 | STK-004 written deliverables request issued (R010) | Request recorded; response NOT required for Elaboration exit (stakeholder decision) |
+| 8 | All 5 ACs accounted for | Layer 1 table complete — AC-001 through AC-005 |
 
 ## Traceability
 
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
-| Iteration Plan (this) | Development Case | Refines | Iteration Assessment (next iteration) |
-| Risk List | Declared risks R001, R002 | Refines | SAD (R001 PoC), Elaboration Iter 1 plan |
-| Coarse roadmap | Rubber profile heuristic, 6±3 rule | Derives | All subsequent Iteration Plans |
-| Work Items 4–6 | FR-001–FR-010 | Derives | Use-Case Model, Supplementary Specification |
-| Work Item 7 | CON-001–CON-014, NFR-001–NFR-005 | Derives | Software Architecture Document |
-| Work Item 8 | UC-001–UC-010 | Derives | Design Model |
-| Work Item 9 | CON-001, CON-002, CON-003 | Derives | Implementation Model |
-| Work Item 10 | AC-001–AC-005 | Derives | Test Case artifacts |
-| AC deferral table | AC-001–AC-005 | Refines | Construction/Transition Iteration Plans |
-| Budget box [ASSUMPTION] | No measured actuals (first iteration) | DependsOn | Iteration Assessment (will record actuals) |
-| FR-to-UC mapping | Use-Case Model §Use-Case Survey (authority) | Derives | Construction Iteration Plans (UC assignments) |
-| F1 resolution | Review Record F1 (Major) | Derives | Use-Case Model (authority for UC IDs) |
-| F2 resolution | Review Record F2 (Minor) | Derives | Artifact repository (status reconciliation) |
+| Iteration Plan (this) | Development Case, SAD (UC prioritization), Risk List (Elab Iter 1), Measured Inception actuals (Work Order) | Refines | Elaboration Iter 1 Iteration Assessment, Elaboration Iter 2 Plan |
+| PoC work items 7–9 | Stakeholder decision (Elab Iter 1): "The PoC is produced in Elaboration and validated empirically" | Authorizes | R001, R003, R004 retirement evidence; LCA gate |
+| Work Item 2 | Stakeholder decision (Elab Iter 1) — Development Case trigger correction | Derives | Development Case (Process Engineer) |
+| Work Item 3 | Stakeholder decision (Elab Iter 1) — SAD PoC Plan superseded | Derives | Software Architecture Document (Architect) |
+| Work Items 4–6 | FR-001–FR-010, NFR-001–NFR-005, CON-011, CON-013 | Derives | Use-Case Model, Supplementary Specification, Design Model |
+| Work Item 10 | AC-003, AC-005, UC-001, UC-004, UC-010 | Derives | Test case artifacts (Test Designer) |
+| Work Item 12 | R010, STK-004, CON-004, CON-005, CON-008 | Derives | Construction Iter 3 integration testing |
+| Construction Schedule Baseline | Use-Case Model §Use-Case Survey (UC ID authority), SAD UC prioritization | Derives | Construction Iteration Plans (built at LCA, not before) |
+| Budget box 1,200K [ASSUMPTION] | Measured Inception actual (1,347,939 tokens, phase-level record) | DependsOn | Elaboration Iter 1 Iteration Assessment (records actuals) |
+| R011 | Stakeholder decision (Elab Iter 1) — validation-environment residual | Derives | Risk List R011, Construction Iter 3 integration |
