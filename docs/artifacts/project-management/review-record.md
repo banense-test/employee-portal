@@ -347,6 +347,37 @@ note bottom of TES
 end note
 @enduml
 ```
+
+### Business Modeling Lens — Scope and Criteria (Business Reviewer, this cycle)
+
+**Scope:** the DC §4 business-process-led classification and the Elaboration artifact set, evaluated against the LCA exit-criteria lens for the Business Modeling discipline: is the discipline correctly INACTIVE, and did the phase produce exactly the BM deliverables the classification requires (zero, for a non-BPL project)?
+
+**Scenario assessment (reviewer heuristic 1):** the engagement is software-feature-led automation of existing, well-understood manual workflows (Excel clocking sheets, mass-email news distribution, PDF directory) — not one of the business-modeling scenarios that warrant a business object model. The ProcessEngineer's DC §4 re-check (2026-09-01) records `isBusinessProcessLed = false` with the Inception verdict unchanged; this lens independently verified the claim against the Vision (tool replacement, no reengineering signals) and the Use-Case Model (zero BUCs, business workers, business entities, or realizations; 10 system UCs trace 1:1 to FR-001…FR-010). The classification is CORRECT — no defect.
+
+**Gate evaluation (what was checked, with evidence):**
+
+```plantuml
+@startuml
+title Business Modeling Lens — DC §4 Gate Evaluation at LCA (Business Reviewer, 2026-09-01)
+
+start
+partition "S1 — Evidence gathered" {
+  :DC §4 classification (ProcessEngineer, Elaboration re-check)\n**isBusinessProcessLed = false** — Inception verdict unchanged;
+  :Vision (Inception, Approved) — BPL signal assessment\ntool replacement (Excel, mass email, PDF directory to web app)\nno reengineering, no workflow transformation, no new business model;
+  :Use-Case Model (Elaboration) — BM section inventory\n**zero** BUCs, business workers, business entities, realizations\n10 system UCs trace 1:1 to FR-001..FR-010;
+}
+partition "Independent verification (quality gate)" {
+  :BPL signal check — **absent** (Vision + declared scope);
+  :BM coverage check — **zero sections** (Use-Case Model);
+  :Scenario assessment (reviewer heuristic 1)\nsoftware-feature-led automation of existing,\nwell-understood manual workflows;
+}
+:State-machine path — no BPL signal AND zero BM sections\n**S_INACTIVE — BR-OK-INACTIVE per DC §4**;
+:Verdict recorded — 0 findings, 0 recommendations,\n0 BM conditions on the LCA milestone gate;
+stop
+@enduml
+```
+
+**Prior-findings reconciliation (this lens):** the findings ledger holds zero findings emitted by the BusinessReviewer role — the Inception findings (F1/F2) belong to the Reviewer and ManagementReviewer lenses and are all RESOLVED. Nothing to close; no `resolve_artifact_finding` calls owed.
 ## Findings
 ### Elaboration Iteration 1 — New Findings (Code-Review Lens)
 
