@@ -1,19 +1,17 @@
 ## Document Control
-
 | Field | Value |
 |---|---|
 | Phase | Elaboration |
-| Status | Draft — Elaboration Iter 1 code-review gate record |
+| Status | Draft — Elaboration Iter 1 CUMULATIVE review record: code-review gate (Code Reviewer lens) + technical LCA milestone review (Reviewer lens) |
 | Milestone Target | End of Elaboration (LCA) — NOT yet achieved |
 | Iteration | 1 (Cycle 1) |
 | Date | 2026-09-01 |
-| Review Type | Code Review — PR Approval Loop (Elaboration evolutionary architectural prototype) |
-| Reviewer | Code Reviewer (Implementation discipline) |
-| Review Point | Iteration Acceptance lens — COMPLETION: were this iteration's code objectives met? (Answer this cycle: NO — no code handoff exists; see Disposition) |
-| Prior Record | Inception LCO Milestone Review (2 iterations) — **GO (APPROVED)**, all 4 findings RESOLVED, stakeholder sanction GRANTED. Historical record preserved in the sections below; prior findings never overwritten. |
-| Cycle Disposition | **No-PRs-To-Review** — S1 guard fired: zero `ready-for-review` branches, zero PRs (any state), `iteration/E1` absent |
-| Open Findings (this cycle) | 1 Critical (F-CR-E1-1), 1 Minor (F-CR-E1-2) |
-
+| Review Type | Cumulative — Code Review (PR Approval Loop, Implementation discipline) + Technical LCA Milestone Review (architecture / design / requirements / test artifacts, exit-criteria lens) |
+| Reviewers | Code Reviewer (Implementation discipline) — code-review gate sections; Reviewer (technical lens) — LCA milestone sections |
+| Review Point | LCA milestone — EXIT CRITERIA lens: do the artifacts collectively satisfy the conditions for phase transition? Technical-lens answer this cycle: NO — 2 Critical findings open; empirical risk retirement unexecuted |
+| Prior Record | Inception LCO Milestone Review (2 iterations) — GO (APPROVED), all 4 findings RESOLVED, stakeholder sanction GRANTED. Historical record preserved below; prior findings never overwritten. |
+| Cycle Dispositions | Code-review gate: **No-PRs-To-Review** (S1 guard fired — zero ready-for-review branches, zero PRs, iteration/E1 absent at that cycle; branch since created, skeleton only). Technical LCA lens: **NEEDS REWORK — sanction withheld** (2 Critical findings on the SAD; empirical validation of R001/R003/R004 has no code evidence) |
+| Open Findings (this cycle) | Technical lens: 2 Critical (SAD F1 — superseded PoC plan; SAD F2 — PoC artifact + code evidence absent), 2 Minor (SAD F3 — stale component dependencies; Risk List F1 — untagged >90% criterion). Code Reviewer lens: 1 Critical (F-CR-E1-1 — no mechanism handoff), 1 Minor (F-CR-E1-2 — CONTRIBUTING.md absent) |
 ## Review Scope and Criteria
 
 ### This Cycle's Scope — Elaboration Iteration 1, Cycle 1
