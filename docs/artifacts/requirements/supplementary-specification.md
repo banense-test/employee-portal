@@ -1,11 +1,14 @@
+# Supplementary Specification
+
 ## Document Control
 
 | Field | Value |
 |---|---|
-| Phase | Inception |
+| Phase | Elaboration |
 | Status | Draft |
-| Milestone Target | End of Inception |
+| Milestone Target | End of Elaboration |
 | Iteration | 1 (Cycle 1) |
+| Elaboration Changes | Offline clocking [SCOPE_QUESTION] RETIRED — stakeholder decision recorded (Reliability); Data Integrity section added (DAT-001, DAT-002 — implied NFRs); SEC-006/SEC-007 added (role enforcement, own-data-only access — forced by full UC specifications); INT-005 (CSV download) added; Offline Sync Mechanism added to cross-cutting mechanisms diagram; thresholds marked for Requirements Specifier quantification |
 
 ## Functionality
 
@@ -18,6 +21,8 @@
 | SEC-003 | No anonymous access — all pages require authentication | CON-009 | Low |
 | SEC-004 | Internal corporate network only — no external access | CON-009 | Low |
 | SEC-005 | No writing back to Active Directory — all AD access is read-only | CON-007 | Low |
+| SEC-006 | HR-only use cases (UC-005–UC-010) enforce the HR Administrator role from Keycloak claims; a session holding only the Employee role is rejected from those functions | CON-004, FR-001, FR-002, FR-003, FR-006, FR-008, FR-009 | Low |
+| SEC-007 | An employee can access only their own clocking history (UC-002); access to another employee's clocking data requires the HR Administrator role (UC-005) | FR-005, FR-001 | Low |
 
 ### Licensing
 
@@ -36,6 +41,13 @@
 | AUD-005 | Employee directory fields are read-only from AD — no audit needed for directory data | NFR-005 | Low |
 
 **Note:** Audit is a cross-cutting mechanism implemented via `<<include>>` from UC-007, UC-008, UC-009, UC-010. It is NOT a standalone use case.
+
+### Data Integrity (implied NFRs — what stakeholders would reject even if functional requirements were met)
+
+| ID | Requirement | Source | Volatility |
+|---|---|---|---|
+| DAT-001 | Clocking timestamps are recorded by the system at the moment of the button press; the employee never enters or edits a time | FR-004 | Low |
+| DAT-002 | Audit entries are append-only — no portal function modifies or deletes an audit entry (a mutable trail would not satisfy NFR-005's mandatory traceability) | NFR-005 | Low |
 
 ## Usability
 
@@ -58,7 +70,7 @@
 | REL-003 | If network drops for 5 minutes, data syncs once connectivity is restored | AC-005 | Medium |
 | REL-004 | Backup and server crash recovery are Infrastructure's responsibility, not a portal requirement | CON-014 | Low |
 
-**Architectural note — offline clocking persistence (NFR-004, AC-005):** The scope of fault tolerance is declared: the system must tolerate 5-minute network disruptions and sync data once connectivity is restored. The implementation mechanism (local queuing strategy, sync conflict resolution, persistence layer for offline clockings) is an architectural concern for the Software Architect to resolve in Elaboration — confirmed by the stakeholder as an architectural decision, not a missing scope item. The Requirements Specifier will quantify thresholds (max queue size, sync timeout, conflict policy) in Elaboration.
+**Stakeholder decision recorded (Elaboration — [SCOPE_QUESTION] retired):** The offline clocking persistence mechanism is **architectural and within declared scope**. The stakeholder was asked whether NFR-004 and AC-005 (system tolerates a 5-minute network drop; data syncs once connectivity is restored) are met by an architect-owned local-queuing mechanism, and answered **"Yes"**. Division of responsibility: the Software Architect designs the mechanism (Offline Sync Mechanism, R004 PoC in Elaboration Iteration 1); the Requirements Specifier quantifies the thresholds (max queue size, sync timeout, conflict policy); the Use-Case Model captures the observable behavior in UC-001 AF-1. No open question remains on this item.
 
 ## Performance
 
@@ -68,7 +80,7 @@
 | PRF-002 | Clock in/out operation must respond in under 1 second | NFR-002 | Low |
 | PRF-003 | Directory search returns results fast enough for AC-003 (under 10 seconds total including user interaction) | AC-003, FR-010 | Medium |
 
-**Note:** RS will quantify exact LDAP query timeout thresholds in Elaboration. R001 (LDAP attribute inconsistency) may affect perceived performance if fallback strategies are needed.
+**Note:** The Requirements Specifier quantifies exact LDAP query timeout thresholds in Elaboration. R001 (LDAP attribute inconsistency) may affect perceived performance if fallback strategies are needed; R005 (LDAP performance) is monitored during the R001 PoC. No further performance targets are declared — inventing ones would be gold-plating.
 
 ## Supportability
 
@@ -103,6 +115,7 @@
 | INT-002 | Active Directory LDAP | Directory query (read-only) | Portal → AD (outbound) | CON-005 |
 | INT-003 | PostgreSQL | Data persistence | Portal → PostgreSQL (outbound) | CON-003 |
 | INT-004 | Chrome / Edge browsers | User interface | Browser → Portal (inbound) | CON-010 |
+| INT-005 | CSV report file download | Data export (monthly clocking report) | Portal → HR Administrator (outbound) | FR-002 |
 
 ## Applicable Standards
 
@@ -120,6 +133,7 @@
 @startuml
 skinparam componentStyle rectangle
 skinparam fontSize 11
+title Cross-Cutting Mechanisms - Constraints on All Use-Case Realizations
 
 package "Employee Portal" {
   component "Clocking Module" as CLK
@@ -128,8 +142,9 @@ package "Employee Portal" {
   component "Category Module" as CAT
 
   component "OIDC Auth Mechanism\n(<<include>> from all UCs)" as AUTH <<cross-cutting>>
-  component "Audit Trail Mechanism\n(<<include>> from UC-007,008,009,010)" as AUDIT <<cross-cutting>>
-  component "LDAP Query Mechanism\n(<<include>> from UC-004, UC-007)" as LDAP <<cross-cutting>>
+  component "Audit Trail Mechanism\n(<<include>> from UC-007, 008, 009, 010)" as AUDIT <<cross-cutting>>
+  component "LDAP Query Mechanism\n(<<include>> from UC-004, 005, 006, 007)" as LDAP <<cross-cutting>>
+  component "Offline Sync Mechanism\n(<<include>> from UC-001)" as SYNC <<cross-cutting>>
 }
 
 component "Keycloak (OIDC)" as KC <<external>>
@@ -139,31 +154,43 @@ database "PostgreSQL" as PG <<external>>
 AUTH ..> KC : validates token, reads roles
 LDAP ..> AD : read-only queries
 CLK --> PG : persists clockings
-NEWS --> PG : persists news + audit
+NEWS --> PG : persists news + audit entries
 CAT --> PG : persists uid -> category
 AUDIT --> PG : persists audit entries
+SYNC --> PG : syncs queued clockings
 DIR ..> LDAP : delegates directory queries
+CLK ..> LDAP : employee display data (UC-005, UC-006)
+CAT ..> LDAP : employee display data (UC-007)
 
 CLK ..> AUTH
 NEWS ..> AUTH
 DIR ..> AUTH
 CAT ..> AUTH
+CLK ..> SYNC
 NEWS ..> AUDIT
 CAT ..> AUDIT
 
-note bottom of AUTH
+note bottom of SYNC
   Cross-cutting: NOT a use case.
-  All UCs <<include>> authentication.
-  Keycloak is external (CON-004).
+  Stakeholder decision recorded: the
+  mechanism is architectural, within
+  declared scope (NFR-004, AC-005).
+  Design: Software Architect (R004 PoC).
+  Thresholds: Requirements Specifier.
 end note
 
 note bottom of LDAP
   Cross-cutting: NOT a use case.
-  Read-only LDAP queries to AD.
-  No write-back (CON-007).
-  No local data copy (CON-006).
+  Read-only (CON-007). No local copy
+  (CON-006). R001: attribute
+  consistency PoC in Elaboration.
 end note
 
+note bottom of AUTH
+  Cross-cutting: NOT a use case.
+  Keycloak external (CON-004).
+  R003: OIDC integration PoC.
+end note
 @enduml
 ```
 
@@ -173,19 +200,24 @@ end note
 |---|---|---|---|
 | SEC-001 | CON-004 | Refines | All UCs (<<include>>) |
 | SEC-002 | CON-004, FR-004 | Refines | UC-001–UC-010 |
-| SEC-005 | CON-007 | Refines | UC-004, UC-007 |
+| SEC-005 | CON-007 | Refines | UC-004, UC-005, UC-006, UC-007 |
+| SEC-006 | CON-004, FR-001, FR-002, FR-003, FR-006, FR-008, FR-009 | Refines | UC-005, UC-006, UC-007, UC-008, UC-009, UC-010 |
+| SEC-007 | FR-005, FR-001 | Refines | UC-002, UC-005 |
 | AUD-001 | NFR-005, FR-006 | Refines | UC-008 |
 | AUD-002 | NFR-005, FR-008 | Refines | UC-009 |
 | AUD-003 | NFR-005, FR-009 | Refines | UC-010 |
 | AUD-004 | NFR-005, FR-003 | Refines | UC-007 |
+| DAT-001 | FR-004 | Refines | UC-001 |
+| DAT-002 | NFR-005 | Refines | UC-007, UC-008, UC-009, UC-010 |
 | USA-001 | CON-011 | Refines | All UCs |
 | USA-002 | AC-001 | Refines | UC-001 |
 | USA-003 | AC-003 | Refines | UC-004 |
 | USA-004 | AC-004 | Refines | UC-001 |
 | USA-005 | AC-002 | Refines | UC-008 |
 | REL-001 | NFR-003 | Refines | (All UCs) |
-| REL-002 | NFR-004 | Refines | UC-001 (architectural mechanism — Architect, Elaboration) |
-| REL-003 | AC-005 | Refines | UC-001 (architectural mechanism — Architect, Elaboration) |
+| REL-002 | NFR-004 | Refines | UC-001 (Offline Sync Mechanism — Architect, R004 PoC) |
+| REL-003 | AC-005 | Refines | UC-001 AF-1 (Offline Sync Mechanism — Architect, R004 PoC) |
+| REL-002/REL-003 decision | NFR-004, AC-005 + stakeholder answer "Yes" (Elaboration) | Authorizes | Offline Sync Mechanism design (Software Architect) |
 | PRF-001 | NFR-001 | Refines | (All UCs) |
 | PRF-002 | NFR-002 | Refines | UC-001 |
 | PRF-003 | AC-003, FR-010 | Refines | UC-004 |
@@ -193,6 +225,7 @@ end note
 | DC-002 | CON-002 | Refines | (Architecture) |
 | DC-003 | CON-003 | Refines | (Architecture) |
 | DC-005 | CON-004 | Refines | (Architecture) |
-| DC-006 | CON-005, CON-006 | Refines | UC-004, UC-007 |
+| DC-006 | CON-005, CON-006 | Refines | UC-004, UC-005, UC-006, UC-007 |
 | INT-001 | CON-004 | Refines | (Architecture) |
-| INT-002 | CON-005 | Refines | UC-004, UC-007 |
+| INT-002 | CON-005 | Refines | UC-004, UC-005, UC-006, UC-007 |
+| INT-005 | FR-002 | Refines | UC-006 |
