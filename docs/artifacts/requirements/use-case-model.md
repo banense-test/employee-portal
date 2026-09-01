@@ -135,7 +135,6 @@ end note
 - All remaining UCs: **Low** — stable, declared, single-customer behavior.
 
 ## Use-Case Specifications
-
 ### UC-001: Clock In and Clock Out — FULL (architecturally significant)
 
 | Field | Value |
@@ -711,6 +710,203 @@ stop
 @enduml
 ```
 
+### UI Flow References (User-Interface Designer — Elaboration Iter 1)
+
+These references realize the **user-interface-specific parts of each use case** (Interaction Design Chain): every UC step is mapped to an observable screen frame — user action and system response — so stakeholders can evaluate the interaction BEFORE implementation. They were developed in parallel with the Requirements Specifier's UC refinement this iteration (pre-baseline), per the parallel-execution principle. Screen IDs (SCR-01…SCR-09, M-01, EX-01) are formally defined in the Design Model §Boundary Classes and Navigation Map; every screen implements the mandatory design reference (CON-011, docs/inputs/employee-portal-design.html). Usability criteria cited per frame are quantified in the Supplementary Specification §Usability (USA-001…USA-009).
+
+**Screen registry (summary — formal definition in Design Model):**
+
+| Screen | Name | Realizes |
+|---|---|---|
+| SCR-01 | Home — clocking card + featured banner + history preview | UC-001, UC-003 |
+| SCR-02 | My Clocking History (current month) | UC-002 |
+| SCR-03 | News — featured banner + category chips + list | UC-003 |
+| SCR-04 | Directory — search bar + person cards | UC-004 |
+| SCR-05 | HR Clocking Report — filters + table + Export CSV | UC-005, UC-006 |
+| SCR-06 | Worker Categories — employee lookup + fixed category select | UC-007 |
+| SCR-07 | News Form (publish mode / edit mode) | UC-008, UC-009 |
+| SCR-08 | News Management — list with status + actions | UC-009, UC-010 |
+| SCR-09 | Access Denied (inline error state) | SEC-006 (UC-005 EF-1, UC-009 EF-1) |
+| M-01 | Unpublish confirmation modal | UC-010 |
+| EX-01 | Keycloak login (external — not a portal screen) | all UCs (`<<include>>` auth) |
+
+#### SB-01 — UC-001: Clock In and Clock Out (FR-004) — storyboard
+
+| Frame | UC-001 step | Screen | User action → System response | Criteria |
+|---|---|---|---|---|
+| 1 | 1–2 | SCR-01 / EX-01 | Open portal → [session expired] redirect to Keycloak (AF-2); credentials → OIDC token with roles | SEC-001 |
+| 2 | 3–4 | SCR-01 | Clocking card renders: status chip ("Present since 08:02" / "Not clocked in today") + **status-aware button** — green ▶ Clock In (accent #17A398) or red ■ Clock Out (danger #C0392B) | USA-001, USA-004 |
+| 3 | 5 | SCR-01 | Press button → button disables instantly; second press within 2 s ignored (AF-3) | USA-002, PRF-002 |
+| 4 | 6–7 | SCR-01 | Timestamp recorded at press (UTC, DAT-001) → persist to PostgreSQL, or queue locally + sync on restore (AF-1) | REL-002, REL-003 |
+| 5 | 8 | SCR-01 | Inline confirmation "Clocked in at 08:58:12" (America/Havana local, USA-008) + status chip updates; < 1 s from press | PRF-002, USA-008 |
+
+```plantuml
+@startuml
+title UC-001 UI Storyboard - Clock In and Clock Out (FR-004)
+|Employee|
+start
+:Open Home (SCR-01);
+|Portal|
+if (OIDC session expired?) then (yes - AF-2)
+  :Redirect to Keycloak login (EX-01);
+  |Employee|
+  :Enter corporate credentials;
+endif
+|Portal|
+:Render clocking card: status chip\n("Present since 08:02" / "Not clocked in")\n+ status-aware button\n(green "Clock In" / red "Clock Out");
+|Employee|
+:Press the clocking button;
+|Portal|
+:Disable button immediately\n(AF-3: second press within 2 s ignored);
+:Record exact timestamp (UTC - DAT-001);
+if (Portal server reachable?) then (yes)
+  :Persist clocking event;
+  :Show inline confirmation\n"Clocked in at 08:58:12"\n(America/Havana local - USA-008);
+else (no - AF-1)
+  :Queue event locally;
+  :Show confirmation from queued data\n+ "Will sync when connection returns";
+endif
+:Update status chip\n("Present since 08:58");
+|Employee|
+:See confirmation in under 1 s (PRF-002);
+stop
+@enduml
+```
+
+#### SB-02 — UC-004: Search Employee Directory (FR-010) — storyboard
+
+| Frame | UC-004 step | Screen | User action → System response | Criteria |
+|---|---|---|---|---|
+| 1 | 1–2 | SCR-04 | Open Directory → search bar: name input, department select, office select, Search button | USA-003 |
+| 2 | 3 | SCR-04 | Enter criteria → press Search | USA-003 |
+| 3 | 4–5 | SCR-04 | LDAP query (5 s hard timeout, PRF-003) → person cards with all six corporate fields on the card — no detail view needed | USA-003, CON-006 |
+| 4 | 6–7 | SCR-04 | AF-1: "No colleagues found" + refine suggestion; AF-2: missing attributes shown blank, entry NOT hidden (R001); AF-3: "Directory temporarily unavailable" (no local fallback) | R001, CON-006 |
+
+```plantuml
+@startuml
+title UC-004 UI Storyboard - Search Employee Directory (FR-010)
+|Employee|
+start
+:Open Directory (SCR-04);
+|Portal|
+:Render search bar: name input,\ndepartment select, office select,\nSearch button;
+|Employee|
+:Enter criteria and press Search;
+|Portal|
+if (LDAP connection succeeds?) then (yes)
+  :Query AD read-only, on demand (CON-006);
+  if (Entries match?) then (yes)
+    :Display person cards: name, job title,\ndepartment, office, email, extension\n- all fields on the card;
+    if (Some attributes missing? - R001) then (yes - AF-2)
+      :Show blank fields - entry NOT hidden;
+    endif
+  else (no - AF-1)
+    :Show "No colleagues found"\n+ suggestion to refine;
+  endif
+else (no - AF-3)
+  :Show "Directory temporarily unavailable"\n(no local fallback - CON-006);
+endif
+|Employee|
+:Read colleague's email / extension\n(total task under 10 s - AC-003, USA-003);
+stop
+@enduml
+```
+
+#### SB-03 — UC-008: Publish News (FR-006) — storyboard
+
+| Frame | UC-008 step | Screen | User action → System response | Criteria |
+|---|---|---|---|---|
+| 1 | 1–2 | SCR-07 | Select "Publish news" in sidebar [HR role] → form: title, body, date, category (General/HR/IT/Events), featured flag | USA-005 |
+| 2 | 3–4 | SCR-07 | Fill fields → submit | USA-005 |
+| 3 | 5 | SCR-07 | AF-1: invalid fields highlighted inline → correct → resubmit | USA-005 |
+| 4 | 6–8 | SCR-07 → SCR-03 | Persist "published" + audit (author + timestamp, AUD-001) → confirmation; featured items show the banner on News | AC-002, AUD-001 |
+
+```plantuml
+@startuml
+title UC-008 UI Storyboard - Publish News (FR-006)
+|HR Administrator|
+start
+:Select "Publish news" in sidebar (SCR-07);
+|Portal|
+:Render publish form: title, body, date,\ncategory (General / HR / IT / Events),\nfeatured flag;
+repeat
+  |HR Administrator|
+  :Fill fields and submit;
+  |Portal|
+  :Validate required fields;
+  if (Invalid fields?) then (yes - AF-1)
+    :Highlight invalid fields inline;
+  endif
+repeat while (Invalid fields?) is (yes)
+:Persist item with status "published";
+:Append audit entry: author + timestamp (AUD-001);
+:Show confirmation - item visible in News (SCR-03);\nfeatured items show the banner;
+|HR Administrator|
+:See confirmation without technical assistance (AC-002, USA-005);
+stop
+@enduml
+```
+
+#### SB-04 — UC-010: Unpublish News (FR-009) — storyboard
+
+| Frame | UC-010 step | Screen | User action → System response | Criteria |
+|---|---|---|---|---|
+| 1 | 1–3 | SCR-08 | Open News Management [HR role] → list with status; "Unpublish" offered on published items only (AF-2) | CON-012 |
+| 2 | 4–5 | SCR-08 → M-01 | Press Unpublish → confirmation modal: "Hide this item from employees? The record is retained for the audit trail." | CON-012 |
+| 3 | 6 | M-01 | Confirm → apply; Cancel (AF-1) → close modal, no change, no audit entry | USA-009 (modal focus + keyboard) |
+| 4 | 7–9 | SCR-08 | Status "unpublished" (soft delete) + audit (actor + timestamp, AUD-003) → confirmation; item hidden from SCR-03 | AUD-003, CON-012 |
+
+```plantuml
+@startuml
+title UC-010 UI Storyboard - Unpublish News (FR-009)
+|HR Administrator|
+start
+:Open News Management (SCR-08);
+|Portal|
+:List news items with status;\n"Unpublish" shown on published items only (AF-2);
+|HR Administrator|
+:Press "Unpublish" on an item;
+|Portal|
+:Open confirmation modal (M-01):\n"Hide this item from employees?\nThe record is retained for the audit trail.";
+|HR Administrator|
+:Confirm or cancel;
+if (Confirmed?) then (yes)
+  |Portal|
+  :Set status "unpublished" (soft delete - CON-012);
+  :Append audit entry: actor + timestamp (AUD-003);
+  :Show confirmation - item hidden from News (SCR-03);
+else (no - AF-1)
+  |Portal|
+  :Close modal - item remains published,\nno change, no audit entry;
+endif
+|HR Administrator|
+:See result;
+stop
+@enduml
+```
+
+#### Compact UI flow references — remaining UCs
+
+| UC | Screen(s) | Main-flow frames (user action → system response) | Alternative / exception frames | Criteria |
+|---|---|---|---|---|
+| UC-002 (FR-005) | SCR-02 | Select "My Clocking History" → current-month table (Date, Clock In, Clock Out, Hours, Status) rendered from PostgreSQL | AF-1 empty state; AF-2 queued-not-yet-synced note; EF-1 "History temporarily unavailable" inline | USA-001, USA-008 |
+| UC-003 (FR-007) | SCR-01, SCR-03 | Load → featured banner at top + list newest-first; category chips (All/General/HR/IT/Events) → filtered list | AF-1 "No news in this category"; AF-2 empty state; EF-1 "News temporarily unavailable" inline | USA-001, USA-007 |
+| UC-005 (FR-001) | SCR-05 | Open [HR role] → all-employees table; filter by employee / date range → matching events, names resolved from AD on demand | AF-1 "No clocking records match"; AF-2 AD user id shown, display attributes marked unavailable; EF-1 role denial → SCR-09 | SEC-006, USA-008 |
+| UC-006 (FR-002) | SCR-05 | Select month + "Export CSV" → file download (ISO-8601 with explicit offset, per stakeholder decision) | AF-1 "No clocking records for this month"; AF-2 "Directory temporarily unavailable" — export aborted, no partial file | INT-005, SEC-006 |
+| UC-007 (FR-003) | SCR-06 | Open [HR role] → locate employee (AD display data, read-only) → select category from FIXED list → confirm → mapping persisted + audited | AF-1 same category → "unchanged", nothing persisted, no audit entry; AF-2 "Directory temporarily unavailable" | CON-013, AUD-004 |
+| UC-009 (FR-008) | SCR-08 → SCR-07 (edit mode) | Select published item → form loads current version → modify + save → updated, audited (all versions traceable) | AF-1 inline validation; AF-2 "no longer published" notice, edit not applied; EF-1 role denial → SCR-09 | AUD-002, SEC-006 |
+
+#### Design-reference reconciliations (CON-011 — R007 mitigation)
+
+The design reference is authoritative for the visual layer; three reconciliations were required where the mockup's shorthand met the declared requirements:
+
+1. **Sidebar item "Manage directory" → SCR-06 "Worker categories".** CON-007 forbids editing employee fields anywhere in the portal; the only HR management adjacent to the directory is the worker category assignment (FR-003). The nav item keeps the design reference's position, icon slot, and style, but its label reads **"Worker categories"** — a label promising directory management would mislead users (error prevention; match real world).
+2. **"Export CSV (HR)" placement.** The mockup shows an HR-only export affordance on the personal history card; UC-006 step 1 places the export in the clocking review area. The control renders on **SCR-05** in the design reference's ghost-button style, visible to the HR role only (SEC-006); the personal history (SCR-02) carries no export (FR-005 is view-only; SEC-007).
+3. **Mockup UC labels.** The design reference's internal labels UC01/UC02/UC03 map to project **UC-001 / UC-003 / UC-004** (project UC IDs follow the Use-Case Model, not the mockup's sequence — the LCO F1 defect was exactly a UC-ID mismatch; this note prevents recurrence).
+
+#### Storyboard validation status
+
+Storyboards SB-01…SB-04 are submitted for stakeholder validation with this iteration's review (STK-001 sponsor, STK-003 end-user representatives). Any feedback is recorded in the Review Record and traced to requirement impacts — the prototype-as-probe principle. The User-Interface Prototype artifact is **[OMITTED — trigger not fired per Development Case §5.2]**; these storyboards inside the Use-Case Model, plus the Boundary Classes and Navigation Map in the Design Model, carry the interaction design. Full UI traceability: Design Model §Traceability.
 ## Traceability
 
 | Element | Traces From | Link Type | Traces To |
