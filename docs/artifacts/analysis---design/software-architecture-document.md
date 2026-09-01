@@ -568,15 +568,16 @@ The portal database stores **only** what is not in Active Directory. Per CON-006
 
 **Note:** `employee_uid` in all tables references the AD user id. No employee name, title, department, or other AD attribute is stored in the portal database. Directory data is always read live from AD via LDAP (COMP-007); HR views (UC-005/006/007) resolve display names on demand (CON-005, CON-006).
 ## Size and Performance
-
 | Metric | Target | Source | Architectural Tactic |
 |---|---|---|---|
-| Page load | < 3 seconds | NFR-001 | Server-rendered Razor Pages; LDAP result caching (60s TTL); no SPA bundle |
-| Clocking operation | < 1 second | NFR-002 | Idempotent endpoint; offline queue provides immediate user feedback |
-| Directory search | < 10 seconds (including user interaction) | AC-003 | LDAP query optimization; result caching; graceful degradation for missing attributes |
+| Page load | < 3 s (95th percentile, working-hours load) | NFR-001, PRF-001 | Server-rendered Razor Pages; LDAP result caching (60 s TTL); no SPA bundle |
+| Clocking operation | < 1 s from button press — on BOTH the online and offline-queued paths | NFR-002, PRF-002 | Idempotent endpoint; offline queue renders confirmation from queued data |
+| Directory search | LDAP query hard timeout 5 s; end-to-end ≤ 10 s including typing | AC-003, PRF-003 | LDAP query optimization; result caching; graceful degradation for missing attributes |
+| Offline sync | All queued events persisted ≤ 60 s after connectivity restored | AC-005, REL-003 | Replay via sync endpoint; idempotency key rejects duplicates |
 | Concurrent users | ~200 peak | Scope (200 employees) | .NET 10 async request handling; single server sufficient |
-| Data volume | Low (200 employees × ~2 clockings/day × 250 workdays = ~100K rows/year) | Derived | PostgreSQL handles this trivially; no sharding or partitioning needed |
+| Data volume | Low (~100K clocking rows/year: 200 employees × ~2 events/day × 250 workdays) | Derived | PostgreSQL handles this trivially; no sharding or partitioning |
 
+**Sizing note (two clocks, never summed):** the Inception phase cost 28 minutes of agent time and 1,347,939 tokens across 11 agent runs (recorded actuals). No Elaboration actuals exist yet — this iteration is the first. The Elaboration architecture work (this SAD baseline) is sized by the token budget of this iteration, recorded by the Project Manager in the next Iteration Assessment. No person-week figures are produced by this system.
 ## Quality
 ### PoC Plan for Elaboration
 
