@@ -1,570 +1,401 @@
 ## Document Control
+
 | Field | Value |
 |---|---|
-| Phase | Inception |
-| Status | Draft |
-| Milestone Target | End of Inception (LCO) |
-| Iteration | 2 (Cycle 1) — Rework iteration |
+| Phase | Elaboration |
+| Status | Draft — Elaboration Iter 1 code-review gate record |
+| Milestone Target | End of Elaboration (LCA) — NOT yet achieved |
+| Iteration | 1 (Cycle 1) |
 | Date | 2026-09-01 |
-| Reviewers | Reviewer (technical lens), Business Reviewer (business lens — INACTIVE), Management Reviewer (management lens) |
-| Review Type | LCO Milestone Review — Feasibility & Exit Criteria |
-| Prior Iteration | 1 (Cycle 1) — 2 findings on Iteration Plan (1 Major, 1 Minor), both now RESOLVED |
-| Stakeholder Sanction (Iter 1) | REFUSED — scope accepted, advance withheld pending Iteration Plan rework |
-| Stakeholder Sanction (Iter 2 — Mgmt Reviewer) | **GRANTED** — "Yes" to advancing past LCO; "Let's go to elaboration." |
-| Stakeholder Sanction (Iter 2 — Review Coordinator) | **CONFIRMED** — "Yes" to advancing to next milestone; "Nothing else to add for this new phase." |
-| Iteration 2 Disposition | **GO (APPROVED)** — all prior findings resolved, zero new findings, all 9 artifacts pass LCO exit criteria, stakeholder sanction granted and confirmed |
-| Milestone Verdict | **requiresIteration: false** — Inception scope complete, phase gate opened for Elaboration |
+| Review Type | Code Review — PR Approval Loop (Elaboration evolutionary architectural prototype) |
+| Reviewer | Code Reviewer (Implementation discipline) |
+| Review Point | Iteration Acceptance lens — COMPLETION: were this iteration's code objectives met? (Answer this cycle: NO — no code handoff exists; see Disposition) |
+| Prior Record | Inception LCO Milestone Review (2 iterations) — **GO (APPROVED)**, all 4 findings RESOLVED, stakeholder sanction GRANTED. Historical record preserved in the sections below; prior findings never overwritten. |
+| Cycle Disposition | **No-PRs-To-Review** — S1 guard fired: zero `ready-for-review` branches, zero PRs (any state), `iteration/E1` absent |
+| Open Findings (this cycle) | 1 Critical (F-CR-E1-1), 1 Minor (F-CR-E1-2) |
+
 ## Review Scope and Criteria
 
-### Artifacts Reviewed (9 + Review Record)
+### This Cycle's Scope — Elaboration Iteration 1, Cycle 1
 
-| # | Artifact | Discipline | Phase | Status | Iter 1 Findings | Iter 2 Findings |
-|---|---|---|---|---|---|---|
-| 1 | Development Case | Environment | Inception | Draft | 0 | 0 — PRESERVED |
-| 2 | Vision | Requirements | Inception | Draft | 0 | 0 — PRESERVED |
-| 3 | Use-Case Model | Requirements | Inception | Draft | 0 | 0 — PRESERVED |
-| 4 | Risk List | Project Management | Inception | Draft | 0 | 0 — PRESERVED |
-| 5 | Supplementary Specification | Requirements | Inception | Draft | 0 | 0 — PRESERVED |
-| 6 | Iteration Plan | Project Management | Inception | Draft | 2 (1 Major, 1 Minor) | 0 — **BOTH RESOLVED** |
-| 7 | Software Architecture Document | Analysis & Design | Inception | Draft | 0 | 0 — PRESERVED |
-| 8 | Test Evaluation Summary | Test | Inception | Draft | 0 | 0 — PRESERVED |
-| 9 | Iteration Assessment | Project Management | Inception | Draft | 0 | 0 — PRESERVED |
-| 10 | Review Record (this) | Project Management | Inception | Draft | (self) | Updated for iteration 2 |
+Per the Work Order and BRANCHING_STRATEGY §5.2, the Elaboration architectural prototype is **evolutionary production code**: the Implementer builds each risk-retirement mechanism in `src/` on `feature/E1-{risk-id}` branches based on `iteration/E1`, labels them `ready-for-review`, and the Code Reviewer opens and reviews one PR per mechanism (base `iteration/E1`) exactly as a Construction feature PR — never rejecting prototype code as throwaway, never waiving the checklist.
 
-### LCO Exit Criteria Applied
+**Expected handoffs this iteration** (Iteration Plan Work Items 7–9, ~250K tokens; Development Case PoC trigger FIRED; stakeholder decision binding — the PoC is produced in Elaboration AND validated empirically):
 
-This review applies the **feasibility and acceptability** lens per RUP Project Approval / Planning review point. The LCO exit criteria checklist:
-
-1. **Vision clarity** — Is the problem statement, product position, and scope clear and stakeholder-acceptable?
-2. **Initial risk identification** — Are declared risks present, classified, and mitigated? Are additional risks identified?
-3. **Use case survey level** — Are all declared FRs decomposed into UCs with sources cited? Are architecturally significant UCs detailed?
-4. **Stakeholder agreement on scope and feasibility** — Does the scope match the declared input? Are cross-cutting mechanisms correctly placed?
-5. **Architecture direction sound** — Is the candidate architecture proportional to scope? Are ADRs justified?
-6. **DC baseline conformance** — Does the Development Case conform to the IARI baseline without forbidden overrides?
-7. **Optional trigger justification** — Are all NOT-FIRED optional triggers genuinely not meeting their §5.2 conditions?
-8. **Traceability** — Do all artifacts trace to declared scope elements (FR-NNN, NFR-NNN, CON-NNN, AC-NNN, RNNN)?
-9. **Work item status accuracy** — Does the Iteration Plan reflect actual artifact state in the repository?
-
-### SCM State
-
-- **Open pull requests:** 0 — no PRs to dispose.
-- **CI build status:** Green on main (verified by Test Evaluation Summary).
-
-### Iteration 2 Reconciliation Summary
-
-The iteration 1 review identified 2 findings on the Iteration Plan from the Management Reviewer lens:
-
-| Finding Key | Severity | Description | Iter 2 Status |
+| Expected mechanism | Risk | Plan work item | Design baseline |
 |---|---|---|---|
-| F1 (ManagementReviewer) | Major | UC ID numbering mismatch: Iteration Plan mapped FR-001→UC-001 (sequential) but Use-Case Model maps FR-001→UC-005, FR-004→UC-001, FR-010→UC-004. Stakeholder refused sanction. | **RESOLVED** via `resolve_artifact_finding` (index=2) |
-| F2 (ManagementReviewer) | Minor | Work item statuses stale: items 4, 5, 6, 7, 10 showed "Pending" while artifacts exist as Draft. Stakeholder: "Reconcile the status column against the repository." | **RESOLVED** via `resolve_artifact_finding` (index=3) |
+| Disposable LDAP directory + attribute population/query validation | R001 (HIGH) | WI-7 | COMP-007 / CLS-009 LdapGateway; graceful degradation (missing attribute = null, entry NOT hidden) |
+| Stub OIDC issuer + token validation + role-claim extraction | R003 (SIGNIFICANT) | WI-8 | COMP-006 / CLS-010 KeycloakAuthProvider; Employee + HR Administrator roles from claims |
+| 5-minute network-drop simulation: localStorage queue + idempotent sync | R004 (SIGNIFICANT) | WI-9 | COMP-009 / CLS-008 OfflineQueueClient; UNIQUE idempotency_key (REL-002), sync ≤ 60 s (REL-003) |
 
-Both findings were verified as corrected in the current Iteration Plan content and closed via `resolve_artifact_finding` in the S_RECONCILE state of this iteration. The Reviewer lens findings (F1, F2) were also resolved in iteration 2 by the Reviewer.
+### Code-Review Checklist (applies unchanged to the first mechanism PR)
+
+| # | Checklist item | Basis |
+|---|---|---|
+| CR-1 | Programming guidelines conformance — every violation cited to a rule in `CONTRIBUTING.md` | RUP Ch.11; DC-flagged guideline gap |
+| CR-2 | Dual coverage — black-box contract AND white-box paths (branches, loops, error handlers) | RUP Ch.11 §7428-7447 |
+| CR-3 | SAD / Design Model conformance — class names, signatures, layer placement, interface contracts | SAD COMP-001…011, ADR-001…004; Design Model CLS-001…027, INT-006…019 |
+| CR-4 | Traceability trailer — `Implements: UC-NNN` or risk-id in PR body / commit | Use-case-driven pillar |
+| CR-5 | Build status hard gate — CI red ⇒ request_changes, no code review | Reviewer heuristic 5 |
+| CR-6 | Build-tree coverage — every changed file under `src/` or `tests/` inside the build tree | S2 checklist |
+| CR-7 | Terminal disposition per PR — approve or request_changes; no PR left undecided | Gate-enforcement mandate |
+
+### Gate Execution — What Was Run This Cycle
+
+```plantuml
+@startuml
+title Employee Portal — Code-Review Gate Execution: Elaboration Iter 1, Cycle 1 (2026-09-01)
+
+start
+partition "S1 DISCOVER (executed this cycle)" {
+  :scm_list_branches_with_label("ready-for-review")
+  returns **0 branches**;
+  :scm_list_pull_requests(state="open")
+  returns **0 PRs**;
+  :scm_list_pull_requests(state="all")
+  returns **0 PRs**;
+  :scm_get_repo_tree("main")
+  returns pre-Elaboration skeleton only
+  (no Services/, no Infrastructure/);
+  :scm_get_build_status("main")
+  returns **GREEN** (run 33492338439);
+  :scm_get_build_status("iteration/E1")
+  returns no CI runs; branch ABSENT;
+}
+if (ready-for-review branches exist?) then (no — 0 handoffs)
+  :GUARD FIRES (S1 exit condition);
+  :Disposition: **No-PRs-To-Review**;
+  :Persist Review Record (this artifact)
+  with SCM evidence + findings;
+  stop
+else (yes — expected path, NOT taken this cycle)
+  :Open ONE PR per ready branch
+  (base = iteration/E1 — the Reviewer owns the base);
+  :S2 REVIEW PER PR (loop):
+  diff, CI gate, guidelines, dual coverage,
+  SAD/Design conformance, traceability
+  trailer, build-tree coverage;
+  :Terminal disposition per PR:
+  approve | request_changes;
+  :Append dispositions to Review Record;
+  stop
+endif
+@enduml
+```
+
+### Compliance Matrix — Checklist × Status
+
+```plantuml
+@startuml
+title Elaboration Iter 1 — Code-Review Compliance Matrix (checklist x status)
+
+object "CR-1 Programming guidelines conformance" as CR1 {
+  STATUS: NOT EXERCISED
+  Reason: no PR exists to review
+  Precondition gap: CONTRIBUTING.md
+  absent (finding F-CR-E1-2)
+}
+object "CR-2 Dual coverage (black-box + white-box)" as CR2 {
+  STATUS: NOT EXERCISED
+  Reason: no PR; tree holds only
+  SmokeTests.cs skeleton
+}
+object "CR-3 SAD / Design Model conformance" as CR3 {
+  STATUS: NOT EXERCISED
+  Reason: no code to compare
+  Baselines LOADED this cycle:
+  SAD COMP-001..011, ADR-001..004;
+  Design Model CLS-001..027,
+  INT-006..019, SEQ-001..010
+}
+object "CR-4 Traceability trailer (UC-NNN / risk-id)" as CR4 {
+  STATUS: NOT EXERCISED
+  Reason: no PR body or commit
+  exists to carry a trailer
+}
+object "CR-5 Build status hard gate" as CR5 {
+  STATUS: VERIFIED AT DISCOVERY
+  main GREEN (run 33492338439);
+  no PR head SHAs to gate
+}
+object "CR-6 Build-tree coverage (src/ + tests/)" as CR6 {
+  STATUS: NOT EXERCISED
+  Reason: no changed files
+}
+object "CR-7 Terminal disposition per PR" as CR7 {
+  STATUS: N/A
+  PR queue empty; guard
+  disposition recorded instead
+}
+
+object "E-1 Label discovery query" as E1 {
+  EXECUTED — 0 branches
+}
+object "E-2 PR census (open + all)" as E2 {
+  EXECUTED — 0 PRs
+}
+object "E-3 Repo tree (main)" as E3 {
+  EXECUTED — skeleton only
+}
+object "E-4 CI status (main)" as E4 {
+  EXECUTED — GREEN
+}
+object "E-5 iteration/E1 existence + CI" as E5 {
+  EXECUTED — ABSENT, no runs
+}
+object "E-6 Upstream baselines read" as E6 {
+  EXECUTED — SAD, Design Model,
+  Development Case, Iteration Plan,
+  BRANCHING_STRATEGY, prior
+  Review Record
+}
+
+CR1 -[hidden]-> CR2
+CR2 -[hidden]-> CR3
+CR3 -[hidden]-> CR4
+CR4 -[hidden]-> CR5
+CR5 -[hidden]-> CR6
+CR6 -[hidden]-> CR7
+E1 -[hidden]-> E2
+E2 -[hidden]-> E3
+E3 -[hidden]-> E4
+E4 -[hidden]-> E5
+E5 -[hidden]-> E6
+
+note bottom of CR7
+  The checklist is PREPARED, not waived:
+  it applies unchanged to the first
+  mechanism PR. CR-1 additionally
+  requires CONTRIBUTING.md to exist.
+end note
+@enduml
+```
+
+### SCM Evidence Snapshot (review evidence — what actually happened)
+
+```plantuml
+@startuml
+title SCM Evidence Snapshot — Elaboration Iter 1, Cycle 1 (2026-09-01)
+
+object "main (release branch)" as MAIN {
+  CI: GREEN — run 33492338439
+  started 2026-09-01 09:27:49Z
+  completed 2026-09-01 09:28:38Z
+  --
+  Content: pre-Elaboration skeleton
+  EmployeePortal.sln
+  src/EmployeePortal (Program.cs,
+  Pages/Index.cshtml, appsettings.json)
+  tests/EmployeePortal.Tests (SmokeTests.cs)
+  NO Services/ · NO Infrastructure/ ·
+  NO mechanism code · NO PoC scaffolding
+}
+
+object "iteration/E1 (integration workspace)" as ITER {
+  Status: ABSENT
+  Tree read: Not Found
+  CI runs: none
+  Required as the base of every
+  Elaboration mechanism PR
+  (BRANCHING_STRATEGY 5.2)
+  Owner: Integrator (invariant 8.1)
+}
+
+object "feature/E1-{risk-id} branches" as FEAT {
+  ready-for-review labeled: 0
+  Handoff protocol (invariant 8.2):
+  Implementer labels the branch;
+  Reviewer discovers via label query
+}
+
+object "Pull requests" as PRS {
+  Open: 0
+  All states: 0
+}
+
+object "Expected this iteration (Plan WIs 7-9)" as EXP {
+  R001: disposable LDAP directory,
+  attribute population + query
+  validation (~100K tokens)
+  R003: stub OIDC issuer, token
+  validation + role-claim extraction (~80K)
+  R004: 5-minute drop simulation,
+  localStorage queue, idempotent sync (~70K)
+  Plan status: "In progress"
+}
+
+MAIN -[hidden]-> ITER
+ITER -[hidden]-> FEAT
+FEAT -[hidden]-> PRS
+PRS -[hidden]-> EXP
+
+note bottom of EXP
+  Exit criteria 1-3 (empirical R001 /
+  R003 / R004 validation) have NO code
+  evidence in SCM as of this cycle.
+  The LCA gate requires empirical
+  evidence — the stakeholder refused
+  paper-only validation of a HIGH risk.
+end note
+@enduml
+```
+
+### Historical Record — Inception LCO Review Scope (preserved)
+
+The Inception record reviewed 9 artifacts + the Review Record against 9 LCO exit criteria (feasibility lens) across 2 iterations. Iteration 1 raised 2 findings on the Iteration Plan (F1 Major — UC-ID mapping mismatch; F2 Minor — stale work-item statuses); the stakeholder REFUSED sanction pending rework. Iteration 2 verified both corrections, raised zero new findings, and recorded stakeholder sanction GRANTED ("Let's go to elaboration."). Full LCO compliance matrices, health state machine, risk retirement status, and milestone timeline diagrams are preserved in SCM history at the Inception revision of this artifact.
 
 ## Findings
 
-### Iteration 2 — New Findings (Management Lens)
+### Elaboration Iteration 1 — New Findings (Code-Review Lens)
 
-**Zero new findings.** All 9 reviewed artifacts pass all LCO exit criteria from the management lens. The Iteration Plan rework has been verified correct:
+| Finding Key | Severity | Location | Description | Remediation |
+|---|---|---|---|---|
+| **F-CR-E1-1** | **Critical** | SCM state vs. Iteration Plan WIs 7–9; exit criteria 1–3 | **No Implementer handoff exists.** Zero `ready-for-review` branches, zero PRs in any state, and the build tree at `main` contains no mechanism code (no `Services/`, no `Infrastructure/`, no PoC scaffolding — only the pre-Elaboration skeleton). `iteration/E1`, the mandatory PR base (BRANCHING_STRATEGY §5.2), does not exist. Consequence: the iteration's exit criteria 1–3 (empirical validation of R001/R003/R004) have **no code evidence**, and the LCA evidence package cannot be assembled — the stakeholder explicitly refused an LCA that validates a HIGH architectural risk on paper only. The code-review gate for this iteration is OPEN. | (1) Integrator creates `iteration/E1` (invariant 8.1 — only the Integrator writes `iteration/*`). (2) Implementer builds the three mechanisms **evolutionarily in `src/`** (never a `poc/` branch or `samples/` directory — invariant 8.4): R001 → COMP-007/CLS-009 against a disposable LDAP directory; R003 → COMP-006/CLS-010 against a stub OIDC issuer; R004 → COMP-009/CLS-008 offline queue + idempotent sync. (3) Each mechanism ships dual-coverage unit tests (black-box contract + white-box paths). (4) Implementer labels each `feature/E1-{risk-id}` branch `ready-for-review`. (5) Code Reviewer opens one PR per branch (base `iteration/E1`) and applies CR-1…CR-7 with terminal dispositions. |
+| **F-CR-E1-2** | **Minor** | Repository root — `CONTRIBUTING.md` (also flagged in Development Case § Tool Configuration References) | **Programming-guidelines baseline absent.** `CONTRIBUTING.md` does not exist in the repository, so checklist item CR-1 has no citable rule baseline for the first mechanism PR. Without it, guideline findings cannot cite a rule (a violation without a rule citation is personal taste, not a finding). The Development Case already records this as a gap owned by Implementer / Software Architect / ConfigurationManager. | Commit `CONTRIBUTING.md` before or together with the first mechanism PR: coding standards (naming, error handling, async conventions, test conventions) plus the branch-strategy documentation section. Until it exists, CR-1 findings in the first PR will be limited to rules citable from the SAD layering rule (dependencies point down, interfaces only) and the Design Model contracts. |
 
-- **F1 (Major) — RESOLVED:** The "Use Cases and Scenarios Addressed" table now maps all 10 FR-to-UC pairs correctly per the Use-Case Model authority. Construction iteration assignments reference the corrected UC IDs. A Layer 3 rework criteria table was added to verify the corrections.
-- **F2 (Minor) — RESOLVED:** All 13 work items now show "Complete" status, matching the 10 existing Draft artifacts. A reconciliation note was added.
+### Defect Distribution (severity × scope)
 
-### Business Modeling Discipline (Reviewer: Business Reviewer)
+```plantuml
+@startuml
+title Elaboration Iter 1 — Defect Distribution (severity x scope)
 
-**Verdict: [BR-OK-INACTIVE] — Discipline NOT APPLICABLE per DC §4**
+object "Implementation scope / SCM state" as D1 {
+  Critical: 1 — F-CR-E1-1
+  Major: 0
+  Minor: 0
+  (no handoff, no mechanism code,
+  iteration/E1 absent)
+}
+object "Guidelines baseline (CONTRIBUTING.md)" as D2 {
+  Critical: 0
+  Major: 0
+  Minor: 1 — F-CR-E1-2
+  (CR-1 precondition absent)
+}
+object "PRs under review" as D3 {
+  Critical: 0
+  Major: 0
+  Minor: 0
+  (none exist this cycle)
+}
+D1 -[hidden]-> D2
+D2 -[hidden]-> D3
+@enduml
+```
 
-DC §4 trigger evaluation: project does not exhibit business-process-led characteristics. No ERP / BPM / workflow-redesign / M&A signals found in Vision. No Business Use Cases / Workers / Entities sections present in Use-Case Model. No business-domain specialist terms in Glossary (Glossary not produced — no specialist vocabulary trigger).
+### Prior Findings (Inception — historical ledger, all RESOLVED; never overwritten)
 
-Conclusion: BPA + BR are correctly INACTIVE for this engagement. No findings, no recommendations. Downstream reviewers (MR, RC) may treat the BM discipline as out-of-scope for the LCO milestone.
-
-### Iteration 1 — Prior Findings (Historical Record)
-
-| Finding Key | Lens | Artifact | Severity | Finding (Summary) | Status |
+| Finding Key | Lens | Artifact | Severity | Finding (summary) | Status |
 |---|---|---|---|---|---|
-| F1 (Reviewer) | Technical | Iteration Plan | Major | UC ID numbering mismatch: Iteration Plan maps FR-001→UC-001 (sequential) but Use-Case Model (authority) maps FR-001→UC-005, FR-004→UC-001, FR-010→UC-004. Breaks plan-to-requirements traceability. | **RESOLVED** (Iter 2 — Reviewer lens) |
-| F1 (ManagementReviewer) | Management | Iteration Plan | Major | Same defect as F1 (Reviewer). Stakeholder reviewed and refused sanction. | **RESOLVED** (Iter 2 — ManagementReviewer lens) |
-| F2 (Reviewer) | Technical | Iteration Plan | Minor | Work item statuses stale: items 4, 5, 6, 7, 10 show "Pending" while artifacts exist as Draft. | **RESOLVED** (Iter 2 — Reviewer lens) |
-| F2 (ManagementReviewer) | Management | Iteration Plan | Minor | Same defect as F2 (Reviewer). Stakeholder: "Reconcile the status column against the repository." | **RESOLVED** (Iter 2 — ManagementReviewer lens) |
-
-### Compliance Matrix (Management Lens)
-
-```plantuml
-@startuml
-!theme plain
-title Employee Portal — LCO Iteration 2 Compliance Matrix (Management Lens)
-
-class "LCO-1: Vision Clarity" as LCO1 {
-  Problem Statement: PASS
-  Product Position: PASS
-  Stakeholder Summary: PASS
-  Scope Alignment: PASS
-  Constraint Coverage: PASS (14/14)
-  Feature Traceability: PASS (10/10 FRs)
-  == PASS ==
-}
-
-class "LCO-2: Risk Identification" as LCO2 {
-  Declared Risks: PASS (R001, R002)
-  Derived Risks: PASS (R003-R010)
-  P x I Classification: PASS
-  Mitigation + Contingency: PASS
-  R001 HIGH Priority: PASS
-  PoC Plan: PASS (3 PoCs)
-  == PASS ==
-}
-
-class "LCO-3: Use Case Survey" as LCO3 {
-  FR Coverage: PASS (10/10)
-  UC Source Tracing: PASS
-  No Cross-Cutting UCs: PASS
-  Detailed UCs (3): PASS
-  Outlined UCs (7): PASS
-  == PASS ==
-}
-
-class "LCO-4: Scope Agreement" as LCO4 {
-  Stakeholder Confirmed: PASS
-  Scope Matches Declaration: PASS
-  Exclusions Listed: PASS
-  == PASS ==
-}
-
-class "LCO-5: Architecture Direction" as LCO5 {
-  Candidate Architecture: PASS
-  Proportional to Scope: PASS
-  ADRs (3): PASS
-  PoC Plan: PASS
-  External Deps (R010): PASS
-  == PASS ==
-}
-
-class "LCO-6: DC Conformance" as LCO6 {
-  IARI Baseline: PASS
-  Role Roster: PASS
-  CORE Artifacts: PASS
-  Ownership: PASS
-  BM INACTIVE: PASS
-  == PASS ==
-}
-
-class "LCO-7: Optional Triggers" as LCO7 {
-  0/6 Fired: PASS
-  All Justified: PASS
-  Re-eval Schedule: PASS
-  == PASS ==
-}
-
-class "LCO-8: Traceability" as LCO8 {
-  UC ID Mapping: **PASS** (F1 resolved)
-  FR-to-UC: PASS (10/10 correct)
-  Construction Assignments: PASS
-  == PASS ==
-}
-
-class "LCO-9: Work Item Status" as LCO9 {
-  All 13 Items: **PASS** (F2 resolved)
-  Repository Reconciled: PASS
-  == PASS ==
-}
-
-LCO1 -[hidden]-> LCO2
-LCO2 -[hidden]-> LCO3
-LCO3 -[hidden]-> LCO4
-LCO4 -[hidden]-> LCO5
-LCO5 -[hidden]-> LCO6
-LCO6 -[hidden]-> LCO7
-LCO7 -[hidden]-> LCO8
-LCO8 -[hidden]-> LCO9
-
-note bottom of LCO8
-  **Iteration 2 rework verified:**
-  F1 (Major) RESOLVED — all 10 UC IDs
-  now match Use-Case Model authority.
-  F2 (Minor) RESOLVED — all 13 work
-  items show "Complete" status.
-  Stakeholder sanction: GRANTED.
-end note
-
-@enduml
-```
-
-### Project Health State Machine
-
-```plantuml
-@startuml
-!theme plain
-title Employee Portal — Project Health State Machine (LCO Iteration 2)
-
-[*] --> Healthy
-
-state "Healthy" as Healthy {
-  Healthy : Scope: GREEN (agreed)
-  Healthy : Schedule: GREEN (on plan)
-  Healthy : Cost: GREEN (within box)
-  Healthy : Quality: GREEN (0 findings)
-  Healthy : Risk: GREEN (R001 PoC planned)
-  Healthy : Stakeholder: GREEN (sanction GRANTED)
-}
-
-Healthy --> AtRisk : [Any dimension degrades]
-Healthy --> Critical : [Critical finding or risk materializes]
-Healthy --> [*] : [LCO milestone achieved — advance to Elaboration]
-
-state "AtRisk" as AtRisk {
-  AtRisk : One dimension AMBER
-  AtRisk : Mitigation plan required
-  AtRisk : Monitor next iteration
-}
-
-state "Critical" as Critical {
-  Critical : One or more dimensions RED
-  Critical : Stop signal — do not advance
-  Critical : Root cause analysis required
-}
-
-AtRisk --> Healthy : [Dimension recovers]
-AtRisk --> Critical : [Dimension degrades further]
-Critical --> AtRisk : [Mitigation effective]
-
-note right of Healthy
-  **Current State: HEALTHY**
-  All 4 dimensions GREEN.
-  LCO exit criteria: 9/9 PASS.
-  Stakeholder sanction: GRANTED.
-  Verdict: GO — advance to Elaboration.
-end note
-
-@enduml
-```
-
-### Risk Retirement Status
-
-```plantuml
-@startuml
-!theme plain
-title Employee Portal — Risk Retirement Status (LCO Iteration 2)
-
-object "R001 AD LDAP Attributes" as R001 {
-  Magnitude: HIGH (P=3, I=3)
-  Status: OPEN — PoC planned Elaboration
-  Trend: STABLE (identified, not yet retired)
-  Strategy: Accept + PoC
-}
-
-object "R002 Clocking Adoption" as R002 {
-  Magnitude: SIGNIFICANT (P=3, I=2)
-  Status: OPEN — mitigation in plan
-  Trend: STABLE
-  Strategy: Accept
-}
-
-object "R003 OIDC Integration" as R003 {
-  Magnitude: SIGNIFICANT (P=2, I=3)
-  Status: OPEN — PoC planned Elaboration
-  Trend: STABLE
-  Strategy: Accept + PoC
-}
-
-object "R004 Offline Fault Tolerance" as R004 {
-  Magnitude: SIGNIFICANT (P=2, I=3)
-  Status: OPEN — PoC planned Elaboration
-  Trend: STABLE
-  Strategy: Accept + PoC
-}
-
-object "R005 LDAP Performance" as R005 {
-  Magnitude: MODERATE (P=2, I=2)
-  Status: OPEN — monitor during R001 PoC
-  Trend: STABLE
-  Strategy: Accept
-}
-
-object "R006 Audit Trail" as R006 {
-  Magnitude: MODERATE (P=2, I=2)
-  Status: OPEN — design in Elaboration
-  Trend: STABLE
-  Strategy: Accept
-}
-
-object "R007 UI Fidelity" as R007 {
-  Magnitude: MODERATE (P=2, I=2)
-  Status: OPEN — design mapping in Elaboration
-  Trend: STABLE
-  Strategy: Accept
-}
-
-object "R008 PG + .NET 10" as R008 {
-  Magnitude: MODERATE (P=2, I=2)
-  Status: OPEN — validate in skeleton
-  Trend: STABLE
-  Strategy: Accept
-}
-
-object "R009 Scope Creep" as R009 {
-  Magnitude: MODERATE (P=2, I=2)
-  Status: OPEN — CCB enforced
-  Trend: STABLE
-  Strategy: Avoid
-}
-
-object "R010 Infra Availability" as R010 {
-  Magnitude: SIGNIFICANT (P=2, I=3)
-  Status: OPEN — engage STK-004 in Elaboration
-  Trend: STABLE
-  Strategy: Transfer
-}
-
-R001 -[hidden]-> R002
-R002 -[hidden]-> R003
-R003 -[hidden]-> R004
-R004 -[hidden]-> R005
-R005 -[hidden]-> R006
-R006 -[hidden]-> R007
-R007 -[hidden]-> R008
-R008 -[hidden]-> R009
-R009 -[hidden]-> R010
-
-note bottom of R001
-  **LCO Assessment:**
-  All 10 risks identified and classified.
-  No risks retired yet (Inception = identification).
-  R001 (HIGH) drives Elaboration PoC priority.
-  R010 blocks 2/3 PoCs — Infra engagement is
-  critical path for Elaboration.
-  Trend: STABLE across all risks — expected
-  at LCO (no mitigation executed yet).
-end note
-
-@enduml
-```
-
-### Milestone Timeline
-
-```plantuml
-@startgantt
-!theme plain
-title Employee Portal — Milestone Timeline (Planned vs Actual)
-
-[Inception Iter 1] lasts 7 days
-[Inception Iter 1] is colored in lightgreen
-
-[Inception Iter 2 (Rework)] lasts 3 days
-[Inception Iter 2 (Rework)] starts at [Inception Iter 1]'s end
-[Inception Iter 2 (Rework)] is colored in lightgreen
-
-[Elaboration Iter 1] lasts 7 days
-[Elaboration Iter 1] starts at [Inception Iter 2 (Rework)]'s end
-
-[Elaboration Iter 2] lasts 7 days
-[Elaboration Iter 2] starts at [Elaboration Iter 1]'s end
-
-[Construction Iter 1] lasts 7 days
-[Construction Iter 1] starts at [Elaboration Iter 2]'s end
-
-[Construction Iter 2] lasts 7 days
-[Construction Iter 2] starts at [Construction Iter 1]'s end
-
-[Construction Iter 3] lasts 7 days
-[Construction Iter 3] starts at [Construction Iter 2]'s end
-
-[Transition Iter 1] lasts 7 days
-[Transition Iter 1] starts at [Construction Iter 3]'s end
-
-@endgantt
-```
-
-### Defect Distribution
-
-```plantuml
-@startuml
-!theme plain
-title Employee Portal — LCO Iteration 2 Defect Distribution
-
-object "Development Case" as DC {
-  Critical: 0
-  Major: 0
-  Minor: 0
-  Info: 0
-}
-
-object "Vision" as VIS {
-  Critical: 0
-  Major: 0
-  Minor: 0
-  Info: 0
-}
-
-object "Use-Case Model" as UCM {
-  Critical: 0
-  Major: 0
-  Minor: 0
-  Info: 0
-}
-
-object "Risk List" as RSK {
-  Critical: 0
-  Major: 0
-  Minor: 0
-  Info: 0
-}
-
-object "Supplementary Spec" as SUP {
-  Critical: 0
-  Major: 0
-  Minor: 0
-  Info: 0
-}
-
-object "Iteration Plan" as ITP {
-  Critical: 0
-  Major: 0 (was 1 — F1 RESOLVED)
-  Minor: 0 (was 1 — F2 RESOLVED)
-  Info: 0
-}
-
-object "Software Arch Doc" as SAD {
-  Critical: 0
-  Major: 0
-  Minor: 0
-  Info: 0
-}
-
-object "Test Eval Summary" as TES {
-  Critical: 0
-  Major: 0
-  Minor: 0
-  Info: 0
-}
-
-object "Iteration Assessment" as IA {
-  Critical: 0
-  Major: 0
-  Minor: 0
-  Info: 0
-}
-
-DC -[hidden]-> VIS
-VIS -[hidden]-> UCM
-UCM -[hidden]-> RSK
-RSK -[hidden]-> SUP
-SUP -[hidden]-> ITP
-ITP -[hidden]-> SAD
-SAD -[hidden]-> TES
-TES -[hidden]-> IA
-
-note bottom of ITP
-  **Iteration 2**: Both prior findings
-  resolved via resolve_artifact_finding
-  (ManagementReviewer lens).
-  Zero new findings this iteration.
-  All 9 artifacts now clean.
-end note
-
-@enduml
-```
+| F1 (Reviewer) | Technical | Iteration Plan | Major | UC ID numbering mismatch: Iteration Plan mapped FR-001→UC-001 sequentially; Use-Case Model (authority) maps FR-001→UC-005, FR-004→UC-001, FR-010→UC-004. | **RESOLVED** (Inception Iter 2) |
+| F1 (ManagementReviewer) | Management | Iteration Plan | Major | Same defect as F1 (Reviewer); stakeholder refused sanction. | **RESOLVED** (Inception Iter 2) |
+| F2 (Reviewer) | Technical | Iteration Plan | Minor | Work item statuses stale ("Pending" while artifacts existed as Draft). | **RESOLVED** (Inception Iter 2) |
+| F2 (ManagementReviewer) | Management | Iteration Plan | Minor | Same defect as F2 (Reviewer). | **RESOLVED** (Inception Iter 2) |
+
+**Reconciliation status:** zero findings carried open into Elaboration Iteration 1. The two findings raised this cycle (F-CR-E1-1, F-CR-E1-2) are NEW defects in the implementation scope, not recurrences of Inception findings — they carry fresh keys.
 
 ## Resolutions and Actions
 
-### Prior Findings Resolved This Iteration (Management Reviewer Lens)
+### Remediation — Closing the Elaboration Iter 1 Code-Review Gate
 
-| Finding Key | Artifact | Severity | Lens | Resolution | Resolution Date | Evidence |
-|---|---|---|---|---|---|---|
-| F1 (ManagementReviewer) | Iteration Plan | Major | Management | **Resolved** — UC ID mapping corrected to match Use-Case Model authority. All 10 FR-to-UC rows verified correct. Construction iteration assignments updated. Layer 3 rework criteria table added. Stakeholder's condition for re-presentation satisfied. | 2026-09-01 | "Use Cases and Scenarios Addressed" table: FR-001→UC-005, FR-002→UC-006, FR-003→UC-007, FR-004→UC-001, FR-005→UC-002, FR-006→UC-008, FR-007→UC-003, FR-008→UC-009, FR-009→UC-010, FR-010→UC-004 |
-| F2 (ManagementReviewer) | Iteration Plan | Minor | Management | **Resolved** — Work item statuses reconciled against repository. All 13 items show "Complete" status. Reconciliation note added. Stakeholder's condition for re-presentation satisfied. | 2026-09-01 | Work Items table: all 13 items Status = "Complete". Reconciliation note: "All statuses updated to reflect actual artifact state in the repository." |
+```plantuml
+@startuml
+title Remediation — Closing the Elaboration Iter 1 Code-Review Gate
 
-### Prior Findings Resolved This Iteration (Reviewer Lens — for reference)
+|Integrator|
+start
+:Create iteration/E1
+(integration workspace — strategy 5.2, 8.1);
 
-| Finding Key | Artifact | Severity | Lens | Resolution | Resolution Date | Evidence |
-|---|---|---|---|---|---|---|
-| F1 (Reviewer) | Iteration Plan | Major | Technical | **Resolved** — UC ID mapping corrected. All 10 FR-to-UC pairs verified correct per Use-Case Model authority. | 2026-09-01 | Same as F1 (ManagementReviewer) above |
-| F2 (Reviewer) | Iteration Plan | Minor | Technical | **Resolved** — Work item statuses reconciled. All 13 items show "Complete" status. | 2026-09-01 | Same as F2 (ManagementReviewer) above |
+|Implementer|
+:Build R001 mechanism (evolutionary, in src/):
+COMP-007 LdapGateway (CLS-009) against a
+disposable LDAP directory — attribute
+mapping, graceful degradation
+(missing attribute = null, entry NOT hidden);
+:Build R003 mechanism:
+COMP-006 (CLS-010) against a stub OIDC
+issuer — token validation, role-claim
+extraction (Employee + HR Administrator);
+:Build R004 mechanism:
+COMP-009 (CLS-008) — localStorage queue,
+idempotent sync endpoint, UNIQUE
+idempotency_key (REL-002);
+:Ship dual-coverage unit tests per mechanism
+(black-box contract + white-box paths);
+:Commit CONTRIBUTING.md (guidelines baseline —
+closes the F-CR-E1-2 precondition);
+:Label branches ready-for-review:
+feature/E1-R001-*, feature/E1-R003-*,
+feature/E1-R004-*;
+
+|Code Reviewer|
+:Open ONE PR per branch — base iteration/E1
+(the Reviewer owns the PR and its base);
+:Apply checklist CR-1..CR-7 per PR:
+CI gate, guidelines, dual coverage,
+SAD/Design conformance, traceability
+trailer (Implements: UC-NNN / risk-id),
+build-tree coverage;
+:Terminal disposition per PR:
+scm_approve_pull_request |
+scm_request_changes_on_pull_request;
+:Append dispositions to this Review Record
+(cumulative);
+
+|Integrator|
+:Merge APPROVED PRs into iteration/E1;
+note right
+  Result: exit criteria 1-3 acquire
+  code evidence; empirical results
+  feed the Architectural Proof-of-Concept
+  artifact (owner: Software Architect)
+  and the LCA evidence package.
+end note
+stop
+@enduml
+```
 
 ### Open Action Items
 
-**None.** All findings from both lenses (Reviewer and ManagementReviewer) are resolved. Zero new findings this iteration. Stakeholder sanction granted.
+| # | Action | Owner | Severity | Blocks |
+|---|---|---|---|---|
+| A-1 | Create `iteration/E1` integration workspace | Integrator | Critical | Every Elaboration mechanism PR (no valid base exists) |
+| A-2 | Build + hand off R001 mechanism (disposable LDAP directory, COMP-007/CLS-009) with dual-coverage tests, branch labeled `ready-for-review` | Implementer | Critical | Exit criterion 1; R001 (HIGH) empirical retirement |
+| A-3 | Build + hand off R003 mechanism (stub OIDC issuer, COMP-006/CLS-010) with dual-coverage tests, branch labeled `ready-for-review` | Implementer | Critical | Exit criterion 2; R003 empirical retirement |
+| A-4 | Build + hand off R004 mechanism (offline queue + idempotent sync, COMP-009/CLS-008) with dual-coverage tests, branch labeled `ready-for-review` | Implementer | Critical | Exit criterion 3; R004 empirical retirement; AC-005 evidence |
+| A-5 | Commit `CONTRIBUTING.md` (coding standards + branch-strategy section) | Implementer / Software Architect / ConfigurationManager | Minor | CR-1 rule citation in the first mechanism PR |
+| A-6 | Open + review one PR per ready branch (base `iteration/E1`), terminal disposition each | Code Reviewer | Critical | Iteration code-review gate closure |
 
-### Review Effectiveness Metrics — Inception Iteration 2 (Cycle 1)
+### Historical Resolutions (Inception — preserved)
 
-| Metric | Iter 1 Value | Iter 2 Value | Notes |
-|---|---|---|---|
-| Review coverage | 100% (8/8) | 100% (9/9 + Review Record) | All artifacts reviewed both iterations |
-| Total findings raised | 4 (2 Major, 2 Minor) | 0 | Zero new findings — rework was clean |
-| Unique defects | 2 | 0 | Both iter 1 defects corrected |
-| Findings resolved (MR lens) | 0 | 2 (F1-MR + F2-MR) | Both closed via `resolve_artifact_finding` |
-| Findings resolved (Reviewer lens) | 0 | 2 (F1 + F2) | Both closed via `resolve_artifact_finding` |
-| Critical findings | 0 | 0 | No Critical findings either iteration |
-| Artifacts with zero findings | 7 of 8 (87.5%) | 9 of 9 (100%) | All artifacts now clean from all lenses |
-| Defect removal efficiency | N/A | 100% (4/4 resolved) | All iter 1 findings resolved in iter 2 |
-| Stakeholder sanction | REFUSED | **GRANTED** | "Yes" — "Let's go to elaboration." |
+F1 (Major, both lenses) — RESOLVED: the Iteration Plan's "Use Cases and Scenarios Addressed" table corrected to the Use-Case Model authority (FR-001→UC-005, FR-002→UC-006, FR-003→UC-007, FR-004→UC-001, FR-005→UC-002, FR-006→UC-008, FR-007→UC-003, FR-008→UC-009, FR-009→UC-010, FR-010→UC-004); Construction assignments updated; Layer 3 rework criteria table added. F2 (Minor, both lenses) — RESOLVED: all 13 work items reconciled to "Complete" against repository state. Both closures verified in the Inception Iter 2 review; stakeholder sanction granted.
 
 ## Disposition
 
-### Management Lens Disposition — Iteration 2
+### Elaboration Iteration 1, Cycle 1 — Code-Review Gate Disposition
 
-**GO (APPROVED)** — All 9 reviewed artifacts pass all LCO exit criteria with zero findings from the management lens. Both prior ManagementReviewer findings (F1-MR Major, F2-MR Minor) on the Iteration Plan have been resolved and closed via `resolve_artifact_finding`. The Reviewer lens findings (F1, F2) were also resolved. No new findings. No Critical findings. No open [SCOPE_QUESTION] markers. No scope creep detected.
+**No-PRs-To-Review.** The S1 guard fired: zero `ready-for-review` branches and zero PRs in any state. No PR received a terminal SCM review decision because no PR existed; the guard disposition is recorded here as the cycle's terminal outcome, and the checklist (CR-1…CR-7) is declared PREPARED, not waived — it applies unchanged to the first mechanism PR.
 
-**Stakeholder sanction: GRANTED** — The stakeholder answered "Yes" to sanctioning advancement past the LCO milestone and added "Let's go to elaboration." This reverses the iteration 1 refusal, which was conditioned on correcting the Iteration Plan. Both conditions are now satisfied.
+**Iteration completion verdict (Iteration Acceptance lens):** the iteration's code objectives are **NOT met as of this cycle** — Work Items 7–9 have no SCM evidence, and exit criteria 1–3 (empirical R001/R003/R004 validation) therefore have no code evidence. This is recorded as finding F-CR-E1-1 (Critical). The milestone is NOT declared achieved; no iteration, phase, or milestone is marked complete by this record. The gate remains open: the moment handoffs arrive, the Code Reviewer opens PRs against `iteration/E1` and issues terminal dispositions per PR.
 
-### LCO Exit Criteria Summary
+**SCM evidence summary:** CI green on `main` (run 33492338439) — no red-build finding applies; `iteration/E1` absent; no open PRs; no mechanism code in the build tree.
 
-| # | Criterion | Iter 1 | Iter 2 |
-|---|---|---|---|
-| 1 | Vision clarity | PASS | PASS (preserved) |
-| 2 | Initial risk identification | PASS | PASS (preserved) |
-| 3 | Use case survey level | PASS | PASS (preserved) |
-| 4 | Stakeholder agreement on scope | PASS | PASS (preserved) |
-| 5 | Architecture direction sound | PASS | PASS (preserved) |
-| 6 | DC baseline conformance | PASS | PASS (preserved) |
-| 7 | Optional trigger justification | PASS | PASS (preserved) |
-| 8 | Traceability | **FAIL** (Iteration Plan UC IDs) | **PASS** (F1 resolved) |
-| 9 | Work item status accuracy | **FAIL** (stale statuses) | **PASS** (F2 resolved) |
+**Scope adherence:** no scope-creep finding — the absence of code cannot inflate scope. The expected mechanisms trace cleanly to declared scope: R001→FR-010/CON-005, R003→CON-004, R004→NFR-004/AC-005, all via the Development Case's FIRED PoC trigger and the stakeholder's empirical-validation decision.
 
-**All 9 LCO exit criteria now PASS from the management lens.**
+### Historical — LCO Disposition (Inception, preserved)
 
-### Four-Axis Health Scorecard
-
-| Dimension | Status | Evidence |
-|---|---|---|
-| Scope | GREEN | Stakeholder confirmed scope accepted; 10/10 FRs decomposed into UCs; no scope creep |
-| Schedule | GREEN | 7-iteration roadmap defined; rework iteration completed within cycle; no schedule slip |
-| Cost | GREEN | Token budget tracked; measured actuals recorded in Iteration Assessment; no scope-driven cost overrun |
-| Quality | GREEN | 0 open findings across all 9 artifacts; 100% defect removal efficiency; CI green on main |
-
-### Conditions for LCO Closure
-
-1. ✅ **F1-MR (Major) RESOLVED** — UC ID mapping corrected in Iteration Plan
-2. ✅ **F2-MR (Minor) RESOLVED** — Work item statuses reconciled
-3. ✅ **F1 (Reviewer) RESOLVED** — Same defect, technical lens closure
-4. ✅ **F2 (Reviewer) RESOLVED** — Same defect, technical lens closure
-5. ✅ **Stakeholder sanction GRANTED** — "Yes" to advancing past LCO; "Let's go to elaboration."
-
-**All conditions for LCO closure are satisfied. The project is sanctioned to proceed to Elaboration.**
-
-### Elaboration Entry Conditions (Advisory)
-
-The following conditions should be monitored as the project enters Elaboration — they are not LCO blockers but are critical-path items for Elaboration success:
-
-| Condition | Risk | Action Required | Owner |
-|---|---|---|---|
-| STK-004 engagement for LDAP access | R010 (SIGNIFICANT) | Request LDAP service account before Elaboration Iter 1 | Project Manager |
-| STK-004 engagement for Keycloak client registration | R010 (SIGNIFICANT) | Request OIDC client registration before Elaboration Iter 1 | Project Manager |
-| R001 PoC execution | R001 (HIGH) | Schedule AD LDAP attribute consistency PoC in Elaboration Iter 1 | Software Architect |
-| R003 PoC execution | R003 (SIGNIFICANT) | Schedule OIDC integration PoC in Elaboration Iter 1 | Software Architect |
-| R004 PoC execution | R004 (SIGNIFICANT) | Schedule offline resilience PoC in Elaboration Iter 1 | Software Architect |
+**GO (APPROVED)** — all 9 artifacts passed all 9 LCO exit criteria; both prior findings resolved; zero new findings; stakeholder sanction GRANTED and confirmed; `requiresIteration: false`. The project was sanctioned to proceed to Elaboration. Elaboration entry conditions (STK-004 engagement, R001/R003/R004 PoC scheduling) were recorded as advisory, non-blocking items — of which the PoC items are now the subject of this cycle's Critical finding.
 
 ## Traceability
 
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
-| Review Record (this) | All 9 Inception artifacts + Review Record | Reviews | Iteration Assessment, LCO Milestone Gate |
-| F1-MR resolution | Iteration Plan — UC ID mapping | Derives | Use-Case Model (authority for UC IDs) |
-| F2-MR resolution | Iteration Plan — Work Items table | Derives | All produced Draft artifacts (status reconciliation) |
-| Compliance Matrix | LCO exit criteria (RUP) | Refines | LCO Milestone Gate |
-| Defect Distribution | All 9 artifacts | Refines | Review Effectiveness Metrics |
-| Risk Retirement Status | Risk List (R001–R010) | Refines | Elaboration PoC Plan |
-| Milestone Timeline | Iteration Plan coarse roadmap | Refines | All subsequent Iteration Plans |
-| Iter 1 findings (historical) | Review Record (Iter 1) | Refines | This Review Record (Iter 2) |
-| Stakeholder sanction (Iter 2) | Stakeholder answer: "Yes" / "Let's go to elaboration." | Authorizes | Phase transition: Inception → Elaboration |
-| Review Effectiveness Metrics | Review coverage, defect density | Refines | Iteration Assessment |
-| Elaboration Entry Conditions | R001, R003, R004, R010 | DependsOn | Elaboration Iteration 1 Plan |
+| Review Record (this, Elaboration Iter 1) | Work Order (Elab Iter 1); BRANCHING_STRATEGY §5.2, §8; Iteration Plan WIs 7–9 + exit criteria 1–3; Development Case (PoC trigger FIRED + stakeholder decision); SAD; Design Model | Reviews | Elaboration Iter 1 Iteration Assessment; LCA milestone gate; Integrator (A-1); Implementer (A-2…A-5) |
+| F-CR-E1-1 (Critical) | Iteration Plan WIs 7–9; exit criteria 1–3; stakeholder decision ("The PoC is produced in Elaboration and validated empirically"); BRANCHING_STRATEGY invariants 8.1, 8.2, 8.4 | Derives | A-1…A-4, A-6; R001, R003, R004 retirement evidence; Architectural Proof-of-Concept artifact |
+| F-CR-E1-2 (Minor) | Development Case § Tool Configuration References (CONTRIBUTING.md gap); RUP Ch.11 guidelines-conformance rule | Derives | A-5; CR-1 checklist item; first mechanism PR review |
+| Checklist CR-1…CR-7 | RUP Ch.11 (code review); SAD/Design Model baselines; BRANCHING_STRATEGY | Refines | Every Elaboration mechanism PR; Construction feature PRs |
+| Expected mechanisms (R001/R003/R004) | FR-010/CON-005 (R001); CON-004 (R003); NFR-004/AC-005 (R004); SAD COMP-007/COMP-006/COMP-009; Design Model CLS-009/CLS-010/CLS-008 | Realizes | Exit criteria 1–3; LCA evidence package |
+| SCM evidence snapshot | scm_list_branches_with_label, scm_list_pull_requests, scm_get_repo_tree, scm_get_build_status (executed 2026-09-01) | DependsOn | F-CR-E1-1; Disposition (No-PRs-To-Review) |
+| Historical LCO record | Inception artifacts (9); prior Review Record revision | Refines | This cumulative Review Record (never overwritten) |
+| Prior findings F1/F2 (Inception) | Iteration Plan; Use-Case Model (UC-ID authority) | Reviews | RESOLVED — verified Inception Iter 2; zero findings carried open into Elaboration |
