@@ -1,12 +1,1497 @@
 ## Document Control
+
 | Field | Value |
 |---|---|
 | Phase | Elaboration |
 | Status | Draft |
 | Milestone Target | End of Elaboration (LCA) |
 | Iteration | 1 (Cycle 1) |
-| Contributions (Elab Iter 1) | **User Interface Designer** — §Boundary Classes and Navigation Map (screen registry SCR-01…SCR-09, M-01, EX-01; UI boundary classes; Navigation Map; UI Patterns P-01…P-07) — PRESERVED. **Designer** — §Design Overview, §Domain Model (analysis classes ACL-001…ACL-026 + attribution), §Use-Case Realizations (SEQ-001…SEQ-010), §Design Packages and Classes (CLS-001…CLS-026), §Interface Contracts (INT-006…INT-019), §Capsules, Protocols and Signals (omission note), §Traceability (merged) — this update. **Database Designer** — §Persistent Data Classes — PENDING (not yet contributed this iteration; the SAD §Data View schema is the interim reference for entity mapping). |
+| Contributions (Elab Iter 1) | **User Interface Designer** — §Boundary Classes and Navigation Map (screen registry SCR-01…SCR-09, M-01, EX-01; UI boundary classes; Navigation Map; UI Patterns P-01…P-07) — PRESERVED verbatim. **Designer** — §Design Overview, §Domain Model (analysis classes ACL-001…ACL-026 + attribution), §Use-Case Realizations (SEQ-001…SEQ-010), §Design Packages and Classes (CLS-001…CLS-027, state machines), §Interface Contracts (INT-006…INT-019), §Capsules omission note, §Traceability (merged) — this update. **Database Designer** — §Persistent Data Classes — PENDING (not yet contributed this iteration; the SAD §Data View schema is the interim reference; entity attributes in §Domain Model are the design-side specification). |
 | Upstream inputs | Use-Case Model (UC-001…UC-010, all FULL, UI Flow References); Supplementary Specification (SEC-001…007, AUD-001…005, DAT-001/002, USA-001…009, REL-001…004, PRF-001…003, SUP-004, DC-001…010, INT-001…005, STD-001…005); Software Architecture Document (COMP-001…COMP-011, subsystem interfaces, ADR-001…004, timestamp convention: store UTC / display America/Havana / export ISO-8601 with explicit offset / payroll day = local calendar day); Review Record (zero open findings on the Design Model) |
+| Optional artifacts | Data Model — [OMITTED: trigger not fired per Development Case §5.2 (data lives inline in this Design Model)] |
+
+## Design Overview
+
+The Design Model translates the ten declared use cases (UC-001…UC-010) into collaborations of design classes **within** the Software Architecture Document's subsystem baseline (COMP-001…COMP-011, ADR-001…004). It is the single design model for the portal — every class, interface, realization, and state machine below belongs to it. The Implementer codes from this model; nothing is implemented that is not realized here.
+
+### Design Decisions (Elaboration Iter 1)
+
+1. **Layering (ADR-001):** dependencies point DOWN only — Presentation (CLS-017…CLS-020) → Application services (CLS-001…CLS-007) → Infrastructure (CLS-008…CLS-016). Every cross-package reference is an interface, never a concrete class (SAD cohesion rule).
+2. **Authentication at the request boundary (SAD Elaboration refinement):** the OIDC middleware (COMP-006 / CLS-010) authenticates and authorizes before a controller executes; controllers receive an `AuthenticatedUser` (uid + roles from claims) as a parameter. No service calls IAUTH — the per-service coupling of the Inception candidate is removed.
+3. **Timestamp convention (stakeholder decision, Elab Iter 1) owned by one class:** CLS-007 TimeService is the single owner of "store UTC, display America/Havana (IANA, DST-aware), export ISO-8601 with explicit offset, payroll day = local calendar day". No other class converts time.
+4. **Audit atomicity (DAT-002):** CLS-005 AuditService **stages** its entry via the audit repositories; the orchestrating service's single `SaveChanges()` commits the state change AND the audit entry in ONE transaction. A failed audit write rolls back the state change — no state change can exist without its trail entry.
+5. **Soft delete (CON-012):** CLS-022 NewsItem has NO delete path — `Status: Published | Unpublished` only. Unpublished records are retained and audited; the state machine (§Design Packages and Classes) makes Unpublished terminal.
+6. **Idempotent receiver (REL-002):** CLS-001 ClockingService.RecordEvent carries a client-generated idempotency key; the UNIQUE constraint in PostgreSQL (not application locking) is the duplicate-suppression point.
+7. **No Employee entity (CON-006):** `EmployeeUid: string` references the AD user id everywhere; display data is resolved live from AD via CLS-009 LdapGateway. The portal stores no name, title, department, office, email, or extension.
+8. **Timestamp capture at the boundary (DAT-001):** the HomeView page script captures `recordedAtUtc` (UTC) and the idempotency key at the moment of the button press — the SAME capture on the online and offline paths, so a queued event replays with its original recorded timestamp unchanged.
+
+### Mechanism Resolution (Three-Level Chain)
+
+Every analysis mechanism is resolved to a design mechanism (pattern + properties). Implementation mechanisms are named **only** where the stakeholder declared the technology.
+
+| Analysis Mechanism | Design Mechanism (pattern + properties) | Implementation Mechanism (declared only) |
+|---|---|---|
+| Persistence | Repository + Unit-of-Work over a transactional relational store: CLS-011 PgPersistence owns the DbContext; per-aggregate repositories (CLS-012…CLS-016) behind INT-015…INT-019; audit writes share the caller's transaction (DAT-002); `idempotency_key` UNIQUE (REL-002) | PostgreSQL via EF Core + Npgsql 10.0.3 (CON-003, ADR-002) |
+| Audit trail | Append-only entry objects (CLS-023, CLS-025) staged by CLS-005 AuditService, committed by the orchestrator in-transaction; `Snapshot` column versions every edit (AUD-002); no UPDATE/DELETE path exists (DAT-002) | PostgreSQL tables `news_audit` / `category_audit` (SAD §Data View) |
+| Time convention | CLS-007 TimeService: capture UTC at button press (DAT-001); convert display to America/Havana; format export as ISO-8601 with the offset in force at event time; compute month boundaries as local calendar days | .NET 10 `TimeZoneInfo` (IANA zones) — declared stack CON-001 |
+| Offline resilience | Client-side ordered queue (CLS-008 OfflineQueueClient, localStorage, capacity ≥ 10, ordered by recorded timestamp) + idempotent sync endpoint; UNIQUE key rejects exact duplicates; sync ≤ 60 s (REL-002/003) | Browser localStorage + PostgreSQL UNIQUE constraint (ADR-003) |
+| Authentication | OIDC middleware at the request boundary; roles read from claims (SEC-002/006); services receive the authenticated identity as a parameter | Keycloak OIDC (CON-004 — external, portal is client only) |
+| Directory query | CLS-009 LdapGateway: read-only LDAP v3 queries, 5 s hard timeout (PRF-003), graceful degradation — missing attributes are null, the entry is NOT hidden (R001); no local copy (CON-006) | Active Directory over LDAP v3 (CON-005, CON-007) |
+| Report export | CLS-006 ReportExportService encapsulates CSV column set v1; month boundaries computed in America/Havana local time; aborts on AD unavailable — no partial file (UC-006 AF-2) | CSV per STD-003 |
+| Category list | Fixed list loaded from external configuration at startup; no CRUD path exists anywhere in the portal (CON-013) | `worker-categories.json` (ADR-004) |
+
+### Design Patterns Applied
+
+| Pattern | Application | Rationale |
+|---|---|---|
+| Repository + Unit of Work | CLS-011 + CLS-012…CLS-016 behind INT-015…INT-019 | Single data-access seam; IPersistence fakeable in tests; transaction scope explicit (audit atomicity) |
+| Facade | CLS-001…CLS-004 facade infrastructure for the Presentation layer | Controllers depend on 4 service interfaces, not on 5+ infrastructure interfaces |
+| Soft Delete | CLS-022 NewsItem.Status | CON-012 — no hard delete; record retained for audit |
+| Idempotent Receiver | CLS-001.RecordEvent(idempotencyKey) + UNIQUE constraint | REL-002 — offline replay never duplicates |
+| Strategy (encapsulated query) | CLS-009 LdapGateway owns filter construction + attribute mapping | R001 volatility: query/fallback changes touch one class |
+| GRASP Controller | CLS-017…CLS-020 receive system events, delegate to services | Non-UI owner of interaction logic (button disable, 2 s ignore window, queue delegation) |
+| GRASP Information Expert | CLS-022 NewsItem validates and applies its own edits; CLS-021 ClockingEvent is immutable after capture | Validation next to the data it needs |
+| Dependency Injection | Composition root (`Program.cs`) wires INT-006…INT-019 to implementations | Testability entry points below |
+
+### Testability Entry Points
+
+- **Every subsystem boundary is an interface** (INT-006…INT-019): the Implementer injects fakes for IPersistence, ILdapGateway, ITimeConvention, IAuditService in unit tests — no database, AD, or Keycloak required.
+- **CLS-007 TimeService is injectable everywhere time is read** — tests fix the clock; DST-boundary behavior (USA-008) is testable without waiting for a clock change.
+- **CLS-009 LdapGateway is fakeable** — R001 graceful-degradation tests (missing attributes → blank fields, entry not hidden) run without AD; the real-AD integration test waits on R010 (STK-004 service account).
+- **CLS-005 AuditService is observable** — every state-changing operation's test asserts an append-only audit row committed in the same transaction (DAT-002).
+- **CLS-008 OfflineQueueClient** is exercised by the AC-005 automated test (5-minute drop simulation) against the idempotent sync endpoint.
+
+## Domain Model
+
+### Analysis Classes (ACL-001…ACL-026)
+
+Analysis classes per use case, stereotyped boundary / control / entity. Boundary classes are detailed by the User Interface Designer in §Boundary Classes and Navigation Map; the analysis view below fixes the complete responsibility map that the design classes realize.
+
+```plantuml
+@startuml
+title Employee Portal — Analysis Classes (ACL-001…ACL-026) — Elaboration Iter 1
+skinparam classAttributeIconSize 0
+skinparam fontSize 10
+skinparam packageStyle rectangle
+
+package "Boundary (screens — detailed in §Boundary Classes and Navigation Map)" {
+  class "ACL-001 HomeView (SCR-01)\nUC-001, UC-003" as B01 <<boundary>>
+  class "ACL-002 ClockingHistoryView (SCR-02)\nUC-002" as B02 <<boundary>>
+  class "ACL-003 NewsView (SCR-03)\nUC-003" as B03 <<boundary>>
+  class "ACL-004 DirectoryView (SCR-04)\nUC-004" as B04 <<boundary>>
+  class "ACL-005 ClockingReportView (SCR-05)\nUC-005, UC-006" as B05 <<boundary>>
+  class "ACL-006 WorkerCategoriesView (SCR-06)\nUC-007" as B06 <<boundary>>
+  class "ACL-007 NewsFormView (SCR-07)\nUC-008, UC-009" as B07 <<boundary>>
+  class "ACL-008 NewsManagementView (SCR-08)\nUC-009, UC-010" as B08 <<boundary>>
+  class "ACL-009 AccessDeniedView (SCR-09)\nUC-005 EF-1, UC-009 EF-1" as B09 <<boundary>>
+}
+
+package "Control" {
+  class "ACL-010 ClockingController\nUC-001, UC-002, UC-005, UC-006" as C01 <<control>>
+  class "ACL-011 NewsController\nUC-003, UC-008, UC-009, UC-010" as C02 <<control>>
+  class "ACL-012 DirectoryController\nUC-004" as C03 <<control>>
+  class "ACL-013 CategoryController\nUC-007" as C04 <<control>>
+  class "ACL-014 ClockingHandler -> CLS-001\nUC-001, UC-002, UC-005" as C05 <<control>>
+  class "ACL-015 NewsHandler -> CLS-002\nUC-003, UC-008, UC-009, UC-010" as C06 <<control>>
+  class "ACL-016 DirectoryHandler -> CLS-003\nUC-004" as C07 <<control>>
+  class "ACL-017 CategoryHandler -> CLS-004\nUC-007" as C08 <<control>>
+  class "ACL-018 AuditHandler -> CLS-005\ncross-cutting (UC-007…UC-010)" as C09 <<control>>
+  class "ACL-019 ReportHandler -> CLS-006\nUC-006" as C10 <<control>>
+  class "ACL-020 TimeKeeper -> CLS-007\ncross-cutting (UC-001, UC-002, UC-005, UC-006)" as C11 <<control>>
+}
+
+package "Entity" {
+  class "ACL-021 ClockingEvent -> CLS-021\nUC-001, UC-002, UC-005, UC-006" as E01 <<entity>>
+  class "ACL-022 NewsItem -> CLS-022\nUC-003, UC-008, UC-009, UC-010" as E02 <<entity>>
+  class "ACL-023 NewsAuditEntry -> CLS-023\nUC-008, UC-009, UC-010" as E03 <<entity>>
+  class "ACL-024 WorkerCategory -> CLS-024\nUC-007" as E04 <<entity>>
+  class "ACL-025 CategoryAuditEntry -> CLS-025\nUC-007" as E05 <<entity>>
+  class "ACL-026 DirectoryEntry -> CLS-026\nUC-004, UC-005, UC-006, UC-007\n(transient — AD-sourced)" as E06 <<entity>>
+}
+
+B01 --> C01
+B02 --> C01
+B05 --> C01
+B03 --> C02
+B07 --> C02
+B08 --> C02
+B04 --> C03
+B06 --> C04
+
+C01 --> C05
+C01 --> C10 : UC-006 export
+C02 --> C06
+C03 --> C07
+C04 --> C08
+
+C05 --> E01
+C05 --> C11
+C06 --> E02
+C06 --> C09
+C07 --> E06
+C08 --> E04
+C08 --> C09
+C09 --> E03
+C09 --> E05
+C10 --> E01
+C10 --> C11
+C10 --> E06
+
+note bottom of E06
+  DirectoryEntry is transient: read
+  from AD on demand, never persisted
+  (CON-006). Missing attributes are
+  null — the entry is NOT hidden (R001).
+end note
+
+note right of C09
+  Audit is a cross-cutting mechanism
+  (NFR-005), included from UC-007,
+  UC-008, UC-009, UC-010 — never a
+  standalone use case.
+end note
+
+note right of C11
+  TimeKeeper owns the timestamp
+  convention (stakeholder decision,
+  Elab Iter 1): store UTC, display
+  America/Havana, export ISO-8601
+  with explicit offset, payroll
+  day = local calendar day.
+end note
+@enduml
+```
+
+### Analysis-to-Design Attribution
+
+Every analysis class maps to a design class or set of design classes — no analysis class disappears between models.
+
+| Analysis Class | Stereotype | Realized By (design) | Notes |
+|---|---|---|---|
+| ACL-001…ACL-009 (views) | boundary | View classes — §Boundary Classes and Navigation Map (UI Designer) | Rendering only; interaction logic lives in controllers |
+| ACL-010 ClockingController | control | CLS-017 ClockingController | GRASP Controller for clocking + report system events |
+| ACL-011 NewsController | control | CLS-018 NewsController | News lifecycle system events |
+| ACL-012 DirectoryController | control | CLS-019 DirectoryController | Directory search system events |
+| ACL-013 CategoryController | control | CLS-020 CategoryController | Category assignment system events |
+| ACL-014 ClockingHandler | control | CLS-001 ClockingService (COMP-001) | + CLS-008 OfflineQueueClient (AF-1 mechanism) |
+| ACL-015 NewsHandler | control | CLS-002 NewsService (COMP-002) | Soft delete + audit delegation |
+| ACL-016 DirectoryHandler | control | CLS-003 DirectoryService (COMP-003) | Delegates queries to CLS-009 LdapGateway |
+| ACL-017 CategoryHandler | control | CLS-004 CategoryService (COMP-004) | Fixed list from worker-categories.json (ADR-004) |
+| ACL-018 AuditHandler | control | CLS-005 AuditService (COMP-005) | Cross-cutting; staged append, orchestrator commits (DAT-002) |
+| ACL-019 ReportHandler | control | CLS-006 ReportExportService (COMP-010) | CSV column set v1; local-time month boundaries |
+| ACL-020 TimeKeeper | control | CLS-007 TimeService (COMP-011) | Single owner of the timestamp convention |
+| ACL-021 ClockingEvent | entity | CLS-021 ClockingEvent | Immutable after capture (DAT-001) |
+| ACL-022 NewsItem | entity | CLS-022 NewsItem | State machine in §Design Packages and Classes |
+| ACL-023 NewsAuditEntry | entity | CLS-023 NewsAuditEntry | Append-only (DAT-002) |
+| ACL-024 WorkerCategory | entity | CLS-024 WorkerCategory | Two data columns only (CON-006) |
+| ACL-025 CategoryAuditEntry | entity | CLS-025 CategoryAuditEntry | old + new value (AUD-004) |
+| ACL-026 DirectoryEntry | entity (transient) | CLS-026 DirectoryEntry | AD-sourced; never persisted |
+| — (mechanism, not analysis class) | — | CLS-008…CLS-016, CLS-027 | Infrastructure design classes realizing the mechanisms resolved in §Design Overview |
+
+### Domain Model (persistent entities + transient directory data)
+
+```plantuml
+@startuml
+title Employee Portal — Domain Model (persistent entities + transient directory data)
+skinparam classAttributeIconSize 0
+skinparam fontSize 11
+
+class "CLS-021 ClockingEvent" as ClockingEvent <<entity>> {
+  +Id: int
+  +EmployeeUid: string
+  +EventType: ClockingEventType
+  +RecordedAtUtc: DateTimeOffset
+  +IdempotencyKey: string
+  +SyncedAtUtc: DateTimeOffset?
+}
+
+class "CLS-022 NewsItem" as NewsItem <<entity>> {
+  +Id: int
+  +Title: string
+  +Body: string
+  +Category: NewsCategory
+  +IsFeatured: bool
+  +Status: NewsStatus
+  +PublishedAtUtc: DateTimeOffset
+  +CreatedByUid: string
+  +CreatedAtUtc: DateTimeOffset
+  +UpdatedByUid: string?
+  +UpdatedAtUtc: DateTimeOffset?
+  +Validate(): Result
+  +ApplyEdit(request: NewsFormRequest, editorUid: string): void
+  +Unpublish(): void
+}
+
+class "CLS-023 NewsAuditEntry" as NewsAuditEntry <<entity>> {
+  +Id: int
+  +NewsId: int
+  +Action: NewsAuditAction
+  +ActorUid: string
+  +TimestampUtc: DateTimeOffset
+  +Snapshot: string
+}
+
+class "CLS-024 WorkerCategory" as WorkerCategory <<entity>> {
+  +EmployeeUid: string
+  +Category: string
+  +AssignedByUid: string
+  +AssignedAtUtc: DateTimeOffset
+}
+
+class "CLS-025 CategoryAuditEntry" as CategoryAuditEntry <<entity>> {
+  +Id: int
+  +EmployeeUid: string
+  +OldCategory: string?
+  +NewCategory: string
+  +ActorUid: string
+  +TimestampUtc: DateTimeOffset
+}
+
+class "CLS-026 DirectoryEntry" as DirectoryEntry <<transient>> {
+  +DisplayName: string?
+  +JobTitle: string?
+  +Department: string?
+  +Office: string?
+  +Email: string?
+  +Extension: string?
+}
+
+class "CLS-027 EmployeeDisplayData" as EmployeeDisplayData <<transient>> {
+  +DisplayName: string?
+  +Department: string?
+  +Office: string?
+}
+
+NewsItem "1" -- "0..*" NewsAuditEntry : audit trail\n(append-only — DAT-002)
+ClockingEvent ..> DirectoryEntry : EmployeeUid resolves via\nAD on demand (never stored)
+WorkerCategory ..> DirectoryEntry : EmployeeUid resolves via\nAD on demand
+CategoryAuditEntry ..> DirectoryEntry : EmployeeUid resolves via\nAD on demand
+
+note bottom of ClockingEvent
+  No Employee entity exists in the
+  portal (CON-006): EmployeeUid is a
+  string reference to the AD user id.
+  The portal stores no name, title,
+  department, office, email, or
+  extension — read live from AD
+  (CON-005). IdempotencyKey carries a
+  UNIQUE constraint (REL-002).
+  Immutable after capture (DAT-001) —
+  no update path exists.
+end note
+
+note right of NewsItem
+  Status: Published | Unpublished.
+  No Deleted state exists — CON-012
+  forbids hard delete; unpublished
+  records are retained for the
+  audit trail. Snapshot in
+  NewsAuditEntry records every
+  version (AUD-002). State machine
+  in §Design Packages and Classes.
+end note
+@enduml
+```
+
+**No-Employee-entity rule (CON-006):** every table and every transient object references the AD user id as a string. `CLS-026 DirectoryEntry` (six corporate fields, FR-010) and `CLS-027 EmployeeDisplayData` (three display fields for HR views, UC-005/006/007) are read-only projections of AD — constructed by CLS-009 LdapGateway, never persisted, never cached beyond the request.
+
+## Use-Case Realizations
+
+One realization per declared use case — the collaboration of design objects that implements the flow of events. Main flow, alternative flows (AF), and exception flows (EF) are shown in each sequence diagram. Participant IDs reference the design classes in §Design Packages and Classes.
+
+| SEQ | Use Case | Participating design classes | Flows realized |
+|---|---|---|---|
+| SEQ-001 | UC-001 Clock In and Clock Out | CLS-017, CLS-001, CLS-007, CLS-008, CLS-011, CLS-012 | Main, AF-1 (offline queue + sync), AF-2 (session), AF-3 (2 s ignore) |
+| SEQ-002 | UC-002 View Own Clocking History | CLS-017, CLS-001, CLS-007, CLS-011, CLS-012 | Main, AF-1 (empty), AF-2 (queued note), EF-1 (PG down) |
+| SEQ-003 | UC-003 Browse News | CLS-018, CLS-002, CLS-013 | Main, AF-1 (empty category), AF-2 (no news), EF-1 (PG down) |
+| SEQ-004 | UC-004 Search Employee Directory | CLS-019, CLS-003, CLS-009 | Main, AF-1 (no results), AF-2 (missing attrs), AF-3 (LDAP down) |
+| SEQ-005 | UC-005 Review Employee Clockings | CLS-017, CLS-001, CLS-003, CLS-009, CLS-011 | Main, AF-1 (no match), AF-2 (AD down), EF-1 (role denial) |
+| SEQ-006 | UC-006 Export Monthly Clocking Report | CLS-017, CLS-006, CLS-007, CLS-003, CLS-009, CLS-011 | Main, AF-1 (no data), AF-2 (AD down — abort) |
+| SEQ-007 | UC-007 Assign Worker Category | CLS-020, CLS-004, CLS-003, CLS-009, CLS-005, CLS-011 | Main, AF-1 (unchanged), AF-2 (AD down) |
+| SEQ-008 | UC-008 Publish News | CLS-018, CLS-002, CLS-005, CLS-011 | Main, AF-1 (validation) |
+| SEQ-009 | UC-009 Edit Published News | CLS-018, CLS-002, CLS-005, CLS-011 | Main, AF-1 (validation), AF-2 (concurrent unpublish), EF-1 (role denial) |
+| SEQ-010 | UC-010 Unpublish News | CLS-018, CLS-002, CLS-005, CLS-011 | Main, AF-1 (cancel), AF-2 (already unpublished) |
+
+### SEQ-001 — UC-001: Clock In and Clock Out (FR-004, NFR-002, NFR-004, AC-005, DAT-001)
+
+```plantuml
+@startuml
+title SEQ-001: UC-001 Clock In and Clock Out — Realization (FR-004, NFR-002, NFR-004, AC-005, DAT-001)
+
+actor "Employee (ACT-001)" as EMP
+participant "HomeView (SCR-01)\npage script" as VIEW
+participant "OIDC Middleware\n(COMP-006 / CLS-010)" as MW
+participant "ClockingController\n(CLS-017)" as CTL
+participant "ClockingService\n(CLS-001)" as CLK
+participant "TimeService\n(CLS-007)" as TIME
+participant "OfflineQueueClient\n(CLS-008, browser)" as QUEUE
+participant "PgPersistence\n(CLS-011)" as PG
+
+== Main flow (online) ==
+EMP -> VIEW : open portal
+VIEW -> MW : GET / (session cookie)
+MW -> MW : validate OIDC token\n(redirect to Keycloak if expired — AF-2)
+MW --> CTL : OnGet(user: AuthenticatedUser)
+CTL -> CLK : GetCurrentStatus(user.Uid)
+CLK -> PG : Clockings.GetByEmployeeAndRange(\nuid, fromUtc, toUtc)
+PG --> CLK : Task<IReadOnlyList<ClockingEvent>>
+CLK --> CTL : ClockingStatus (ClockedIn | NotClockedIn)\n(most recent event rule)
+CTL -> TIME : ToLocalDisplay(lastEvent.RecordedAtUtc)
+TIME --> CTL : local string (America/Havana — USA-008)
+CTL --> VIEW : model: status chip + status-aware button
+VIEW --> EMP : green "Clock In" / red "Clock Out" (USA-001)
+
+EMP -> VIEW : press button
+VIEW -> VIEW : capture recordedAtUtc (UTC) at press\n+ idempotencyKey = NewGuid()\n(DAT-001; same capture in BOTH paths —\nsee design decision D-8)
+VIEW -> VIEW : disable button;\nignore repeat press < 2 s (AF-3)
+VIEW -> CTL : POST /api/clockings\n(RecordClockingRequest)
+CTL -> CLK : RecordEvent(request)
+CLK -> PG : Clockings.Add(@event);\nSaveChanges()
+PG --> CLK : ok — UNIQUE idempotency_key\nenforced (REL-002)
+CLK --> CTL : ClockingResult.Confirmed
+CTL -> TIME : ToLocalDisplay(recordedAtUtc)
+TIME --> CTL : "08:58:12"
+CTL --> VIEW : 200 OK + confirmation
+VIEW --> EMP : "Clocked in at 08:58:12"\n(< 1 s — PRF-002)
+
+== AF-1: portal server unreachable (NFR-004, AC-005) ==
+EMP -> VIEW : press button (network down)
+VIEW -> CTL : POST /api/clockings — fetch fails
+VIEW -> QUEUE : Enqueue(QueuedClockingEvent)\nordered by RecordedAtUtc,\ncapacity >= 10 (REL-002)
+QUEUE --> VIEW : queued
+VIEW -> VIEW : format local time\n(Intl, IANA America/Havana —\nsame convention as CLS-007)
+VIEW --> EMP : confirmation from queued data\n+ "will sync when connection returns"\n(< 1 s — PRF-002 offline path)
+... connectivity restored ...
+QUEUE -> CTL : POST /api/clockings/sync\n(IEnumerable<ClockingEventDto>)
+CTL -> CLK : SyncEvents(events)
+CLK -> PG : Clockings.AddRange(events);\nSaveChanges()
+PG --> CLK : exact duplicates rejected\n(ON CONFLICT idempotency_key DO NOTHING)
+CLK --> CTL : SyncResult(persisted, duplicatesRejected)
+CTL --> QUEUE : 200 OK — queue cleared\n(all events persisted <= 60 s — REL-003)
+@enduml
+```
+
+### SEQ-002 — UC-002: View Own Clocking History (FR-005, SEC-007, USA-008)
+
+```plantuml
+@startuml
+title SEQ-002: UC-002 View Own Clocking History — Realization (FR-005, SEC-007, USA-008)
+
+actor "Employee (ACT-001)" as EMP
+participant "ClockingHistoryView\n(SCR-02)" as VIEW
+participant "OIDC Middleware\n(COMP-006)" as MW
+participant "ClockingController\n(CLS-017)" as CTL
+participant "ClockingService\n(CLS-001)" as CLK
+participant "TimeService\n(CLS-007)" as TIME
+participant "PgPersistence\n(CLS-011)" as PG
+
+EMP -> VIEW : select "My Clocking History"
+VIEW -> MW : GET /history
+MW --> CTL : OnGetHistory(user: AuthenticatedUser)
+CTL -> TIME : MonthBoundsLocal(currentYear, currentMonth)
+TIME --> CTL : (fromUtc, toUtc) — current month as\nlocal calendar days in America/Havana\n(payroll day = local day, never server's)
+CTL -> CLK : GetHistory(user.Uid, fromUtc, toUtc)
+note right of CLK
+  SEC-007: employeeUid is taken from
+  the authenticated claims, never
+  from the request — a user can
+  only ever query their own data.
+end note
+CLK -> PG : Clockings.GetByEmployeeAndRange(\nuid, fromUtc, toUtc)
+alt events exist
+  PG --> CLK : Task<IReadOnlyList<ClockingEvent>>
+  CLK --> CTL : events
+  CTL -> TIME : ToLocalDisplay(each event)
+  TIME --> CTL : local strings (USA-008)
+  CTL --> VIEW : model: rows (Date, Clock In, Clock Out)
+  VIEW --> EMP : current-month history table
+else no events this month (AF-1)
+  PG --> CLK : empty list
+  CLK --> CTL : events (0)
+  CTL --> VIEW : empty-state model (P-05)
+  VIEW --> EMP : "No clockings yet this month"
+end
+note over VIEW
+  AF-2: events queued locally under UC-001 AF-1
+  appear only after sync; until then the
+  table reflects the last synced state.
+  The page script shows a note when the
+  local queue is non-empty.
+end note
+== EF-1: PostgreSQL unreachable ==
+PG --> CLK : throws PersistenceUnavailable
+CLK --> CTL : propagates
+CTL --> VIEW : "History temporarily unavailable"\n(no partial or cached data — P-05)
+VIEW --> EMP : unavailable message; retry offered
+@enduml
+```
+
+### SEQ-003 — UC-003: Browse News (FR-007, USA-007)
+
+```plantuml
+@startuml
+title SEQ-003: UC-003 Browse News — Realization (FR-007, USA-007)
+
+actor "Employee (ACT-001)" as EMP
+participant "NewsView\n(SCR-03 / SCR-01 banner)" as VIEW
+participant "OIDC Middleware\n(COMP-006)" as MW
+participant "NewsController\n(CLS-018)" as CTL
+participant "NewsService\n(CLS-002)" as NEWS
+participant "PgPersistence\n(CLS-011)" as PG
+
+EMP -> VIEW : open News (or Home)
+VIEW -> MW : GET /news [category: NewsCategory?]
+MW --> CTL : OnGetNews(user: AuthenticatedUser,\ncategory: NewsCategory?)
+CTL -> NEWS : GetPublishedNews(category)
+NEWS -> PG : News.GetPublished(category)
+alt published items exist
+  PG --> NEWS : Task<IReadOnlyList<NewsItem>>\nsorted by PublishedAtUtc desc (newest first)
+  NEWS --> CTL : items
+  CTL --> VIEW : model: featured banner (IsFeatured)\n+ list, category chips (All/General/HR/IT/Events)
+  VIEW --> EMP : featured banner at top + news list
+  opt employee selects a category filter
+    EMP -> VIEW : select chip
+    VIEW -> CTL : GET /news?category=HR
+    CTL -> NEWS : GetPublishedNews(NewsCategory.HR)
+    NEWS -> PG : News.GetPublished(HR)
+    alt items in category
+      PG --> NEWS : items
+      NEWS --> CTL : filtered items
+      CTL --> VIEW : filtered list
+      VIEW --> EMP : filtered list
+    else no items in category (AF-1)
+      PG --> NEWS : empty list
+      NEWS --> CTL : items (0)
+      CTL --> VIEW : "No news in this category" (P-05)
+      VIEW --> EMP : empty-category message
+    end
+  end
+else no published news at all (AF-2)
+  PG --> NEWS : empty list
+  NEWS --> CTL : items (0)
+  CTL --> VIEW : empty-state model (P-05)
+  VIEW --> EMP : empty-state message
+end
+note over NEWS
+  Unpublished items (UC-010) are NEVER
+  returned: GetPublished filters
+  Status == Published. Read-only for
+  employees — no comments, no reactions.
+end note
+== EF-1: PostgreSQL unreachable ==
+PG --> NEWS : throws PersistenceUnavailable
+NEWS --> CTL : propagates
+CTL --> VIEW : "News temporarily unavailable"\n(no partial list — P-05)
+VIEW --> EMP : unavailable message
+@enduml
+```
+
+### SEQ-004 — UC-004: Search Employee Directory (FR-010, R001, PRF-003, AC-003)
+
+```plantuml
+@startuml
+title SEQ-004: UC-004 Search Employee Directory — Realization (FR-010, R001, PRF-003, AC-003)
+
+actor "Employee (ACT-001)" as EMP
+participant "DirectoryView\n(SCR-04)" as VIEW
+participant "OIDC Middleware\n(COMP-006)" as MW
+participant "DirectoryController\n(CLS-019)" as CTL
+participant "DirectoryService\n(CLS-003)" as DIR
+participant "LdapGateway\n(CLS-009)" as LDAP
+database "Active Directory\n(ACT-003)" as AD
+
+EMP -> VIEW : enter criteria (name / department / office)
+VIEW -> MW : GET /directory (DirectorySearchCriteria)
+MW --> CTL : OnGetDirectory(user, criteria)
+CTL -> DIR : Search(criteria)
+DIR -> LDAP : Search(criteria)
+LDAP -> AD : LDAP v3 search, read-only\n(5 s hard timeout — PRF-003)
+alt AD responds in time
+  AD --> LDAP : matching entries
+  LDAP --> DIR : IReadOnlyList<DirectoryEntry>\n(missing attributes = null — R001)
+  alt entries found
+    DIR --> CTL : DirectoryResult(entries)
+    CTL --> VIEW : model: person cards
+    VIEW --> EMP : cards: name, job title, department,\noffice, email, extension — all six fields\non the card (USA-003); missing fields\nblank, entry NOT hidden (AF-2, R001)
+  else no matches (AF-1)
+    LDAP --> DIR : empty list
+    DIR --> CTL : DirectoryResult(0 entries)
+    CTL --> VIEW : "No colleagues found"\n+ refine suggestion (P-05)
+    VIEW --> EMP : no-results message
+  end
+else timeout or connection failure (AF-3)
+  LDAP --> DIR : throws DirectoryUnavailableException
+  DIR --> CTL : propagates
+  CTL --> VIEW : "Directory temporarily unavailable"\n(no local fallback — CON-006, P-05)
+  VIEW --> EMP : unavailable message
+end
+note over LDAP
+  CON-005/CON-006/CON-007: query is
+  live, read-only, on demand. No portal
+  table caches directory data. Total
+  task <= 10 s including typing (AC-003).
+end note
+@enduml
+```
+
+### SEQ-005 — UC-005: Review Employee Clockings (FR-001, SEC-006, CON-005/006)
+
+```plantuml
+@startuml
+title SEQ-005: UC-005 Review Employee Clockings — Realization (FR-001, SEC-006, CON-005/006)
+
+actor "HR Administrator (ACT-002)" as HR
+participant "ClockingReportView\n(SCR-05)" as VIEW
+participant "OIDC Middleware\n(COMP-006 / CLS-010)" as MW
+participant "ClockingController\n(CLS-017)" as CTL
+participant "ClockingService\n(CLS-001)" as CLK
+participant "DirectoryService\n(CLS-003)" as DIR
+participant "LdapGateway\n(CLS-009)" as LDAP
+participant "PgPersistence\n(CLS-011)" as PG
+
+== EF-1: role denial (checked BEFORE the controller) ==
+HR -> MW : GET /hr/clockings (Employee-role session)
+MW -> MW : HR Administrator role not in claims (SEC-006)
+MW --> VIEW : redirect SCR-09 Access Denied\n(no data revealed)
+VIEW --> HR : access denied; "Back to Home"
+
+== Main flow (HR role verified) ==
+HR -> VIEW : open Clocking report; set filters\n(employee and/or date range)
+VIEW -> MW : GET /hr/clockings (ClockingFilter)
+MW --> CTL : OnGetReport(user, filter)\n[role verified — SEC-006]
+CTL -> CLK : GetClockings(filter)
+CLK -> PG : Clockings.GetByFilter(filter)
+PG --> CLK : Task<IReadOnlyList<ClockingEvent>>
+CLK --> CTL : events (all employees matching filter)
+CTL -> DIR : GetDisplayData(distinct uids)
+DIR -> LDAP : GetDisplayData(uids)
+alt AD resolves display data
+  LDAP --> DIR : uid -> EmployeeDisplayData\n(name, department, office)
+  DIR --> CTL : IReadOnlyDictionary<string, EmployeeDisplayData>
+  CTL -> CTL : merge events + display data;\nconvert times via TimeService (USA-008)
+  CTL --> VIEW : model: table rows with names
+  VIEW --> HR : clocking review table
+else AD unavailable (AF-2)
+  LDAP --> DIR : throws DirectoryUnavailableException
+  DIR --> CTL : propagates
+  CTL --> VIEW : events with AD user id only;\ndisplay attributes marked unavailable
+  VIEW --> HR : table shows uid + "unavailable" markers\n(events remain viewable — portal data)
+end
+note over CLK
+  AF-1: filter matching zero events
+  renders "No clocking records match"
+  (P-05) — same path, empty result.
+end note
+@enduml
+```
+
+### SEQ-006 — UC-006: Export Monthly Clocking Report (FR-002, SEC-006, INT-005, STD-003)
+
+```plantuml
+@startuml
+title SEQ-006: UC-006 Export Monthly Clocking Report — Realization (FR-002, SEC-006, INT-005, STD-003)
+
+actor "HR Administrator (ACT-002)" as HR
+participant "ClockingReportView\n(SCR-05)" as VIEW
+participant "OIDC Middleware\n(COMP-006)" as MW
+participant "ClockingController\n(CLS-017)" as CTL
+participant "ReportExportService\n(CLS-006)" as EXP
+participant "TimeService\n(CLS-007)" as TIME
+participant "DirectoryService\n(CLS-003)" as DIR
+participant "LdapGateway\n(CLS-009)" as LDAP
+participant "PgPersistence\n(CLS-011)" as PG
+
+HR -> VIEW : select month + "Export CSV"
+VIEW -> MW : GET /hr/clockings/export?month=YYYY-MM
+MW --> CTL : OnGetExport(user, year, month)\n[HR role verified — SEC-006]
+CTL -> EXP : ExportMonth(year, month)
+EXP -> TIME : MonthBoundsLocal(year, month)
+TIME --> EXP : (fromUtc, toUtc) — month boundaries as\nlocal calendar days in America/Havana\n(payroll day = local day, never server's)
+EXP -> PG : Clockings.GetByRange(fromUtc, toUtc)
+alt events exist for the month
+  PG --> EXP : Task<IReadOnlyList<ClockingEvent>>
+  EXP -> DIR : GetDisplayData(distinct uids)
+  EXP -> LDAP : GetDisplayData(uids)
+  alt AD reachable
+    LDAP --> DIR : uid -> EmployeeDisplayData
+    DIR --> EXP : display data map
+    EXP -> EXP : build rows: ad_user_id, employee_name,\ndepartment, office, event_timestamp, event_type
+    EXP -> TIME : ToIso8601WithOffset(each event)\n(offset in force at event time per IANA zone db)
+    TIME --> EXP : "2026-09-01T08:58:12-04:00"
+    EXP -> EXP : serialize CSV (column set v1, STD-003)
+    EXP --> CTL : ExportResult(csvBytes, fileName)
+    CTL --> VIEW : 200 OK\nContent-Type: text/csv\nContent-Disposition: attachment
+    VIEW --> HR : CSV download (INT-005)
+  else AD unavailable (AF-2)
+    LDAP --> DIR : throws DirectoryUnavailableException
+    DIR --> EXP : propagates
+    EXP --> CTL : ExportAborted.DirectoryUnavailable
+    CTL --> VIEW : "Directory temporarily unavailable"\n(export aborted — NO partial file)
+    VIEW --> HR : unavailable message; no file
+  end
+else no events for the month (AF-1)
+  PG --> EXP : empty list
+  EXP --> CTL : ExportResult.NoData
+  CTL --> VIEW : "No clocking records for this month"
+  VIEW --> HR : informational message; no file
+end
+note over EXP
+  COMP-010 encapsulates the CSV column
+  set (Medium volatility — downstream
+  payroll/records consumers may reshape
+  it). Column changes touch CLS-006 only.
+end note
+@enduml
+```
+
+### SEQ-007 — UC-007: Assign Worker Category (FR-003, CON-006, CON-013, AUD-004, ADR-004)
+
+```plantuml
+@startuml
+title SEQ-007: UC-007 Assign Worker Category — Realization (FR-003, CON-006, CON-013, AUD-004, ADR-004)
+
+actor "HR Administrator (ACT-002)" as HR
+participant "WorkerCategoriesView\n(SCR-06)" as VIEW
+participant "OIDC Middleware\n(COMP-006)" as MW
+participant "CategoryController\n(CLS-020)" as CTL
+participant "CategoryService\n(CLS-004)" as CAT
+participant "DirectoryService\n(CLS-003)" as DIR
+participant "LdapGateway\n(CLS-009)" as LDAP
+participant "AuditService\n(CLS-005)" as AUD
+participant "PgPersistence\n(CLS-011)" as PG
+
+== Load page ==
+HR -> VIEW : open Worker categories
+VIEW -> MW : GET /hr/categories
+MW --> CTL : OnGet(user: AuthenticatedUser)\n[HR role verified — SEC-006]
+CTL -> CAT : GetCategoryList()
+CAT --> CTL : IReadOnlyList<string>\n(from worker-categories.json — ADR-004;\nFIXED list, no CRUD — CON-013)
+CTL --> VIEW : model: fixed category select
+VIEW --> HR : category select (no create/edit/rename/delete)
+
+== Locate employee (AD display data, read-only) ==
+HR -> VIEW : search employee by name
+VIEW -> CTL : GET /hr/categories/search (DirectorySearchCriteria)
+CTL -> DIR : Search(criteria)
+DIR -> LDAP : Search(criteria)
+alt AD reachable
+  LDAP --> DIR : IReadOnlyList<DirectoryEntry>
+  DIR --> CTL : entries
+  CTL --> VIEW : employee list (AD display data)
+  VIEW --> HR : employee list
+else AD unavailable (AF-2)
+  LDAP --> DIR : throws DirectoryUnavailableException
+  DIR --> CTL : propagates
+  CTL --> VIEW : "Directory temporarily unavailable"
+  VIEW --> HR : lookup blocked; assignment cannot proceed\n(portal holds no employee display data — CON-006)
+end
+
+== Assign category ==
+HR -> VIEW : select employee + category; confirm
+VIEW -> CTL : POST /hr/categories\n(employeeUid, category)
+CTL -> CAT : Assign(employeeUid, category, user)
+CAT -> PG : WorkerCategories.GetByUid(uid)
+PG --> CAT : current mapping (or none)
+alt selected category differs from current
+  CAT -> PG : WorkerCategories.Upsert(mapping)\n(staged — two data columns only, CON-006)
+  CAT -> AUD : AppendCategoryChange(uid, oldCategory,\nnewCategory, actorUid, timestampUtc)
+  AUD -> PG : CategoryAuditEntries.Add(entry)\n(staged only — the orchestrator commits)
+  AUD --> CAT : ok
+  CAT -> PG : SaveChanges()\n(ONE transaction: mapping + audit entry — DAT-002)
+  PG --> CAT : ok
+  CAT --> CTL : AssignmentResult.Changed
+  CTL --> VIEW : confirmation
+  VIEW --> HR : "Category assigned"
+else same category re-selected (AF-1)
+  CAT --> CTL : AssignmentResult.Unchanged
+  CTL --> VIEW : "Category unchanged"
+  VIEW --> HR : nothing persisted, no audit entry\n(NFR-005 audits changes only)
+end
+@enduml
+```
+
+### SEQ-008 — UC-008: Publish News (FR-006, SEC-006, AUD-001, AC-002)
+
+```plantuml
+@startuml
+title SEQ-008: UC-008 Publish News — Realization (FR-006, SEC-006, AUD-001, AC-002)
+
+actor "HR Administrator (ACT-002)" as HR
+participant "NewsFormView\n(SCR-07, publish mode)" as VIEW
+participant "OIDC Middleware\n(COMP-006)" as MW
+participant "NewsController\n(CLS-018)" as CTL
+participant "NewsService\n(CLS-002)" as NEWS
+participant "AuditService\n(CLS-005)" as AUD
+participant "PgPersistence\n(CLS-011)" as PG
+
+HR -> VIEW : select "Publish news"
+VIEW -> MW : GET /hr/news/new
+MW --> CTL : OnGetNew(user: AuthenticatedUser)\n[HR role verified — SEC-006]
+CTL --> VIEW : empty form: title, body, date,\ncategory (General/HR/IT/Events), featured flag
+VIEW --> HR : publish form (USA-005)
+HR -> VIEW : fill fields; submit
+VIEW -> CTL : POST /hr/news (NewsFormRequest)
+CTL -> NEWS : Publish(request, user)
+NEWS -> NEWS : NewsItem.Validate()\n(title, body, date, category required)
+alt fields valid
+  NEWS -> PG : News.Add(item: Status=Published)\n(staged)
+  NEWS -> AUD : AppendNewsAction(newsId, Publish,\nactorUid, timestampUtc, snapshot)
+  AUD -> PG : NewsAuditEntries.Add(entry)\n(staged only — the orchestrator commits)
+  AUD --> NEWS : ok
+  NEWS -> PG : SaveChanges()\n(ONE transaction: item + audit entry — DAT-002;\nauthor + timestamp — AUD-001)
+  PG --> NEWS : ok
+  NEWS --> CTL : NewsResult.Published
+  CTL --> VIEW : confirmation
+  VIEW --> HR : published; visible to employees (UC-003);\nfeatured items show the banner
+else validation failure (AF-1)
+  NEWS --> CTL : NewsResult.Invalid(fields)
+  CTL --> VIEW : invalid fields highlighted inline (P-05)
+  VIEW --> HR : correct and resubmit
+end
+@enduml
+```
+
+### SEQ-009 — UC-009: Edit Published News (FR-008, SEC-006, AUD-002, CON-012)
+
+```plantuml
+@startuml
+title SEQ-009: UC-009 Edit Published News — Realization (FR-008, SEC-006, AUD-002, CON-012)
+
+actor "HR Administrator (ACT-002)" as HR
+participant "NewsManagementView\n(SCR-08)" as MGMT
+participant "NewsFormView\n(SCR-07, edit mode)" as VIEW
+participant "OIDC Middleware\n(COMP-006)" as MW
+participant "NewsController\n(CLS-018)" as CTL
+participant "NewsService\n(CLS-002)" as NEWS
+participant "AuditService\n(CLS-005)" as AUD
+participant "PgPersistence\n(CLS-011)" as PG
+
+== EF-1: role denial ==
+HR -> MW : GET /hr/news/{id}/edit (Employee-role session)
+MW -> MW : HR Administrator role not in claims (SEC-006)
+MW --> MGMT : redirect SCR-09 Access Denied
+MGMT --> HR : access denied; no news item loaded
+
+== Main flow ==
+HR -> MGMT : open News management; select "Edit"\n[offered on published items only]
+MGMT -> MW : GET /hr/news/{id}/edit
+MW --> CTL : OnGetEdit(user, id) [HR role verified]
+CTL -> NEWS : GetNewsItem(id)
+NEWS -> PG : News.GetById(id)
+PG --> NEWS : NewsItem (current version)
+NEWS --> CTL : item
+CTL --> VIEW : edit form loaded with current version
+VIEW --> HR : form (title, body, date, category, featured)
+HR -> VIEW : modify fields; save
+VIEW -> CTL : POST /hr/news/{id} (NewsFormRequest)
+CTL -> NEWS : Edit(id, request, user)
+NEWS -> PG : News.GetById(id) — re-read for\nconcurrent-unpublish check (AF-2)
+alt item still published
+  PG --> NEWS : item (Status=Published)
+  NEWS -> NEWS : NewsItem.Validate(request)
+  alt fields valid
+    NEWS -> NEWS : item.ApplyEdit(request, editorUid)
+    NEWS -> PG : News.Update(item)\n(staged)
+    NEWS -> AUD : AppendNewsAction(newsId, Edit,\nactorUid, timestampUtc, snapshot)\n(snapshot = post-edit version —\nall versions traceable, AUD-002)
+    AUD -> PG : NewsAuditEntries.Add(entry)\n(staged only — the orchestrator commits)
+    AUD --> NEWS : ok
+    NEWS -> PG : SaveChanges()\n(ONE transaction: item + audit entry — DAT-002)
+    PG --> NEWS : ok
+    NEWS --> CTL : NewsResult.Updated
+    CTL --> VIEW : confirmation
+    VIEW --> HR : updated; visible to employees (UC-003)
+  else validation failure (AF-1)
+    NEWS --> CTL : NewsResult.Invalid(fields)
+    CTL --> VIEW : invalid fields highlighted inline
+    VIEW --> HR : correct and resubmit
+  end
+else concurrent unpublish (AF-2)
+  PG --> NEWS : item (Status=Unpublished)
+  NEWS --> CTL : NewsResult.NotPublished
+  CTL --> VIEW : "Item no longer published — edit not applied"
+  VIEW --> HR : notice; record retained read-only for audit
+end
+@enduml
+```
+
+### SEQ-010 — UC-010: Unpublish News (FR-009, SEC-006, AUD-003, CON-012)
+
+```plantuml
+@startuml
+title SEQ-010: UC-010 Unpublish News — Realization (FR-009, SEC-006, AUD-003, CON-012)
+
+actor "HR Administrator (ACT-002)" as HR
+participant "NewsManagementView\n(SCR-08, M-01 modal)" as VIEW
+participant "OIDC Middleware\n(COMP-006)" as MW
+participant "NewsController\n(CLS-018)" as CTL
+participant "NewsService\n(CLS-002)" as NEWS
+participant "AuditService\n(CLS-005)" as AUD
+participant "PgPersistence\n(CLS-011)" as PG
+
+HR -> VIEW : open News management
+VIEW -> MW : GET /hr/news
+MW --> CTL : OnGetManagement(user: AuthenticatedUser)\n[HR role verified — SEC-006]
+CTL -> NEWS : GetAllNews()
+NEWS -> PG : News.GetAll()
+PG --> NEWS : all items (published + unpublished)
+NEWS --> CTL : items
+CTL --> VIEW : list with status
+VIEW --> HR : list; "Unpublish" offered on\npublished items only (AF-2)
+
+HR -> VIEW : press "Unpublish"
+VIEW --> HR : M-01 confirmation modal:\n"Hide this item from employees?\nThe record is retained for the audit trail." (CON-012)
+alt HR confirms
+  HR -> VIEW : confirm
+  VIEW -> CTL : POST /hr/news/{id}/unpublish
+  CTL -> NEWS : Unpublish(id, user)
+  NEWS -> PG : News.GetById(id)
+  PG --> NEWS : item (Status=Published)
+  NEWS -> NEWS : item.Unpublish()\n(soft delete — record NOT deleted, CON-012)
+  NEWS -> PG : News.Update(item)\n(staged)
+  NEWS -> AUD : AppendNewsAction(newsId, Unpublish,\nactorUid, timestampUtc, snapshot)
+  AUD -> PG : NewsAuditEntries.Add(entry)\n(staged only — the orchestrator commits)
+  AUD --> NEWS : ok
+  NEWS -> PG : SaveChanges()\n(ONE transaction: item + audit entry — DAT-002;\nactor + timestamp — AUD-003)
+  PG --> NEWS : ok
+  NEWS --> CTL : NewsResult.Unpublished
+  CTL --> VIEW : confirmation
+  VIEW --> HR : item hidden from employees (UC-003);\nstatus shows "unpublished"
+else HR cancels (AF-1)
+  HR -> VIEW : cancel
+  VIEW --> HR : modal closed — item remains published,\nno change, no audit entry
+end
+@enduml
+```
+
+## Design Packages and Classes
+
+One design model, three packages inside the single deployable (ADR-001). Dependencies point DOWN only; every cross-package reference is an interface.
+
+```plantuml
+@startuml
+title Design Model Organization — packages, layers, and interface boundaries (ADR-001)
+skinparam packageStyle rectangle
+skinparam fontSize 11
+
+package "Presentation (src/EmployeePortal/Pages/)" as PRES {
+  rectangle "View classes (SCR-01…SCR-09, M-01)\n+ CLS-017 ClockingController\n+ CLS-018 NewsController\n+ CLS-019 DirectoryController\n+ CLS-020 CategoryController" as PRESCLS
+}
+
+package "Application Services (src/EmployeePortal/Services/)" as APP {
+  rectangle "CLS-001 ClockingService (COMP-001)\nCLS-002 NewsService (COMP-002)\nCLS-003 DirectoryService (COMP-003)\nCLS-004 CategoryService (COMP-004)\nCLS-005 AuditService (COMP-005)\nCLS-006 ReportExportService (COMP-010)\nCLS-007 TimeService (COMP-011)\n+ domain entities CLS-021…CLS-027\n+ request/result types" as APPCLS
+}
+
+package "Infrastructure (src/EmployeePortal/Infrastructure/)" as INFRA {
+  rectangle "CLS-008 OfflineQueueClient (COMP-009)\nCLS-009 LdapGateway (COMP-007)\nCLS-010 KeycloakAuthProvider (COMP-006)\nCLS-011 PgPersistence (COMP-008)\nCLS-012…CLS-016 repositories" as INFRACLS
+}
+
+PRES ..> APP : INT-006…INT-009, INT-013, INT-014\n(service interfaces only)
+APP ..> INFRA : INT-010, INT-015…INT-019\n(gateway, persistence, repository interfaces only)
+INFRA ..> "PostgreSQL (CON-003)" : Npgsql 10.0.3 (ADR-002)
+INFRA ..> "Active Directory (CON-005)" : LDAP v3, read-only (CON-007)
+INFRA ..> "Keycloak (CON-004)" : OIDC client only
+
+note bottom of PRES
+  Layering rule (ADR-001): dependencies
+  point DOWN only. Every cross-package
+  reference is an interface, never a
+  concrete class. CLS-008 OfflineQueueClient
+  is the browser-side half of COMP-009 —
+  it lives with the HomeView page script
+  and calls the sync endpoint over HTTPS.
+end note
+
+note right of APP
+  One design model, three packages —
+  logical grouping inside the single
+  deployable (ADR-001). Package
+  cohesion: each package owns one
+  layer's responsibility; cross-package
+  coupling is interface-only.
+end note
+@enduml
+```
+
+### Package: Application Services (src/EmployeePortal/Services/) — CLS-001…CLS-007
+
+```plantuml
+@startuml
+title Design Package: Application Services (src/EmployeePortal/Services/) — CLS-001…CLS-007
+skinparam classAttributeIconSize 0
+skinparam fontSize 10
+skinparam packageStyle rectangle
+
+package "Application Services (COMP-001…005, 010, 011)" {
+  interface "INT-006 IClockingService" as ICLK {
+    +GetCurrentStatus(employeeUid: string): Task<ClockingStatus>
+    +RecordEvent(request: RecordClockingRequest): Task<ClockingResult>
+    +SyncEvents(events: IEnumerable<ClockingEventDto>): Task<SyncResult>
+    +GetHistory(employeeUid: string, fromUtc: DateTimeOffset, toUtc: DateTimeOffset): Task<IReadOnlyList<ClockingEvent>>
+    +GetClockings(filter: ClockingFilter): Task<IReadOnlyList<ClockingEvent>>
+  }
+  class "CLS-001 ClockingService" as CLK {
+    -clockings: IClockingsRepository
+    -time: ITimeConvention
+    +GetCurrentStatus(employeeUid: string): Task<ClockingStatus>
+    +RecordEvent(request: RecordClockingRequest): Task<ClockingResult>
+    +SyncEvents(events: IEnumerable<ClockingEventDto>): Task<SyncResult>
+    +GetHistory(employeeUid: string, fromUtc: DateTimeOffset, toUtc: DateTimeOffset): Task<IReadOnlyList<ClockingEvent>>
+    +GetClockings(filter: ClockingFilter): Task<IReadOnlyList<ClockingEvent>>
+  }
+
+  interface "INT-007 INewsService" as INEWS {
+    +GetPublishedNews(category: NewsCategory?): Task<IReadOnlyList<NewsItem>>
+    +GetAllNews(): Task<IReadOnlyList<NewsItem>>
+    +GetNewsItem(id: int): Task<NewsItem>
+    +Publish(request: NewsFormRequest, actor: AuthenticatedUser): Task<NewsResult>
+    +Edit(id: int, request: NewsFormRequest, actor: AuthenticatedUser): Task<NewsResult>
+    +Unpublish(id: int, actor: AuthenticatedUser): Task<NewsResult>
+  }
+  class "CLS-002 NewsService" as NEWS {
+    -news: INewsRepository
+    -audit: IAuditService
+    +GetPublishedNews(category: NewsCategory?): Task<IReadOnlyList<NewsItem>>
+    +GetAllNews(): Task<IReadOnlyList<NewsItem>>
+    +GetNewsItem(id: int): Task<NewsItem>
+    +Publish(request: NewsFormRequest, actor: AuthenticatedUser): Task<NewsResult>
+    +Edit(id: int, request: NewsFormRequest, actor: AuthenticatedUser): Task<NewsResult>
+    +Unpublish(id: int, actor: AuthenticatedUser): Task<NewsResult>
+  }
+
+  interface "INT-008 IDirectoryService" as IDIR {
+    +Search(criteria: DirectorySearchCriteria): Task<DirectoryResult>
+    +GetDisplayData(uids: IEnumerable<string>): Task<IReadOnlyDictionary<string, EmployeeDisplayData>>
+  }
+  class "CLS-003 DirectoryService" as DIR {
+    -ldap: ILdapGateway
+    +Search(criteria: DirectorySearchCriteria): Task<DirectoryResult>
+    +GetDisplayData(uids: IEnumerable<string>): Task<IReadOnlyDictionary<string, EmployeeDisplayData>>
+  }
+
+  interface "INT-009 ICategoryService" as ICAT {
+    +GetCategoryList(): IReadOnlyList<string>
+    +Assign(employeeUid: string, category: string, actor: AuthenticatedUser): Task<AssignmentResult>
+  }
+  class "CLS-004 CategoryService" as CAT {
+    -workerCategories: IWorkerCategoryRepository
+    -audit: IAuditService
+    -categoryList: IReadOnlyList<string>
+    +GetCategoryList(): IReadOnlyList<string>
+    +Assign(employeeUid: string, category: string, actor: AuthenticatedUser): Task<AssignmentResult>
+  }
+
+  interface "INT-012 IAuditService" as IAUD {
+    +AppendNewsAction(newsId: int, action: NewsAuditAction, actorUid: string, timestampUtc: DateTimeOffset, snapshot: string): void
+    +AppendCategoryChange(employeeUid: string, oldCategory: string?, newCategory: string, actorUid: string, timestampUtc: DateTimeOffset): void
+  }
+  class "CLS-005 AuditService" as AUD {
+    -newsAudit: INewsAuditRepository
+    -categoryAudit: ICategoryAuditRepository
+    +AppendNewsAction(newsId: int, action: NewsAuditAction, actorUid: string, timestampUtc: DateTimeOffset, snapshot: string): void
+    +AppendCategoryChange(employeeUid: string, oldCategory: string?, newCategory: string, actorUid: string, timestampUtc: DateTimeOffset): void
+  }
+
+  interface "INT-013 IReportExport" as IEXP {
+    +ExportMonth(year: int, month: int): Task<ExportResult>
+  }
+  class "CLS-006 ReportExportService" as EXP {
+    -clockings: IClockingsRepository
+    -directory: IDirectoryService
+    -time: ITimeConvention
+    +ExportMonth(year: int, month: int): Task<ExportResult>
+  }
+
+  interface "INT-014 ITimeConvention" as ITIME {
+    +NowUtc(): DateTimeOffset
+    +ToLocalDisplay(timestampUtc: DateTimeOffset): string
+    +ToIso8601WithOffset(timestampUtc: DateTimeOffset): string
+    +MonthBoundsLocal(year: int, month: int): MonthBounds
+  }
+  class "CLS-007 TimeService" as TIME {
+    +NowUtc(): DateTimeOffset
+    +ToLocalDisplay(timestampUtc: DateTimeOffset): string
+    +ToIso8601WithOffset(timestampUtc: DateTimeOffset): string
+    +MonthBoundsLocal(year: int, month: int): MonthBounds
+  }
+}
+
+CLK ..|> ICLK
+NEWS ..|> INEWS
+DIR ..|> IDIR
+CAT ..|> ICAT
+AUD ..|> IAUD
+EXP ..|> IEXP
+TIME ..|> ITIME
+
+CLK ..> INT016 : uses
+INT016 : INT-016 IClockingsRepository
+NEWS ..> INT017 : uses
+INT017 : INT-017 INewsRepository
+CAT ..> INT018 : uses
+INT018 : INT-018 IWorkerCategoryRepository
+AUD ..> INT019 : uses
+INT019 : INT-019 IAuditEntryRepository
+CLK ..> ITIME
+EXP ..> ITIME
+EXP ..> IDIR
+NEWS ..> IAUD
+CAT ..> IAUD
+DIR ..> INT010 : uses
+INT010 : INT-010 ILdapGateway
+
+note bottom of AUD
+  AppendNewsAction / AppendCategoryChange
+  STAGE the entry via the repositories;
+  the orchestrating service's single
+  SaveChanges() commits state change +
+  audit entry in ONE transaction (DAT-002).
+  No Update/Delete path exists on the
+  audit repositories (append-only).
+end note
+
+note right of CAT
+  categoryList is loaded ONCE from
+  worker-categories.json at startup
+  (ADR-004) — FIXED list, no CRUD
+  (CON-013). Assign() validates the
+  selected category against this list.
+end note
+
+note bottom of CLK
+  SAD refinement: COMP-001's listed
+  IAUD dependency is OMITTED — NFR-005
+  scopes audit to news operations
+  (AUD-001..003) and category changes
+  (AUD-004); clocking events carry
+  their own actor (EmployeeUid) and
+  are immutable (DAT-001). Coupling
+  reduction, no behavior change.
+end note
+
+note right of EXP
+  SAD refinement: COMP-010's ILDAP
+  dependency is realized transitively
+  via IDirectoryService.GetDisplayData —
+  display-data resolution exists once
+  (COMP-003), not duplicated. Boundary
+  remains interface-based.
+end note
+@enduml
+```
+
+### Package: Infrastructure (src/EmployeePortal/Infrastructure/) — CLS-008…CLS-016
+
+```plantuml
+@startuml
+title Design Package: Infrastructure (src/EmployeePortal/Infrastructure/) — CLS-008…CLS-016
+skinparam classAttributeIconSize 0
+skinparam fontSize 10
+skinparam packageStyle rectangle
+
+package "Infrastructure (COMP-006…009)" {
+  class "CLS-008 OfflineQueueClient\n(browser-side, COMP-009)" as QUEUE {
+    +Enqueue(event: QueuedClockingEvent): void
+    +GetQueued(): IReadOnlyList<QueuedClockingEvent>
+    +Clear(): void
+    +Sync(): Promise<SyncResult>
+    -storage: localStorage
+    -capacity: int = 10
+  }
+
+  interface "INT-010 ILdapGateway" as ILDAP {
+    +Search(criteria: DirectorySearchCriteria): Task<IReadOnlyList<DirectoryEntry>>
+    +GetDisplayData(uids: IEnumerable<string>): Task<IReadOnlyDictionary<string, EmployeeDisplayData>>
+  }
+  class "CLS-009 LdapGateway (COMP-007)" as LDAP {
+    -connectionSettings: LdapConnectionSettings
+    -timeout: TimeSpan = 5 s
+    +Search(criteria: DirectorySearchCriteria): Task<IReadOnlyList<DirectoryEntry>>
+    +GetDisplayData(uids: IEnumerable<string>): Task<IReadOnlyDictionary<string, EmployeeDisplayData>>
+    -BuildFilter(criteria: DirectorySearchCriteria): string
+    -MapEntry(result: LdapSearchResult): DirectoryEntry
+  }
+
+  interface "INT-011 IAuthProvider" as IAUTH {
+    +ConfigureOidc(builder: WebApplicationBuilder, options: KeycloakClientOptions): void
+    +GetAuthenticatedUser(context: HttpContext): AuthenticatedUser
+  }
+  class "CLS-010 KeycloakAuthProvider (COMP-006)" as AUTH {
+    +ConfigureOidc(builder: WebApplicationBuilder, options: KeycloakClientOptions): void
+    +GetAuthenticatedUser(context: HttpContext): AuthenticatedUser
+    -MapRoles(claims: IEnumerable<Claim>): IReadOnlySet<string>
+  }
+
+  interface "INT-015 IPersistence" as IPERSIST {
+    +SaveChanges(): Task
+    +BeginTransaction(): IDbContextTransaction
+  }
+  class "CLS-011 PgPersistence (COMP-008)" as PG {
+    -dbContext: PortalDbContext
+    +SaveChanges(): Task
+    +BeginTransaction(): IDbContextTransaction
+  }
+
+  interface "INT-016 IClockingsRepository" as ICLKREP {
+    +Add(event: ClockingEvent): void
+    +AddRange(events: IEnumerable<ClockingEvent>): void
+    +GetByEmployeeAndRange(employeeUid: string, fromUtc: DateTimeOffset, toUtc: DateTimeOffset): Task<IReadOnlyList<ClockingEvent>>
+    +GetByFilter(filter: ClockingFilter): Task<IReadOnlyList<ClockingEvent>>
+    +GetByRange(fromUtc: DateTimeOffset, toUtc: DateTimeOffset): Task<IReadOnlyList<ClockingEvent>>
+  }
+  class "CLS-012 ClockingsRepository" as CLKREP {
+    +Add(event: ClockingEvent): void
+    +AddRange(events: IEnumerable<ClockingEvent>): void
+    +GetByEmployeeAndRange(employeeUid: string, fromUtc: DateTimeOffset, toUtc: DateTimeOffset): Task<IReadOnlyList<ClockingEvent>>
+    +GetByFilter(filter: ClockingFilter): Task<IReadOnlyList<ClockingEvent>>
+    +GetByRange(fromUtc: DateTimeOffset, toUtc: DateTimeOffset): Task<IReadOnlyList<ClockingEvent>>
+  }
+
+  interface "INT-017 INewsRepository" as INEWSREP {
+    +Add(item: NewsItem): void
+    +GetById(id: int): Task<NewsItem?>
+    +Update(item: NewsItem): void
+    +GetPublished(category: NewsCategory?): Task<IReadOnlyList<NewsItem>>
+    +GetAll(): Task<IReadOnlyList<NewsItem>>
+  }
+  class "CLS-013 NewsRepository" as NEWSREP {
+    +Add(item: NewsItem): void
+    +GetById(id: int): Task<NewsItem?>
+    +Update(item: NewsItem): void
+    +GetPublished(category: NewsCategory?): Task<IReadOnlyList<NewsItem>>
+    +GetAll(): Task<IReadOnlyList<NewsItem>>
+  }
+
+  interface "INT-018 IWorkerCategoryRepository" as ICATREP {
+    +GetByUid(employeeUid: string): Task<WorkerCategory?>
+    +Upsert(mapping: WorkerCategory): void
+  }
+  class "CLS-014 WorkerCategoryRepository" as CATREP {
+    +GetByUid(employeeUid: string): Task<WorkerCategory?>
+    +Upsert(mapping: WorkerCategory): void
+  }
+
+  interface "INT-019 IAuditEntryRepository" as IAUDREP {
+    +AddNewsEntry(entry: NewsAuditEntry): void
+    +AddCategoryEntry(entry: CategoryAuditEntry): void
+  }
+  class "CLS-015 NewsAuditRepository" as NAUDREP {
+    +AddNewsEntry(entry: NewsAuditEntry): void
+  }
+  class "CLS-016 CategoryAuditRepository" as CAUDREP {
+    +AddCategoryEntry(entry: CategoryAuditEntry): void
+  }
+}
+
+LDAP ..|> ILDAP
+AUTH ..|> IAUTH
+PG ..|> IPERSIST
+CLKREP ..|> ICLKREP
+NEWSREP ..|> INEWSREP
+CATREP ..|> ICATREP
+NAUDREP ..|> IAUDREP
+CAUDREP ..|> IAUDREP
+
+note bottom of LDAP
+  Read-only LDAP v3 (CON-007); live
+  query, no local copy (CON-006);
+  5 s hard timeout (PRF-003);
+  MapEntry leaves missing attributes
+  null — entry NOT hidden (R001, AF-2).
+  BuildFilter/MapEntry are the R001
+  volatility point: query strategy
+  changes touch this class only.
+end note
+
+note bottom of QUEUE
+  Client half of COMP-009 (ADR-003):
+  localStorage queue ordered by
+  RecordedAtUtc (REL-002), capacity
+  >= 10; replays via the idempotent
+  sync endpoint on reconnect;
+  clears on 200 OK (REL-003).
+end note
+
+note right of IAUDREP
+  Append-only (DAT-002): the interface
+  exposes Add only — no Update, no
+  Delete. The compiler enforces the
+  audit trail's immutability.
+end note
+
+note bottom of PG
+  Owns the PortalDbContext (EF Core /
+  Npgsql 10.0.3 — ADR-002). SaveChanges()
+  is the single transaction boundary:
+  staged repository changes + staged
+  audit entries commit together.
+  UNIQUE idempotency_key enforced by
+  the clockings table (REL-002).
+end note
+@enduml
+```
+
+### Package: Presentation (src/EmployeePortal/Pages/) — CLS-017…CLS-020 + view classes
+
+```plantuml
+@startuml
+title Design Package: Presentation (src/EmployeePortal/Pages/) — CLS-017…CLS-020 + view classes
+skinparam classAttributeIconSize 0
+skinparam fontSize 10
+skinparam packageStyle rectangle
+
+package "Presentation (Razor Pages — CON-002)" {
+  class "CLS-017 ClockingController" as CLKCTL <<controller>> {
+    -clocking: IClockingService
+    -export: IReportExport
+    -time: ITimeConvention
+    +OnGet(user: AuthenticatedUser): HomeModel
+    +OnPostClocking(user: AuthenticatedUser, request: RecordClockingRequest): IActionResult
+    +OnPostSync(user: AuthenticatedUser, events: IEnumerable<ClockingEventDto>): IActionResult
+    +OnGetHistory(user: AuthenticatedUser): HistoryModel
+    +OnGetReport(user: AuthenticatedUser, filter: ClockingFilter): ReportModel
+    +OnGetExport(user: AuthenticatedUser, year: int, month: int): IActionResult
+  }
+  class "CLS-018 NewsController" as NEWCTL <<controller>> {
+    -news: INewsService
+    +OnGetNews(user: AuthenticatedUser, category: NewsCategory?): NewsModel
+    +OnGetManagement(user: AuthenticatedUser): ManagementModel
+    +OnGetNew(user: AuthenticatedUser): NewsFormModel
+    +OnGetEdit(user: AuthenticatedUser, id: int): NewsFormModel
+    +OnPostNews(user: AuthenticatedUser, request: NewsFormRequest): IActionResult
+    +OnPostEdit(user: AuthenticatedUser, id: int, request: NewsFormRequest): IActionResult
+    +OnPostUnpublish(user: AuthenticatedUser, id: int): IActionResult
+  }
+  class "CLS-019 DirectoryController" as DIRCTL <<controller>> {
+    -directory: IDirectoryService
+    +OnGetDirectory(user: AuthenticatedUser, criteria: DirectorySearchCriteria): DirectoryModel
+  }
+  class "CLS-020 CategoryController" as CATCTL <<controller>> {
+    -category: ICategoryService
+    -directory: IDirectoryService
+    +OnGet(user: AuthenticatedUser): CategoriesModel
+    +OnGetSearch(user: AuthenticatedUser, criteria: DirectorySearchCriteria): IActionResult
+    +OnPostAssign(user: AuthenticatedUser, employeeUid: string, category: string): IActionResult
+  }
+
+  class "HomeView (SCR-01)" as HOMEV <<view>>
+  class "ClockingHistoryView (SCR-02)" as HISTV <<view>>
+  class "NewsView (SCR-03)" as NEWSV <<view>>
+  class "DirectoryView (SCR-04)" as DIRV <<view>>
+  class "ClockingReportView (SCR-05)" as REPV <<view>>
+  class "WorkerCategoriesView (SCR-06)" as CATV <<view>>
+  class "NewsFormView (SCR-07)" as FORMV <<view>>
+  class "NewsManagementView (SCR-08, M-01)" as MGMTV <<view>>
+  class "AccessDeniedView (SCR-09)" as DENYV <<view>>
+}
+
+interface "INT-006 IClockingService" as ICLK
+interface "INT-007 INewsService" as INEWS
+interface "INT-008 IDirectoryService" as IDIR
+interface "INT-009 ICategoryService" as ICAT
+interface "INT-013 IReportExport" as IEXP
+interface "INT-014 ITimeConvention" as ITIME
+
+HOMEV ..> CLKCTL
+HISTV ..> CLKCTL
+REPV ..> CLKCTL
+NEWSV ..> NEWCTL
+FORMV ..> NEWCTL
+MGMTV ..> NEWCTL
+DIRV ..> DIRCTL
+CATV ..> CATCTL
+
+CLKCTL ..> ICLK
+CLKCTL ..> IEXP
+CLKCTL ..> ITIME
+NEWCTL ..> INEWS
+DIRCTL ..> IDIR
+CATCTL ..> ICAT
+CATCTL ..> IDIR
+
+note bottom of CLKCTL
+  GRASP Controller for clocking system
+  events. The page script (HomeView)
+  captures recordedAtUtc + idempotency
+  key at press (DAT-001), disables the
+  button, ignores repeat press < 2 s
+  (AF-3), and delegates offline queueing
+  to CLS-008. OnPostSync is the idempotent
+  sync endpoint (ADR-003).
+end note
+
+note right of CATCTL
+  OnGetSearch reuses IDirectoryService
+  for employee lookup (AD display data,
+  read-only — CON-007). The category
+  select is FIXED (CON-013) — no CRUD.
+end note
+
+note bottom of DENYV
+  Rendered by the OIDC middleware on
+  role denial (SEC-006) — server rejects
+  BEFORE the controller executes; no
+  data is revealed.
+end note
+@enduml
+```
+
+### Shared Types (request / result / value objects)
+
+| Type | Kind | Fields / Values | Used by |
+|---|---|---|---|
+| AuthenticatedUser | value | Uid: string; Roles: IReadOnlySet\<string\> | all controllers (from CLS-010) |
+| RecordClockingRequest | request | EmployeeUid, EventType, RecordedAtUtc, IdempotencyKey | CLS-017 → CLS-001 |
+| ClockingEventDto | request | EmployeeUid, EventType, RecordedAtUtc, IdempotencyKey | sync endpoint payload |
+| QueuedClockingEvent | client value | as ClockingEventDto + EnqueuedAt | CLS-008 (localStorage) |
+| ClockingFilter | request | EmployeeUid?, FromUtc, ToUtc | CLS-017 → CLS-001 (UC-005) |
+| ClockingStatus | enum | ClockedIn, NotClockedIn | CLS-001 → CLS-017 |
+| ClockingResult | enum | Confirmed, RejectedDuplicate | CLS-001 |
+| SyncResult | value | Persisted: int; DuplicatesRejected: int | CLS-001 → CLS-008 |
+| NewsFormRequest | request | Title, Body, Date, Category, IsFeatured | CLS-018 → CLS-002 (publish + edit share one shape) |
+| NewsResult | enum | Published, Updated, Unpublished, Invalid(fields), NotPublished | CLS-002 |
+| NewsCategory | enum | General, HR, IT, Events | CLS-022, filters |
+| NewsStatus | enum | Published, Unpublished | CLS-022 (no Deleted — CON-012) |
+| NewsAuditAction | enum | Publish, Edit, Unpublish | CLS-023 |
+| ClockingEventType | enum | In, Out | CLS-021 |
+| DirectorySearchCriteria | request | Name?, Department?, Office? | CLS-019/020 → CLS-003 |
+| DirectoryResult | value | Entries: IReadOnlyList\<DirectoryEntry\> | CLS-003 |
+| AssignmentResult | enum | Changed, Unchanged | CLS-004 |
+| ExportResult | value | Success(CsvBytes, FileName) \| NoData \| Aborted.DirectoryUnavailable | CLS-006 |
+| MonthBounds | value | FromUtc, ToUtc | CLS-007 |
+| PersistenceUnavailable | exception | — | thrown by CLS-011 on DB failure |
+| DirectoryUnavailableException | exception | — | thrown by CLS-009 on LDAP timeout/failure |
+
+### State Machines (classes with 3+ lifecycle states / significant lifecycle)
+
+**CLS-022 NewsItem** — the news lifecycle (FR-006/008/009, CON-012):
+
+```plantuml
+@startuml
+title State Machine: CLS-022 NewsItem (FR-006/008/009, CON-012)
+
+[*] --> Published : Publish(request, actor)\n[validation ok] / audit Publish\n(SEQ-008, AUD-001)
+
+state "Published" as PUBLISHED {
+  PUBLISHED : visible to employees (UC-003)\nfeatured banner if IsFeatured
+}
+
+state "Unpublished" as UNPUBLISHED {
+  UNPUBLISHED : hidden from employees;\nrecord RETAINED for audit trail (CON-012)
+}
+
+PUBLISHED --> PUBLISHED : Edit(request, actor)\n[validation ok] / audit Edit\n(SEQ-009 — all versions traceable, AUD-002)
+PUBLISHED --> UNPUBLISHED : Unpublish(actor)\n/ audit Unpublish (SEQ-010, AUD-003)
+UNPUBLISHED --> [*] : (terminal — no hard delete exists;\nno republish path in declared scope)
+
+note right of PUBLISHED
+  No Draft state exists: UC-008
+  creates items directly as
+  Published — no draft flow is
+  declared. Edit re-reads the item
+  and checks Status == Published
+  first (AF-2): a concurrent
+  unpublish blocks the edit —
+  NewsResult.NotPublished.
+end note
+
+note bottom of UNPUBLISHED
+  CON-012: no hard delete of a news
+  item. Unpublished is terminal by
+  design — the declared scope has no
+  republish flow (FR-009 hides;
+  nothing re-shows). The record and
+  its full audit trail persist.
+end note
+@enduml
+```
+
+**CLS-021 ClockingEvent** — the offline sync lifecycle (ADR-003, REL-002/003):
+
+```plantuml
+@startuml
+title State Machine: CLS-021 ClockingEvent (sync lifecycle — ADR-003, REL-002/003)
+
+[*] --> Persisted : button press [portal reachable]\n/ capture RecordedAtUtc (UTC, DAT-001)\n+ idempotencyKey; INSERT
+[*] --> Queued : button press [portal unreachable]\n/ capture RecordedAtUtc (UTC, DAT-001)\n+ idempotencyKey; enqueue
+
+state "Queued (browser localStorage)" as QUEUED {
+  QUEUED : ordered by RecordedAtUtc;\ncapacity >= 10 (REL-002)
+}
+
+state "Persisted (PostgreSQL)" as PERSISTED {
+  PERSISTED : immutable after capture\n(DAT-001) — no update path
+}
+
+QUEUED --> Persisted : sync on reconnect\n/ INSERT ... ON CONFLICT\n(idempotency_key) DO NOTHING\n(<= 60 s — REL-003)
+Persisted --> Persisted : duplicate replay\n[exact duplicate] / rejected,\nnever duplicated (REL-002)
+
+note right of QUEUED
+  The confirmation is rendered from
+  queued data (< 1 s — PRF-002 offline
+  path). If the browser closes during
+  the drop, queued events are lost —
+  acceptable within the declared
+  5-minute window (ADR-003).
+end note
+
+note bottom of PERSISTED
+  Terminal state: a clocking event is
+  never edited or deleted (DAT-001).
+  The UNIQUE constraint is the
+  synchronization point — no
+  application-level locking.
+end note
+@enduml
+```
+
+### SAD Boundary Reconciliations (documented deviations — coupling reductions, not violations)
+
+| SAD statement | Design realization | Justification |
+|---|---|---|
+| COMP-001 Clocking Service lists IAUD dependency | CLS-001 does NOT depend on IAuditService | NFR-005 scopes audit to news operations (AUD-001…003) and category changes (AUD-004). A clocking event carries its own actor (EmployeeUid) and is immutable (DAT-001) — there is nothing to audit beyond the event row itself. Coupling reduction; no behavior change. |
+| COMP-010 Report Export Service lists ILDAP dependency | CLS-006 depends on IDirectoryService.GetDisplayData (INT-008), which internally uses ILDAP | Display-data resolution exists exactly once (COMP-003) instead of being duplicated in COMP-010. The boundary remains interface-based; the SAD's intent (AD-sourced display data, CON-005) is preserved. |
+| COMP-009 Offline Resilience Handler "internal to COMP-001" | CLS-008 OfflineQueueClient is browser-side (localStorage), calling the sync endpoint (CLS-017.OnPostSync → CLS-001.SyncEvents); the server half is ClockingService.SyncEvents | Consistent with ADR-003 and the SAD Deployment View, which places the localStorage queue on the employee workstation node. "Internal to COMP-001" is realized as: the queue's only server counterpart is COMP-001's sync path. |
+
+## Interface Contracts
+
+Operation signatures with preconditions / postconditions for every subsystem-boundary interface. Interfaces INT-001…INT-005 (external system interfaces) are specified in the Supplementary Specification; INT-006…INT-019 are the portal's internal subsystem boundaries.
+
+| ID | Interface | Operation | Precondition | Postcondition |
+|---|---|---|---|---|
+| INT-006 | IClockingService | GetCurrentStatus(employeeUid) | employeeUid non-empty; caller authenticated | Returns ClockedIn iff the employee's most recent persisted event is IN; offline-queued events not yet synced are not reflected |
+| INT-006 | IClockingService | RecordEvent(request) | request.IdempotencyKey non-empty; request.RecordedAtUtc is the press-time UTC capture (DAT-001) | Exactly one event persisted, OR an event with the same idempotency key already exists and NO new row is created (idempotent — REL-002); UNIQUE constraint is the enforcement point |
+| INT-006 | IClockingService | SyncEvents(events) | every event carries RecordedAtUtc + IdempotencyKey; caller authenticated | Every event either persisted or rejected as exact duplicate — zero losses, zero duplicates (REL-002); all persisted ≤ 60 s from restore (REL-003) |
+| INT-006 | IClockingService | GetHistory(employeeUid, fromUtc, toUtc) | employeeUid equals the authenticated user's uid (SEC-007 — controller enforces from claims, never from request) | Returns only that employee's events within the range; range bounds are local calendar days converted by the caller via INT-014 |
+| INT-006 | IClockingService | GetClockings(filter) | caller holds HR Administrator role (SEC-006 — enforced at the request boundary) | Returns events for all employees matching the filter |
+| INT-007 | INewsService | GetPublishedNews(category?) | caller authenticated | Only Status=Published items, sorted PublishedAtUtc desc; unpublished items NEVER returned (UC-003) |
+| INT-007 | INewsService | GetAllNews() / GetNewsItem(id) | caller holds HR Administrator role | All items including unpublished (management list) / the item or null |
+| INT-007 | INewsService | Publish(request, actor) | request fields valid (title, body, date, category required) | Item persisted Status=Published AND audit entry (Publish, actorUid, timestampUtc, snapshot) staged; BOTH committed in ONE transaction (DAT-002, AUD-001); item visible to employees |
+| INT-007 | INewsService | Edit(id, request, actor) | item exists AND Status=Published at save time (AF-2 re-read) | Updated item + audit entry (Edit, post-edit snapshot) in ONE transaction (AUD-002); if concurrently unpublished → NewsResult.NotPublished, NO change, NO audit entry |
+| INT-007 | INewsService | Unpublish(id, actor) | item exists AND Status=Published | Status=Unpublished (record retained — CON-012) + audit entry (Unpublish) in ONE transaction (AUD-003); item hidden from employees |
+| INT-008 | IDirectoryService | Search(criteria) | caller authenticated | Entries read LIVE from AD (CON-006); missing attributes null, entry NOT hidden (R001); throws DirectoryUnavailableException on timeout/failure — no local fallback (AF-3) |
+| INT-008 | IDirectoryService | GetDisplayData(uids) | caller authenticated | Map uid → EmployeeDisplayData (name, department, office); missing attributes null; throws on AD unavailable |
+| INT-009 | ICategoryService | GetCategoryList() | — | FIXED list from worker-categories.json (ADR-004); never mutated at runtime (CON-013) |
+| INT-009 | ICategoryService | Assign(employeeUid, category, actor) | category ∈ fixed list; caller holds HR Administrator role | If category ≠ current: mapping upserted (two data columns — CON-006) + audit entry (old, new, actor, timestamp) in ONE transaction (AUD-004). If equal: NO change, NO audit entry (AF-1) |
+| INT-010 | ILdapGateway | Search(criteria) / GetDisplayData(uids) | connection configured (R010 service account) | Read-only LDAP v3 (CON-007); 5 s hard timeout (PRF-003); missing attributes mapped null (R001) |
+| INT-011 | IAuthProvider | ConfigureOidc(builder, options) | Keycloak client settings present in configuration | OIDC middleware registered at the request boundary; all pages require authentication (SEC-003); roles mapped from claims (SEC-002) |
+| INT-011 | IAuthProvider | GetAuthenticatedUser(context) | — | AuthenticatedUser (Uid + Roles) or null if unauthenticated |
+| INT-012 | IAuditService | AppendNewsAction(newsId, action, actorUid, timestampUtc, snapshot) | called within an active unit of work whose orchestrator will SaveChanges | Entry STAGED (not committed); append-only — no update/delete path exists (DAT-002) |
+| INT-012 | IAuditService | AppendCategoryChange(employeeUid, oldCategory, newCategory, actorUid, timestampUtc) | as above | Entry staged; old + new value recorded (AUD-004) |
+| INT-013 | IReportExport | ExportMonth(year, month) | caller holds HR Administrator role | Month boundaries computed as local calendar days in America/Havana (payroll day = local day); CSV column set v1 (ad_user_id, employee_name, department, office, event_timestamp ISO-8601 with explicit offset, event_type); ExportAborted.DirectoryUnavailable if AD unreachable — NO partial file (AF-2); NoData if no events (AF-1) |
+| INT-014 | ITimeConvention | NowUtc() | — | Current UTC time (DAT-001 capture source) |
+| INT-014 | ITimeConvention | ToLocalDisplay(timestampUtc) | — | America/Havana local time string, DST-aware (USA-008); raw UTC or server time is NEVER returned for display |
+| INT-014 | ITimeConvention | ToIso8601WithOffset(timestampUtc) | — | "YYYY-MM-DDThh:mm:ss±hh:mm" with the offset in force at the event time per the IANA zone database |
+| INT-014 | ITimeConvention | MonthBoundsLocal(year, month) | — | UTC bounds of the local calendar month in America/Havana (payroll day = local calendar day, never the server's) |
+| INT-015 | IPersistence | SaveChanges() / BeginTransaction() | staged changes present | All staged changes (state + audit entries) committed in ONE transaction (DAT-002) |
+| INT-016 | IClockingsRepository | Add / AddRange / GetByEmployeeAndRange / GetByFilter / GetByRange | — | Stages / queries; UNIQUE idempotency_key enforced at the database (REL-002); returned events are immutable |
+| INT-017 | INewsRepository | Add / GetById / Update / GetPublished / GetAll | — | GetPublished filters Status=Published, sorted desc; Update stages only (commit via INT-015) |
+| INT-018 | IWorkerCategoryRepository | GetByUid / Upsert | — | Two data columns only (CON-006); Upsert stages only |
+| INT-019 | IAuditEntryRepository | AddNewsEntry / AddCategoryEntry | — | Add ONLY — the interface exposes no Update, no Delete (DAT-002); the compiler enforces the audit trail's immutability |
+
+## Persistent Data Classes
+
+**Pending contribution by the Database Designer (Elaboration).** This section is NOT owned by the Designer — no content is invented here. Interim references until that contribution lands: (a) the SAD §Data View schema (tables `clockings`, `news_items`, `news_audit`, `worker_categories`, `category_audit`) is the authoritative table-level baseline; (b) the entity attribute specifications in §Domain Model (CLS-021…CLS-025) are the design-side attribute definitions those tables map to; (c) the mapping constraints that the design model already fixes: `clockings.idempotency_key` UNIQUE (REL-002), `clockings.timestamp_utc` stored in UTC (stakeholder decision), `worker_categories` carries exactly two data columns (CON-006), audit tables are append-only with no UPDATE/DELETE path (DAT-002).
+
 ## Boundary Classes and Navigation Map
 
 (User Interface Designer — Elaboration Iter 1. This section realizes the user-interface-specific parts of the use cases: the boundary classes the user operates, the formal navigation topology, and the UI patterns every implementer follows. Interaction flows per UC are in the Use-Case Model §Use-Case Specifications → UI Flow References; usability criteria are quantified in the Supplementary Specification §Usability.)
@@ -247,10 +1732,62 @@ Coordination artifact for the Designer (view-class detailing), the Implementer (
 2. **"Export CSV (HR)" placement.** The mockup shows an HR-only export affordance on the personal history card; UC-006 step 1 places the export in the clocking review area. The control renders on SCR-05 in the reference's ghost-button style, HR role only; SCR-02 carries no export (FR-005 view-only, SEC-007).
 3. **Mockup UC labels.** The reference's internal UC01/UC02/UC03 map to project UC-001/UC-003/UC-004 (Use-Case Model is the UC-ID authority — prevents recurrence of the LCO F1 UC-ID mismatch).
 
+## Capsules, Protocols and Signals
+
+[OMITTED — no capsule-based elements exist in this system. The portal is a request/response web application (ADR-001: layered monolith, single process); it contains no real-time capsules, no signal protocols, and no asynchronous message-passing elements. The only asynchronous behavior is the offline sync replay (CLS-008 → sync endpoint), which is an HTTP request/response exchange specified in SEQ-001 — not a signal protocol.]
+
 ## Traceability
 
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
+| **Design classes (Designer — Elaboration Iter 1)** | | | |
+| CLS-001 ClockingService | UC-001, UC-002, UC-005 (ACL-014), FR-004, FR-005, FR-001, DAT-001, REL-002 | Derives | INT-006; CLS-007, CLS-012; sync endpoint CLS-017.OnPostSync |
+| CLS-002 NewsService | UC-003, UC-008, UC-009, UC-010 (ACL-015), FR-006/007/008/009, CON-012 | Derives | INT-007; CLS-005, CLS-013 |
+| CLS-003 DirectoryService | UC-004 (ACL-016), FR-010, R001 | Derives | INT-008; CLS-009 |
+| CLS-004 CategoryService | UC-007 (ACL-017), FR-003, CON-006, CON-013, ADR-004 | Derives | INT-009; CLS-005, CLS-014 |
+| CLS-005 AuditService | NFR-005, AUD-001…004, DAT-002 (ACL-018) | Derives | INT-012; CLS-015, CLS-016 |
+| CLS-006 ReportExportService | UC-006 (ACL-019), FR-002, INT-005, STD-003 | Derives | INT-013; CLS-003, CLS-007, CLS-012 |
+| CLS-007 TimeService | DAT-001, USA-008 + stakeholder decisions (store UTC, America/Havana, ISO-8601 offset, local payroll day) (ACL-020) | Derives | INT-014; consumed by CLS-001, CLS-006, CLS-017 |
+| CLS-008 OfflineQueueClient | NFR-004, AC-005, REL-002/003, ADR-003 | Derives | sync endpoint (CLS-017.OnPostSync → CLS-001.SyncEvents) |
+| CLS-009 LdapGateway | CON-005, CON-006, CON-007, R001, PRF-003 | Derives | INT-010; Active Directory (external) |
+| CLS-010 KeycloakAuthProvider | CON-004, SEC-001/002/003/006, R003 | Derives | INT-011; Keycloak (external) |
+| CLS-011 PgPersistence | CON-003, ADR-002, DAT-002 | Derives | INT-015; PostgreSQL (external) |
+| CLS-012…CLS-016 repositories | CON-003, ADR-002, DAT-002, REL-002 | Derives | INT-016…INT-019 |
+| CLS-017 ClockingController | UC-001, UC-002, UC-005, UC-006 (ACL-010) | Derives | INT-006, INT-013, INT-014 |
+| CLS-018 NewsController | UC-003, UC-008, UC-009, UC-010 (ACL-011) | Derives | INT-007 |
+| CLS-019 DirectoryController | UC-004 (ACL-012) | Derives | INT-008 |
+| CLS-020 CategoryController | UC-007 (ACL-013) | Derives | INT-009, INT-008 |
+| CLS-021 ClockingEvent | UC-001/002/005/006 (ACL-021), DAT-001, REL-002 | Derives | clockings table (SAD Data View); sync state machine |
+| CLS-022 NewsItem | UC-003/008/009/010 (ACL-022), CON-012 | Derives | news_items table; lifecycle state machine |
+| CLS-023 NewsAuditEntry | AUD-001…003, DAT-002 (ACL-023) | Derives | news_audit table |
+| CLS-024 WorkerCategory | UC-007 (ACL-024), CON-006 | Derives | worker_categories table |
+| CLS-025 CategoryAuditEntry | AUD-004, DAT-002 (ACL-025) | Derives | category_audit table |
+| CLS-026 DirectoryEntry | UC-004/005/006/007 (ACL-026), FR-010, CON-006 | Derives | transient — never persisted |
+| CLS-027 EmployeeDisplayData | UC-005/006/007, CON-005 | Derives | transient — never persisted |
+| **Use-case realizations (Designer)** | | | |
+| SEQ-001 | UC-001 (FR-004) | Realizes | CLS-017, CLS-001, CLS-007, CLS-008, CLS-011, CLS-012 |
+| SEQ-002 | UC-002 (FR-005) | Realizes | CLS-017, CLS-001, CLS-007, CLS-011, CLS-012 |
+| SEQ-003 | UC-003 (FR-007) | Realizes | CLS-018, CLS-002, CLS-013 |
+| SEQ-004 | UC-004 (FR-010) | Realizes | CLS-019, CLS-003, CLS-009 |
+| SEQ-005 | UC-005 (FR-001) | Realizes | CLS-017, CLS-001, CLS-003, CLS-009, CLS-011 |
+| SEQ-006 | UC-006 (FR-002) | Realizes | CLS-017, CLS-006, CLS-007, CLS-003, CLS-009, CLS-011 |
+| SEQ-007 | UC-007 (FR-003) | Realizes | CLS-020, CLS-004, CLS-003, CLS-009, CLS-005, CLS-011 |
+| SEQ-008 | UC-008 (FR-006) | Realizes | CLS-018, CLS-002, CLS-005, CLS-011 |
+| SEQ-009 | UC-009 (FR-008) | Realizes | CLS-018, CLS-002, CLS-005, CLS-011 |
+| SEQ-010 | UC-010 (FR-009) | Realizes | CLS-018, CLS-002, CLS-005, CLS-011 |
+| **Interfaces (Designer)** | | | |
+| INT-006…INT-009 | SAD Logical View service interfaces (ICLK, INEWS, IDIR, ICAT) | Refines | CLS-001…CLS-004 implementations |
+| INT-010, INT-011 | SAD Logical View infrastructure interfaces (ILDAP, IAUTH) | Refines | CLS-009, CLS-010 |
+| INT-012, INT-013, INT-014 | SAD Logical View cross-cutting interfaces (IAUD, IEXPORT, ITIME) | Refines | CLS-005, CLS-006, CLS-007 |
+| INT-015…INT-019 | SAD Logical View persistence interfaces (IPERSIST + repositories) | Refines | CLS-011…CLS-016 |
+| **State machines (Designer)** | | | |
+| NewsItem state machine | FR-006, FR-008, FR-009, CON-012 | Refines | CLS-022 |
+| ClockingEvent state machine | ADR-003, REL-002, REL-003, DAT-001 | Refines | CLS-021, CLS-008 |
+| **SAD boundary reconciliations (Designer)** | | | |
+| COMP-001 IAUD omission | NFR-005 scope (AUD-001…004), DAT-001 | Refines | SAD Logical View (coupling reduction) |
+| COMP-010 ILDAP via IDirectoryService | CON-005, CON-006 | Refines | SAD Logical View (single display-data path) |
+| COMP-009 browser-side realization | ADR-003, SAD Deployment View | Refines | CLS-008 + CLS-001.SyncEvents |
+| **Boundary classes and navigation (User Interface Designer — Elaboration Iter 1, PRESERVED)** | | | |
 | SCR-01 Home | UC-001 (FR-004), UC-003 (FR-007), CON-011 | Derives | HomeView (CLS), ClockingController, ICLK, INEWS |
 | SCR-02 My Clocking History | UC-002 (FR-005), SEC-007 | Derives | ClockingHistoryView, ClockingController, ICLK |
 | SCR-03 News | UC-003 (FR-007), CON-011 | Derives | NewsView, NewsController, INEWS |
