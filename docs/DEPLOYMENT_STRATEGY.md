@@ -1,84 +1,101 @@
 # Employee Portal — Deployment Strategy
 
-**Phase:** Inception (Iteration 1, Cycle 1)
-**Date:** 2026-09-01
-**Owner:** Deployment Manager
+**Phase:** Inception (Iteration 2)
+**Status:** Baseline
+**Deployment Manager:** Deployment discipline
 
-## Deployment Mode
+## 1. Deployment Mode
 
-**Custom-built** — The Employee Portal is a purpose-built internal web application for Cuba Corp (200 employees, 3 offices). It is not shrink-wrapped or downloadable; it is deployed to a single internal Windows Server operated by the Infrastructure Team (STK-004).
+**Custom-built** — the Employee Portal is an internal web application deployed as a single-node system on an internal Windows Server within the Cuba Corp corporate network. No cloud, no external access, no distribution media.
 
-## Target User Community
+**Rationale:** The portal serves a single organization (200 employees, 3 offices). A custom-built deployment on internal infrastructure is proportional to the declared scope (CON-008, CON-009). Shrink-wrapped and downloadable modes do not apply.
 
-| Community | Size | Access | Roles |
+## 2. Target User Community
+
+| Group | Size | Role | Access |
 |---|---|---|---|
-| Employees | ~200 across 3 offices | Corporate network, Chrome/Edge browser | Clock in/out, view history, browse news, search directory |
-| HR Administrators | Small subset (HR staff) | Corporate network, Chrome/Edge browser | Review clockings, export CSV, assign categories, publish/edit/unpublish news |
+| Employees (STK-003) | 200 | Clock in/out, browse news, search directory | Corporate network, Chrome/Edge |
+| HR Administrators (STK-001) | ~5 | Publish/edit/unpublish news, review clockings, export CSV, assign categories | Corporate network, Chrome/Edge |
 
-## Target Environment
+All users authenticate via Keycloak OIDC (CON-004) with corporate credentials.
 
-| Attribute | Value | Source |
+## 3. Target Topology
+
+Single-node deployment on Windows Server:
+
+- **Application:** .NET 10 Razor Pages (CON-001, CON-002)
+- **Database:** PostgreSQL (CON-003)
+- **Authentication:** Keycloak OIDC (CON-004) — external, operated by STK-004
+- **Directory:** Active Directory LDAP read-only (CON-005) — external, operated by STK-004
+- **Network:** Internal corporate network only (CON-009)
+- **Browsers:** Chrome and Edge (CON-010)
+
+No clustering, no load balancers, no container orchestration — proportional to 200-user scope.
+
+## 4. Rollout Approach — Two-Gate Acceptance
+
+### Gate 1: Development Site Acceptance
+- Portal deployed to development Windows Server instance
+- Verification: all 10 UCs functional, OIDC auth works, LDAP reads succeed, PostgreSQL data persists
+- Exit: dev-site acceptance signed off by Deployment Manager + HR Director (STK-001)
+
+### Gate 2: Production Site Acceptance (with Pilot)
+- Portal deployed to production Windows Server (same node profile)
+- Pilot group: 10-20 employees across 3 offices for 1 week
+- Exit criteria:
+  - AC-001: Employee clocks in/out without help
+  - AC-003: Employee finds colleague's phone/email in under 10 seconds
+  - AC-004: 80% of pilot group completes at least one clocking with no prior training
+  - NFR-001: Pages load under 3 seconds
+  - NFR-002: Clocking responds under 1 second
+
+### Full Rollout
+- All 3 offices, all 200 employees
+- Monitor adoption per BG-003 (80% within 3 months)
+- R002 mitigation: communicate change to prevent Excel relapse
+
+### Rollback Criteria
+- Critical UC failure (clocking, auth, directory)
+- Performance below NFR thresholds
+- Data integrity issues
+- Rollback action: stop production instance, redirect to maintenance page, fix on dev-site, re-deploy
+
+## 5. External Infrastructure Dependencies (R010)
+
+| Dependency | Provider | Needed For | Blocking? |
+|---|---|---|---|
+| Windows Server provisioning | STK-004 (Infra) | All deployment | Yes — blocks Construction deployment |
+| Keycloak client registration | STK-004 (Infra) | OIDC authentication (all UCs) | Yes — blocks auth integration |
+| LDAP read access to AD (service account) | STK-004 (Infra) | Directory search (UC-004), category assignment (UC-007) | Yes — blocks Elaboration PoC for R001 |
+
+These dependencies are owned by STK-004 and must be secured before Construction deployment activities begin.
+
+## 6. Deployment Constraints
+
+| ID | Constraint | Impact on Deployment |
 |---|---|---|
-| Hosting | Internal Windows Server (no cloud) | CON-008 |
-| Network access | Internal corporate network only — no external access | CON-009 |
-| Browsers | Current Chrome and Edge | CON-010 |
-| Database | PostgreSQL (co-located on same server) | CON-003 |
-| Authentication | Keycloak OIDC (existing, external) | CON-004 |
-| Directory | Active Directory LDAP v3 (existing, external, read-only) | CON-005 |
-| Backup/Recovery | Infrastructure's responsibility (STK-004) | CON-014 |
+| CON-008 | Internal Windows Server (no cloud) | Single-node physical or VM server |
+| CON-009 | Internal corporate network only | No external DNS, no public endpoints |
+| CON-010 | Chrome and Edge only | No cross-browser deployment testing |
+| CON-014 | Backup/recovery is Infrastructure's responsibility | Coordinate with STK-004; not a portal deliverable |
+| NFR-003 | Availability Mon-Fri 7:00-19:00 | Deployment windows outside business hours |
 
-## Initial Deployment Topology
+## 7. Bill of Materials (Preview)
 
-Single-node topology on an internal Windows Server within the corporate network:
-
-- **Windows Server (CON-008):** Hosts the .NET 10 Razor Pages application and PostgreSQL database
-- **Employee workstations (3 offices):** Access the portal via HTTPS over the corporate network using Chrome or Edge
-- **Keycloak (external, CON-004):** OIDC authentication — portal registers as a client only
-- **Active Directory (external, CON-005):** LDAP v3 read-only queries for directory data
-
-No load balancers, no clusters, no container orchestration — proportional to 200 users on a single server.
-
-## Rollout Approach
-
-Phased internal deployment:
-
-1. **Development site (Elaboration/Construction):** Portal deployed on a dev Windows Server for integration testing and PoC validation
-2. **Acceptance gate 1 — Development site:** Functional acceptance by dev team; all 10 UCs verified against AC-001 through AC-005
-3. **Pilot deployment (early Transition):** Portal deployed to production Windows Server; small pilot group (HR + subset from one office)
-4. **Acceptance gate 2 — Production site:** Stakeholder acceptance (STK-001) confirms system meets acceptance criteria
-5. **Full rollout (Transition):** All 200 employees across 3 offices gain access; adoption tracked against BG-003 (80% within 3 months)
-
-## Rollback Criteria
-
-| Criterion | Trigger | Action |
+| Component | Technology | License |
 |---|---|---|
-| Authentication failure | OIDC broken — no users can log in | Roll back; verify Keycloak client config with STK-004 |
-| LDAP connectivity failure | Directory search errors for all queries | Roll back; verify LDAP service account with STK-004 |
-| Data corruption | PostgreSQL integrity issues | Roll back; restore from Infra-managed backup (CON-014) |
-| Performance regression | Page load >5s (above NFR-001's 3s) | Roll back; investigate server resources |
-| Clocking data loss | Offline sync fails to persist events | Roll back; investigate idempotent endpoint + queue (COMP-009) |
+| Application | .NET 10 Razor Pages | Open-source (MIT) |
+| Database | PostgreSQL | Open-source (PostgreSQL License) |
+| Authentication | Keycloak (existing) | Existing infrastructure |
+| Directory | Active Directory (existing) | Existing infrastructure |
+| Web Server | IIS or Kestrel (TBD in Elaboration) | Included with .NET |
 
-## External Dependencies
+Detailed BOM with lock files will be produced in Construction when the codebase is established.
 
-| Dependency | Provider | Blocking? |
+## 8. Risks Affecting Deployment
+
+| Risk | Severity | Mitigation |
 |---|---|---|
-| Windows Server provisioned | STK-004 (Infra) | Yes |
-| LDAP service account (read access) | STK-004 (Infra) | Yes |
-| Keycloak OIDC client registered | STK-004 (Infra) | Yes |
-| PostgreSQL installed on server | STK-004 (Infra) or dev team | Yes |
-
-## Deployment Constraints and Risks
-
-- **CON-008:** Single Windows Server, no cloud — STK-004 provisions and operates
-- **CON-009:** Internal network only — no external access config needed
-- **CON-014:** Backup/recovery is Infrastructure's responsibility — not in deployment plan
-- **R001:** AD LDAP attribute consistency — may require graceful degradation; PoC in Elaboration
-- **R002:** Clocking adoption risk — rollout must include communication/training (BG-003)
-- **STK-004 dependency:** Server, LDAP, and Keycloak client all blocking; engage early in Elaboration
-
-## Phase Evolution
-
-- **Inception (this document):** Strategy, mode, topology sketch, rollout approach, rollback criteria
-- **Elaboration:** Topology refined against SAD; PoC validation of LDAP, OIDC, offline resilience
-- **Construction:** Build artifacts packaged; dev-site deployment and acceptance gate 1
-- **Transition:** Release Notes drafted; pilot deployment, acceptance gate 2, full rollout, adoption tracking
+| R001: AD LDAP attribute inconsistency | High (P3×I3=9) | Early PoC in Elaboration; coordinate with STK-004 |
+| R002: Employee adoption resistance | Medium (P3×I2=6) | Change communication during pilot; BG-003 tracking |
+| R010: Infrastructure deliverables | High | PM engages STK-004 early in Elaboration |
