@@ -102,7 +102,7 @@ Measurable criteria per user role. Each criterion is testable; none invents targ
 
 **Stakeholder decision recorded (Elaboration Iter 2 — R001 validation bar):** The R001 validation bar is **behavioural, not statistical**. The prior ">90% of sampled users per office with all six corporate attributes populated" figure is **dropped** — it is invented (the declared R001 names no percentage; the PoC decision names none), and measured against a disposable directory the team seeds itself it cannot fail, so it proves nothing. The architectural risk is what the portal DOES when an attribute is absent, not how many attributes are missing (a property of the real directory nobody can know until STK-004 delivers). **The bar, in the stakeholder's words:** "every employee is rendered whether or not their attributes are complete; a missing attribute never removes someone from search results; a missing attribute never raises an error. Seed the gaps deliberately and prove those three hold. That retires R001 empirically, this phase, without the production directory." The percentage belongs to a different activity — measuring the real AD's data quality once STK-004 delivers — tracked in Construction (R011 residual), kept out of the LCA evidence package.
 
-**Requirements consequence (Requirements Specifier, Elaboration Iter 2):** the bar is a **reliability contract at the LDAP Query Mechanism boundary** — one contract, four consumers. UC-004 (FR-010) is the declared home of the bar (the stakeholder's wording names search results). UC-005 (FR-001), UC-006 (FR-002), and UC-007 (FR-003) read the same AD attributes through the same mechanism, so the same three clauses are specified there as AF-3 alternative flows, each marked **[DERIVED — from FR-00N + the R001 behavioural bar, awaiting stakeholder confirmation]** — the bar's reach beyond the directory wording is the stakeholder's to confirm, not this role's to assume. The three clauses are testable as written: seed gaps deliberately in the disposable directory, exercise each consumer, and verify (a) rendering completeness, (b) no removal, (c) no error. Distinct-condition note: AD-unreachable (UC-005 AF-2, UC-006 AF-2, UC-007 AF-2, UC-004 AF-3) is a different failure mode with a different contract — it is NOT waived by the behavioural bar.
+**Stakeholder confirmation recorded (Elaboration Iter 2 — bar reach):** Asked whether the behavioural bar applies to **all four AD-reading use cases** (UC-004 directory search, UC-005 HR clocking review, UC-006 CSV export, UC-007 worker category assignment) and not only the directory search, the stakeholder answered **"Yes"**. The bar is therefore a **reliability contract at the LDAP Query Mechanism boundary** — one contract, four consumers: UC-004 (FR-010) is the declared home of the bar (the stakeholder's original wording names search results); UC-005 (FR-001), UC-006 (FR-002), and UC-007 (FR-003) carry the same three clauses as confirmed AF-3 alternative flows. The three clauses are testable as written: seed gaps deliberately in the disposable directory, exercise each consumer, and verify (a) rendering completeness, (b) no removal, (c) no error. Distinct-condition note: AD-unreachable (UC-005 AF-2, UC-006 AF-2, UC-007 AF-2, UC-004 AF-3) is a different failure mode with a different contract — it is NOT waived by the behavioural bar.
 
 ```plantuml
 @startuml
@@ -112,9 +112,9 @@ title R001 Behavioural Bar - One Contract, Four AD-Reading Use Cases\nLDAP Query
 
 package "Employee Portal" {
   component "UC-004 Directory Search\n(FR-010 - declared home of the bar)" as UC004
-  component "UC-005 HR Clocking Review\n(FR-001 - AF-3 [DERIVED])" as UC005
-  component "UC-006 CSV Export\n(FR-002 - AF-3 [DERIVED])" as UC006
-  component "UC-007 Category Assignment\n(FR-003 - AF-3 [DERIVED])" as UC007
+  component "UC-005 HR Clocking Review\n(FR-001 - AF-3 confirmed)" as UC005
+  component "UC-006 CSV Export\n(FR-002 - AF-3 confirmed)" as UC006
+  component "UC-007 Category Assignment\n(FR-003 - AF-3 confirmed)" as UC007
 
   component "LDAP Query Mechanism\n(cross-cutting, <<include>>\nfrom UC-004/005/006/007)" as LDAP <<cross-cutting>>
 }
@@ -141,9 +141,10 @@ note bottom of LDAP
   (c) a missing attribute never
   raises an error
   UC-004: declared home (FR-010).
-  UC-005/006/007: [DERIVED - from
-  FR-001/FR-002/FR-003 + the bar,
-  awaiting stakeholder confirmation]
+  UC-005/006/007: stakeholder-
+  confirmed (Elab Iter 2, answer Yes)
+  - the bar applies to all four
+  AD-reading use cases.
 end note
 
 note bottom of DISPOSABLE
