@@ -1,0 +1,15 @@
+## .NET build output
+bin/
+obj/
+
+## Visual Studio
+*.user
+*.suo
+.vs/
+
+## Test results
+TestResults/
+*.trx
+
+## Logs
+*.log
