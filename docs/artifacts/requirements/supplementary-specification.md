@@ -1,5 +1,3 @@
-# Supplementary Specification
-
 ## Document Control
 
 | Field | Value |
@@ -8,7 +6,7 @@
 | Status | Draft |
 | Milestone Target | End of Elaboration |
 | Iteration | 1 (Cycle 1) |
-| Elaboration Changes | Offline clocking [SCOPE_QUESTION] RETIRED — stakeholder decision recorded (Reliability); Data Integrity section added (DAT-001, DAT-002 — implied NFRs); SEC-006/SEC-007 added (role enforcement, own-data-only access — forced by full UC specifications); INT-005 (CSV download) added; Offline Sync Mechanism added to cross-cutting mechanisms diagram; thresholds marked for Requirements Specifier quantification |
+| Elaboration Changes | Offline clocking [SCOPE_QUESTION] RETIRED — stakeholder decision recorded (Reliability); Data Integrity section added (DAT-001, DAT-002 — implied NFRs); SEC-006/SEC-007 added (role enforcement, own-data-only access — forced by full UC specifications); INT-005 (CSV download) added; Offline Sync Mechanism added to cross-cutting mechanisms diagram; thresholds marked for Requirements Specifier quantification. **RS Iter 1 additions:** Performance and Reliability thresholds quantified with testable criteria (PRF-001/002/003, REL-001/002/003 — per the recorded stakeholder decision delegating threshold quantification to RS); timestamp convention flagged [SCOPE_QUESTION] (multi-timezone offices — Havana/Madrid); SYNC mechanism note updated to reference quantified thresholds |
 
 ## Functionality
 
@@ -72,6 +70,17 @@
 
 **Stakeholder decision recorded (Elaboration — [SCOPE_QUESTION] retired):** The offline clocking persistence mechanism is **architectural and within declared scope**. The stakeholder was asked whether NFR-004 and AC-005 (system tolerates a 5-minute network drop; data syncs once connectivity is restored) are met by an architect-owned local-queuing mechanism, and answered **"Yes"**. Division of responsibility: the Software Architect designs the mechanism (Offline Sync Mechanism, R004 PoC in Elaboration Iteration 1); the Requirements Specifier quantifies the thresholds (max queue size, sync timeout, conflict policy); the Use-Case Model captures the observable behavior in UC-001 AF-1. No open question remains on this item.
 
+### Quantified Thresholds (Requirements Specifier, Elaboration Iter 1 — per the recorded stakeholder decision delegating threshold quantification to this role)
+
+| ID | Quantified Threshold | Testable Criteria | Basis |
+|---|---|---|---|
+| REL-001 | Availability window Mon–Fri 7:00–19:00; during the window the portal serves PRF-001 page loads and PRF-002 clocking responses | During the declared window, pages load and clocking responds per PRF-001/PRF-002; outside the window no availability commitment is made | NFR-003 (declared window); no availability percentage declared — none invented (gold-plating guard) |
+| REL-002 | Offline tolerance: network disruptions of at least 5 minutes are tolerated; per-client queue capacity ≥ 10 clocking events per employee browser; queued events are never lost; idempotent conflict policy — an exact duplicate (same employee, same event type, same recorded timestamp) is rejected, never duplicated; events ordered by recorded timestamp, not arrival order | Simulate a 5-minute outage: events queue locally with confirmation shown from queued data; after restore, all queued events are persisted with zero duplicates and zero losses | AC-005 (declared 5 min); queue capacity [ASSUMPTION — requires validation] — at most 2 transitions per employee per workday (FR-004 in/out), so 10 events covers 5 full workdays of total outage; conflict policy per DAT-001 |
+| REL-003 | Sync completion: all queued events persisted ≤ 60 seconds after connectivity is restored | After restore, measure time from reconnection to full persistence of the queued set: ≤ 60 s | [ASSUMPTION — requires validation] — worst case 200 employees × 1 queued event each (STK-003 population), small records, restored corporate LAN |
+| Timestamp convention | Queued timestamps are captured at the moment of the button press and persisted unchanged on sync; recorded, displayed, and exported in a single reference timezone | Verify the persisted timestamp equals the captured press time after sync, unchanged | DAT-001; the reference timezone is **[SCOPE_QUESTION — see open question below]** |
+
+**[SCOPE_QUESTION — not declared, consequential: timezone convention for clocking timestamps.]** The 3 offices span different timezones (Use-Case Model discovery scenarios reference Havana and Madrid). FR-002 exports the recorded times for payroll/records, so the convention changes what the times mean downstream — an employee in a different timezone reading "08:58" must know which 08:58 it is. The declared scope does not address this. **Escalated to the stakeholder this iteration via REQUIRES_USER_INPUT**; the working assumption pending the answer is the portal server's timezone (single-node Windows Server, CON-008). This marker is retired only by the stakeholder's answer.
+
 ## Performance
 
 | ID | Requirement | Source | Volatility |
@@ -81,6 +90,14 @@
 | PRF-003 | Directory search returns results fast enough for AC-003 (under 10 seconds total including user interaction) | AC-003, FR-010 | Medium |
 
 **Note:** The Requirements Specifier quantifies exact LDAP query timeout thresholds in Elaboration. R001 (LDAP attribute inconsistency) may affect perceived performance if fallback strategies are needed; R005 (LDAP performance) is monitored during the R001 PoC. No further performance targets are declared — inventing ones would be gold-plating.
+
+### Quantified Thresholds (Requirements Specifier, Elaboration Iter 1)
+
+| ID | Quantified Threshold | Testable Criteria | Basis |
+|---|---|---|---|
+| PRF-001 | Page load < 3 s at the 95th percentile under normal working-hours load (Mon–Fri 7:00–19:00, the REL-001 window) on the corporate network | Automated timing of page loads during the REL-001 window: ≥ 95% of loads complete in < 3 s | NFR-001 (declared 3 s); percentile basis [ASSUMPTION — requires validation] — standard intranet measurement; no load model was declared |
+| PRF-002 | Clock in/out confirmation displayed < 1 s from button press — on BOTH the online path and the offline-queued path (UC-001 AF-1) | Measure button-press → confirmation latency with the portal reachable and with the portal server unreachable; both < 1 s | NFR-002 (declared 1 s); the offline path is included because the confirmation is shown from queued data (UC-001 step 8) |
+| PRF-003 | Directory search: LDAP query hard timeout of 5 s; end-to-end search (criteria entry → results displayed) ≤ 10 s | Simulated search: LDAP query aborts at 5 s and UC-004 AF-3 "Directory temporarily unavailable" is shown; a typical search completes end-to-end ≤ 10 s | AC-003 (declared 10 s total); the 5 s query split [ASSUMPTION — requires validation] — leaves ≥ 5 s of the AC-003 budget for typing and rendering |
 
 ## Supportability
 
@@ -176,7 +193,8 @@ note bottom of SYNC
   mechanism is architectural, within
   declared scope (NFR-004, AC-005).
   Design: Software Architect (R004 PoC).
-  Thresholds: Requirements Specifier.
+  Thresholds: quantified - see
+  Reliability (REL-002, REL-003).
 end note
 
 note bottom of LDAP
@@ -221,6 +239,12 @@ end note
 | PRF-001 | NFR-001 | Refines | (All UCs) |
 | PRF-002 | NFR-002 | Refines | UC-001 |
 | PRF-003 | AC-003, FR-010 | Refines | UC-004 |
+| PRF-001 quantification | NFR-001 | Refines | All UCs (page loads, REL-001 window) |
+| PRF-002 quantification | NFR-002 | Refines | UC-001 (online path + AF-1 offline path) |
+| PRF-003 quantification | AC-003, FR-010 | Refines | UC-004 (AF-3 LDAP timeout) |
+| REL-002 quantification | NFR-004, AC-005, DAT-001 | Refines | UC-001 AF-1 (Offline Sync Mechanism — Architect, R004 PoC) |
+| REL-003 quantification | AC-005 | Refines | UC-001 AF-1 |
+| Timestamp convention [SCOPE_QUESTION] | DAT-001, CON-008 | Refines | UC-001, UC-006 CSV column set — pending stakeholder answer (escalated in-round) |
 | DC-001 | CON-001 | Refines | (Architecture) |
 | DC-002 | CON-002 | Refines | (Architecture) |
 | DC-003 | CON-003 | Refines | (Architecture) |
