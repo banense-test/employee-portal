@@ -842,6 +842,57 @@ First formal review event of the Elaboration phase — no prior Elaboration data
 | Rework effort | The convergence cycle (Elab Iter 2) IS the rework vehicle; sized by the plan's Elab Iter 2 box [ASSUMPTION — remainder of the ~2,400K Elaboration phase box, basis named in the Iteration Plan]; no measured rework actuals exist yet | First rework actual records at Elab Iter 2 close (Iteration Assessment) |
 | Findings overdue | 0 of 10 (deadlines iteration-relative; all raised 2026-09-01) | Review debt: none accrued; the tracker arms escalation at the first missed deadline |
 ## Resolutions and Actions
+### Convergence-Cycle Review Calendar (Review Coordinator — Elaboration Iteration 2)
+
+The phase auto-iterates into the already-planned Elaboration Iteration 2 (BUILDING). The review calendar below is synchronized to the convergence-cycle workflow — every review event is triggered by a workflow activity completion, not by a fixed calendar date; if the iteration slips, the reviews slip with it. Entry criteria are coordinator-enforced before each event begins; exit criteria gate each event's completion.
+
+```plantuml
+@startuml
+title Elaboration Iter 2 (Convergence Cycle) - Review Calendar\nReview events mapped to the convergence-cycle workflow (Review Coordinator, 2026-09-01)
+
+start
+:Phase auto-iterates into Elaboration Iteration 2\n(trigger - LCA NO-GO this cycle plus the stakeholder\nall-findings directive, binding on phase transition);
+
+partition "R1 - Mechanism PR code reviews (Code Reviewer)" {
+  :ENTRY - Implementer labels the mechanism branches\nready-for-review (feature/E1-R001, E1-R003, E1-R004),\nCI green, CONTRIBUTING.md committed (A-5);
+  :One PR per branch, base iteration/E1,\nchecklist CR-1..CR-7 applied per PR;
+  :EXIT - terminal disposition per PR\n(approve or request_changes);
+}
+
+partition "R2 - Mid-iteration PRA checkpoint (Management Reviewer)" {
+  :Monitor convergence execution against the Iteration Plan;\nescalate any finding that misses its deadline;
+}
+
+partition "R3 - Corrected-artifact re-reviews" {
+  :SAD re-review (Reviewer lens)\nENTRY - A-7 and A-9 committed\nEXIT - SAD F1 and SAD F3 closed in the ledger;
+  :Iteration Plan and Risk List re-review (Management lens)\nENTRY - A-12..A-15 committed\nEXIT - Iteration Plan F4, F5 and Risk List F1 closed;
+  :Architectural Proof-of-Concept artifact review (Reviewer lens)\nENTRY - A-8 produced with empirical R001/R003/R004 results\nEXIT - SAD F2 closed in the ledger;
+}
+
+partition "R4 - Iteration Evaluation Criteria Review" {
+  :Verify exit criteria 1-8 PLUS the all-findings criterion\n(zero open findings - ALL lenses, ALL severities);
+}
+
+partition "R5 - Iteration Acceptance Review" {
+  :Formal acceptance of the convergence deliverables\n(mechanisms merged to iteration/E1, PoC artifact,\ncorrected SAD, Iteration Plan, Risk List);
+}
+
+partition "R6 - LCA milestone re-presentation" {
+  :ENTRY GATE - coordinator-enforced\n1. findings ledger EMPTY (read_artifact_findings across\nall 12 artifacts shows zero open findings)\n2. evidence package assembled (PoC artifact plus mechanism\ncode on iteration/E1 plus TC-001..TC-020 executed)\n3. SAD, Iteration Plan and Risk List corrected\n4. review materials distributed before the review;
+  :Fresh sanction request to the stakeholder\n(decision-maker with phase-sanctioning authority);
+  if (Sanction GRANTED?) then (yes)
+    :Phase transition sanctioned - Construction entry;
+    stop
+  else (no)
+    :Record refusal and directive;\niterate again against the same entry gate;
+    stop
+  endif
+}
+@enduml
+```
+
+**Calendar-to-finding mapping:** R1 closes F-CR-E1-1 and F-CR-E1-2 (tracker #9, #10); R3 closes SAD F1/F2/F3, Iteration Plan F4/F5, Risk List F1 ×2 (tracker #1, #2, #4–#8); R4 verifies Iteration Plan F3's remediation (tracker #3 — the exit criteria it violates must PASS with code evidence); R6 is the milestone gate whose entry condition is the stakeholder's all-findings directive satisfied. **Participant assignment (expertise-matched):** architecture re-reviews require the Reviewer lens with architecture competency; the PoC artifact review requires the Reviewer lens plus the Software Architect as author; the Iteration Plan/Risk List re-reviews require the Management Reviewer lens; the code reviews require the Code Reviewer lens; the LCA re-presentation requires the stakeholder (STK-001 — sanctioning authority) with all three lenses reporting.
+
 ### Remediation — Closing the Elaboration Iter 1 Code-Review Gate
 
 ```plantuml
@@ -921,6 +972,17 @@ stop
 | **A-13** | **Remove the human-gate queue-time forecasts from the milestone table** (retain measured Inception 0s as a recorded actual); report measured actuals only at each Iteration Assessment — closes Iteration Plan F5 (Minor) | Project Manager (plan owner) | Minor | Planning-rule conformance |
 | **A-14** | **Add a trend column to the Risk Register** (direction since last review + evidence pointer), updated at each iteration reappraisal — closes Risk List F1 (Management, part 1) | Project Manager (Risk List owner) | Minor | Risk-retirement trend verification at every review |
 | **A-15** | **Add a Risk List entry bounding the human-gate queue risk** (strategy Accept; mitigation: in-round stakeholder answering as measured at LCO and at this review's consultation; contingency: process suspends at 14 days per the planning rule — nothing is auto-filled) — closes Risk List F1 (Management, part 2) | Project Manager (Risk List owner) | Minor | Human-gate risk bounded in the Risk List, not forecast in the plan |
+
+### Coordinator Prioritization (execution order for the convergence cycle)
+
+The action chain is sequenced by dependency, not by severity alone — the stakeholder's directive makes ALL of them phase-exit conditions, so the order optimizes the critical path:
+
+1. **P0 — unblock the code path (A-1 done, A-5, A-2, A-3, A-4):** CONTRIBUTING.md first (CR-1 precondition), then the three mechanisms in risk order R001 → R003 → R004 (R001 is the only HIGH-magnitude risk; the Elaboration test priority confirms UC-001, UC-004, UC-010 coverage).
+2. **P1 — close the evidence gap (A-6, A-8, A-11):** PR dispositions, TC-001…TC-020 execution, empirical results into the Architectural Proof-of-Concept artifact — this closes tracker #2, #3, #9 (the three-gate observation of the same defect) and assembles the LCA evidence package.
+3. **P2 — correct the architecture record (A-7, A-9):** the SAD re-correction must land BEFORE the LCA re-presentation (the SAD is the artifact the gate evaluates); A-9 rides the same SAD evolution.
+4. **P3 — close the management findings (A-12, A-13, A-14, A-15, A-10):** the plan/risk corrections are quick, independent, and must be committed before the Iteration Evaluation Criteria Review verifies the all-findings criterion.
+
+**Conflict resolution (cross-lens):** no severity conflicts exist across lenses. The one consolidation decision: SAD F2, F-CR-E1-1, and Iteration Plan F3 are tracked as three findings (three gates, three emitting lenses) but remediated by ONE action chain (A-2…A-6 + A-8 + A-11) — the coordinator does not merge the findings (each lens closes its own) but merges the WORK to avoid triple execution of the same remediation.
 
 ### Historical Resolutions (Inception — preserved)
 
