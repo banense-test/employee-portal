@@ -233,11 +233,11 @@ The baseline architecture is a **layered application** with **subsystem decompos
 2. **Application Layer** (.NET 10, CON-001): subsystem services implementing business logic. Each subsystem encapsulates one area of change.
 3. **Infrastructure Layer**: adapters for external systems (Keycloak OIDC, AD LDAP, PostgreSQL) and cross-cutting mechanisms (offline resilience).
 
-### Subsystem Decomposition (Elaboration baseline — 11 components)
+### Subsystem Decomposition (Elaboration baseline — 11 components; boundary reconciled with the Design Model, Elab Iter 2)
 
 | Component | ID | Encapsulates | Interfaces | Dependencies |
 |---|---|---|---|---|
-| Clocking Service | COMP-001 | Clocking data model, time recording, idempotent endpoint | ICLK | IPERSIST, IAUD, ITIME, COMP-009 |
+| Clocking Service | COMP-001 | Clocking data model, time recording, idempotent endpoint | ICLK | IPERSIST, ITIME, COMP-009 |
 | News Service | COMP-002 | News lifecycle (publish, edit, unpublish, browse), soft-delete | INEWS | IPERSIST, IAUD |
 | Directory Service | COMP-003 | Directory search, LDAP query delegation, graceful degradation | IDIR | ILDAP |
 | Category Service | COMP-004 | AD user id → category mapping, audit on change | ICAT | IPERSIST, IAUD |
@@ -246,13 +246,19 @@ The baseline architecture is a **layered application** with **subsystem decompos
 | LDAP Gateway | COMP-007 | LDAP query construction, connection management, result mapping | ILDAP | AD (external) |
 | PG Persistence | COMP-008 | Database access, EF Core / Npgsql, repository pattern | IPERSIST | PostgreSQL (external) |
 | Offline Resilience Handler | COMP-009 | Client-side retry, local queue, sync-on-reconnect | (internal to COMP-001) | IPERSIST |
-| Report Export Service | COMP-010 | CSV column set v1, ISO-8601 offset formatting, month boundaries in local time | IEXPORT | IPERSIST, ILDAP, ITIME |
+| Report Export Service | COMP-010 | CSV column set v1, ISO-8601 offset formatting, month boundaries in local time | IEXPORT | IPERSIST, IDIR (via COMP-003), ITIME |
 | Time Service | COMP-011 | Timestamp convention: UTC storage, America/Havana display, offset export, payroll-day boundaries | ITIME | — |
 
-**Elaboration refinements vs the Inception candidate:**
-1. **COMP-010 Report Export Service (new)** — FR-002/UC-006 was never assigned to a component; the CSV column set is a declared Medium-volatility area (downstream payroll/records consumers may reshape it). Encapsulated so column changes do not ripple.
-2. **COMP-011 Time Service (new)** — the stakeholder-decided timestamp convention (store UTC, display America/Havana, export ISO-8601 with explicit offset, payroll day = local calendar day) is an area of change designed to survive a future multi-zone reality; it is encapsulated in one component rather than scattered across every screen and service.
-3. **Authentication enforcement moved to the request boundary** — the Inception candidate showed every service calling IAUTH. In the Elaboration baseline, the OIDC middleware authenticates and authorizes at the request boundary; services receive the authenticated identity (claims) as a parameter. This removes per-service IAUTH coupling while keeping COMP-006 the single encapsulation of OIDC details (R003).
+**SAD–Design Model boundary reconciliation (Elab Iter 2 — closes SAD F3):** the Design Model documents two deliberate coupling reductions at subsystem boundaries; the SAD component table and diagram now agree with them:
+
+1. **COMP-001 does NOT depend on IAUD.** NFR-005 scopes the mandatory audit trail to news operations (AUD-001…003) and worker category changes (AUD-004). Clocking events carry their own actor (the authenticated employee) and are immutable once recorded (DAT-001) — there is no state change to audit, so CLS-001 omits `IAuditService`. This is a coupling reduction, not a violation.
+2. **COMP-010 does NOT depend on ILDAP.** The export resolves employee display data transitively via `IDirectoryService` (COMP-003, INT-008) — the same LDAP read path, one gateway, one graceful-degradation policy shared by UC-004/005/006/007. Direct ILDAP use by COMP-010 would duplicate the query path and the degradation policy.
+
+### Elaboration refinements vs the Inception candidate
+
+1. **COMP-010 Report Export Service (new, Iter 1)** — FR-002/UC-006 was never assigned to a component; the CSV column set is a declared Medium-volatility area (downstream payroll/records consumers may reshape it). Encapsulated so column changes do not ripple.
+2. **COMP-011 Time Service (new, Iter 1)** — the stakeholder-decided timestamp convention (store UTC, display America/Havana, export ISO-8601 with explicit offset, payroll day = local calendar day) is an area of change designed to survive a future multi-zone reality; it is encapsulated in one component rather than scattered across every screen and service.
+3. **Authentication enforcement moved to the request boundary (Iter 1)** — the OIDC middleware authenticates and authorizes at the request boundary; services receive the authenticated identity (claims) as a parameter. This removes per-service IAUTH coupling while keeping COMP-006 the single encapsulation of OIDC details (R003).
 
 ### Cohesion and Coupling Assessment
 
@@ -264,7 +270,7 @@ The baseline architecture is a **layered application** with **subsystem decompos
 @startuml
 skinparam componentStyle rectangle
 skinparam fontSize 11
-title Employee Portal — Logical View (Elaboration Baseline)
+title Employee Portal — Logical View (Elaboration Baseline, Iter 2 — boundary reconciliation applied)
 
 package "Presentation Layer (Razor Pages — CON-002)" as PRES {
   component "Clocking Pages\n(SCR-01, SCR-02)" as CLK_P
@@ -328,9 +334,8 @@ CAT_S ..> IPERSIST
 AUD_S ..> IPERSIST
 EXP_S ..> IPERSIST
 DIR_S ..> ILDAP
-EXP_S ..> ILDAP
+EXP_S ..> IDIR
 
-CLK_S ..> IAUD
 NEWS_S ..> IAUD
 CAT_S ..> IAUD
 
@@ -362,6 +367,8 @@ end note
 note right of EXP_S
   Encapsulates: CSV column set v1
   (UC-006, Medium volatility).
+  Resolves employee display data via
+  IDIR (COMP-003) — INT-008.
   Aborts on AD unavailable (UC-006 AF-2).
 end note
 
@@ -372,11 +379,21 @@ note right of OFFLINE
 end note
 
 note bottom of AUTH
-  Elaboration refinement: authentication
-  enforced at request boundary (middleware);
-  services receive authenticated identity
+  Authentication enforced at request
+  boundary (middleware); services
+  receive authenticated identity
   (claims) - no per-service IAUTH calls.
-  Reduces subsystem coupling.
+end note
+
+note bottom of CLK_S
+  SAD-Design Model boundary
+  reconciliation (Elab Iter 2, SAD F3):
+  COMP-001 does NOT call IAUD —
+  NFR-005 scopes audit to news
+  operations (AUD-001..003) and
+  category changes (AUD-004);
+  clocking events carry their own
+  actor and are immutable (DAT-001).
 end note
 @enduml
 ```
