@@ -1,13 +1,13 @@
 ## Document Control
-
 | Field | Value |
 |---|---|
-| Phase | Inception |
-| Status | Draft |
-| Milestone Target | End of Inception (LCO) |
+| Phase | Elaboration |
+| Status | Draft — 4+1 baseline submitted for LCA review |
+| Milestone Target | End of Elaboration (LCA) |
 | Iteration | 1 (Cycle 1) |
 | Date | 2026-09-01 |
-
+| Prior Version | Inception candidate (Approved at LCO — 0 findings); EVOLVED, not recreated |
+| Elaboration Changes | Full 4+1 baseline established: Process, Implementation, and Use-Case views completed (were deferred in Inception); Logical View refined — COMP-010 Report Export Service and COMP-011 Time Service added (volatility gaps closed), authentication enforcement moved to the request boundary (middleware); timestamp convention incorporated (stakeholder decision, Elab Iter 1: store UTC, display America/Havana, export ISO-8601 with explicit offset, payroll day = local calendar day); ADR-004 added (worker category list = externally-configured JSON file, per UC-007 delegation); stack re-anchored against enterprise version policy — unchanged, PRESERVED (Npgsql 10.0.3 confirmed latest stable); Data View refined (idempotency key, UTC storage, two-column worker_categories per CON-006); PoC plan corrected per Development Case oracle (Architectural Proof-of-Concept trigger NOT fired) with per-risk retirement dispositions; LCA Review assessment added (milestone NOT yet declared achieved) |
 ## Architectural Representation
 
 This document presents the **candidate architecture** for the Employee Portal — a sketch-level decomposition sufficient to surface architectural risks and guide Elaboration planning. Per RUP, the full 4+1 baseline is established in Elaboration; Inception produces the candidate only.
