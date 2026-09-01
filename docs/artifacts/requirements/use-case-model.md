@@ -6,7 +6,7 @@
 | Status | Draft |
 | Milestone Target | End of Elaboration |
 | Iteration | 1 (Cycle 1) |
-| Elaboration Changes | All 10 UCs fully specified (was: 3 detailed / 7 outlined); AD display-data dependencies of UC-005/006/007 made explicit (CON-005, CON-006); offline clocking AF-1 confirmed in-scope by stakeholder; volatility updated with PoC learnings (R001, R003, R004). **RS Iter 1 additions:** activity diagrams completed for UC-002/003/005/009 (all 10 UCs now diagrammed); exception flows added (UC-002/003 EF-1 data-source unavailability; UC-005/009 EF-1 role denial per SEC-006); UC-001 AF-1 offline-sync thresholds + AF-3 ignore window quantified (delegated to RS by recorded stakeholder decision); UC-006 CSV column set v1 detailed. **RS Iter 1 post-answer:** timestamp convention decided by stakeholder — store UTC, display office local timezone, export ISO-8601 with explicit offset, payroll day = local calendar day; invented office-location references (Havana/Madrid) removed from discovery scenarios — the declared input names no office locations and all 3 offices share one timezone (stakeholder-confirmed) |
+| Elaboration Changes | All 10 UCs fully specified (was: 3 detailed / 7 outlined); AD display-data dependencies of UC-005/006/007 made explicit (CON-005, CON-006); offline clocking AF-1 confirmed in-scope by stakeholder; volatility updated with PoC learnings (R001, R003, R004). **RS Iter 1 additions:** activity diagrams completed for UC-002/003/005/009 (all 10 UCs now diagrammed); exception flows added (UC-002/003 EF-1 data-source unavailability; UC-005/009 EF-1 role denial per SEC-006); UC-001 AF-1 offline-sync thresholds + AF-3 ignore window quantified (delegated to RS by recorded stakeholder decision); UC-006 CSV column set v1 detailed. **RS Iter 1 post-answer:** timestamp convention decided by stakeholder — store UTC, display office local timezone, export ISO-8601 with explicit offset, payroll day = local calendar day; invented office-location references (Havana/Madrid) removed from discovery scenarios — the declared input names no office locations and all 3 offices share one timezone (stakeholder-confirmed). **RS Iter 1 final:** office local timezone decided by stakeholder — America/Havana (IANA identifier, DST-aware; a fixed offset would silently shift every payroll day boundary when the clocks change); incorporated into UC-001 timestamp convention and UC-006 event_timestamp column |
 
 ## Use-Case Diagram
 
@@ -169,7 +169,7 @@ end note
 | Per-client queue capacity | ≥ 10 clocking events per employee browser | [ASSUMPTION — requires validation] Basis: at most 2 transitions per employee per workday (FR-004 in/out); 10 events covers 5 full workdays of total outage — far beyond the declared 5-minute window |
 | Sync completion | All queued events persisted ≤ 60 seconds after connectivity is restored | [ASSUMPTION — requires validation] Basis: worst case 200 employees × 1 queued event each (STK-003 population), small records, restored corporate LAN |
 | Conflict policy | Idempotent: an exact duplicate (same employee, same event type, same recorded timestamp) is rejected, never duplicated; events are ordered by recorded timestamp, not arrival order | DAT-001 (timestamp fixed at button press), AF-3 |
-| Timestamp convention | Queued timestamps are captured at the moment of the button press, stored in UTC, and persisted unchanged on sync; displayed in the office local timezone. All 3 offices share one timezone (stakeholder-confirmed) | DAT-001; stakeholder decision (Elaboration Iter 1): "store every clocking timestamp in UTC, display it in the office local timezone" |
+| Timestamp convention | Queued timestamps are captured at the moment of the button press, stored in UTC, and persisted unchanged on sync; displayed in the office local timezone (America/Havana, IANA — stakeholder decision, Elaboration Iter 1). All 3 offices share this one timezone (stakeholder-confirmed) | DAT-001; stakeholder decisions (Elaboration Iter 1): "store every clocking timestamp in UTC, display it in the office local timezone" — office local zone: America/Havana (IANA identifier, DST-aware) |
 
 **Scenarios (discovery walk):**
 - **S1:** María (Employee) opens the portal at 08:58, sees "Clock In", presses → confirmation "Clocked in at 08:58:12".
@@ -473,10 +473,10 @@ stop
 | 2 | employee_name | Full name, read from AD on demand | CON-005, FR-010 attribute set |
 | 3 | department | Department, read from AD on demand | CON-005, FR-010 |
 | 4 | office | Office, read from AD on demand | CON-005, FR-010 |
-| 5 | event_timestamp | Event time in ISO-8601 with explicit offset, office local timezone (format YYYY-MM-DDThh:mm:ss±hh:mm) | FR-004 recorded timestamp (stored UTC); stakeholder decision (Elaboration Iter 1) |
+| 5 | event_timestamp | Event time in ISO-8601 with explicit offset, America/Havana local time (format YYYY-MM-DDThh:mm:ss±hh:mm; the offset is the one in force at the event time per the IANA zone database) | FR-004 recorded timestamp (stored UTC); stakeholder decisions (Elaboration Iter 1) |
 | 6 | event_type | IN or OUT | FR-004 |
 
-**CSV scope notes:** Job title, email, and extension are excluded — they are directory attributes (FR-010), not clocking data. Timestamps are stored in UTC and exported in ISO-8601 with an explicit offset in the office local timezone; the selected month's boundaries are computed in office local time — the payroll day is the local calendar day, never the server's (stakeholder decision, Elaboration Iter 1). All 3 offices share one timezone (stakeholder-confirmed). Volatility: Medium — downstream payroll/records consumers may reshape the column set; the export format must be encapsulated so column changes do not ripple (Use-Case Survey volatility rationale). AF-2 guarantees every exported row resolves employee display data. Export is HR-only; employees have no export (FR-005 is view-only).
+**CSV scope notes:** Job title, email, and extension are excluded — they are directory attributes (FR-010), not clocking data. Timestamps are stored in UTC and exported in ISO-8601 with an explicit offset in America/Havana local time (IANA identifier, DST-aware — a fixed offset would silently shift the payroll day boundary when the clocks change); the selected month's boundaries are computed in America/Havana local time — the payroll day is the local calendar day, never the server's (stakeholder decisions, Elaboration Iter 1). All 3 offices share this one timezone (stakeholder-confirmed). Volatility: Medium — downstream payroll/records consumers may reshape the column set; the export format must be encapsulated so column changes do not ripple (Use-Case Survey volatility rationale). AF-2 guarantees every exported row resolves employee display data. Export is HR-only; employees have no export (FR-005 is view-only).
 
 **Activity Diagram:**
 
@@ -731,11 +731,11 @@ stop
 | ACT-004 | CON-004 | Derives | All UCs (<<include>> auth) |
 | UC-001 AF-1 | NFR-004, AC-005 | Refines | Offline Sync Mechanism (Supplementary Specification; Architect — R004 PoC) |
 | UC-001 AF-1 thresholds | NFR-004, AC-005, DAT-001 | Refines | REL-002, REL-003 (Supplementary Specification — quantified by RS, Elab Iter 1) |
-| UC-001 timestamp convention | DAT-001 + stakeholder decision (Elaboration Iter 1): store UTC, display office local timezone | Refines | REL-002 timestamp convention (Supplementary Specification); UC-006 event_timestamp column |
+| UC-001 timestamp convention | DAT-001 + stakeholder decisions (Elaboration Iter 1): store UTC, display office local timezone (America/Havana, IANA) | Refines | REL-002 timestamp convention (Supplementary Specification); UC-006 event_timestamp column |
 | UC-001 AF-3 ignore window | NFR-002, FR-004 | Refines | PRF-002 (Supplementary Specification) |
 | UC-002 EF-1 | NFR-004 | Refines | REL-002 (Supplementary Specification) |
 | UC-003 EF-1 | NFR-004 | Refines | REL-002 (Supplementary Specification) |
 | UC-004 AF-2 | R001 | Mitigates | LDAP attribute consistency PoC (Architect) |
 | UC-005 EF-1 | SEC-006 | Refines | (Supplementary Specification — role enforcement) |
-| UC-006 CSV column set | FR-002, CON-005, CON-006, INT-005 + stakeholder decision (ISO-8601 offset export, local payroll day) | Refines | STD-003 (CSV format); UC-006 AF-2 (abort on AD unavailable) |
+| UC-006 CSV column set | FR-002, CON-005, CON-006, INT-005 + stakeholder decisions (ISO-8601 offset export, local payroll day, office zone America/Havana) | Refines | STD-003 (CSV format); UC-006 AF-2 (abort on AD unavailable) |
 | UC-009 EF-1 | SEC-006 | Refines | (Supplementary Specification — role enforcement) |
