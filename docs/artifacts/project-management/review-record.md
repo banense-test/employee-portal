@@ -60,13 +60,67 @@ The iteration 1 review identified 2 findings on the Iteration Plan (both from th
 Both findings were verified as corrected in the current Iteration Plan content and closed via `resolve_artifact_finding` in the S_RECONCILE state of this iteration.
 
 ## Findings
-
 ### Iteration 2 — New Findings
 
 **Zero new findings.** All 9 reviewed artifacts pass all LCO exit criteria. The Iteration Plan rework has been verified correct:
 
 - **F1 (Major) — RESOLVED:** The "Use Cases and Scenarios Addressed" table now maps all 10 FR-to-UC pairs correctly per the Use-Case Model authority. Construction iteration assignments reference the corrected UC IDs. A Layer 3 rework criteria table was added to verify the corrections.
 - **F2 (Minor) — RESOLVED:** All 13 work items now show "Complete" status, matching the 10 existing Draft artifacts. A reconciliation note was added.
+
+### Business Modeling Discipline (Reviewer: Business Reviewer)
+
+**Verdict: [BR-OK-INACTIVE] — Discipline NOT APPLICABLE per DC §4**
+
+DC §4 trigger evaluation: project does not exhibit business-process-led characteristics. No ERP / BPM / workflow-redesign / M&A signals found in Vision. No Business Use Cases / Workers / Entities sections present in Use-Case Model. No business-domain specialist terms in Glossary (Glossary not produced — no specialist vocabulary trigger).
+
+Conclusion: BPA + BR are correctly INACTIVE for this engagement. No findings, no recommendations. Downstream reviewers (MR, RC) may treat the BM discipline as out-of-scope for the LCO milestone.
+
+```plantuml
+@startuml
+!theme plain
+title Employee Portal — DC §4 Business-Process-Led Trigger Evaluation
+
+skinparam noteBackgroundColor #F5F5F5
+skinparam classBackgroundColor #E8F5E9
+
+class "BPL Trigger Evaluation" as EVAL {
+  **Trigger 1: ERP / large system replacement**
+  NOT TRIGGERED — intranet web app, not ERP
+  --
+  **Trigger 2: BPM / workflow redesign**
+  NOT TRIGGERED — automates existing manual
+  workflows, no reengineering
+  --
+  **Trigger 3: M&A / organizational restructuring**
+  NOT TRIGGERED — no org changes declared
+  --
+  **Trigger 4: New business / greenfield**
+  NOT TRIGGERED — existing org, existing
+  processes, new tool only
+  --
+  == Result: BPL = FALSE ==
+  BM Discipline: INACTIVE
+  BPA + BR: INACTIVE
+}
+
+note right of EVAL
+  **Classification Source:** DC §4
+  **Classified At:** 2026-09-01
+  **Classification By:** Process Engineer
+  --
+  **Artifacts Checked:**
+  • Vision — no BPL signals in prose
+  • Use-Case Model — 10 system UCs,
+    0 business UCs, 0 workers, 0 entities
+  • Glossary — not produced (no specialist
+    vocabulary trigger)
+  --
+  **Conclusion:** BPA + BR correctly
+  INACTIVE for this engagement.
+end note
+
+@enduml
+```
 
 ### Iteration 1 — Prior Findings (Historical Record)
 
@@ -290,7 +344,6 @@ end note
 
 @enduml
 ```
-
 ## Resolutions and Actions
 
 ### Prior Findings Resolved This Iteration
