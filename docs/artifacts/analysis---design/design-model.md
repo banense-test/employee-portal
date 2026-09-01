@@ -1867,8 +1867,9 @@ Growth: `clockings` ~100K rows/year (SAD sizing) — years of headroom on a sing
 | Migration V1 (baseline DDL) | CON-003, ADR-002, R008 | Realizes | Implementer initial EF migration (Construction) |
 | No-Employee-table rule | CON-005, CON-006, CON-007 | Derives | CLS-009 live LDAP resolution (R001 graceful degradation) |
 ## Boundary Classes and Navigation Map
+(User Interface Designer — Elaboration Iter 1, evolved Iter 2 (convergence cycle). This section realizes the user-interface-specific parts of the use cases: the boundary classes the user operates, the formal navigation topology, and the UI patterns every implementer follows. Interaction flows per UC are in the Use-Case Model §Use-Case Specifications → UI Flow References; usability criteria are quantified in the Supplementary Specification §Usability.)
 
-(User Interface Designer — Elaboration Iter 1. This section realizes the user-interface-specific parts of the use cases: the boundary classes the user operates, the formal navigation topology, and the UI patterns every implementer follows. Interaction flows per UC are in the Use-Case Model §Use-Case Specifications → UI Flow References; usability criteria are quantified in the Supplementary Specification §Usability.)
+**Elaboration Iter 2 evolution (convergence cycle):** (1) **P-05 extended** — the missing-AD-attribute pattern now carries the stakeholder-confirmed R001 behavioural bar across ALL four AD-reading use cases (UC-004/005/006/007), each with its rendering contract; (2) **Salt wireframes added** for the two primary screens — SCR-01 Home (first-use affordance, USA-004) and SCR-04 Directory (10-second lookup, USA-003; the wireframe renders the R001 blank-field contract). All other content is preserved exactly as reviewed at the Elaboration Iter 1 LCA review (zero findings on this artifact).
 
 ### Screen Registry
 
@@ -2064,6 +2065,88 @@ end note
 - **Terminal states explicit:** Sign out → `[*]` (topbar, every screen); session expiry → EX-01 (global transition, AF-2).
 - **Guards:** `[HR role]` on all HR-screen transitions (SEC-006 — server-enforced; hiding nav items is defense-in-depth, never the only barrier); `[item published]` on Unpublish/Edit (UC-009 AF-2, UC-010 AF-2); `[session valid/expired]` on entry (AF-2).
 
+### Wireframes (Salt) — primary screens (Elaboration Iter 2)
+
+The two primary screens carry the highest usability stakes: **SCR-01 Home** is the single primary affordance for first use (USA-004, AC-001, AC-004 — adoption risk R002) and **SCR-04 Directory** carries the 10-second lookup task (USA-003, AC-003) plus the R001 rendering contract. Both wireframes are drawn from the mandatory design reference (CON-011): topbar (brand-900, user chip, Sign out), sidebar nav (Employee-role view — HR items hidden per P-06), content cards. The Designer details the view classes behind them; the Implementer builds from them.
+
+**SCR-01 Home** — clocked-in state shown (the button toggles green ▶ "Clock In" ↔ red ■ "Clock Out" by status, USA-001; never both visible):
+
+```plantuml
+@startsalt
+{
+{Employee Portal | Maria Gomez - Employee | [Sign out]}
+--
+{
+{Home
+My Clocking History
+News
+Directory}
+|
+{Home
+Good morning, Maria
+--
+{{Clocking
+--
+Status: Present since 08:02
+[■ Clock Out]
+Last event: Clocked in at 08:02:14}}
+--
+{{Featured news
+--
+★ IT Town Hall - Friday 15:00}}
+--
+{{My clocking history
+--
+Today: 08:02 in
+[View full history]}}
+}
+}
+}
+@endsalt
+```
+
+Wireframe contract: status chip + status-aware button are the ONLY clocking controls (USA-002: ≤ 2 interactions from Home); the confirmation renders inline on the card after press (< 1 s, PRF-002); all displayed times are America/Havana local (USA-008); featured banner uses the warn-tinted style (P-02); history preview links to SCR-02.
+
+**SCR-04 Directory** — search results for "Gomez"; the second and third cards deliberately render the **R001 behavioural bar** (stakeholder-confirmed, Elaboration Iter 2): missing attributes render as blank values (em-dash placeholder), the entry is NOT hidden, no error is raised:
+
+```plantuml
+@startsalt
+{
+{Employee Portal | Maria Gomez - Employee | [Sign out]}
+--
+{
+{Home
+My Clocking History
+News
+Directory}
+|
+{Directory
+Find a colleague
+--
+{"Gomez          " | ^All departments^ | ^All offices^ | [Search]}
+--
+{{Gomez, Ana
+Job title: Financial Analyst
+Department: Finance | Office: Central
+Email: a.gomez@cubacorp.example | Ext: 2451}}
+--
+{{Gomez, Luis
+Job title: —
+Department: — | Office: Central
+Email: l.gomez@cubacorp.example | Ext: —}}
+--
+{{Gomez, Marta
+Job title: HR Generalist
+Department: HR | Office: North
+Email: m.gomez@cubacorp.example | Ext: —}}
+}
+}
+}
+@endsalt
+```
+
+Wireframe contract: all six corporate fields render ON the card — no detail view needed (USA-003); a missing attribute renders as an empty value ("—") while the field label remains visible, so the user sees the attribute exists but is unpopulated in AD — never "N/A", never an error, never a hidden card (R001 bar clauses a/b/c; UC-004 AF-2); the same blank-value convention applies to the SCR-05 review table and SCR-06 lookup (P-05). Empty results → "No colleagues found" + refine suggestion (UC-004 AF-1); LDAP failure → "Directory temporarily unavailable", no partial data (UC-004 AF-3, CON-006).
+
 ### UI Patterns
 
 Coordination artifact for the Designer (view-class detailing), the Implementer (screen construction), and the Technical Writer (terminology). All patterns are drawn from the mandatory design reference (CON-011); nothing is invented beyond it.
@@ -2089,7 +2172,7 @@ Coordination artifact for the Designer (view-class detailing), the Implementer (
 **P-05 State patterns (consistent across all screens)**
 - Empty state: friendly one-line message, no skeleton rows (UC-002 AF-1, UC-003 AF-1/AF-2, UC-004 AF-1, UC-005 AF-1).
 - Unavailable state: inline "… temporarily unavailable" message in the content area, NO partial or cached data (UC-002 EF-1, UC-003 EF-1, UC-004 AF-3, UC-006 AF-2, UC-007 AF-2 — CON-006 forbids local fallback).
-- Missing AD attribute: field shown blank, entry NOT hidden (UC-004 AF-2 — R001 graceful degradation).
+- Missing AD attribute: field shown blank, entry NOT hidden, no error — the **R001 behavioural bar (stakeholder-confirmed, Elaboration Iter 2) applies to ALL four AD-reading use cases**, each with its rendering contract: **UC-004 AF-2** directory cards (all six fields on the card, blank values for gaps — SCR-04 wireframe); **UC-005 AF-3** review table (EVERY event row rendered — clocking columns are portal data and always complete; missing display fields blank); **UC-006 AF-3** CSV export (every event row written, missing display fields as blank cells, no abort — ad_user_id resolves identity); **UC-007 AF-3** category lookup (employee still locatable and selectable with blank fields). Blank renders as an empty value with the field label retained (em-dash placeholder on cards/tables) — never "N/A", never an error, never a hidden entry. Visualized in SB-05 (Use-Case Model).
 - Role denial: SCR-09 inline state, no data revealed (SEC-006).
 - Validation: inline field highlight + message on submit (UC-008 AF-1, UC-009 AF-1).
 
@@ -2105,7 +2188,6 @@ Coordination artifact for the Designer (view-class detailing), the Implementer (
 1. **Sidebar item "Manage directory" → SCR-06 "Worker categories".** CON-007 forbids editing employee fields anywhere in the portal; the only HR management adjacent to the directory is worker category assignment (FR-003). The nav item keeps the reference's position, icon slot, and style; its label reads "Worker categories" (error prevention — a label promising directory management would mislead).
 2. **"Export CSV (HR)" placement.** The mockup shows an HR-only export affordance on the personal history card; UC-006 step 1 places the export in the clocking review area. The control renders on SCR-05 in the reference's ghost-button style, HR role only; SCR-02 carries no export (FR-005 view-only, SEC-007).
 3. **Mockup UC labels.** The reference's internal UC01/UC02/UC03 map to project UC-001/UC-003/UC-004 (Use-Case Model is the UC-ID authority — prevents recurrence of the LCO F1 UC-ID mismatch).
-
 ## Capsules, Protocols and Signals
 
 [OMITTED — no capsule-based elements exist in this system. The portal is a request/response web application (ADR-001: layered monolith, single process); it contains no real-time capsules, no signal protocols, and no asynchronous message-passing elements. The only asynchronous behavior is the offline sync replay (CLS-008 → sync endpoint), which is an HTTP request/response exchange specified in SEQ-001 — not a signal protocol.]
