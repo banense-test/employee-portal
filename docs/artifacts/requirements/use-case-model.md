@@ -733,7 +733,9 @@ stop
 
 ### UI Flow References (User-Interface Designer — Elaboration Iter 1)
 
-These references realize the **user-interface-specific parts of each use case** (Interaction Design Chain): every UC step is mapped to an observable screen frame — user action and system response — so stakeholders can evaluate the interaction BEFORE implementation. They were developed in parallel with the Requirements Specifier's UC refinement this iteration (pre-baseline), per the parallel-execution principle. Screen IDs (SCR-01…SCR-09, M-01, EX-01) are formally defined in the Design Model §Boundary Classes and Navigation Map; every screen implements the mandatory design reference (CON-011, docs/inputs/employee-portal-design.html). Usability criteria cited per frame are quantified in the Supplementary Specification §Usability (USA-001…USA-009).
+These references realize the **user-interface-specific parts of each use case** (Interaction Design Chain): every UC step is mapped to an observable screen frame — user action and system response — so stakeholders can evaluate the interaction BEFORE implementation begins. They were developed in parallel with the Requirements Specifier's UC refinement (pre-baseline), per the parallel-execution principle. Screen IDs (SCR-01…SCR-09, M-01, EX-01) are formally defined in the Design Model §Boundary Classes and Navigation Map; every screen implements the mandatory design reference (CON-011, docs/inputs/employee-portal-design.html). Usability criteria cited per frame are quantified in the Supplementary Specification §Usability (USA-001…USA-009).
+
+**Elaboration Iter 2 evolution (User Interface Designer — convergence cycle):** storyboard **SB-05** added — the R001 behavioural bar visualized across the three HR AD-reading screens (UC-005/006/007). The stakeholder confirmed this iteration (asked whether the behavioural bar applies to all four AD-reading use cases and not only the directory search, the stakeholder answered **"Yes"**), so the bar's rendering contract on the HR screens is now a validated interaction requirement, not a compact text row only. SB-01…SB-04, the compact references, and the design-reference reconciliations are preserved exactly as reviewed at the Elaboration Iter 1 LCA review (zero findings). Salt wireframes for the primary screens (SCR-01 Home; SCR-04 Directory — the latter rendering the R001 blank-field contract) are added to the Design Model §Boundary Classes and Navigation Map this iteration.
 
 **Screen registry (summary — formal definition in Design Model):**
 
@@ -906,6 +908,60 @@ stop
 @enduml
 ```
 
+#### SB-05 — UC-005 / UC-006 / UC-007: R001 behavioural bar across the HR AD-reading screens (FR-001, FR-002, FR-003) — storyboard (Elaboration Iter 2)
+
+The stakeholder confirmed this iteration that the R001 behavioural bar applies to **all four AD-reading use cases**, not only the directory search. The bar's three clauses: **(a)** every employee is rendered whether or not their attributes are complete; **(b)** a missing attribute never removes someone from results; **(c)** a missing attribute never raises an error. UC-004's rendering contract is already visualized in SB-02 frame 4. This storyboard visualizes the same bar on the three HR screens, where the rendering stakes differ per use case: the review table must show **every event row** (clocking data is portal data, always complete); the CSV export must write **every event row with blank cells** for missing display fields (ad_user_id resolves identity — no abort); the category lookup must keep the employee **locatable and selectable**.
+
+| Frame | UC step | Screen | User action → System response | Criteria |
+|---|---|---|---|---|
+| 1 | UC-005 steps 3–5 | SCR-05 | Open report [HR role] → all-employees table; names resolved from AD on demand; employee with missing AD attributes → **row rendered with blank display fields, NOT removed, no error** (AF-3) — clocking columns (event type, timestamp) always complete | R001 bar (a)(b)(c), USA-008 |
+| 2 | UC-006 steps 3–6 | SCR-05 | Select month + "Export CSV" → **every event row written**; missing display fields as blank cells; no abort (AF-3); ad_user_id (column 1) always present | R001 bar, INT-005, STD-003 |
+| 3 | UC-007 steps 3–5 | SCR-06 | Locate employee → entry with missing attributes rendered with **blank fields, still locatable and selectable**; no error (AF-3) | R001 bar, CON-013 |
+| 4 | UC-007 steps 6–8 | SCR-06 | Select category from FIXED list → confirm → mapping persisted (ad_user_id → category, CON-006) + audited (AUD-004) | CON-006, AUD-004 |
+
+```plantuml
+@startuml
+title SB-05 - R001 Behavioural Bar across the AD-reading screens (UC-005 / UC-006 / UC-007 - stakeholder-confirmed, Elab Iter 2)
+|HR Administrator|
+start
+:Open HR Clocking Report (SCR-05);
+|Portal|
+:Load clocking events from PostgreSQL\n(portal data: event type + timestamp always complete);
+:Resolve employee display attributes\nfrom AD on demand (CON-005, CON-006);
+if (Some employees have missing AD attributes?) then (yes - UC-005 AF-3)
+  :Render EVERY matching event row;\nmissing display fields blank,\nemployee NOT removed, no error;
+else (no)
+  :Render event rows with complete display data;
+endif
+|HR Administrator|
+:Review all events - no employee\nmissing from the table;
+:Select month, press "Export CSV";
+|Portal|
+if (AD reachable for display attributes?) then (yes)
+  :Write EVERY event row to the CSV;\nmissing display fields as blank cells,\nno abort, no error (UC-006 AF-3 -\nad_user_id resolves identity);
+  :Deliver CSV download;
+else (no - UC-006 AF-2)
+  :Show "Directory temporarily unavailable";\nabort export - no partial file;
+endif
+|HR Administrator|
+:Open Worker Categories (SCR-06);
+|Portal|
+:Employee lookup from AD display data (read-only);
+if (Located employee has missing AD attributes?) then (yes - UC-007 AF-3)
+  :Render employee with blank fields -\nstill locatable and selectable, no error;
+else (no)
+  :Render employee with complete display data;
+endif
+|HR Administrator|
+:Select category from FIXED list (CON-013), confirm;
+|Portal|
+:Persist ad_user_id -> category\n(two columns only - CON-006);
+:Append audit entry: actor + timestamp +\nold value + new value (AUD-004);
+:Confirm assignment;
+stop
+@enduml
+```
+
 #### Compact UI flow references — remaining UCs
 
 | UC | Screen(s) | Main-flow frames (user action → system response) | Alternative / exception frames | Criteria |
@@ -927,7 +983,7 @@ The design reference is authoritative for the visual layer; three reconciliation
 
 #### Storyboard validation status
 
-Storyboards SB-01…SB-04 are submitted for stakeholder validation with this iteration's review (STK-001 sponsor, STK-003 end-user representatives). Any feedback is recorded in the Review Record and traced to requirement impacts — the prototype-as-probe principle. The User-Interface Prototype artifact is **[OMITTED — trigger not fired per Development Case §5.2]**; these storyboards inside the Use-Case Model, plus the Boundary Classes and Navigation Map in the Design Model, carry the interaction design. Full UI traceability: Design Model §Traceability.
+Storyboards SB-01…SB-05 are submitted for stakeholder validation with this iteration's review (STK-001 sponsor, STK-003 end-user representatives). **SB-05 visualizes the R001 behavioural bar exactly as stakeholder-confirmed this iteration** — the same three clauses the disposable-directory validation proves empirically with deliberately-seeded gaps (UC-004 S4 bar walk; R001 PoC, Work Item 7). Any feedback is recorded in the Review Record and traced to requirement impacts — the prototype-as-probe principle. The User-Interface Prototype artifact is **[OMITTED — trigger not fired per Development Case §5.2]**; these storyboards inside the Use-Case Model, plus the Boundary Classes and Navigation Map (now with Salt wireframes for SCR-01 and SCR-04) in the Design Model, carry the interaction design. Full UI traceability: Design Model §Traceability.
 ## Traceability
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
