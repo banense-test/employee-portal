@@ -489,9 +489,64 @@ These dependencies are owned by STK-004 per R010. The Project Manager must engag
 
 **Elaboration refinement vs the Inception candidate:** the browser node now explicitly carries the **localStorage offline queue** (client half of COMP-009) — the deployment consequence of ADR-003 is that part of the system's state lives on the employee workstation, which is why the sync endpoint and idempotency key exist. The server node shows the single deployable process (ADR-001) with the auth middleware at its boundary.
 ## Implementation View
+The subsystem decomposition maps to the **actual repository structure** (verified against the repo tree this iteration): a single solution `EmployeePortal.sln` with one application project `src/EmployeePortal` and one test project `tests/EmployeePortal.Tests`. The 11 components are **logical packages inside the single deployable** (ADR-001) — not separate projects, which would be over-engineering for this scale.
 
-**Deferred to Elaboration.** The Implementation view will map the subsystem decomposition to .NET 10 project structure (solution, projects, namespaces) once the architecture is baselined.
+```plantuml
+@startuml
+skinparam packageStyle rectangle
+skinparam fontSize 11
+title Employee Portal — Implementation View (repository mapping)
 
+package "EmployeePortal.sln" as SLN {
+  package "src/EmployeePortal\n(ASP.NET Core — CON-001, CON-002)" as APP {
+    package "Pages/ (Presentation)" as PAGES {
+      object "Index.cshtml — SCR-01 Home\n(exists)" as IDX
+      object "SCR-02…SCR-09 page folders\n(to be created — Construction)" as PGS
+    }
+    package "Services/ (Application)" as SVCS {
+      object "ClockingService (COMP-001)\nNewsService (COMP-002)\nDirectoryService (COMP-003)\nCategoryService (COMP-004)\nAuditService (COMP-005)\nReportExportService (COMP-010)\nTimeService (COMP-011)" as SVCOBJ
+    }
+    package "Infrastructure/ (Infrastructure)" as INFRA {
+      object "KeycloakAuthProvider (COMP-006)\nLdapGateway (COMP-007)\nPgPersistence (COMP-008)\nOfflineResilienceHandler (COMP-009)" as INFRAOBJ
+    }
+    object "Program.cs — composition root (exists);\nDI wiring: interfaces -> implementations" as PROG
+    object "appsettings.json (exists)\n+ worker-categories.json (ADR-004)" as CFG
+  }
+  package "tests/EmployeePortal.Tests (exists)" as TESTS {
+    object "SmokeTests.cs\n+ per-mechanism tests (Construction)" as TST
+  }
+}
+
+PAGES ..> SVCS : interfaces only\n(ICLK, INEWS, IDIR, ICAT, IEXPORT)
+SVCS ..> INFRA : interfaces only\n(IPERSIST, ILDAP, ITIME, IAUD)
+PROG ..> SVCS
+PROG ..> INFRA
+TESTS ..> APP
+
+note right of SVCS
+  Layering rule (design guideline):
+  dependencies point DOWN only;
+  every cross-package reference is
+  an interface, never a concrete
+  class (SAD cohesion rule).
+end note
+
+note bottom of CFG
+  worker-categories.json is the
+  externally-configured FIXED
+  category list (CON-013, ADR-004) —
+  no category CRUD exists in the
+  portal (SUP-004).
+end note
+@enduml
+```
+
+**Implementation-view decisions:**
+- **Single project, logical packages** — `Pages/`, `Services/`, `Infrastructure/` map 1:1 to the three layers. The Implementer creates the `Services/` and `Infrastructure/` folders; `Pages/` already exists with SCR-01 (Index.cshtml).
+- **Composition root** — `Program.cs` (exists) wires interfaces to implementations via .NET DI. No service locator, no manual construction.
+- **Configuration** — `appsettings.json` (exists) carries connection strings and Keycloak client settings; `worker-categories.json` (ADR-004) carries the fixed category list, editable by Infrastructure/HR without a code deployment (SUP-004).
+- **CI** — `.github/workflows/ci.yml` and `deploy.yml` exist (ConfigurationManager); the build gates every push to main.
+- **Design guideline for the Implementer:** dependencies point DOWN only (Pages → Services → Infrastructure); every cross-package reference is an interface, never a concrete class.
 ## Data View
 
 ### Portal Database Schema (PostgreSQL — CON-003)
