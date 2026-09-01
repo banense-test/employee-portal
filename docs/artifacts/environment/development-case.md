@@ -5,8 +5,10 @@
 | Phase | Inception |
 | Status | Draft |
 | Milestone Target | End of Inception |
-| Iteration | 1 (Cycle 1) |
+| Iteration | 2 (Cycle 1) |
 | Date | 2026-09-01 |
+| Prior Review | 0 findings on Development Case — artifact passed LCO review cleanly |
+| Governance Re-recorded | DC §4 classification, optional triggers, version policy — all re-recorded iteration 2 |
 
 ## Tailoring Overview
 
