@@ -449,7 +449,6 @@ end note
 
 **Reconciliation status:** zero findings carried open into Elaboration Iteration 1. The two Code-Reviewer findings (F-CR-E1-1, F-CR-E1-2) and the four technical-lens findings (SAD F1/F2/F3, Risk List F1) are NEW defects, not recurrences — they carry fresh keys. SAD F2 and F-CR-E1-1 observe the same underlying gap (no mechanism code / no empirical validation) from two different lenses and two different gates; their remediation converges on the same action chain (A-1…A-6 + A-7) and they are expected to close together in the convergence cycle.
 ## Resolutions and Actions
-
 ### Remediation — Closing the Elaboration Iter 1 Code-Review Gate
 
 ```plantuml
@@ -514,17 +513,70 @@ stop
 
 | # | Action | Owner | Severity | Blocks |
 |---|---|---|---|---|
-| A-1 | Create `iteration/E1` integration workspace | Integrator | Critical | Every Elaboration mechanism PR (no valid base exists) |
+| A-1 | Create `iteration/E1` integration workspace | Integrator | Critical | Every Elaboration mechanism PR (no valid base exists) — **DONE since the code-review cycle** (branch exists, skeleton only; no mechanism code yet) |
 | A-2 | Build + hand off R001 mechanism (disposable LDAP directory, COMP-007/CLS-009) with dual-coverage tests, branch labeled `ready-for-review` | Implementer | Critical | Exit criterion 1; R001 (HIGH) empirical retirement |
 | A-3 | Build + hand off R003 mechanism (stub OIDC issuer, COMP-006/CLS-010) with dual-coverage tests, branch labeled `ready-for-review` | Implementer | Critical | Exit criterion 2; R003 empirical retirement |
 | A-4 | Build + hand off R004 mechanism (offline queue + idempotent sync, COMP-009/CLS-008) with dual-coverage tests, branch labeled `ready-for-review` | Implementer | Critical | Exit criterion 3; R004 empirical retirement; AC-005 evidence |
 | A-5 | Commit `CONTRIBUTING.md` (coding standards + branch-strategy section) | Implementer / Software Architect / ConfigurationManager | Minor | CR-1 rule citation in the first mechanism PR |
 | A-6 | Open + review one PR per ready branch (base `iteration/E1`), terminal disposition each | Code Reviewer | Critical | Iteration code-review gate closure |
+| **A-7** | **Re-correct the SAD PoC Plan to the empirical disposition** (§Quality per-risk retirement: R001 disposable directory / R003 stub issuer / R004 direct, citing the stakeholder decision; §External Dependencies: R010 blocks production-instance integration only; LCA criterion 3 corrected; name the Architectural Proof-of-Concept artifact as validation vehicle) — closes SAD F1 | Software Architect | Critical | LCA exit criterion 3 (technical lens); SAD F1 |
+| **A-8** | **Produce the Architectural Proof-of-Concept artifact** (DC-sanctioned, Architect-owned) carrying the empirical results for R001/R003/R004 once the mechanisms are validated — closes SAD F2 | Software Architect | Critical | LCA evidence package; SAD F2 |
+| **A-9** | **Reconcile SAD §Logical View component dependencies with the Design Model's documented reconciliations** (COMP-001 IAUD removal, COMP-010 ILDAP → IDirectoryService) — closes SAD F3 | Software Architect | Minor | SAD/Design Model boundary consistency |
+| **A-10** | **Tag the R001 >90% acceptance criterion `[ASSUMPTION — requires validation]` with its basis** (or escalate to the stakeholder as the R001 validation bar); propagate the tag to the SAD PoC Plan, Test Evaluation Summary, and Test Case on next evolution — closes Risk List F1 | Project Manager (Risk List owner) | Minor | R001 validation-bar traceability |
 
 ### Historical Resolutions (Inception — preserved)
 
 F1 (Major, both lenses) — RESOLVED: the Iteration Plan's "Use Cases and Scenarios Addressed" table corrected to the Use-Case Model authority (FR-001→UC-005, FR-002→UC-006, FR-003→UC-007, FR-004→UC-001, FR-005→UC-002, FR-006→UC-008, FR-007→UC-003, FR-008→UC-009, FR-009→UC-010, FR-010→UC-004); Construction assignments updated; Layer 3 rework criteria table added. F2 (Minor, both lenses) — RESOLVED: all 13 work items reconciled to "Complete" against repository state. Both closures verified in the Inception Iter 2 review; stakeholder sanction granted.
 
+### Technical-Lens Remediation Chain (convergence cycle — Elaboration Iter 2)
+
+```plantuml
+@startuml
+title Technical-Lens Remediation Chain — Elaboration Iter 2 Convergence
+
+|Software Architect|
+start
+:A-7 Re-correct SAD PoC Plan to the
+empirical disposition (closes SAD F1);
+:A-9 Reconcile SAD Logical View
+dependencies with the Design Model
+(closes SAD F3);
+
+|Implementer|
+:A-2..A-4 Build and hand off the three
+mechanisms (evolutionary, in src/,
+dual-coverage tests, ready-for-review
+labels) — closes F-CR-E1-1 / Issue #1;
+
+|Code Reviewer|
+:A-6 Open one PR per branch
+(base iteration/E1), apply CR-1..CR-7,
+terminal disposition each;
+
+|Integrator|
+:Merge APPROVED PRs into iteration/E1;
+
+|Test Designer|
+:Execute TC-001..TC-020 against the
+validation fixtures (disposable LDAP
+directory, stub OIDC issuer, PG dev,
+drop simulation) — unblocks all 20 cases;
+
+|Software Architect|
+:A-8 Produce the Architectural
+Proof-of-Concept artifact carrying the
+empirical R001/R003/R004 results
+(closes SAD F2);
+
+|Project Manager|
+:A-10 Tag the R001 90 percent criterion
+(closes Risk List F1);
+:Record actuals in the Iteration
+Assessment; assemble the LCA
+evidence package;
+stop
+@enduml
+```
 ## Disposition
 
 ### Elaboration Iteration 1, Cycle 1 — Code-Review Gate Disposition
