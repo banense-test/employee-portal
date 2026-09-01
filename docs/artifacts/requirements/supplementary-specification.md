@@ -48,7 +48,6 @@
 | DAT-002 | Audit entries are append-only — no portal function modifies or deletes an audit entry (a mutable trail would not satisfy NFR-005's mandatory traceability) | NFR-005 | Low |
 
 ## Usability
-
 | ID | Requirement | Source | Volatility |
 |---|---|---|---|
 | USA-001 | Custom UI design (docs/inputs/employee-portal-design.html) is mandatory and authoritative for the UI visual layer | CON-011 | Low |
@@ -58,7 +57,26 @@
 | USA-005 | HR Administrator can publish a news item without technical assistance | AC-002 | Low |
 | USA-006 | Compatible with current Chrome and Edge browsers | CON-010 | Low |
 | USA-007 | Responsive web design (no native mobile app) — works on corporate browsers including mobile viewport | Scope Statement | Low |
+| USA-008 | All clocking times are DISPLAYED in the office local timezone (America/Havana, IANA identifier, DST-aware) — never as raw UTC or server time. This is the display facet of the timestamp convention recorded under Reliability (store UTC, display office local, export ISO-8601 with explicit offset) | Stakeholder decision (Elaboration Iter 1 — see Reliability "Timestamp convention"); DAT-001 | Low |
+| USA-009 | The mandatory design reference's accessibility rules apply to every screen: AA contrast, visible focus indicators, interactive targets ≥ 40 px, full keyboard operability | CON-011 (design reference accessibility declaration) | Low |
 
+### Quantified Thresholds (User-Interface Designer, Elaboration Iter 1)
+
+Measurable criteria per user role. Each criterion is testable; none invents targets beyond declared sources (gold-plating guard).
+
+| ID | Quantified Threshold | Testable Criteria | Basis |
+|---|---|---|---|
+| USA-001 | Every screen implements the design reference tokens: palette (brand-900 #0B3D5C, brand-500 #1E7FB5, accent #17A398, danger #C0392B, warn #E6A817), type scale 12/14/16/20/28 px, radius 8 px cards / 6 px controls / 999 px chips, 1120 px container; the clocking button toggles green "Clock In" (accent) ↔ red "Clock Out" (danger) by current status | Side-by-side inspection of every screen against docs/inputs/employee-portal-design.html; button color and label match the employee's clocking status in every state | CON-011 (design tokens declared in the reference header) |
+| USA-002 | A clock in/out completes in ≤ 2 interactions from Home (open Home → press the status-aware button); the inline confirmation with the recorded time is the success signal | Unaided user test: employee completes clocking with zero assistance; confirmation visible < 1 s from press (PRF-002) | AC-001; UC-001 steps 4–8 |
+| USA-003 | From Directory page load, a colleague's email AND extension are visible on the result card — no detail view needed; total task ≤ 10 s including typing | Timed task: locate a named colleague's email/extension in ≤ 10 s (AC-003); person card renders all six corporate fields (name, job title, department, office, email, extension) | AC-003; PRF-003; design reference person card (CON-011) |
+| USA-004 | The Home clocking card is the single primary affordance for first use: one status-aware button, no training material required | First-use test without training: ≥ 80% of sampled employees complete ≥ 1 clocking unaided | AC-004; R002 (adoption risk) |
+| USA-005 | Publish completes in one form (title, body, date, category, featured flag) with inline validation feedback on errors | Unaided HR task completion: publish a news item without technical assistance; invalid fields highlighted inline on submit (UC-008 AF-1) | AC-002; UC-008 steps 3–8 |
+| USA-006 | Every screen renders and operates correctly in current Chrome and Edge | Manual pass of all screens and interactions in both browsers; no browser-specific breakage | CON-010 |
+| USA-007 | Layout collapses to a single column below 900 px viewport (design reference media query); all actions remain operable at mobile width | Walkthrough at 375 px viewport: sidebar, clocking button, search, chips, tables usable | Scope Statement; design reference @media(max-width:900px) (CON-011) |
+| USA-008 | Every displayed clocking time (status chip, confirmation, history tables, HR report) renders in America/Havana local time, DST-aware | Inspect displayed values across a DST boundary: displayed local time matches the IANA zone in force at the event time; no raw UTC or server time shown to users | Stakeholder decision (Elaboration Iter 1); DAT-001 |
+| USA-009 | AA contrast, visible focus, targets ≥ 40 px, keyboard operable on every interactive element of every screen | Keyboard-only walkthrough of every screen: all actions reachable, focus visible on every control, interactive targets ≥ 40 px (clocking button 52 px per design reference) | CON-011 (design reference accessibility line) |
+
+**UI design realization:** the interaction flows that satisfy these criteria are specified as per-UC storyboards in the Use-Case Model §Use-Case Specifications (UI Flow References) and formalized as boundary classes + navigation map + UI patterns in the Design Model §Boundary Classes and Navigation Map (User-Interface Designer, Elaboration Iter 1).
 ## Reliability
 
 | ID | Requirement | Source | Volatility |
