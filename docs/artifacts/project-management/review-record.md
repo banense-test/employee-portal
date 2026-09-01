@@ -666,6 +666,16 @@ stop
 ### Historical — LCO Disposition (Inception, preserved)
 
 **GO (APPROVED)** — all 9 artifacts passed all 9 LCO exit criteria; both prior findings resolved; zero new findings; stakeholder sanction GRANTED and confirmed; `requiresIteration: false`. The project was sanctioned to proceed to Elaboration. Elaboration entry conditions (STK-004 engagement, R001/R003/R004 PoC scheduling) were recorded as advisory, non-blocking items — of which the PoC items are now the subject of this cycle's Critical findings.
+
+### Business Modeling Lens — Milestone Disposition (Business Reviewer, 2026-09-01)
+
+**Verdict: [BR-OK-INACTIVE] — Discipline NOT APPLICABLE per DC §4.**
+
+DC §4 trigger evaluation at LCA: the project does not exhibit business-process-led characteristics. The ProcessEngineer's Elaboration re-check (2026-09-01) records `isBusinessProcessLed = false` with the Inception verdict unchanged, and this lens independently verified the claim against the Vision (tool replacement — Excel sheets, mass emails, PDF directory → one web app; no reengineering, workflow transformation, or business object modeling in scope) and the Use-Case Model (zero BUCs, business workers, business entities, or realizations; all 10 system UCs trace 1:1 to declared FR-001…FR-010). No BM sections were produced during Elaboration, and none were required.
+
+**Conclusion:** the Business Modeling discipline remains correctly INACTIVE. Zero findings, zero recommendations, zero BM action items. The LCA milestone may proceed without BM contributions — the business lens imposes **no conditions** on the LCA gate. The technical lens's withheld sanction (2 Critical findings on the SAD, empirical validation unexecuted) is the only open gate from this Review Record; it is owned by the Reviewer and Code Reviewer lenses, not this one.
+
+**Re-trigger condition (recorded for the ReviewCoordinator):** a Change Request introducing business-process reengineering, workflow transformation, or a business object model re-opens the DC §4 classification (owner: ProcessEngineer). Until such a CR exists, no BM deliverable is owed in Elaboration Iter 2, Construction, or Transition, and this lens's next review obligation arises only if the classification changes.
 ## Traceability
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
