@@ -1,59 +1,44 @@
-# CONTRIBUTING — Employee Portal
+# Contributing — Employee Portal
 
-**Project:** Employee Portal (Cuba Corp)
-**Maintainers:** Software Architect (coding standards) · Implementer (test conventions) · Configuration Manager (branch strategy)
-**Status:** Partial — branch-strategy section committed by the Configuration Manager (Elaboration Iter 1, Cycle 1, 2026-09-01). Coding-standards and test-convention sections are pending from their owners (Review Record F-CR-E1-2 / A-5).
-**Last Updated:** 2026-09-01
+This file is the **programming-guidelines baseline** for every pull request. Code-review checklist item **CR-1** cites rules from here; a violation without a rule citation is personal taste, not a finding.
 
----
+**Ownership:** architectural rules (ARCH-*) — Software Architect; coding conventions — Implementer; repository mechanics — ConfigurationManager. The authoritative branch strategy is `docs/BRANCHING_STRATEGY.md`.
 
-## Branch Strategy (owner: Configuration Manager)
+## Architectural Rules (ARCH-1…ARCH-10 — Software Architect)
 
-This section is the citable rule baseline for code-review checklist item **CR-1** in all branch, PR, and merge matters. The full model lives in `docs/BRANCHING_STRATEGY.md`; this section states the rules every contributor MUST follow.
-
-### 1. Branch naming (mandatory)
-
-| Pattern | Phase | Example |
+| Rule | Statement | Source |
 |---|---|---|
-| `feature/E{n}-{risk-id}[-{mechanism}]` | Elaboration | `feature/E1-R001-ldap-attribute-mapping` |
-| `iteration/E{n}` | Elaboration | `iteration/E1` |
-| `feature/C{n}-{uc-id}-{subject}` | Construction | `feature/C1-UC-004-clock-in-out` |
-| `iteration/C{n}` | Construction | `iteration/C1` |
-| `hotfix/{issue-id}` | Transition | `hotfix/CR-015` |
-| `chore/{subject}` | Any | `chore/ci-config` |
+| ARCH-1 | **Layering:** dependencies point DOWN only — `Pages/` → `Services/` → `Infrastructure/`. No upward or lateral concrete references. | SAD Implementation View |
+| ARCH-2 | **Interfaces only:** every cross-package reference is an interface (`ICLK`, `INEWS`, `IDIR`, `ICAT`, `IEXPORT`, `IAUD`, `ILDAP`, `IPERSIST`, `ITIME`, `IAUTH`), never a concrete class. | SAD Logical View |
+| ARCH-3 | **Composition root:** all wiring lives in `Program.cs` via .NET DI. No service locator; no manual construction of services in pages. | SAD Implementation View |
+| ARCH-4 | **Timestamps:** stored in UTC (DAT-001); displayed via the Time Service in America/Havana (IANA, DST-aware); exported as ISO-8601 with explicit offset. Never render raw UTC or server time to a user. | SAD Timestamp Convention; COMP-011 |
+| ARCH-5 | **Audit atomicity:** audit writes commit in the SAME database transaction as the state change they record (DAT-002). No audit row is ever updated or deleted. | SAD Process View; NFR-005 |
+| ARCH-6 | **Graceful degradation:** a missing AD attribute renders as a blank field; the entry is NEVER hidden from results; a missing attribute NEVER raises an error. | R001 behavioural bar (stakeholder decision, Elab Iter 2); UC-004 AF-2 |
+| ARCH-7 | **Idempotency:** clocking persistence uses `ON CONFLICT (idempotency_key) DO NOTHING` — an exact duplicate returns the original result, never a second row. | ADR-003; REL-002 |
+| ARCH-8 | **Read-only LDAP:** the LDAP Gateway never writes to Active Directory. | CON-007 |
+| ARCH-9 | **No employee data in the portal database** beyond `worker_categories` (`employee_uid` + `category`). Directory data is always read live from AD. | CON-006 |
+| ARCH-10 | **Evolutionary mechanisms:** PoC mechanism code lives in `src/` as production code — never in a `poc/` branch or `samples/` directory. | BRANCHING_STRATEGY §8.4 |
 
-A branch that does not match its phase pattern is a **naming violation** — surfaced as an SCM issue (`severity:minor`, `nature:defect`, `naming-violation`). The Configuration Manager does NOT auto-rename; the branch owner corrects the name.
+## Coding Conventions (Implementer)
 
-### 2. Branch write permissions (invariant)
+- **Naming:** PascalCase for public types and members; camelCase for locals and parameters; async methods suffixed `Async`.
+- **Error handling:** catch specific exceptions, never a bare `catch`; user-facing failures use the designated error pages; no swallowed exceptions.
+- **Async:** `async`/`await` end-to-end for all I/O (LDAP, PostgreSQL, HTTP); no `.Result`/`.Wait()` (deadlock risk).
+- **Tests:** dual coverage per mechanism — black-box contract AND white-box paths (branches, loops, error handlers); test names follow `Given_When_Then`.
 
-- Only the **Integrator** writes `iteration/*` and `main`. No other role pushes directly to these branches.
-- The Implementer works on `feature/*`; the Code Reviewer opens PRs; the Integrator merges APPROVED PRs.
+## Branch Strategy
 
-### 3. Handoff protocol
+Authoritative document: `docs/BRANCHING_STRATEGY.md`. Essentials:
 
-1. Implementer labels the feature branch `ready-for-review`.
-2. Code Reviewer lists branches with that label and opens ONE PR per branch (base = the current `iteration/{phase}{n}` — the Reviewer owns the PR and its base).
-3. Every PR body carries a **traceability trailer**: `Implements: UC-NNN` or the risk-id it retires (checklist CR-4).
-4. CI must be green on the PR head before review proceeds (CR-5 hard gate — CI red ⇒ request_changes, no code review).
+- Mechanism branches: `feature/E1-{risk-id}` created from `iteration/E1`.
+- Label the branch `ready-for-review` when handed off; the Code Reviewer opens one PR per branch (base `iteration/E1`).
+- Only the Integrator writes `iteration/*` branches.
+- PR body carries a traceability trailer: `Implements: UC-NNN` or the risk id.
 
-### 4. No throwaway code
+## PR Checklist
 
-All code is evolutionary and lives in `src/`. There is **no `poc/` branch and no `samples/` directory**. Elaboration risk-retirement mechanisms are production code, reviewed exactly like Construction features — never rejected as throwaway, never waived through the checklist.
-
-### 5. Baselines
-
-A baseline tag `baseline-{phase}{n}-v{x}` freezes only an APPROVED + CI-green commit on `main`. Contributors never tag; the Configuration Manager tags at iteration close after dual-gate verification (review state APPROVED + post-merge `main` CI green). The authoritative identification record is the **Baseline Register** in `docs/BRANCHING_STRATEGY.md` §7.1.
-
-### 6. Documentation commits
-
-`docs/BRANCHING_STRATEGY.md` and this file's branch-strategy section go **direct to `main`** via commit — no PR. Source code always goes through a PR.
-
----
-
-## Coding Standards (owner: Software Architect)
-
-*Pending — to be committed by the Software Architect before or together with the first mechanism PR (Review Record F-CR-E1-2 / A-5). Until this section exists, CR-1 findings are limited to rules citable from the SAD layering rule (dependencies point down; interfaces only across package boundaries) and the Design Model contracts.*
-
-## Test Conventions (owner: Implementer)
-
-*Pending — to be committed by the Implementer together with the first mechanism PR. Dual coverage is mandatory per the review checklist (CR-2): black-box contract tests AND white-box path tests (branches, loops, error handlers).*
+- CI green (hard gate — a red build is request_changes, no code review)
+- Dual-coverage tests included for every mechanism
+- Traceability trailer in the PR body
+- Changed files under `src/` or `tests/` only (build-tree coverage)
+- No violations of ARCH-1…ARCH-10 (cite the rule number in review comments)
