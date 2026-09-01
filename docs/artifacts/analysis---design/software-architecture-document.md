@@ -579,59 +579,62 @@ The portal database stores **only** what is not in Active Directory. Per CON-006
 
 **Sizing note (two clocks, never summed):** the Inception phase cost 28 minutes of agent time and 1,347,939 tokens across 11 agent runs (recorded actuals). No Elaboration actuals exist yet — this iteration is the first. The Elaboration architecture work (this SAD baseline) is sized by the token budget of this iteration, recorded by the Project Manager in the next Iteration Assessment. No person-week figures are produced by this system.
 ## Quality
-### PoC Plan for Elaboration
+### PoC Plan — Risk Retirement Dispositions (corrected per Development Case oracle)
 
-The following risks are architecturally significant and require empirical validation through a Proof-of-Concept in Elaboration. The PoC optional artifact trigger has not fired in Inception — it fires in Elaboration. This plan is documented here so the Project Manager can schedule PoC work in Elaboration Iteration 1.
+**Correction (Elaboration Iter 1):** the Inception SAD's PoC plan stated that R001, R003, and R004 require Proof-of-Concepts in Elaboration. The Development Case oracle (`get_optional_artifact_triggers`, consulted this iteration) reports the **Architectural Proof-of-Concept trigger NOT fired** — no separate PoC artifact is sanctioned. The risks are therefore retired through **designed mechanisms in the Construction baseline plus validation test activities**, recorded per risk below. The mechanisms are evolutionary: they are production code in `src/`, never throwaway samples.
 
-| Risk ID | Risk | Magnitude | PoC Needed? | PoC Scope | Success Criteria |
+| Risk | Magnitude | Retirement Mode | Mechanism (production code in src/) | Validation Activity | Acceptance Criteria |
 |---|---|---|---|---|---|
-| R001 | AD LDAP attribute consistency across 3 offices | HIGH | **Yes** | Query AD over LDAP from each of the 3 offices. Verify that job title, department, office, email, and extension attributes are populated for a sample of users per office. Identify which attributes are missing and define fallback display behavior. | All 5 corporate attributes (name, job title, department, office, email, extension) are populated for >90% of users in each office. Missing attributes are identified and graceful degradation behavior is defined. |
-| R003 | OIDC integration with Keycloak | SIGNIFICANT | **Yes** | Register an OIDC client in Keycloak. Implement token validation and role-claim mapping in COMP-006. Test the full auth flow: redirect → login → token return → role extraction → authorized access. | Employee and HR Administrator roles are correctly extracted from Keycloak claims. Token validation works. Redirect flow completes without errors. |
-| R004 | Offline fault tolerance (NFR-004, AC-005) | SIGNIFICANT | **Yes** | Implement the idempotent clocking endpoint with client-side retry and localStorage queue (ADR-003). Simulate a 5-minute network drop: queue a clocking event, reconnect, verify sync without duplicates. | Clocking event queued during network drop is synced to PostgreSQL on reconnect. No duplicate records created. User sees immediate confirmation from queued data. Idempotency key prevents duplicates on retry. |
-| R005 | LDAP query performance | MODERATE | **No (monitor)** | If R001 PoC reveals slow queries, add a performance test. Otherwise, LDAP query performance for 200 users is expected to be well within the 3-second target. | Directory search completes in <2 seconds for typical queries. If exceeded, implement in-memory cache with 60s TTL. |
-| R008 | PostgreSQL + .NET 10 compatibility | MODERATE | **No (validate during skeleton setup)** | Implementer validates Npgsql 10.0.3 + EF Core compatibility during project skeleton setup in Elaboration. Not a separate PoC — it is a build-time validation. | Basic CRUD test against PostgreSQL succeeds. EF Core migrations run without errors. |
+| R001 — LDAP attribute consistency | HIGH | **Analysis-only + designed mechanism** | COMP-007 LDAP Gateway with graceful degradation: missing attributes render blank, entry NOT hidden (UC-004 AF-2) | Integration test against real AD once STK-004 delivers the service account (R010); Test Designer owns the test case | All six corporate attributes populated for >90% of sampled users per office; missing attributes display blank without hiding the entry |
+| R003 — OIDC integration | SIGNIFICANT | **Analysis-only + designed mechanism** | COMP-006 OIDC Auth Provider: client registration, redirect, token validation, roles from claims — nothing more (CON-004) | Integration test once STK-004 delivers Keycloak client registration (R010) | Employee and HR Administrator roles correctly extracted from claims; redirect flow completes; SEC-006 role enforcement verified |
+| R004 — Offline fault tolerance | SIGNIFICANT | **Analysis-only + designed mechanism** | COMP-009 Offline Resilience Handler: localStorage queue + idempotent sync endpoint (ADR-003), thresholds quantified (REL-002/003) | Automated test simulating a 5-minute network drop (AC-005) | Queued event syncs on reconnect with zero duplicates (idempotency key) and zero losses; confirmation < 1 s on both paths (PRF-002); sync ≤ 60 s (REL-003) |
+| R005 — LDAP query performance | MODERATE | **Monitor** | 5 s hard timeout (PRF-003); 60 s TTL result cache tactic held in reserve | Measured during R001 validation | Typical search completes end-to-end ≤ 10 s (AC-003); if exceeded, enable cache and re-test |
+| R006 — Audit trail completeness | MODERATE | **Analysis-only + designed mechanism** | COMP-005 Audit Service: append-only (DAT-002), atomic with state change (Process View) | Integration test on UC-007/008/009/010 flows | Every publish/edit/unpublish/category change writes actor + timestamp; category changes record old + new value; no audit row is ever updated or deleted |
+| R008 — PostgreSQL + .NET 10 compatibility | MODERATE | **Build-time validation** | COMP-008 PG Persistence (Npgsql 10.0.3 + EF Core, re-confirmed this iteration) | Implementer runs basic CRUD + migration test during skeleton evolution | CRUD test against PostgreSQL succeeds; EF Core migrations run without errors |
 
-### PoC Sequencing for Elaboration
+**Rationale for analysis-only dispositions:** each mechanism is a decided, well-understood pattern (idempotency via UNIQUE constraint; claims-based auth; append-only audit) whose remaining uncertainty is empirical (does the real AD populate the attributes? does the real Keycloak emit the claims?) — that uncertainty is retired by integration testing against the real systems, not by prototyping the mechanism itself. The blocking dependency for R001/R003 validation is R010 (STK-004 deliverables), already flagged to the Project Manager.
 
-```plantuml
-@startuml
-!theme plain
-title Elaboration PoC Sequencing
+### Architecture Decision Records
 
-start
-:R001 PoC: LDAP attribute consistency
-(Query AD from 3 offices);
-note right: HIGH magnitude — first priority
-:R003 PoC: OIDC integration
-(Register client, test auth flow);
-note right: SIGNIFICANT — second priority
-:R004 PoC: Offline resilience
-(Idempotent endpoint + queue + sync);
-note right: SIGNIFICANT — third priority
-:Validate R008: Npgsql + EF Core
-(Basic CRUD test during skeleton);
-note right: MODERATE — concurrent with PoCs
-stop
+**ADR-001: Architectural Style — Layered Monolith** *(preserved from Inception; unchanged)*
+- **Context:** internal web app, 200 users, single Windows Server; .NET 10 + Razor Pages declared (CON-001/002); no cloud (CON-008), internal only (CON-009).
+- **Decision:** layered monolith — Presentation (Razor Pages + auth middleware), Application (subsystem services), Infrastructure (external adapters); single process, single deployable.
+- **Alternatives:** microservices (rejected — zero benefit at this scale, pure operational overhead); hexagonal (partially adopted — interface-based subsystem boundaries follow ports-and-adapters for external systems, overall style stays layered).
+- **Consequences:** simple deployment and debugging; decomposition needed only if scope grows far beyond declaration (YAGNI).
 
-note bottom
-  R005 (LDAP performance) is monitored during R001 PoC.
-  If queries are slow, add caching and re-test.
-  No separate PoC needed unless R001 reveals a problem.
-end note
+**ADR-002: Persistence — PostgreSQL with EF Core / Npgsql 10.0.3** *(preserved; version re-confirmed this iteration)*
+- **Context:** CON-003 declares PostgreSQL; portal stores clockings, news, category mappings, audit entries; no employee data (CON-006).
+- **Decision:** PostgreSQL via Npgsql 10.0.3 (latest stable, no policy pin — re-verified against registry and enterprise policy this iteration) + EF Core; repository pattern behind `IPersistence` (COMP-008).
+- **Alternatives:** Dapper (rejected — EF Core migrations and change tracking reduce boilerplate; revisit only if profiling shows overhead); raw Npgsql (rejected — boilerplate for CRUD-heavy scope).
+- **Consequences:** R008 validated at build time by the Implementer; fallback to Dapper if incompatibility appears.
 
-@enduml
-```
+**ADR-003: Offline Resilience — Client-Side Queue + Server-Side Idempotency** *(preserved; thresholds now quantified)*
+- **Context:** NFR-004/AC-005 require tolerating 5-minute network drops with sync on restore; the drop is between browser and portal server on the corporate LAN. Stakeholder confirmed the mechanism is architectural and in scope.
+- **Decision:** (1) clocking button submits with a client-generated idempotency key; (2) on network failure the browser queues the event in localStorage (ordered by recorded timestamp, capacity ≥ 10 events — REL-002) and shows immediate confirmation from queued data; (3) on reconnect the queue replays via a sync endpoint; (4) the server persists with `ON CONFLICT (idempotency_key) DO NOTHING` — exact duplicates rejected, never duplicated; all events persisted ≤ 60 s after restore (REL-003).
+- **Alternatives:** Service Worker + Background Sync (rejected — different paradigm for a server-rendered intranet app); full offline-first PWA (rejected — scope is 5-minute tolerance, not indefinite offline); server-side queue only (rejected — user needs < 1 s feedback, NFR-002).
+- **Consequences:** if the browser is closed during a drop, queued events are lost — acceptable within the declared 5-minute working-hours window; validation is an automated AC-005 test.
 
-### PoC Dependencies on External Parties
+**ADR-004: Worker Category List Source — Externally-Configured JSON File** *(new — Elaboration Iter 1; decision delegated to the Architect by UC-007)*
+- **Context:** CON-013 — the category list is fixed and configured outside the application; no create/edit/rename/delete in the portal UI. SUP-004 — list changes must not require code deployment. The Use-Case Model explicitly delegates the mechanism choice to the Software Architect.
+- **Decision:** the fixed category list lives in `worker-categories.json`, deployed alongside the application and read by COMP-004 at startup. Editing the file changes the list — no code deployment, no portal UI.
+- **Alternatives:** (1) database table — rejected: a table invites CRUD management, which CON-013 forbids, and adds a migration per list change; (2) a section inside `appsettings.json` — rejected: mixes a business list into sensitive operational config (connection strings, Keycloak settings); a dedicated file is editable by HR/Infrastructure without touching anything else; (3) environment variable — rejected: a list does not fit env-var shape and is invisible to non-technical editors.
+- **Trade-offs:** Pro — zero-deployment list changes (SUP-004), simple, inspectable. Con — editing requires server file access (Infrastructure-mediated, consistent with CON-014's operational boundary); no validation UI (acceptable — the list is fixed and rarely changes).
+- **Consequences:** COMP-004 reads the list from the file; the file is deployment configuration, not code; the Implementation View places it beside `appsettings.json`.
 
-| PoC | External Dependency | Provider | Action Needed |
+### LCA Review — Milestone Assessment (Elaboration Iter 1)
+
+The Lifecycle Architecture Milestone is **NOT yet declared achieved** — this iteration produces the baseline that the milestone review will evaluate. Assessment against the six LCA criteria:
+
+| # | Criterion | Status | Evidence |
 |---|---|---|---|
-| R001 (LDAP) | LDAP read access to AD (service account) | STK-004 (Infra) | Request service account with LDAP read permissions before Elaboration Iteration 1 |
-| R003 (OIDC) | Keycloak client registration | STK-004 (Infra) | Request OIDC client registration with redirect URIs before Elaboration Iteration 1 |
-| R004 (Offline) | None — internal to the portal | — | No external dependency |
-| R008 (PG compatibility) | PostgreSQL instance | STK-004 (Infra) or local dev instance | Local dev instance sufficient for validation |
+| 1 | Vision of the product stable | **YES** | All 10 UCs fully specified (Use-Case Model, Elab Iter 1); stakeholder decisions recorded: offline mechanism in scope, timestamp convention (UTC / America/Havana / ISO-8601 offset / local payroll day) |
+| 2 | Architecture stable | **YES (baseline)** | 4+1 views complete (7 diagrams); 11 components, each encapsulating one area of change; interfaces specified at every boundary; 4 ADRs with alternatives; stack re-anchored against version policy (unchanged) |
+| 3 | Executable prototype shows major risks addressed | **PARTIAL — by design** | No executable prototype: the Development Case did not fire the Architectural Proof-of-Concept trigger. R001/R003/R004 are retired by designed mechanisms with quantified acceptance criteria (see PoC Plan); empirical validation is a Construction test activity, blocked on R010 (STK-004 deliverables) for R001/R003 |
+| 4 | Construction plan sufficiently detailed | **YES** | Iteration Plan assigns all 10 UCs to Construction iterations (UC IDs corrected and verified at LCO); mechanisms and interfaces ready for the Designer and Implementer to refine |
+| 5 | All stakeholders agree vision achievable | **PENDING** | This iteration's review decides; prior stakeholder sanctions recorded (LCO Go; offline mechanism "Yes"); STK-004 engagement on R010 deliverables outstanding |
+| 6 | Actual vs planned expenditure acceptable | **ON TRACK** | Inception actuals recorded (28 min agent time, 1,347,939 tokens, 11 runs); Elaboration actuals recorded at this iteration's assessment |
 
-**Critical path:** R001 and R003 PoCs are blocked by STK-004 deliverables. The Project Manager must engage STK-004 at the start of Elaboration to secure LDAP access and Keycloak client registration. If STK-004 cannot deliver by Elaboration Iteration 1, mock LDAP and mock OIDC providers should be used for development, with integration deferred to early Construction (per R010 contingency).
+**Open architecture issues:** (1) R010 — STK-004 must deliver the LDAP service account and Keycloak client registration before R001/R003 validation can run (Project Manager owns the engagement); (2) the three mechanism validations (R001/R003/R004) execute as Construction test activities — their results may refine COMP-006/007/009 without changing the baseline's structure.
 ## ADRs
 
 ### ADR-001: Architectural Style — Layered Monolith
