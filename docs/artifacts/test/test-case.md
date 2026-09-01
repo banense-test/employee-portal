@@ -3,19 +3,19 @@
 | Field | Value |
 |---|---|
 | Phase | Elaboration |
-| Status | Draft — 20 test cases DESIGNED and regression-ready; execution BLOCKED on mechanism code handoff (Review Record F-CR-E1-1) |
+| Status | Draft — 20 test cases DESIGNED; **execution Cycle 1 COMPLETE**: smoke test PASS (main CI run 33492338439), all 20 cases verdict **BLOCKED** (zero mechanism code in SCM — Issue #1, severity:blocker); defects formalized as SCM Issues #1 (blocker/critical) and #2 (minor/medium) with canonical CCM labels |
 | Milestone Target | End of Elaboration (LCA) — NOT yet achieved |
 | Iteration | 1 (Cycle 1) |
 | Date | 2026-09-01 |
-| Elaboration Changes | First Test Case artifact (no prior version). Test model established for the architecture baseline: 20 test cases (TC-001…TC-020) covering the three architecturally significant UCs (UC-001, UC-004, UC-010 — test priority 1), the R003 authentication mechanism, and the SEC-006/SEC-007 cross-cutting security requirements. Every case carries preconditions, input data, expected outcome, pass/fail criteria, the failure scenario it attacks, automation hints, and observable interface points (INT-006…INT-019). Test automation architecture specified (stub OIDC issuer, disposable LDAP directory, drop-simulation control, unit-level fakes, real PostgreSQL). Execution status recorded honestly: zero mechanism code exists in SCM (F-CR-E1-1), so all cases are BLOCKED at execution — no pass counts are claimed or fabricated. |
+| Elaboration Changes | First Test Case artifact (design) EVOLVED with the first execution record. Design (prior revision): 20 test cases (TC-001…TC-020) covering UC-001, UC-004, UC-010 (test priority 1), the R003 authentication mechanism, and SEC-006/SEC-007 — each with preconditions, input data, expected outcome, pass/fail criteria, attacked failure scenario, automation hints, and interface points (INT-006…INT-019); automation architecture specified (stub OIDC issuer, disposable LDAP directory, drop-simulation control, unit-level fakes, real PostgreSQL). Execution (this revision, S1–S4): smoke test PASS; implementation-under-test inspected empirically on `iteration/E1` (branch EXISTS — Review Record action A-1 DONE — but skeleton only: no Services/, no Infrastructure/, no Npgsql/LDAP/JWT packages; file shas 5a1f720/9a04a31/10f68b8/dc835d2); CI trigger configuration VERIFIED CORRECT (ci.yml sha 8444392 — `iteration/**` covered for push+PR, so the gap is code delivery, not CI infrastructure); all 20 cases BLOCKED with per-group blocking causes; regression baseline = zero prior PASS results (first execution cycle); defects formalized as Issue #1 (R001/R003/R004 mechanism code absent — blocks exit criteria 1–3) and Issue #2 (CONTRIBUTING.md absent — CR-1 baseline); Test Evaluation Flow diagram added. No pass counts are claimed or fabricated. |
 
 ## Test Scope
 
 ### Evaluation Mission Alignment
 
-This test model is the verification counterpart of the Use-Case Model for the **Elaboration Iteration 1 Evaluation Mission** (Test Evaluation Summary): empirically validate the three architecturally significant mechanisms — **R001 (HIGH, disposable LDAP directory) > R003 (SIGNIFICANT, stub OIDC issuer) > R004 (SIGNIFICANT, direct)** — against the architecture baseline (SAD COMP-001…011, ADR-001…004; Design Model CLS-001…027, INT-006…INT-019). Per the binding stakeholder decision, the PoC is produced in Elaboration and validated empirically; these test cases are the executable instrument of that validation, ready to run the moment the Implementer hands off the mechanisms (Review Record actions A-2…A-4).
+This test model is the verification counterpart of the Use-Case Model for the **Elaboration Iteration 1 Evaluation Mission** (Test Evaluation Summary): empirically validate the three architecturally significant mechanisms — **R001 (HIGH, disposable LDAP directory) > R003 (SIGNIFICANT, stub OIDC issuer) > R004 (SIGNIFICANT, direct)** — against the architecture baseline (SAD COMP-001…011, ADR-001…004; Design Model CLS-001…027, INT-006…INT-019). Per the binding stakeholder decision, the PoC is produced in Elaboration and validated empirically; these test cases are the executable instrument of that validation, ready to run the moment the Implementer hands off the mechanisms (Review Record actions A-2…A-4; SCM Issue #1).
 
-**In scope (this iteration):** test case design for UC-001, UC-004, UC-010 (all flows: main + AF + EF), the R003 token-validation matrix, and SEC-006/SEC-007 role enforcement — with automation architecture, test data, and UC→TC traceability.
+**In scope (this iteration):** test case design for UC-001, UC-004, UC-010 (all flows: main + AF + EF), the R003 token-validation matrix, and SEC-006/SEC-007 role enforcement — with automation architecture, test data, and UC→TC traceability; **execution** of every case whose mechanism code exists in SCM (Cycle 1 result: none exists — all BLOCKED, see Findings).
 
 **Out of scope (per Evaluation Mission):** full functional testing of all 10 UCs (Construction); execution against production AD/Keycloak (Construction Iter 3, R010/R011); full-scale load testing (Construction); usability/adoption testing (AC-004, Transition pilot); UI visual-fidelity testing against CON-011 (Construction).
 
@@ -166,6 +166,53 @@ stop
 @enduml
 ```
 
+**Test Evaluation Flow — Cycle 1 execution record (S1–S4, executed 2026-09-01):**
+
+```plantuml
+@startuml
+title Test Evaluation Flow - Elaboration Iteration 1, Cycle 1 (2026-09-01)
+
+start
+:S1 DISCOVER
+Load Test Case (TC-001..TC-020), Test Evaluation
+Summary (mission: R001, R003, R004 in priority
+order), Review Record (F-CR-E1-1, actions A-1..A-6);
+:S2 SMOKE TEST
+scm_get_build_status("main") returns GREEN
+CI run 33492338439;
+note right
+  Smoke gate PASSED:
+  detailed testing authorized
+end note
+:S3 EXECUTE - inspect implementation under test
+Branch: iteration/E1 (exists - action A-1 DONE)
+Program.cs 5a1f720 / csproj 9a04a31
+appsettings 10f68b8 / SmokeTests dc835d2
+ci.yml 8444392;
+if (Mechanism code present in build tree?) then (no)
+  :Verdict: TC-001..TC-020 all BLOCKED
+No LdapGateway CLS-009 (R001)
+No OIDC auth CLS-010 (R003)
+No offline queue CLS-008 (R004)
+No Npgsql / LDAP / JWT packages;
+  :Regression status: zero prior PASS
+results exist - first execution
+cycle (nothing to re-run);
+else (yes)
+  :Execute against fixtures
+(disposable LDAP, stub OIDC,
+PG dev, drop simulation);
+endif
+:S4 CHANGE REQUESTS
+Formalize confirmed defects in the SCM
+issue tracker with canonical CCM labels
+(blocker/critical + minor/medium);
+:Record verdicts, build ID and evidence
+in Test Case Findings (this artifact);
+stop
+@enduml
+```
+
 ### Test Case Lifecycle
 
 ```plantuml
@@ -213,7 +260,7 @@ end note
 @enduml
 ```
 
-**Execution status (honest, per F-CR-E1-1):** zero `ready-for-review` branches, zero PRs, no mechanism code in the build tree — all 20 cases are **Designed → Blocked** at execution. No test counts, pass rates, or durations are claimed. The cases become executable the moment actions A-1…A-6 land; the fixtures above are already specified down to the entry level (§ Test Data).
+**Execution status (Cycle 1 record, 2026-09-01):** the smoke gate PASSED (main CI green, run 33492338439) and the implementation under test was inspected empirically on `iteration/E1` — the branch exists (action A-1 DONE) but contains **zero mechanism code** (no `Services/`, no `Infrastructure/`, no Npgsql/LDAP/JWT packages; `Program.cs` is a bare Razor Pages boot). All 20 cases therefore remain **Designed → Blocked**, now with the blocking defects formalized in the SCM tracker as **Issue #1** (severity:blocker — mechanism code absent) and **Issue #2** (severity:minor — CONTRIBUTING.md absent). CI trigger configuration was verified CORRECT (`ci.yml` covers `iteration/**` for push and PR), so the blocker is code delivery, not test infrastructure. Full evidence in § Findings (Test Case Catalog). No test counts, pass rates, or durations are claimed.
 
 ## Test Case Catalog
 
@@ -609,6 +656,43 @@ stop
 
 **Cases deferred to Construction (recorded, not designed here):** UC-002/003/005/006/007/008/009 functional suites; PRF-001 full-scale page-load percentile measurement; USA-001/006/007/009 visual-fidelity and accessibility passes; AC-002/AC-004 usability tests. These trace to the Evaluation Mission's out-of-scope boundary and the Iteration Plan's Construction assignments — designing them now would exceed the Development Case's Elaboration test intensity (Medium).
 
+### Findings — Elaboration Iteration 1, Cycle 1 (Execution Record)
+
+**Execution context (all values from actual tool calls, 2026-09-01 — nothing fabricated):**
+
+| Item | Value | Source |
+|---|---|---|
+| Smoke test (build stability gate) | **PASS** — CI green on `main`, run 33492338439 (started 2026-09-01 09:27:49Z, completed 09:28:38Z) | `scm_get_build_status("main")` |
+| Implementation under test | `iteration/E1` — branch **EXISTS** (Review Record action A-1 DONE; it was absent at the Code Reviewer's cycle) but holds 51 entries: skeleton only — no `Services/`, no `Infrastructure/`, no `worker-categories.json`, no `CONTRIBUTING.md` | `scm_get_repo_tree("iteration/E1")` |
+| CI on `iteration/E1` | No runs found — zero pushes have landed on the branch | `scm_get_build_status("iteration/E1")` |
+| CI trigger configuration | **VERIFIED CORRECT** — push + PR triggers on `main`, `iteration/**`, `chore/**`, `feature/**`, `hotfix/**` (sha 84443920ba9d87e9c1c675cdff1ab9a54bc21da5): the blocker is code delivery, NOT CI infrastructure | `scm_get_file_content(".github/workflows/ci.yml")` |
+| Defect baseline before this cycle | 0 issues (all states) — the SCM tracker held no record of the two Review Record findings | `scm_list_issues` (all states) |
+
+**Per-case verdicts — Cycle 1 (20/20 BLOCKED; zero PASS, zero FAIL, zero SKIP):**
+
+| Case group | Verdict | Blocking cause (empirically confirmed) | CR |
+|---|---|---|---|
+| TC-001…TC-008, TC-020 (UC-001 clocking, offline queue, timestamp convention) | **BLOCKED** | R004 mechanism (CLS-008 OfflineQueueClient) and R003 mechanism (CLS-010) absent from the build tree: `EmployeePortal.csproj` (sha 9a04a31) has zero package references — no Npgsql, no LDAP, no OIDC/JWT; `Program.cs` (sha 5a1f720) is a bare Razor Pages boot with no auth middleware | Issue #1 |
+| TC-009…TC-012 (UC-004 directory) | **BLOCKED** | R001 mechanism (CLS-009 LdapGateway) absent: no LDAP package, no LDAP configuration in `appsettings.json` (sha 10f68b8) | Issue #1 |
+| TC-013…TC-016 (UC-010 news/audit) | **BLOCKED** | News/audit mechanism is **Construction scope** (not an Elaboration WI-7…9 mechanism) — design complete this iteration per WI-10; execution deferred with the mechanism. NOT an Elaboration exit-criterion blocker (exit criteria 1–3 cover R001/R003/R004 only) | Construction scheduling |
+| TC-017, TC-018 (SEC-006/SEC-007 role enforcement) | **BLOCKED** | R003 mechanism (CLS-010) absent — no auth middleware exists to enforce roles | Issue #1 |
+| TC-019 (R003 token validation matrix) | **BLOCKED** | R003 mechanism absent — the empirical R003 validation the stakeholder mandated cannot run | Issue #1 |
+
+**Reproduction notes (exact evidence, build ID captured):** build under test = `iteration/E1` @ file shas `Program.cs` 5a1f720b0f03be897f524e9d1e8425440d5aa540, `EmployeePortal.csproj` 9a04a31ebe4a98f731982c8ce0a74ba952e7b10d, `appsettings.json` 10f68b8c8b4f796baf8ddeee7551b6a52b9437cc, `SmokeTests.cs` dc835d2b30f80ceb96a5cb296cb29364e52423e4 (single `Assert.True(true)` — no mechanism tests, CR-2 dual coverage 0/3); smoke baseline = main CI run 33492338439 (GREEN). Expected (Iteration Plan WIs 7–9): evolutionary mechanism code in `src/` for R001/R003/R004 with dual-coverage tests on `feature/E1-{risk-id}` branches labeled `ready-for-review`. Actual: zero mechanism code, zero `ready-for-review` branches, zero PRs.
+
+**Regression status:** first execution cycle — **zero prior PASS results exist; there is nothing to re-run**. The regression baseline activates with the first executed PASS; from that point the mandatory policy applies (re-run ALL prior results after EVERY merged PR).
+
+**Defects formalized in the SCM tracker (canonical CCM labels — heuristic #8):**
+
+| Issue | Title | Labels | Traces |
+|---|---|---|---|
+| **#1** | R001/R003/R004 mechanism code absent from SCM — empirical validation of all 20 Elaboration test cases BLOCKED | `change-request, cr:logged, nature:defect, severity:blocker, priority:critical` | Review Record F-CR-E1-1, actions A-2…A-4; Iteration Plan WIs 7–9, exit criteria 1–3; R001 (HIGH), R003, R004; TC-001…TC-020 |
+| **#2** | CONTRIBUTING.md absent — programming-guidelines baseline missing for CR-1 review of the first mechanism PR | `change-request, cr:logged, nature:defect, severity:minor, priority:medium` | Review Record F-CR-E1-2, action A-5; code-review checklist CR-1 |
+
+**Test-code materialization status (Work Order: "commit automated test code to the repository so the run is repeatable in CI"):** the Tester role holds no SCM push tooling this cycle, and with zero mechanism code in the build tree there is nothing under test to script against. Test-code materialization is therefore folded into **Issue #1's remediation scope**: the Implementer ships dual-coverage automated tests per mechanism (CR-2), materializing this artifact's automation architecture (§ Test Automation Architecture) in `tests/EmployeePortal.Tests/`, so the run is repeatable in CI. Flagged explicitly — not silently dropped.
+
+**Cycle 1 verdict for the Evaluation Mission:** NOT YET ACHIEVED — exit criteria 1–3 (empirical R001/R003/R004 validation) have no code evidence. The smoke gate passed and the test instrument is fully specified and regression-ready; the blocker is code delivery (Issue #1), owned by the Implementer and gated by the Code Reviewer (actions A-2…A-6).
+
 ## Test Data
 
 All data is synthetic and self-contained — no production AD data, no real employee identities. Fixtures are reusable Construction assets (R011 mitigation, Test Evaluation Summary recommendation 4).
@@ -690,5 +774,9 @@ Controlled press instants T1/T2 (TC-004/005: 2 events) and 10 alternating presse
 | TC-019 | R003, SEC-001, SEC-002, SEC-003, CON-004 | Tests | CLS-010, INT-011; COMP-006; stub OIDC issuer (R003 empirical evidence) |
 | Automation architecture (§ Test Scope) | Design Model testability entry points (INT-006…INT-019 fakeable); Test Evaluation Summary test configurations; Review Record CR-2 (dual coverage), CR-5 (CI gate) | DependsOn | tests/EmployeePortal.Tests; CI (ci.yml); Implementer mechanism PRs (WIs 7–9) |
 | Test data (§ Test Data) | FR-010 (six attributes), FR-006/FR-009 (news lifecycle), ADR-004 (category list), stakeholder decision (America/Havana) | Derives | Disposable LDAP directory, stub OIDC issuer, PG dev instance, FakeClock (reusable Construction fixtures — R011) |
-| Execution BLOCKED status | Review Record F-CR-E1-1 (Critical), actions A-1…A-6; Test Evaluation Summary INC-1 | DependsOn | Integrator (A-1); Implementer (A-2…A-4); Code Reviewer (A-6) — unblocks all 20 cases |
+| Findings — Cycle 1 execution record (§ Test Case Catalog) | Review Record F-CR-E1-1; CI run 33492338439 (`scm_get_build_status`); `iteration/E1` tree + file shas 5a1f720/9a04a31/10f68b8/dc835d2/8444392 (`scm_get_repo_tree`, `scm_get_file_content`); defect baseline 0 (`scm_list_issues`) | DependsOn | Issue #1, Issue #2 (SCM tracker); Test Evaluation Summary quality metrics; Iteration Assessment |
+| Issue #1 (CR — blocker/critical) | TC-001…TC-020 BLOCKED verdicts; Iteration Plan WIs 7–9, exit criteria 1–3; R001 (HIGH), R003, R004; Review Record actions A-2…A-4 | Derives | Implementer (mechanism delivery + dual-coverage test code); Code Reviewer (A-6); LCA evidence package |
+| Issue #2 (CR — minor/medium) | Review Record F-CR-E1-2, action A-5; code-review checklist CR-1 | Derives | CONTRIBUTING.md commit; first mechanism PR review |
+| Test Evaluation Flow diagram (Cycle 1, § Test Scope) | S1–S4 execution this cycle (smoke PASS; empirical inspection; verdicts; CRs) | Refines | Findings — Cycle 1 execution record; Test Evaluation Summary mission verdict |
+| Execution BLOCKED status | Review Record F-CR-E1-1 (Critical), actions A-1…A-6; SCM Issue #1 (blocker), Issue #2 (minor); Test Evaluation Summary INC-1 | DependsOn | Integrator (A-1 — DONE this cycle); Implementer (A-2…A-4); Code Reviewer (A-6) — unblocks all 20 cases |
 | Test Plan omission | Development Case §5.2 oracle (trigger not fired) | DependsOn | Iteration Plan (per-iteration testing scope); Test Evaluation Summary (strategy, schedule, resources) |
