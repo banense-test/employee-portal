@@ -588,6 +588,10 @@ stop
 
 **Scope adherence:** no scope-creep finding — the absence of code cannot inflate scope. The expected mechanisms trace cleanly to declared scope: R001→FR-010/CON-005, R003→CON-004, R004→NFR-004/AC-005, all via the Development Case's FIRED PoC trigger and the stakeholder's empirical-validation decision.
 
+### PR Disposition Record (S3 — terminal verdicts per in-scope PR)
+
+**In-scope open PR set: ∅ (empty).** Verified via `scm_list_pull_requests` (state=open) at review start: zero open PRs; the Code Reviewer's census additionally recorded zero PRs in ALL states. No PR carries the Elaboration architecture baseline, so no PR-level sanction (approve / request-changes) was issued this cycle — there is nothing to sanction and nothing to withhold on. The baseline sanction lands on the PR that carries the architecture baseline when it exists: the mechanism PRs opened next cycle per actions A-2…A-6 (base `iteration/E1`), each of which will receive a terminal verdict from the Code Reviewer under checklist CR-1…CR-7, and the iteration-close PR to main, which the Integrator merges only on APPROVED. Withholding the LCA sanction this cycle is a verdict, not a skip: the convergence cycle (Elaboration Iter 2) re-presents the baseline with the empirical evidence attached.
+
 ### Technical LCA Lens — Per-Artifact Verdicts (Reviewer, 2026-09-01)
 
 | Artifact | Verdict (this lens) | Basis |
@@ -613,6 +617,8 @@ stop
 **SCM evidence for the disposition:** zero open PRs (nothing to sanction or withhold on — no PR carries the baseline); CI green on `main` (run 33492338439); `iteration/E1` exists but holds skeleton only (no Services/, no Infrastructure/, no Npgsql/LDAP/JWT packages); SCM Issue #1 (severity:blocker) formalizes the mechanism-code absence; Issue #2 (severity:minor) formalizes the CONTRIBUTING.md gap.
 
 **Scope adherence (technical lens):** no scope-creep findings. Every element in every artifact traces to the declared scope (10 FRs, 5 NFRs, 5 ACs, 14 CONs, 2 declared risks); the three stakeholder decisions are incorporated with markers retired in place; the only untagged quantitative figure is recorded as Risk List F1 (Minor).
+
+**Critical-finding escalation note:** both Critical findings (SAD F1, SAD F2) trace to a question the stakeholder has ALREADY answered and recorded ("The PoC is produced in Elaboration and validated empirically" — R001 disposable directory, R003 stub issuer, R004 direct). The findings are non-compliance with that recorded decision, not ambiguity requiring new stakeholder input; their remediation (A-7, A-8, A-2…A-4) is fully determined by the decision itself. The findings remain OPEN in the finding system — they block milestone auto-iteration until resolved — and the withheld sanction is the review's terminal signal to the ReviewCoordinator and stakeholder for this cycle.
 
 ### Historical — LCO Disposition (Inception, preserved)
 
