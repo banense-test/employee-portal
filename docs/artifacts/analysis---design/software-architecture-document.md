@@ -477,17 +477,17 @@ end note
 @enduml
 ```
 
-### External Dependencies (R010 — Infrastructure Team)
+### External Dependencies (R010 — Infrastructure Team; re-scoped per stakeholder decision, Elab Iter 2)
 
-| Dependency | Provider | Needed By | Blocking? |
+| Dependency | Provider | Needed By | Blocks |
 |---|---|---|---|
-| LDAP read access to AD (service account) | STK-004 (Infra) | COMP-007, UC-004, UC-005, UC-006, UC-007 | Yes — blocks R001 validation |
-| Keycloak client registration | STK-004 (Infra) | COMP-006, all UCs | Yes — blocks auth integration |
-| Windows Server provisioning | STK-004 (Infra) | Deployment | Yes — blocks Construction deployment |
+| LDAP read access to AD (service account) | STK-004 (Infra) | COMP-007, UC-004, UC-005, UC-006, UC-007 | **Production-instance integration only (Construction)** — does NOT block Elaboration: R001 validates against the disposable LDAP directory |
+| Keycloak client registration | STK-004 (Infra) | COMP-006, all UCs | **Production-instance integration only (Construction)** — does NOT block Elaboration: R003 validates against the stub OIDC issuer |
+| Windows Server provisioning | STK-004 (Infra) | Deployment | Construction deployment |
 
-These dependencies are owned by STK-004 per R010. The Project Manager must engage STK-004 early; if deliverables are delayed, mock LDAP and mock OIDC providers unblock development with integration deferred to early Construction (R010 contingency).
+Per the stakeholder decision (Elab Iter 1): what STK-004 genuinely blocks is integration with the specific production instances — a separate, smaller risk (R010, SIGNIFICANT) that does **NOT** inherit R001's HIGH and does not condition Elaboration exit on another team's ticket. The Project Manager owns the engagement; delivery aligns to early Construction integration testing. The residual risk that the validation fixtures differ from the production instances is R011 (validation-environment fidelity), retired at Construction integration; the disposable directory and stub issuer are retained as reusable test fixtures.
 
-**Elaboration refinement vs the Inception candidate:** the browser node now explicitly carries the **localStorage offline queue** (client half of COMP-009) — the deployment consequence of ADR-003 is that part of the system's state lives on the employee workstation, which is why the sync endpoint and idempotency key exist. The server node shows the single deployable process (ADR-001) with the auth middleware at its boundary.
+**Elaboration refinement vs the Inception candidate:** the browser node explicitly carries the **localStorage offline queue** (client half of COMP-009) — the deployment consequence of ADR-003 is that part of the system's state lives on the employee workstation, which is why the sync endpoint and idempotency key exist. The server node shows the single deployable process (ADR-001) with the auth middleware at its boundary.
 ## Implementation View
 The subsystem decomposition maps to the **actual repository structure** (verified against the repo tree this iteration): a single solution `EmployeePortal.sln` with one application project `src/EmployeePortal` and one test project `tests/EmployeePortal.Tests`. The 11 components are **logical packages inside the single deployable** (ADR-001) — not separate projects, which would be over-engineering for this scale.
 
