@@ -531,7 +531,7 @@ package "EmployeePortal.sln" as SLN {
     object "appsettings.json (exists)\n+ worker-categories.json (ADR-004)" as CFG
   }
   package "tests/EmployeePortal.Tests (exists)" as TESTS {
-    object "SmokeTests.cs\n+ per-mechanism tests (Construction)" as TST
+    object "SmokeTests.cs\n+ per-mechanism dual-coverage tests\n(Elab Iter 2 PoC mechanisms —\nblack-box contract + white-box paths;\nConstruction feature tests follow)" as TST
   }
 }
 
@@ -547,6 +547,11 @@ note right of SVCS
   every cross-package reference is
   an interface, never a concrete
   class (SAD cohesion rule).
+  Services/ and Infrastructure/ are
+  created THIS convergence cycle
+  (Elab Iter 2) by the Implementer —
+  the PoC mechanisms are evolutionary
+  production code, not samples.
 end note
 
 note bottom of CFG
@@ -560,11 +565,11 @@ end note
 ```
 
 **Implementation-view decisions:**
-- **Single project, logical packages** — `Pages/`, `Services/`, `Infrastructure/` map 1:1 to the three layers. The Implementer creates the `Services/` and `Infrastructure/` folders; `Pages/` already exists with SCR-01 (Index.cshtml).
+- **Single project, logical packages** — `Pages/`, `Services/`, `Infrastructure/` map 1:1 to the three layers. The Implementer creates the `Services/` and `Infrastructure/` folders **this convergence cycle** (the PoC mechanisms are evolutionary production code, per ARCH-10); `Pages/` already exists with SCR-01 (Index.cshtml).
 - **Composition root** — `Program.cs` (exists) wires interfaces to implementations via .NET DI. No service locator, no manual construction.
 - **Configuration** — `appsettings.json` (exists) carries connection strings and Keycloak client settings; `worker-categories.json` (ADR-004) carries the fixed category list, editable by Infrastructure/HR without a code deployment (SUP-004).
 - **CI** — `.github/workflows/ci.yml` and `deploy.yml` exist (ConfigurationManager); the build gates every push to main.
-- **Design guideline for the Implementer:** dependencies point DOWN only (Pages → Services → Infrastructure); every cross-package reference is an interface, never a concrete class.
+- **Design guidelines for the Implementer** (now citable as rules in code review — `CONTRIBUTING.md`, committed this iteration): dependencies point DOWN only (Pages → Services → Infrastructure); every cross-package reference is an interface, never a concrete class; timestamps stored UTC, displayed America/Havana, exported ISO-8601 with offset (ARCH-4); audit writes atomic with the state change (ARCH-5); graceful degradation per the R001 behavioural bar (ARCH-6); idempotent clocking persistence (ARCH-7); read-only LDAP (ARCH-8); no employee data beyond `worker_categories` (ARCH-9); PoC mechanisms live in `src/`, never in `poc/` or `samples/` (ARCH-10).
 ## Data View
 ### Portal Database Schema (PostgreSQL — CON-003)
 
