@@ -5,8 +5,10 @@
 | Phase | Inception |
 | Status | Draft |
 | Milestone Target | End of Inception (LCO) |
-| Iteration | 1 (Cycle 1) |
+| Iteration | 2 (Cycle 1) — Rework iteration |
 | Date | 2026-09-01 |
+| Rework Reason | F1 (Major): UC ID mapping corrected to match Use-Case Model (authority); F2 (Minor): Work item statuses reconciled against repository |
+| Findings Resolved | F1 (Major — UC ID mismatch), F2 (Minor — stale work item statuses) |
 
 ## Iteration Objectives
 
@@ -127,21 +129,23 @@ stop
 
 ### Work Items — Inception Iteration 1
 
+> **Status reconciliation (Iteration 2):** All statuses updated to reflect actual artifact state in the repository. Items previously marked "Pending" or "In progress" have been reconciled against the 10 existing Draft artifacts.
+
 | # | Work Item | Owner Role | Token Budget | Depends On | Status |
 |---|---|---|---|---|---|
-| 1 | Risk List (R001–R010, classified, mitigated) | Project Manager | ~15K | — | In progress |
+| 1 | Risk List (R001–R010, classified, mitigated) | Project Manager | ~15K | — | Complete |
 | 2 | Development Case (tailoring, tool assessment) | Process Engineer | ~12K | — | Complete |
 | 3 | Tool environment configuration | Process Engineer | ~8K | Work Item 2 | Complete |
-| 4 | Vision Document (from stakeholder declaration) | System Analyst | ~20K | Work Item 2 | Pending |
-| 5 | Use-Case Model (UC-001–UC-010) | System Analyst | ~25K | Work Item 4 | Pending |
-| 6 | Supplementary Specification (NFRs, constraints) | System Analyst | ~15K | Work Item 5 | Pending |
-| 7 | Software Architecture Document (draft) | Software Architect | ~25K | Work Items 5, 6 | Pending |
-| 8 | Design Model (start — analysis classes) | Designer | ~15K | Work Item 7 | Pending |
-| 9 | Project skeleton (.NET 10, Razor Pages, PG) | Implementer | ~15K | Work Item 7 | Pending |
-| 10 | Test strategy (AC mapping, approach) | Test Manager | ~10K | Work Item 5 | Pending |
-| 11 | Repository configuration (branches, CI) | ConfigurationManager | ~10K | Work Item 2 | Pending |
-| 12 | Iteration Plan (this document) | Project Manager | ~15K | Work Item 1 | In progress |
-| 13 | LCO readiness assessment | Project Manager | ~5K | All above | Pending |
+| 4 | Vision Document (from stakeholder declaration) | System Analyst | ~20K | Work Item 2 | Complete |
+| 5 | Use-Case Model (UC-001–UC-010) | System Analyst | ~25K | Work Item 4 | Complete |
+| 6 | Supplementary Specification (NFRs, constraints) | System Analyst | ~15K | Work Item 5 | Complete |
+| 7 | Software Architecture Document (draft) | Software Architect | ~25K | Work Items 5, 6 | Complete |
+| 8 | Design Model (start — analysis classes) | Designer | ~15K | Work Item 7 | Complete |
+| 9 | Project skeleton (.NET 10, Razor Pages, PG) | Implementer | ~15K | Work Item 7 | Complete |
+| 10 | Test strategy (AC mapping, approach) | Test Manager | ~10K | Work Item 5 | Complete |
+| 11 | Repository configuration (branches, CI) | ConfigurationManager | ~10K | Work Item 2 | Complete |
+| 12 | Iteration Plan (this document) | Project Manager | ~15K | Work Item 1 | Complete |
+| 13 | LCO readiness assessment | Project Manager | ~5K | All above | Complete |
 | **Total** | | | **~185K** | | |
 
 ## Resources
@@ -186,23 +190,25 @@ stop
 
 This iteration addresses ALL 10 declared functional requirements at the analysis and architecture level — none are implemented as running features yet. The Use-Case Model decomposes FR-001 through FR-010 into system use cases. The SAD draft addresses the architectural implications of all FRs.
 
-| FR ID | Use Case (planned) | Inception Activity | Implementation Iteration |
-|---|---|---|---|
-| FR-001 | UC-001 Review Employee Clockings | Analyzed in UC Model; architecture noted in SAD | Construction Iter 1 |
-| FR-002 | UC-002 Export Monthly Clocking Report | Analyzed in UC Model; CSV export design noted | Construction Iter 2 |
-| FR-003 | UC-003 Assign Worker Category | Analyzed in UC Model; AD user id → category storage in SAD | Construction Iter 1 |
-| FR-004 | UC-004 Clock In and Clock Out | Analyzed in UC Model; OIDC auth + idempotent clocking in SAD | Construction Iter 1 |
-| FR-005 | UC-005 View Own Clocking History | Analyzed in UC Model | Construction Iter 1 |
-| FR-006 | UC-006 Publish News | Analyzed in UC Model; audit trail design in SAD | Construction Iter 2 |
-| FR-007 | UC-007 Browse News | Analyzed in UC Model | Construction Iter 2 |
-| FR-008 | UC-008 Edit Published News | Analyzed in UC Model; audit trail for edits in SAD | Construction Iter 2 |
-| FR-009 | UC-009 Unpublish News | Analyzed in UC Model; soft-delete + audit in SAD | Construction Iter 2 |
-| FR-010 | UC-010 Search Employee Directory | Analyzed in UC Model; LDAP read-on-demand in SAD; R001 PoC planned for Elaboration | Construction Iter 3 |
+> **UC ID mapping corrected in Iteration 2 to match the Use-Case Model (authority).** The Use-Case Model assigns UC IDs by architectural significance, not by FR sequence. All FR-to-UC mappings below are copied from the Use-Case Model's Use-Case Survey table.
+
+| FR ID | Use Case ID | Use Case Name | Inception Activity | Implementation Iteration |
+|---|---|---|---|---|
+| FR-001 | UC-005 | Review Employee Clockings | Analyzed in UC Model; architecture noted in SAD | Construction Iter 1 |
+| FR-002 | UC-006 | Export Monthly Clocking Report | Analyzed in UC Model; CSV export design noted | Construction Iter 3 |
+| FR-003 | UC-007 | Assign Worker Category | Analyzed in UC Model; AD user id → category storage in SAD | Construction Iter 1 |
+| FR-004 | UC-001 | Clock In and Clock Out | Analyzed in UC Model; OIDC auth + idempotent clocking in SAD | Construction Iter 1 |
+| FR-005 | UC-002 | View Own Clocking History | Analyzed in UC Model | Construction Iter 1 |
+| FR-006 | UC-008 | Publish News | Analyzed in UC Model; audit trail design in SAD | Construction Iter 2 |
+| FR-007 | UC-003 | Browse News | Analyzed in UC Model | Construction Iter 2 |
+| FR-008 | UC-009 | Edit Published News | Analyzed in UC Model; audit trail for edits in SAD | Construction Iter 2 |
+| FR-009 | UC-010 | Unpublish News | Analyzed in UC Model; soft-delete + audit in SAD | Construction Iter 2 |
+| FR-010 | UC-004 | Search Employee Directory | Analyzed in UC Model; LDAP read-on-demand in SAD; R001 PoC planned for Elaboration | Construction Iter 3 |
 
 **Iteration sequencing rationale (risk-driven):**
-- **Construction Iter 1** addresses FR-004 (clocking) and FR-005 (history) first — these are the highest-adoption-risk features (R002) and the simplest to implement, providing early user value.
-- **Construction Iter 2** addresses the news management cluster (FR-006–FR-009) — these share the audit trail mechanism (R006) and are implemented together for coherence.
-- **Construction Iter 3** addresses FR-010 (directory) and FR-002 (CSV export) — directory depends on R001 resolution (Elaboration PoC), and CSV export is a downstream reporting feature.
+- **Construction Iter 1** addresses FR-004 (UC-001, clocking) and FR-005 (UC-002, history) first — these are the highest-adoption-risk features (R002) and the simplest to implement, providing early user value. FR-001 (UC-005, review clockings) and FR-003 (UC-007, assign category) are also assigned here as they are HR-facing features that complement the clocking workflow.
+- **Construction Iter 2** addresses the news management cluster: FR-006 (UC-008), FR-007 (UC-003), FR-008 (UC-009), FR-009 (UC-010) — these share the audit trail mechanism (R006) and are implemented together for coherence.
+- **Construction Iter 3** addresses FR-010 (UC-004, directory) and FR-002 (UC-006, CSV export) — directory depends on R001 resolution (Elaboration PoC), and CSV export is a downstream reporting feature.
 
 ## Evaluation Criteria
 
@@ -210,9 +216,9 @@ This iteration addresses ALL 10 declared functional requirements at the analysis
 
 | AC ID | Description | Addressed This Iteration? | Evidence / Deferral |
 |---|---|---|---|
-| AC-001 | Employee can clock in/out without HR help | Deferred to Construction Iter 1 | UC-004 analyzed; implementation pending |
-| AC-002 | HR can publish news without technical assistance | Deferred to Construction Iter 2 | UC-006 analyzed; implementation pending |
-| AC-003 | Employee finds colleague's phone/email in <10 seconds | Deferred to Construction Iter 3 | UC-010 analyzed; R001 PoC required first (Elaboration) |
+| AC-001 | Employee can clock in/out without HR help | Deferred to Construction Iter 1 | UC-001 analyzed; implementation pending |
+| AC-002 | HR can publish news without technical assistance | Deferred to Construction Iter 2 | UC-008 analyzed; implementation pending |
+| AC-003 | Employee finds colleague's phone/email in <10 seconds | Deferred to Construction Iter 3 | UC-004 analyzed; R001 PoC required first (Elaboration) |
 | AC-004 | 80% of employees complete one clocking with no training | Deferred to Transition Iter 1 | Adoption measurement requires deployed system |
 | AC-005 | System works temporarily offline (5-min network drop) | Deferred to Construction Iter 1 | R004 (offline fault tolerance) addressed in SAD draft; implementation pending |
 
@@ -225,9 +231,18 @@ No AC is absent from this table. All 5 declared acceptance criteria are accounte
 | 1 | Risk List produced with all risks classified (P × I = magnitude) and mitigation/contingency defined | Review of Risk List artifact — 10 risks (R001–R010), all with strategy, mitigation, contingency |
 | 2 | Coarse cross-iteration roadmap defined with milestone sequence | Review of this Iteration Plan — 7 iterations, 4 milestones (LCO, LCA, IOC, PR) |
 | 3 | Iteration budget box defined with per-work-item token allocation | Review of Work Items table — 13 items, ~185K total, each with owner and budget |
-| 4 | All 10 FRs traced to planned use cases and implementation iterations | Review of Use Cases and Scenarios Addressed table — FR-001 through FR-010 mapped |
+| 4 | All 10 FRs traced to planned use cases and implementation iterations | Review of Use Cases and Scenarios Addressed table — FR-001 through FR-010 mapped to UC-001 through UC-010 per Use-Case Model authority |
 | 5 | All 5 ACs accounted for with deferral or closure evidence | Review of Evaluation Criteria Layer 1 — AC-001 through AC-005 all listed |
-| 6 | LCO readiness assessed | PM assessment: scope agreed (stakeholder declaration), risks identified (R001–R010), architecture direction sound (SAD draft pending but direction defined) |
+| 6 | LCO readiness assessed | PM assessment: scope agreed (stakeholder declaration), risks identified (R001–R010), architecture direction sound (SAD draft produced) |
+
+### Layer 3 — Iteration 2 Rework Criteria
+
+| # | Rework Criterion | Verification Method |
+|---|---|---|
+| R1 | F1 (Major) resolved: All 10 FR-to-UC mappings match the Use-Case Model | Use Cases and Scenarios Addressed table cross-checked against Use-Case Model §Use-Case Survey |
+| R2 | F2 (Minor) resolved: Work item statuses reconciled against repository | Work Items table status column cross-checked against artifact list (all 10 artifacts exist as Draft) |
+| R3 | Construction iteration assignments reference correct UC IDs | Iteration sequencing rationale and Implementation Iteration column verified against corrected UC IDs |
+| R4 | Evaluation Criteria UC references corrected | AC-001→UC-001, AC-002→UC-008, AC-003→UC-004 verified against Use-Case Model |
 
 ## Traceability
 
@@ -243,3 +258,6 @@ No AC is absent from this table. All 5 declared acceptance criteria are accounte
 | Work Item 10 | AC-001–AC-005 | Derives | Test Case artifacts |
 | AC deferral table | AC-001–AC-005 | Refines | Construction/Transition Iteration Plans |
 | Budget box [ASSUMPTION] | No measured actuals (first iteration) | DependsOn | Iteration Assessment (will record actuals) |
+| FR-to-UC mapping | Use-Case Model §Use-Case Survey (authority) | Derives | Construction Iteration Plans (UC assignments) |
+| F1 resolution | Review Record F1 (Major) | Derives | Use-Case Model (authority for UC IDs) |
+| F2 resolution | Review Record F2 (Minor) | Derives | Artifact repository (status reconciliation) |
