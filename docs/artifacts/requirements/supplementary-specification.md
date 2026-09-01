@@ -290,7 +290,6 @@ end note
 ```
 
 ## Traceability
-
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
 | SEC-001 | CON-004 | Refines | All UCs (<<include>>) |
@@ -323,6 +322,8 @@ end note
 | REL-003 quantification | AC-005 | Refines | UC-001 AF-1 |
 | Timestamp convention (stakeholder decision) | DAT-001 + stakeholder answer (Elaboration Iter 1): store UTC, display office local timezone, export ISO-8601 with explicit offset, payroll day = local calendar day | Authorizes | UC-001 timestamp convention; UC-006 CSV column set (event_timestamp) |
 | Office local timezone (stakeholder decision) | Stakeholder answer (Elaboration Iter 1): "America/Havana" — an IANA identifier, not a fixed offset; Cuba observes DST, so a hardcoded UTC-5 would silently shift every payroll day boundary when the clocks change | Authorizes | UC-001 timestamp convention; UC-006 event_timestamp column (DST-aware offset per IANA zone database) |
+| R001 behavioural bar (stakeholder decision, Elaboration Iter 2) | Declared R001 + stakeholder answer (Elaboration Iter 2): the bar is behavioural, not statistical — every employee is rendered whether or not their attributes are complete; a missing attribute never removes someone from search results; a missing attribute never raises an error; gaps seeded deliberately in the disposable LDAP directory; the prior >90% statistical criterion is dropped (invented, unsourceable); real-AD data-quality measurement moves to Construction (R011 residual, STK-004-dependent), excluded from the LCA evidence package | Authorizes | UC-004 AF-2 (declared home — FR-010); UC-005 AF-3, UC-006 AF-3, UC-007 AF-3 (each [DERIVED — from FR-001/FR-002/FR-003 + the bar, awaiting stakeholder confirmation]); R001 PoC (Architect, Work Item 7 — deliberately-seeded gaps); Test Case TC-011 (fixture re-seeded to include attribute gaps) |
+| R001 behavioural bar — distinct-condition boundary | R001 behavioural bar (stakeholder decision, Elaboration Iter 2) + CON-006 | Refines | AD-unreachable flows (UC-004 AF-3, UC-005 AF-2, UC-006 AF-2, UC-007 AF-2) — a different failure mode with a different contract; NOT waived by the behavioural bar |
 | DC-001 | CON-001 | Refines | (Architecture) |
 | DC-002 | CON-002 | Refines | (Architecture) |
 | DC-003 | CON-003 | Refines | (Architecture) |
