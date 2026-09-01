@@ -427,48 +427,53 @@ end note
 - **Audit atomicity** — COMP-005 writes are in-transaction with the caller's state change; a failed audit write rolls back the state change. This is the architectural guarantee behind NFR-005's "mandatory" traceability.
 - **Fault tolerance scope** — the "network drop" (NFR-004) is between browser and portal server on the corporate LAN; the portal server itself is Infrastructure's responsibility (CON-014). The mechanism tolerates client-side drops only; server crash recovery is out of scope.
 ## Deployment View
-
-The deployment is a **single-node topology** on an internal Windows Server. This is proportional to the declared scope: 200 users, 3 offices, no cloud, no external access. No load balancers, no clusters, no container orchestration — those would be over-engineering for this scale.
+The deployment is a **single-node topology** on an internal Windows Server — proportional to the declared scope: 200 users, 3 offices, no cloud, no external access. No load balancers, no clusters, no container orchestration.
 
 ```plantuml
 @startuml
 skinparam nodeStyle rectangle
 skinparam fontSize 11
-title Employee Portal — Deployment Topology (Physical View)
+title Employee Portal — Deployment View (Elaboration Baseline)
 
-node "Windows Server\n(CON-008)" as WINSRV {
-  component ".NET 10 Razor Pages App\n(CON-001, CON-002)" as APP
-  database "PostgreSQL\n(CON-003)" as PG
+node "Employee Workstation\n(corporate network — CON-009)" as WS {
+  node "Browser (Chrome / Edge — CON-010)" as BROWSER {
+    artifact "Razor Pages UI\n(SCR-01…SCR-09, M-01)" as UI
+    storage "localStorage\nOffline Queue — client half of COMP-009" as LSQ
+  }
 }
 
-node "Corporate Network\n(CON-009)" as CORPNET {
-  node "Employee Browser\n(Chrome / Edge — CON-010)" as BROWSER
+node "Windows Server (CON-008)\nsingle node — operated by STK-004 (CON-014)" as WINSRV {
+  node "Kestrel / IIS — .NET 10 process (CON-001)" as APPPROC {
+    artifact "EmployeePortal\n(Presentation + Application + Infrastructure\n— single deployable, ADR-001)" as APP
+    artifact "OIDC Auth Middleware (COMP-006)" as MW
+  }
+  database "PostgreSQL (CON-003)\nclockings | news_items | news_audit |\nworker_categories | category_audit" as PG
 }
 
-node "Existing Infrastructure\n(operated by STK-004)" as EXISTING {
-  component "Keycloak\n(OIDC — CON-004)" as KC
-  component "Active Directory\n(LDAP — CON-005)" as AD
+node "Existing Infrastructure\n(operated by STK-004 — not this project)" as EXISTING {
+  component "Keycloak (OIDC — CON-004)" as KC
+  component "Active Directory (LDAP — CON-005)" as AD
 }
 
-BROWSER ..> APP : HTTPS\nRazor Pages
-APP ..> KC : OIDC redirect/token\n(INT-001)
-APP ..> AD : LDAP v3 read-only\n(INT-002)
-APP ..> PG : Npgsql / EF Core\n(INT-003)
+UI ..> APP : HTTPS — Razor Pages (INT-004)
+LSQ ..> APP : replay queued clockings on reconnect\n(idempotent sync endpoint — ADR-003)
+MW ..> KC : OIDC redirect / token validation (INT-001, STD-001)
+APP ..> AD : LDAP v3 read-only (INT-002, STD-002)\n5 s hard timeout (PRF-003)
+APP ..> PG : Npgsql 10.0.3 / EF Core (INT-003)
 
 note bottom of WINSRV
-  Single server deployment.
-  No cloud (CON-008).
-  Internal network only (CON-009).
-  No external access.
+  Single server, no cloud (CON-008),
+  internal network only (CON-009).
+  Backup and crash recovery are
+  Infrastructure's responsibility (CON-014).
 end note
 
 note bottom of EXISTING
-  External systems — not deployed
-  or managed by this project.
-  Keycloak: OIDC client only (CON-004).
-  AD: read-only LDAP (CON-005, CON-007).
+  External systems — the portal is a
+  client only: OIDC client of Keycloak
+  (CON-004), read-only LDAP client of
+  AD (CON-005, CON-007).
 end note
-
 @enduml
 ```
 
@@ -476,12 +481,13 @@ end note
 
 | Dependency | Provider | Needed By | Blocking? |
 |---|---|---|---|
-| LDAP read access to AD (service account) | STK-004 (Infra) | COMP-007, UC-004, UC-007 | Yes — blocks Elaboration PoC for R001 |
+| LDAP read access to AD (service account) | STK-004 (Infra) | COMP-007, UC-004, UC-005, UC-006, UC-007 | Yes — blocks R001 validation |
 | Keycloak client registration | STK-004 (Infra) | COMP-006, all UCs | Yes — blocks auth integration |
 | Windows Server provisioning | STK-004 (Infra) | Deployment | Yes — blocks Construction deployment |
 
-These dependencies are owned by STK-004 (Infrastructure Team) per R010. The Project Manager should engage STK-004 early in Elaboration to secure these deliverables.
+These dependencies are owned by STK-004 per R010. The Project Manager must engage STK-004 early; if deliverables are delayed, mock LDAP and mock OIDC providers unblock development with integration deferred to early Construction (R010 contingency).
 
+**Elaboration refinement vs the Inception candidate:** the browser node now explicitly carries the **localStorage offline queue** (client half of COMP-009) — the deployment consequence of ADR-003 is that part of the system's state lives on the employee workstation, which is why the sync endpoint and idempotency key exist. The server node shows the single deployable process (ADR-001) with the auth middleware at its boundary.
 ## Implementation View
 
 **Deferred to Elaboration.** The Implementation view will map the subsystem decomposition to .NET 10 project structure (solution, projects, namespaces) once the architecture is baselined.
