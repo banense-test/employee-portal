@@ -2,426 +2,397 @@
 
 | Field | Value |
 |---|---|
-| Phase | Inception |
-| Status | Draft |
-| Milestone Target | End of Inception (LCO) |
-| Iteration | 2 (Cycle 1) — Rework iteration |
+| Phase | Elaboration |
+| Status | Draft — Elaboration Iter 1 (Cycle 1) close-out record |
+| Milestone Target | End of Elaboration (LCA) — **NOT achieved this cycle; NOT declared by this assessment** (the milestone verdict is the Review Coordinator's, already issued) |
+| Iteration | 1 (Cycle 1) |
 | Date | 2026-09-01 |
-| Review Coordinator Verdict | LCO: no further iteration required |
-| Stakeholder Sanction | GRANTED — "Yes" to advancing past LCO; "Let's go to elaboration." |
-| Review Coordinator Confirmation | "Yes" to advancing to next milestone; "Nothing else to add for this new phase." |
-| Prior Iteration | 1 (Cycle 1) — 2 findings (1 Major, 1 Minor), both now RESOLVED |
+| Review Coordinator Verdict (recorded, not declared here) | **LCA: iteration REQUIRED (scope incomplete)** — `requiresIteration: TRUE`; the phase auto-iterates into Elaboration Iteration 2 (convergence cycle, already planned as BUILDING) |
+| Stakeholder Sanction (this cycle) | **REFUSED** — "No" to accepting this iteration's Iteration Plan and sanctioning advance past LCA. Binding directive, recorded verbatim: "Please fix all the findings even if they are minors prior to move to next phase" — reinforced by the escalation resolution: "Fix all the issues and close all findings" |
+| Prior Version | Inception Iteration Assessment (Approved at LCO — mission ACHIEVED); EVOLVED, not recreated. The Inception record is preserved in SCM history |
+| Elaboration Changes | Elaboration Iter 1 close-out added: 4 phase objectives assessed (1 MET, 1 PARTIALLY MET, 2 NOT MET); 3 of 8 exit criteria met; measured actuals recorded (12,523,281 tokens; agent 6:00:59; stakeholder queue 0:35:14 — never summed); budget-box variance root-caused (~10.4× the assumed box); work items reconciled to SCM evidence (7 Complete, 5 roll forward); 10 open findings recorded with convergence-cycle entry plan; lessons learned + N+1 adjustments |
 
 ## Iteration Objectives Reached
 
-The Inception phase defined four objectives. Iteration 1 met objectives 1–3 but not objective 4 (Establish Feasibility), blocked by two Iteration Plan findings. Iteration 2 was a rework iteration that resolved both findings and achieved the LCO milestone. All four objectives are now MET.
+The phase planned four objectives. Assessed against the Review Record (verified findings ledger) and the Test Evaluation Summary (mission verdict), the record is: **1 MET, 1 PARTIALLY MET, 2 NOT MET.**
 
 ```plantuml
 @startuml
 !theme plain
-title Employee Portal — Inception Iter 2 Objective Assessment
+title Employee Portal — Elaboration Iter 1: Phase Objective Assessment
 
-state "OBJ-1: Define Project Scope" as OBJ1 {
-  OBJ1 : Status: MET (preserved)
-  OBJ1 : Vision: 0 findings
-  OBJ1 : UC Model: 0 findings
-  OBJ1 : Supp Spec: 0 findings
-  OBJ1 : [SCOPE_QUESTION] retired
-  OBJ1 : Stakeholder: scope accepted
+state "OBJ-1: Establish Architecture Baseline" as OBJ1 {
+  OBJ1 : Status: NOT MET (at the LCA exit bar)
+  OBJ1 : Structure sound: 4+1 views (7 diagrams),
+  OBJ1 : 11 components, ADR-001..004
+  OBJ1 : Design Model clean (0 findings)
+  OBJ1 : BUT SAD F1 + F2 Critical open
+  OBJ1 : LCA-2 (architecture stable): NOT MET
 }
-
-state "OBJ-2: Identify Critical Risks" as OBJ2 {
-  OBJ2 : Status: MET (preserved)
-  OBJ2 : Risk List: 0 findings
-  OBJ2 : 10 risks (R001-R010)
-  OBJ2 : All P x I = magnitude
-  OBJ2 : R001 HIGH, 4 SIGNIFICANT
+state "OBJ-2: Address High-Risk Elements" as OBJ2 {
+  OBJ2 : Status: NOT MET — primary LCA blocker
+  OBJ2 : R001 HIGH: path designed, NOT executed
+  OBJ2 : R003 / R004: same — zero code evidence
+  OBJ2 : Trend FLAT since Inception
+  OBJ2 : Test mission: NOT YET ACHIEVED
+  OBJ2 : LCA-3: NOT MET
 }
-
-state "OBJ-3: Tailor Dev Process" as OBJ3 {
-  OBJ3 : Status: MET (preserved)
-  OBJ3 : Development Case: 0 findings
-  OBJ3 : IARI baseline: PASS
-  OBJ3 : 0/6 optional triggers fired
-  OBJ3 : BM correctly INACTIVE
+state "OBJ-3: Refine Requirements" as OBJ3 {
+  OBJ3 : Status: MET
+  OBJ3 : UC Model: 10/10 FULL, 0 findings
+  OBJ3 : Supp Spec: quantified, 0 findings
+  OBJ3 : 3 stakeholder decisions incorporated,
+  OBJ3 : markers retired in place
 }
-
-state "OBJ-4: Establish Feasibility" as OBJ4 {
-  OBJ4 : Status: MET (was NOT MET in Iter 1)
-  OBJ4 : SAD: 0 findings, arch sound
-  OBJ4 : F1 (Major): RESOLVED
-  OBJ4 : F2 (Minor): RESOLVED
-  OBJ4 : Stakeholder sanction: GRANTED
-  OBJ4 : LCO milestone: ACHIEVED
+state "OBJ-4: Develop Detailed Plan" as OBJ4 {
+  OBJ4 : Status: PARTIALLY MET
+  OBJ4 : Construction baseline from actuals,
+  OBJ4 : UC IDs verified, LCA-4 PASS
+  OBJ4 : PRA Part 1: plan feasible as sized
+  OBJ4 : BUT plan carries F3 Critical,
+  OBJ4 : F4 Major, F5 Minor — rework owed
 }
-
 OBJ1 -[hidden]-> OBJ2
 OBJ2 -[hidden]-> OBJ3
 OBJ3 -[hidden]-> OBJ4
 
 note bottom of OBJ4
-  **Iteration 2 rework verified:**
-  F1 (Major) RESOLVED — all 10 UC IDs
-  now match Use-Case Model authority.
-  F2 (Minor) RESOLVED — all 13 work
-  items show "Complete" status.
-  Stakeholder: "Let's go to elaboration."
-  Review Coordinator: "Yes" to advance.
-  LCO: no further iteration required.
+  Record: 1 MET, 1 PARTIALLY MET,
+  2 NOT MET. The phase continues
+  into Elaboration Iteration 2
+  (convergence cycle) per the
+  Review Coordinator verdict.
 end note
-
 @enduml
 ```
 
-### Objective 1 — Define Project Scope: **MET** (preserved from iteration 1)
+**Objective 1 — Establish Architecture Baseline: NOT MET (at the LCA exit bar).** The 4+1 baseline is structurally sound — 7 diagrams, 11 change-area components, ADR-001…004, interface-based boundaries; the Design Model is clean (10/10 realizations, 0 findings). But the SAD — the artifact the LCA gate evaluates — carries two Critical findings: F1 (superseded analysis-only PoC disposition, contradicting the binding stakeholder decision) and F2 (the DC-sanctioned Architectural Proof-of-Concept artifact absent; zero mechanism code in SCM). LCA criterion 2 (architecture stable): NOT MET. The structure must NOT be reworked; the record must be corrected and the validation executed.
 
-| Evidence | Source |
-|---|---|
-| Vision Document produced with clear includes/excludes matching declared scope | Review Record — 0 findings (preserved) |
-| Use-Case Model decomposes all 10 FRs into UC-001–UC-010 with sources cited | Review Record — 0 findings (preserved) |
-| Supplementary Specification covers all 5 NFRs, FURPS+ categorized, cross-cutting mechanisms correctly placed | Review Record — 0 findings (preserved) |
-| [SCOPE_QUESTION] on offline clocking retired by stakeholder confirmation | Stakeholder answer: "Yes" — architectural concern, not scope |
-| Stakeholder confirmed scope accepted | Stakeholder: "Scope and objectives: accepted. They are not in question." |
+**Objective 2 — Address High-Risk Elements: NOT MET — the primary LCA blocker.** The empirical validation paths for R001 (disposable LDAP directory), R003 (stub OIDC issuer), R004 (direct) are correctly designed and re-scoped per the stakeholder decision — but unexecuted: zero `ready-for-review` branches, zero PRs, no `Services/`, no `Infrastructure/`, `iteration/E1` skeleton only. R001 (HIGH, exposure=9) has been HIGH since Inception with a FLAT trend line. The Test Evaluation Summary's mission verdict: NOT YET ACHIEVED (0 of 3 validations evidenced). LCA criterion 3: NOT MET. The stakeholder's binding position: an LCA that validates a HIGH architectural risk on paper only will not be accepted.
 
-### Objective 2 — Identify Critical Risks: **MET** (preserved from iteration 1)
+**Objective 3 — Refine Requirements: MET.** All 10 UCs detailed FULL with correct `Source: FR-NNN` (0 findings); the Supplementary Specification is quantified, testable, threshold-tagged (0 findings); the three stakeholder decisions (timestamp convention: UTC store / local display / ISO-8601 offset export / local payroll day; office timezone: America/Havana — IANA, DST-aware; PoC empirical validation) are incorporated with markers retired in place. LCA criterion 1 (vision stable): MET.
 
-| Evidence | Source |
-|---|---|
-| Risk List produced with 10 risks (R001–R010), all classified P × I = magnitude | Review Record — 0 findings (preserved) |
-| R001 (AD LDAP) classified HIGH (P=3, I=3) — highest magnitude | Risk List |
-| 4 SIGNIFICANT risks (R002, R003, R004, R010), 5 MODERATE risks (R005–R009) | Risk List |
-| Mitigation + contingency defined for all 10 risks | Risk List |
-| R010 (Infra availability) identified as critical-path blocker for Elaboration PoCs | Test Evaluation Summary — infrastructure needs assessment |
-
-### Objective 3 — Tailor Development Process: **MET** (preserved from iteration 1)
-
-| Evidence | Source |
-|---|---|
-| Development Case conforms to IARI baseline with no forbidden overrides | Review Record — LCO-6: PASS (preserved) |
-| 0 of 6 optional triggers fired; all justified per DC §5.2 | Review Record — optional trigger audit: PASS (preserved) |
-| Business Modeling correctly classified INACTIVE (not business-process-led) | Review Record — DC §4 classification evidence (preserved) |
-| Role roster, ownership, CORE artifacts all verified | Review Record — compliance matrix: PASS (preserved) |
-
-### Objective 4 — Establish Feasibility: **MET** (was NOT MET in iteration 1)
-
-| Evidence | Source |
-|---|---|
-| SAD draft produced — 9 components, 3 ADRs, candidate architecture proportional to 200-user scope | Review Record — LCO-5: PASS, 0 findings (preserved) |
-| PoC plan for R001/R003/R004 defined in SAD | SAD + Test Evaluation Summary |
-| F1 (Major) RESOLVED — all 10 FR-to-UC mappings corrected to match Use-Case Model authority | Review Record — F1 (ManagementReviewer): RESOLVED via `resolve_artifact_finding` |
-| F2 (Minor) RESOLVED — all 13 work item statuses reconciled to "Complete" | Review Record — F2 (ManagementReviewer): RESOLVED via `resolve_artifact_finding` |
-| Zero new findings this iteration | Review Record — "Zero new findings. All 9 reviewed artifacts pass all LCO exit criteria." |
-| Stakeholder sanction GRANTED | Stakeholder: "Yes" — "Let's go to elaboration." |
-| Review Coordinator confirmed | "Yes" to advancing to next milestone; "Nothing else to add for this new phase." |
-| LCO milestone ACHIEVED | Review Coordinator: "LCO: no further iteration required" |
-
-**Root cause of iteration 1 failure (resolved):** The Iteration Plan assumed a sequential FR-001→UC-001 mapping that the Use-Case Model (the authority) does not use. This propagated incorrect UC references into Construction iteration assignments. Additionally, work items 4, 5, 6, 7, and 10 showed "Pending" status while their artifacts existed as Draft. Both defects were corrected in iteration 2 and verified by the Management Reviewer and Reviewer lenses.
+**Objective 4 — Develop Detailed Plan: PARTIALLY MET.** The Construction schedule baseline is built from measured actuals with UC IDs verified against the Use-Case Model authority (LCO F1 lesson applied); LCA criterion 4 (Construction plan sufficiently detailed): MET, and the PRA's Part 1 verdict is that the plan is feasible as sized. But the Iteration Plan itself carries three findings: F3 (Critical — exit criteria 1–3 have no code evidence; Work Items 7–9 showed "In progress" with zero SCM evidence), F4 (Major — all-findings closure is not a phase-exit condition, contrary to the stakeholder's directive), F5 (Minor — human-gate queue forecasts violate the no-estimate rule). The plan's rework is scheduled in the convergence cycle (A-12, A-13).
 
 ## Adherence to Plan
 
-### Budget vs Actuals
-
 ```plantuml
 @startuml
 !theme plain
-title Employee Portal — Inception Iter 2 Budget vs Actuals
+title Employee Portal — Elaboration Iter 1: Budget vs Actuals\nTwo clocks, never summed
 
 object "Token Spend" as TS {
-  Iter 1 actual: 2,202,369
-  Iter 2 actual: 1,347,939
-  Cumulative: 3,550,308
-  Iter 1 assumption: 185K [ASSUMPTION]
-  Note: assumption replaced by measured
+  Box (planned): 1,200K [ASSUMPTION —
+  basis: measured Inception actual
+  1,347,939, phase-level record]
+  Actual: 12,523,281 (measured)
+  Variance: ~10.4x the box
+  Root cause: 22 invocations over a
+  12-artifact accumulated surface plus
+  a 5-lens cumulative review; spend is
+  dominated by reasoning over the
+  surface, not by output volume
 }
-
 object "Agent Elapsed Time" as AET {
-  Iter 1: 1:24:29
-  Iter 2: 0:28:16
-  Cumulative: 1:52:46
-  Note: work time, not queue time
+  Actual: 6:00:59 (measured)
+  Work time — never summed
+  with queue time
 }
-
-object "Human Gate Queue" as HGQ {
-  Iter 1: 0:02:20
-  Iter 2: 0:00:00
-  Note: stakeholder answering questions
-  Note: never summed with agent time
+object "Stakeholder Queue" as HGQ {
+  Actual: 0:35:14 (measured)
+  28 user interactions, answered
+  in-round; excludes the
+  end-of-iteration approval gate
 }
-
-object "Agent Invocations" as AI {
-  Iter 1: (not separately recorded)
-  Iter 2: 11
+object "Volume and Quality" as VOL {
+  Agent invocations: 22
+  User interactions: 28
+  Artifacts: 12
+  Avg quality: 9.9 / 10
 }
-
-object "User Interactions" as UI {
-  Iter 1: 12
-  Iter 2: 10
+object "Token Record Reconciliation" as REC {
+  Inception phase-level record:
+  1,347,939 — GOVERNS
+  Prior assessment's 3,550,308
+  cumulative figure: superseded
+  by the phase-level record
+  Elab Iter 1 actual 12,523,281
+  replaces the assumed shape for
+  ALL later budget forecasts
 }
-
-object "Artifacts" as ART {
-  Total: 10 (9 + Review Record)
-  New in Iter 2: 0 (all preserved)
-  Reworked in Iter 2: 1 (Iteration Plan)
-}
-
-object "Avg Quality" as AQ {
-  Iter 2: 9.9 / 10
-}
-
 TS -[hidden]-> AET
 AET -[hidden]-> HGQ
-HGQ -[hidden]-> AI
-AI -[hidden]-> UI
-UI -[hidden]-> ART
-ART -[hidden]-> AQ
-
-note bottom of TS
-  **Two clocks, never summed:**
-  Agent work = tokens + elapsed time.
-  Human gates = days of queue time.
-  Iter 2 queue = 0 (stakeholder
-  answered in-round, no waiting).
-end note
-
+HGQ -[hidden]-> VOL
+VOL -[hidden]-> REC
 @enduml
 ```
 
-| Metric | Iter 1 Actual | Iter 2 Actual | Cumulative | Notes |
-|---|---|---|---|---|
-| Token spend | 2,202,369 | 1,347,939 | 3,550,308 | Iter 2 was rework-only: 1 artifact corrected, 8 preserved |
-| Agent elapsed time | 1:24:29 | 0:28:16 | 1:52:46 | Work time — never summed with queue time |
-| Human gate queue time | 0:02:20 | 0:00:00 | 0:02:20 | Stakeholder answered in-round; no waiting this iteration |
-| Agent invocations | — | 11 | 11 | — |
-| User interactions | 12 | 10 | 22 | — |
-| Artifacts produced | 9 | 0 (new) | 9 | Iter 2 reworked 1, preserved 8 |
-| Artifacts reworked | 0 | 1 (Iteration Plan) | 1 | F1 + F2 corrections |
-| Avg quality score | — | 9.9 / 10 | — | Reviewer-assessed across all artifacts |
-
-**Variance analysis:** Iteration 2 consumed 1,347,939 tokens — 61% of iteration 1's spend — for a rework scope of one artifact. This reflects the cumulative reasoning cost of re-reading the Use-Case Model (authority), the Iteration Plan (target), and the Review Record (findings), then producing the corrected plan. The rework was not a simple find-and-replace: it required cross-referencing all 10 FR-to-UC mappings, updating Construction iteration assignments, adding a Layer 3 rework criteria table, and reconciling 13 work item statuses. The measured actual replaces the prior assumption for all Elaboration forecasts.
-
-**Two clocks, never summed:** Agent work consumed 0:28:16 of elapsed time. Human gate queue time was 0:00:00 — the stakeholder answered in-round with no waiting. These two clocks are reported side by side and never added.
-
-### Work Item Status Reconciliation (Iteration 2)
-
-All 13 work items now show "Complete" status, reconciled against the repository. The F2 finding (items 4, 5, 6, 7, 10 showed "Pending") is resolved.
-
-| # | Work Item | Iter 1 Status | Iter 2 Status | Finding |
-|---|---|---|---|---|
-| 1 | Risk List | Complete | Complete (Draft) | — |
-| 2 | Development Case | Complete | Complete (Draft) | — |
-| 3 | Tool environment config | Complete | Complete | — |
-| 4 | Vision Document | Pending ❌ | Complete (Draft) ✅ | F2 RESOLVED |
-| 5 | Use-Case Model | Pending ❌ | Complete (Draft) ✅ | F2 RESOLVED |
-| 6 | Supplementary Specification | Pending ❌ | Complete (Draft) ✅ | F2 RESOLVED |
-| 7 | Software Architecture Document | Pending ❌ | Complete (Draft) ✅ | F2 RESOLVED |
-| 8 | Design Model | Pending | Complete (Draft) | — |
-| 9 | Project skeleton | Pending | Complete | — |
-| 10 | Test strategy | Pending ❌ | Complete (Draft) ✅ | F2 RESOLVED |
-| 11 | Repository configuration | Pending | Complete | — |
-| 12 | Iteration Plan | In progress (with defects) | Complete (Draft, corrected) ✅ | F1 RESOLVED |
-| 13 | LCO readiness assessment | Pending | Complete (this artifact) ✅ | — |
-
-## Use Cases and Scenarios Implemented
-
-No use cases were implemented as running features in this iteration — Inception produces analysis and architecture artifacts, not executable code. All 10 UCs (UC-001–UC-010) were analyzed in the Use-Case Model and addressed at the architecture level in the SAD draft.
-
-**F1 resolution verified:** The Iteration Plan's "Use Cases and Scenarios Addressed" table now maps all 10 FR-to-UC pairs correctly per the Use-Case Model (the authority):
-
-| FR ID | Correct UC ID (per Use-Case Model) | Iter 1 Had | Iter 2 Status |
+| Metric | Planned | Actual (measured) | Notes |
 |---|---|---|---|
-| FR-001 | UC-005 | UC-001 ❌ | UC-005 ✅ |
-| FR-002 | UC-006 | UC-002 ❌ | UC-006 ✅ |
-| FR-003 | UC-007 | UC-003 ❌ | UC-007 ✅ |
-| FR-004 | UC-001 | UC-004 ❌ | UC-001 ✅ |
-| FR-005 | UC-002 | UC-005 ❌ | UC-002 ✅ |
-| FR-006 | UC-008 | UC-006 ❌ | UC-008 ✅ |
-| FR-007 | UC-003 | UC-007 ❌ | UC-003 ✅ |
-| FR-008 | UC-009 | UC-008 ❌ | UC-009 ✅ |
-| FR-009 | UC-010 | UC-009 ❌ | UC-010 ✅ |
-| FR-010 | UC-004 | UC-010 ❌ | UC-004 ✅ |
+| Token spend | 1,200K box [ASSUMPTION] | 12,523,281 | ~10.4× the box — variance root-caused below |
+| Agent elapsed time | Measured at close | 6:00:59 | Work time; never summed with queue |
+| Stakeholder queue | Estimate NONE (rule) | 0:35:14 | 28 interactions answered in-round; excludes the end-of-iteration approval gate |
+| Agent invocations | — | 22 | 9 roles active |
+| User interactions | — | 28 | 3 stakeholder decisions + review consultations |
+| Artifacts | — | 12 | 7 clean from the technical lens |
+| Avg quality | — | 9.9 / 10 | Reviewer-assessed |
 
-All 10 rows corrected. Construction iteration assignments referencing UC IDs also updated. A Layer 3 rework criteria table was added to the Iteration Plan to verify the corrections.
+**Variance root cause (token spend ~10.4× the box):** the 1,200K box was scaled from the Inception **phase-level** record (1,347,939 tokens — which covers TWO iterations, 10 artifacts, 11 runs). An Elaboration iteration is a different shape: 9 active roles reasoning over a 12-artifact accumulated surface, 22 invocations, 28 user interactions, and a 5-lens cumulative milestone review. Spend is dominated by reasoning over the accumulated surface, not by output volume — exactly the pattern the Inception lesson predicted, at larger scale. **The measured iteration actual (12,523,281) replaces the assumed shape for every later forecast; the phase-level record governs phase accounting, and iteration boxes are sized from iteration-shaped actuals.**
 
-## Results Relative to Evaluation Criteria
+**Token record reconciliation (owned by this role per the Review Record):** the Inception phase-level record (1,347,939 tokens) governs; the prior Inception assessment's 3,550,308 cumulative figure is superseded by it. One row per CLOSED phase; no per-iteration velocity is quoted from a phase-level record.
 
-The Iteration Plan defined 6 exit criteria for Inception. In iteration 1, criteria 4 and 6 were NOT MET. In iteration 2, both are now MET.
+**Metrics with purpose (each answers a decision):**
 
-| # | Exit Criterion | Iter 1 Result | Iter 2 Result | Evidence |
-|---|---|---|---|---|
-| 1 | Risk List produced with all risks classified (P × I = magnitude) and mitigation/contingency defined | MET | MET (preserved) | Risk List — 10 risks, all classified, 0 findings |
-| 2 | Coarse cross-iteration roadmap defined with milestone sequence | MET | MET (preserved) | Iteration Plan — 7 iterations, 4 milestones (LCO, LCA, IOC, PR) |
-| 3 | Iteration budget box defined with per-work-item token allocation | MET | MET (preserved) | Work Items table — 13 items, each with owner and budget |
-| 4 | All 10 FRs traced to planned use cases and implementation iterations | **NOT MET** | **MET** ✅ | F1 RESOLVED — all 10 FR-to-UC mappings now match Use-Case Model authority; Construction assignments corrected |
-| 5 | All 5 ACs accounted for with deferral or closure evidence | MET | MET (preserved) | Evaluation Criteria Layer 1 — AC-001 through AC-005 all listed with deferral targets |
-| 6 | LCO readiness assessed | **NOT MET** | **MET** ✅ | LCO milestone ACHIEVED — 0 open findings, stakeholder sanction GRANTED, Review Coordinator confirmed |
-
-**Score: 6 of 6 exit criteria met.** All criteria now pass. The LCO milestone is achieved.
-
-### Layer 3 — Rework Criteria Verification (Iteration 2)
-
-| # | Rework Criterion | Result | Evidence |
-|---|---|---|---|
-| R1 | F1 (Major) resolved: All 10 FR-to-UC mappings match the Use-Case Model | **PASS** ✅ | "Use Cases and Scenarios Addressed" table cross-checked against Use-Case Model — all 10 rows correct |
-| R2 | F2 (Minor) resolved: Work item statuses reconciled against repository | **PASS** ✅ | All 13 work items show "Complete" status; 10 artifacts exist as Draft in repository |
-| R3 | Construction iteration assignments reference correct UC IDs | **PASS** ✅ | Implementation Iteration column verified against corrected UC IDs |
-| R4 | Evaluation Criteria UC references corrected | **PASS** ✅ | AC-001→UC-001, AC-002→UC-008, AC-003→UC-004 verified against Use-Case Model |
-
-## Test Results
-
-No test execution occurred in this iteration — Inception produces no executable code beyond the bootstrap skeleton. The Test Evaluation Summary records the quality baseline (preserved from iteration 1, verified green in iteration 2):
-
-| Metric | Value | Source |
+| Goal (decision enabled) | Metric | Primitive measure |
 |---|---|---|
-| CI build status (main) | ✅ Success | `scm_get_build_status` — 2026-09-01 |
-| CI build duration | ~66 seconds | `scm_get_build_status` — 2026-09-01 |
-| Open defects (SCM issues) | 0 | SCM issue tracker — 2026-09-01 |
-| Use cases defined | 10 (UC-001–UC-010) | Use-Case Model |
-| Acceptance criteria mapped | 5/5 (AC-001–AC-005) | Test Evaluation Summary |
-| Risks identified | 10 (R001–R010) | Risk List |
-| PoCs planned for Elaboration | 3 (R001, R003, R004) | SAD |
-| Avg artifact quality | 9.9 / 10 | Review Record — iteration 2 |
+| Re-size the Elaboration Iter 2 budget box from fact, not assumption | Token spend actual | 12,523,281 (system-measured) |
+| Bound the human-gate queue risk (A-15) with a measured basis, not a forecast | Stakeholder queue time | 0:35:14 across 28 interactions (system-measured) |
+| Locate defect concentration for the convergence cycle's critical path | Open findings by severity × artifact | Verified ledger: 3 Critical, 1 Major, 4 Minor + 2 narrative-tracked |
+| Establish the process-effectiveness baseline | Defect removal efficiency | NOT YET MEASURABLE — 0 test executions; becomes measurable when TC-001…TC-020 run in the convergence cycle |
+| Confirm defects concentrate in execution, not design (protects the sound baseline from rework) | Avg artifact quality | 9.9 / 10 (reviewer-assessed) |
 
-**Test Evaluation Mission verdict: ACHIEVED** (preserved) — all 5 mission objectives met (risk prioritization, UC-to-AC coverage mapping, infrastructure needs assessment, quality baseline recording, Elaboration test strategy outline).
-
-**Critical path for Elaboration:** R010 (Infrastructure Team availability) blocks 2 of 3 Elaboration PoCs. LDAP read access and Keycloak client registration must be secured from STK-004 before Elaboration Iteration 1.
-
-## External Changes
-
-No external changes were recorded during this iteration. The stakeholder confirmed: "Nothing else to add for this new phase." No new requirements, no scope changes, no additional priorities.
-
-The [SCOPE_QUESTION] on the offline clocking persistence mechanism was retired in iteration 1 by stakeholder confirmation: the mechanism is an architectural concern for the Software Architect in Elaboration, not a missing scope item.
-
-## Rework Required
-
-**None.** All findings from both lenses (Reviewer and ManagementReviewer) are resolved. Zero new findings this iteration. The LCO milestone is achieved with 0 Critical, 0 Major, and 0 Minor open defects.
+### Work Item Reconciliation (statuses reconciled to SCM evidence — LCO F2 lesson, deepened)
 
 ```plantuml
 @startuml
 !theme plain
-title Employee Portal — Inception Iter 2 Variance Analysis
+title Employee Portal — Elaboration Iter 1: Work Item Reconciliation
+
+object "Complete this iteration (7 of 12)" as C {
+  WI-1 Risk List reappraisal
+  (artifact carries 2 Minor findings:
+  A-10, A-14, A-15 owed)
+  WI-2 DC PoC-trigger correction
+  (0 findings; trigger FIRED verified)
+  WI-4 UC Model + Supp Spec (0 findings)
+  WI-5 Design Model (0 findings)
+  WI-6 CON-011 Razor Pages mapping
+  (0 findings)
+  WI-10 Test case design — 20 cases,
+  0 findings (execution BLOCKED)
+  WI-11 Iteration Plan baseline
+  (artifact carries F3 Critical,
+  F4 Major, F5 Minor — rework owed)
+}
+object "Roll forward to Elab Iter 2 (5 of 12)" as R {
+  WI-3 SAD PoC Plan correction —
+  SAD F1 Critical open (the 4+1
+  baseline structure itself is sound)
+  WI-7 PoC R001 — zero SCM evidence
+  WI-8 PoC R003 — zero SCM evidence
+  WI-9 PoC R004 — zero SCM evidence
+  (F-CR-E1-1 = SAD F2 = Iteration
+  Plan F3: one defect, three gates)
+  WI-12 STK-004 request — no
+  recorded issuance
+}
+C -[hidden]-> R
+
+note bottom of R
+  Status honesty lesson (deepens
+  LCO F2): WI-7..9 showed In progress
+  with zero SCM evidence — status
+  must cite repository state,
+  not intent. Finding Iteration
+  Plan F3 (Critical).
+end note
+@enduml
+```
+
+## Use Cases and Scenarios Implemented
+
+**No use case was implemented as a running feature this iteration** — Elaboration produces the architecture baseline and validation evidence, not Construction features. The iteration's use-case scope was UC-001 (Clock In and Clock Out), UC-004 (Search Employee Directory), UC-010 (Unpublish News) — the three architecturally significant scenarios the PoC mechanisms were to validate:
+
+| UC | Validation Target | Mechanism | Result This Iteration |
+|---|---|---|---|
+| UC-001 | R003 (stub OIDC issuer) + R004 (offline drop) | COMP-006/CLS-010; COMP-009/CLS-008 | **Not executed** — zero code evidence; test cases designed (0 findings), execution BLOCKED |
+| UC-004 | R001 (disposable LDAP directory) | COMP-007/CLS-009 | **Not executed** — zero code evidence; test cases designed (0 findings), execution BLOCKED |
+| UC-010 | Audit trail + soft delete (R006 design) | CLS-005, DAT-002 | **Design complete** (Design Model, 0 findings); test cases designed, execution BLOCKED |
+
+All 10 UCs (UC-001…UC-010) were refined at the analysis level by the System Analyst (Use-Case Model: 10/10 FULL, 0 findings). Implementation of running features is Construction work per the baselined schedule (Iter 1 clocking cluster, Iter 2 news cluster, Iter 3 directory + export).
+
+## Results Relative to Evaluation Criteria
+
+### Layer 1 — Declared Acceptance Criteria (all 5 accounted; none closed this iteration)
+
+| AC | Status This Iteration | Evidence / Deferral |
+|---|---|---|
+| AC-001 | Not addressed (deferred) | Construction Iter 1 — UC-001 running feature |
+| AC-002 | Not addressed (deferred) | Construction Iter 2 — UC-008 running feature |
+| AC-003 | Not met this iteration (partial evidence owed) | R001 validation was to produce partial evidence; it did not execute — rolls to the convergence cycle; formal closure at Construction Iter 3 |
+| AC-004 | Not addressed (deferred) | Transition Iter 1 — adoption measurement requires a deployed system (BG-003) |
+| AC-005 | Not met this iteration (partial evidence owed) | R004 5-minute drop simulation did not execute — rolls to the convergence cycle; formal AC test at Construction Iter 1 |
+
+### Layer 2 — Iteration Plan Exit Criteria (3 of 8 met)
+
+| # | Exit Criterion | Result | Evidence |
+|---|---|---|---|
+| 1 | R001 PoC empirically validated (disposable LDAP directory) | **NOT MET** | Zero mechanism code in SCM (F-CR-E1-1 / SAD F2 / Iteration Plan F3); Test Evaluation Summary: 0 of 3 validations evidenced |
+| 2 | R003 PoC empirically validated (stub OIDC issuer) | **NOT MET** | Same evidence gap as criterion 1 |
+| 3 | R004 PoC empirically validated (direct) | **NOT MET** | Same evidence gap as criterion 1 |
+| 4 | SAD PoC Plan corrected to the stakeholder decision | **NOT MET** | SAD F1 (Critical) — superseded analysis-only disposition persists; Architect owns A-7 |
+| 5 | Development Case PoC-trigger record corrected | **MET** | DC trigger FIRED verified by both review lenses; 0 findings on the Development Case |
+| 6 | Construction schedule baselined from measured actuals | **MET** | Iteration Plan Construction Schedule Baseline; UC IDs verified against Use-Case Model authority; LCA-4 PASS |
+| 7 | STK-004 written deliverables request issued (R010) | **NOT EVIDENCED** | No recorded issuance this iteration; rolls to the convergence cycle — and the response is NOT a condition of Elaboration exit (stakeholder decision) |
+| 8 | All 5 ACs accounted for | **MET** | Layer 1 table complete — AC-001 through AC-005, each with evidence or deferral |
+
+**Score: 3 of 8.** The unmet criteria (1–4) are precisely the empirical-validation core the stakeholder made binding; criteria 1–3 are one defect observed by three review gates, remediated by one action chain (A-2…A-6 + A-8 + A-11).
+
+## Test Results
+
+No test execution occurred — no mechanism code exists to test. The Test Evaluation Summary (read in full) records the quality evidence for this iteration:
+
+| Metric | Value | Source |
+|---|---|---|
+| Evaluation Mission verdict | **NOT YET ACHIEVED** — blocked on code evidence (INC-1 / F-CR-E1-1) | Test Evaluation Summary § Conclusions |
+| Risk-retirement validations evidenced | 0 of 3 (R001, R003, R004) | Test Evaluation Summary § Quality Metrics |
+| Test cases designed / executed | 20 designed (TC-001…TC-020, 0 findings) / **all 20 BLOCKED** on SCM Issue #1 | Test Case + Test Evaluation Summary |
+| CI build status (main) | **Green** — run 33492338439 | `scm_get_build_status`, verified this iteration |
+| Open defects (SCM tracker) | 0 (all states) | `scm_list_issues`, verified this iteration |
+| Fabricated results | None — the honest NOT YET ACHIEVED verdict is itself the quality signal | Test Evaluation Summary § Conclusions |
+
+The mission is defined, agreed, and executable; what it cannot yet claim is the three empirical validations. Recording "achieved" here would have been exactly the paper-only validation of a HIGH risk the stakeholder refused.
+
+## External Changes
+
+**No scope changes.** The declared scope (10 FRs, 5 NFRs, 5 ACs, 14 CONs) is unchanged; zero scope-creep findings across all review lenses; R009 (scope creep) held by CCB enforcement.
+
+**Stakeholder decisions recorded this iteration (all incorporated, markers retired in place):**
+1. **Timestamp convention** — store UTC, display office-local, export ISO-8601 with explicit offset; payroll day is the local calendar day. The stakeholder corrected an invented premise in the question (office locations were never declared) — all 3 offices are in the same timezone.
+2. **Office timezone** — America/Havana (IANA identifier, not a fixed offset; Cuba observes DST).
+3. **PoC empirical validation** — produced in Elaboration and validated empirically: R001 via a disposable LDAP directory, R003 via a stub OIDC issuer, R004 direct; R010 re-scoped to production-instance integration only (Construction), tracked separately, not inheriting R001's HIGH.
+
+**Stakeholder sanction: REFUSED this cycle**, with the binding directive to fix ALL findings including Minors before phase transition — recorded as Iteration Plan F4 (Major) with remediation A-12. The escalation resolution ("Fix all the issues and close all findings") confirms the convergence-cycle execution path with no correction, no reprioritization, and no additional requirement.
+
+## Rework Required
+
+**Ten open findings across four artifacts (verified ledger: 3 Critical, 1 Major, 4 Minor; plus 2 narrative-tracked Code Reviewer findings).** All are phase-exit conditions per the stakeholder's directive — severity-based prioritization is superseded for PHASE EXIT; the execution order below optimizes the critical path, not the severity ranking.
+
+| # | Finding | Severity | Owner (Action) |
+|---|---|---|---|
+| 1 | SAD F1 — superseded analysis-only PoC disposition | Critical | Software Architect (A-7) |
+| 2 | SAD F2 — PoC artifact absent; zero mechanism code | Critical | Software Architect (A-8) + Implementer (A-2…A-4) |
+| 3 | Iteration Plan F3 — exit criteria 1–3 no code evidence; WIs 7–9 status dishonest | Critical | Project Manager (A-11) + Implementer + Code Reviewer + Test Designer |
+| 4 | Iteration Plan F4 — all-findings closure not a phase-exit condition | Major | Project Manager (A-12) |
+| 5 | SAD F3 — stale component dependencies vs Design Model | Minor | Software Architect (A-9) |
+| 6 | Risk List F1 (Reviewer) — untagged >90% R001 criterion | Minor | Project Manager (A-10) |
+| 7 | Risk List F1 (Management) — no trend column; gate-queue risk unbounded | Minor | Project Manager (A-14, A-15) |
+| 8 | Iteration Plan F5 — human-gate queue forecasts violate no-estimate rule | Minor | Project Manager (A-13) |
+| 9 | F-CR-E1-1 — no Implementer handoff (narrative-tracked; converges with #2, #3) | Critical | Integrator (A-1) + Implementer (A-2…A-4) + Code Reviewer (A-6) |
+| 10 | F-CR-E1-2 — CONTRIBUTING.md absent (narrative-tracked) | Minor | Implementer / Architect / ConfigurationManager (A-5) |
+
+### Convergence-Cycle Entry Plan (Elaboration Iteration 2 — BUILDING)
+
+```plantuml
+@startuml
+!theme plain
+title Employee Portal — Elaboration Iter 2 (Convergence Cycle)\nEntry plan derived from this assessment
 
 start
+:PM re-sizes the Iter 2 budget box from the\nMEASURED Iter 1 actual (12,523,281 tokens) —\nnever from the disproven 1,200K assumption.\nThe box carries an ASSUMPTION tag with its\nbasis named at plan-build time;
 
-:Iteration 1 closed with 2 open findings
-on Iteration Plan (F1 Major, F2 Minor);
-:Stakeholder sanction REFUSED;
-:Auto-iterate to Inception Iteration 2;
-
-partition "Rework: F1 (Major) — UC ID Mapping" {
-  :Read Use-Case Model (authority);
-  :Correct all 10 FR-to-UC mappings;
-  :Update Construction iteration assignments;
-  :Add Layer 3 rework criteria table;
+partition "PM corrections (A-10, A-12..A-15)" {
+  :Iteration Plan — add the all-findings-closure\nexit criterion (A-12) and remove the\nhuman-gate queue forecasts (A-13);
+  :Risk List — tag the R001 90-percent criterion\nas an assumption requiring validation (A-10),\nadd the trend column (A-14), and bound the\ngate-queue risk with the 14-day suspension\nceiling (A-15);
 }
 
-partition "Rework: F2 (Minor) — Work Item Statuses" {
-  :Reconcile items 4,5,6,7,10;
-  :All 13 items now show "Complete";
+partition "Code path first (P0-P1: A-1..A-6, A-8)" {
+  :CONTRIBUTING.md before the first PR (A-5);
+  :Implementer builds the three mechanisms in\nrisk order R001, then R003, then R004 —\nevolutionary in src/, dual-coverage tests\n(A-2..A-4);
+  :Code Reviewer — one PR per mechanism,\nbase iteration/E1, checklist CR-1..CR-7,\nterminal dispositions (A-6);
+  :Test Designer executes TC-001..TC-020\nagainst the validation fixtures;
+  :Architect produces the Architectural\nProof-of-Concept artifact with the\nempirical results (A-8);
 }
 
-:Upsert corrected Iteration Plan;
-:Re-present LCO to stakeholder;
+partition "Architecture record (P2: A-7, A-9)" {
+  :SAD PoC Plan re-corrected to the empirical\ndisposition, component dependencies\nreconciled with the Design Model;
+}
 
-if (Review: 0 new findings?) then (yes)
-  :All 9 LCO exit criteria PASS;
-else (no)
-  :Additional rework required;
-  stop
-endif
-
-if (Stakeholder sanction?) then (GRANTED)
-  :Stakeholder: "Let's go to elaboration.";
-  :Review Coordinator: "Yes" to advance;
-  :LCO milestone: ACHIEVED;
-  :Phase gate opened for Elaboration;
-else (REFUSED)
-  :Iterate again;
-endif
-
+partition "Gate (P3)" {
+  :Findings ledger EMPTY across all 12\nartifacts — all lenses, all severities\n(stakeholder directive, binding);
+  :LCA re-presented with the evidence\npackage plus a fresh sanction request;
+}
 stop
+@enduml
+```
 
+### Variance Analysis
+
+```plantuml
+@startuml
+!theme plain
+title Employee Portal — Elaboration Iter 1 Close-Out: Variance Analysis
+
+start
+:Planned: 12 work items, ~1,180K tokens\ninside a 1,200K box [ASSUMPTION — basis:\nmeasured Inception actual 1,347,939,\nphase-level record];
+:Executed: 9 agent roles, 22 invocations,\n12 artifacts, 28 user interactions;
+
+partition "Measured actuals (two clocks, never summed)" {
+  :Agent work — 12,523,281 tokens,\n6:00:59 elapsed;
+  :Stakeholder queue — 0:35:14\n(excludes the end-of-iteration approval\ngate, which is not measured);
+}
+
+partition "Exit criteria verification (Iteration Plan Layer 2)" {
+  if (Criteria 1-3: empirical R001/R003/R004?) then (NOT MET)
+    :Zero mechanism code in SCM — one defect,\nthree gates: F-CR-E1-1 = SAD F2\n= Iteration Plan F3;
+  endif
+  if (Criterion 4: SAD PoC Plan corrected?) then (NOT MET)
+    :Superseded analysis-only disposition\npersists (SAD F1, Critical);
+  endif
+  if (Criteria 5, 6, 8: DC correction, Construction\nbaseline, AC accounting?) then (MET)
+    :DC trigger FIRED verified, Construction\nschedule baselined from actuals,\nall 5 ACs accounted;
+  endif
+  if (Criterion 7: STK-004 request issued?) then (NOT EVIDENCED)
+    :No recorded issuance — rolls to the\nconvergence cycle, and the response is NOT\na condition of Elaboration exit;
+  endif
+}
+
+:Score: 3 of 8 exit criteria met;
+:Review Coordinator verdict (already issued,\nrecorded here — not declared by this\nassessment): LCA — iteration REQUIRED\n(scope incomplete);
+:Stakeholder sanction REFUSED this cycle.\nBinding directive: fix ALL findings,\nincluding Minors, before phase transition;
+
+partition "Convergence cycle entry (Elab Iter 2, BUILDING)" {
+  :Actions A-1..A-15 close all 10 open findings\n(4 Critical, 1 Major, 5 Minor — verified\nledger plus narrative-tracked);
+  :LCA re-presented with the evidence\npackage and a fresh sanction request;
+}
+stop
 @enduml
 ```
 
 ### Lessons Learned
 
-1. **UC ID authority (reinforced):** The Use-Case Model is the authority for UC identifiers. The Iteration Plan must reference UC IDs as assigned by the System Analyst — never assume a sequential FR-to-UC mapping. This traceability discipline failure cost one full rework iteration. Future Iteration Plans must cross-check UC IDs against the Use-Case Model before first upsert.
+1. **Budget-box calibration (the dominant variance):** an iteration box scaled from a phase-level record (1,347,939 tokens covering TWO Inception iterations) was ~10.4× under the measured Elaboration iteration actual (12,523,281). Iteration boxes must be sized from measured ITERATION-shaped actuals; the phase-level record governs phase accounting only. Every later forecast is rebuilt from the 12,523,281 figure.
+2. **Status honesty, deepened (LCO F2 → Iteration Plan F3):** "In progress" with zero SCM evidence is intent, not status. Work-item status must cite repository state — branches, PRs, build tree — never the plan's own expectation.
+3. **One defect, three gates:** the absent mechanism code was observed by three review lenses as three findings (F-CR-E1-1, SAD F2, Iteration Plan F3). The remediation WORK merges into one action chain; the findings do not — each emitting lens closes its own.
+4. **The stakeholder's all-findings directive supersedes severity-based phase-exit logic:** Minors are phase-exit conditions too. The convergence cycle's exit criterion is an EMPTY findings ledger, verified per artifact — not "all Criticals closed."
+5. **In-round stakeholder answering held at scale:** 28 interactions, 0:35:14 total queue — the measured basis for bounding the human-gate queue risk (A-15) without forecasting it in the plan.
 
-2. **Work item status hygiene (reinforced):** Work item statuses must be reconciled against the repository at iteration close. Stale "Pending" statuses for produced artifacts misrepresent project state and erode trust in the plan as a tracking instrument.
-
-3. **Token spend calibration:** The cumulative Inception spend is 3,550,308 tokens across two iterations. Iteration 2 (rework) consumed 61% of iteration 1's spend despite touching only 1 artifact — the reasoning cost of re-reading and cross-referencing dominates, not the volume of output. This measured shape replaces all assumed budget boxes for Elaboration forecasts.
-
-4. **Rework iterations are efficient but not free:** The rework iteration resolved both findings with zero new defects and achieved the milestone. However, it consumed 1,347,939 tokens and 0:28:16 of agent time. Earlier cross-checking against the Use-Case Model would have avoided this cost entirely.
-
-5. **Stakeholder sanction is a hard gate (confirmed):** The stakeholder accepted scope and objectives in iteration 1 but correctly refused to sanction advance because the Iteration Plan did not match the requirements baseline. In iteration 2, with both findings resolved, the sanction was granted. The LCO milestone is not a formality.
-
-### Next Phase Adjustments (Elaboration)
-
-```plantuml
-@startuml
-!theme plain
-title Employee Portal — Inception Phase Close-Out Summary
-
-[*] --> Iter1
-state "Inception Iter 1" as Iter1 {
-  Iter1 : 9 artifacts produced
-  Iter1 : 4/6 exit criteria met
-  Iter1 : 2 findings (1 Major, 1 Minor)
-  Iter1 : Stakeholder: REFUSED
-  Iter1 : LCO: NOT achieved
-}
-
-Iter1 --> Iter2 : Auto-iterate (rework)
-state "Inception Iter 2 (Rework)" as Iter2 {
-  Iter2 : 1 artifact reworked (Iteration Plan)
-  Iter2 : 8 artifacts preserved (0 findings)
-  Iter2 : 0 new findings
-  Iter2 : 6/6 exit criteria met
-  Iter2 : Stakeholder: GRANTED
-  Iter2 : LCO: ACHIEVED
-}
-
-Iter2 --> Elab : Phase gate opened
-state "Elaboration" as Elab {
-  Elab : 3 PoCs planned (R001, R003, R004)
-  Elab : R010 critical path: Infra deliverables
-  Elab : Entry: secure LDAP + Keycloak access
-}
-
-note right of Iter2
-  **LCO Milestone: ACHIEVED**
-  All 9 exit criteria PASS.
-  0 Critical, 0 Major, 0 Minor.
-  Stakeholder sanction: GRANTED.
-  Review Coordinator: confirmed.
-  Verdict: no further iteration required.
-end note
-
-@enduml
-```
+### Next Iteration Adjustments (Elaboration Iteration 2 — binding inputs to the next Iteration Plan)
 
 | Adjustment | Rationale |
 |---|---|
-| Secure STK-004 deliverables before Elaboration Iter 1 | R010 blocks 2/3 PoCs — LDAP access and Keycloak client registration are critical path |
-| Budget Elaboration from measured Inception actuals (3,550,308 tokens cumulative) | Measured actuals replace assumptions per budget-box discipline |
-| Cross-check all UC IDs against Use-Case Model in Elaboration Iteration Plan | Prevent recurrence of F1 — traceability discipline |
-| Schedule R001 PoC as first Elaboration priority | Only HIGH-magnitude risk; drives directory test case design |
-| Schedule R003 and R004 PoCs in Elaboration Iter 1 | Both SIGNIFICANT; both depend on R010 deliverables |
-| No scope changes | Stakeholder confirmed: scope accepted, nothing to add |
+| Re-size the Iter 2 budget box from the measured 12,523,281 actual | The 1,200K assumption is disproven; the box is rebuilt from fact with its basis named |
+| Add the all-findings-closure exit criterion (A-12) | Stakeholder directive, binding on phase transition — Iteration Plan F4 |
+| Remove human-gate queue forecasts from the milestone table (A-13) | A human gate is a risk, not an estimate — bound it in the Risk List (A-15), never forecast it in the plan |
+| Risk List: trend column (A-14), gate-queue risk entry with 14-day suspension ceiling (A-15), R001 >90% criterion tagged [ASSUMPTION — requires validation] (A-10) | Risk List F1 (both lenses) — a risk unchanged across two reviews must show why |
+| Code path first: CONTRIBUTING.md (A-5), then mechanisms in risk order R001 → R003 → R004 (A-2…A-4), PR gate per mechanism (A-6), TC-001…TC-020 execution, PoC artifact (A-8) | Closes the three-gate defect; R001 is the only HIGH risk; the regression line holds — the third validation re-runs the first two |
+| SAD re-correction (A-7, A-9) lands BEFORE the LCA re-presentation | The SAD is the artifact the gate evaluates; the 4+1 structure itself is sound and is NOT reworked |
+| No scope reduction required | The convergence scope is fully determined by the 10 findings and confirmed by the stakeholder; the budget box governs, and the box is being re-sized from measured fact |
 
 ## Traceability
 
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
-| Iteration Assessment (this) | Iteration Plan, Review Record, Test Evaluation Summary | Reviews | Elaboration Iteration Plan |
-| OBJ-1 (Scope) | Vision, Use-Case Model, Supplementary Specification | Derives | LCO-1 (Scope Agreement) |
-| OBJ-2 (Risks) | Risk List (R001–R010) | Derives | LCO-2 (Risk Identification) |
-| OBJ-3 (Dev Process) | Development Case | Derives | LCO-6 (DC Conformance) |
-| OBJ-4 (Feasibility) | SAD, Iteration Plan | Derives | LCO-3 (Feasibility), LCO-8 (Traceability), LCO-9 (Work Item Status) |
-| F1 resolution | Iteration Plan — UC ID mapping | Derives | Use-Case Model (authority for UC IDs) |
-| F2 resolution | Iteration Plan — Work Items table | Derives | All produced Draft artifacts (status reconciliation) |
-| Token spend actual (3,550,308 cumulative) | Measured by system | Replaces | Budget box assumption (185K) for Elaboration forecasts |
-| Test baseline | Test Evaluation Summary | Derives | Elaboration test strategy |
-| Elaboration entry conditions | R001, R003, R004, R010 | DependsOn | Elaboration Iteration 1 Plan |
-| Stakeholder sanction (Iter 2) | Stakeholder answer: "Yes" / "Let's go to elaboration." | Authorizes | Phase transition: Inception → Elaboration |
-| Review Coordinator confirmation | "Yes" to advancing to next milestone | Confirms | Phase transition: Inception → Elaboration |
+| Iteration Assessment (this, Elaboration Iter 1) | Iteration Plan (Elaboration Iter 1 — objectives, exit criteria, budget box); Review Record (verified findings ledger, RC verdict, stakeholder sanction record); Test Evaluation Summary (mission verdict, quality metrics); Work Order measured facts (tokens, times, invocations, quality) | Reviews | Elaboration Iteration 2 Iteration Plan (convergence cycle); Risk List evolution (A-10, A-14, A-15); LCA re-presentation |
+| OBJ-1 assessment (Architecture Baseline) | SAD (4+1 baseline, F1/F2 Critical); Design Model (0 findings); Review Record LCA-2 | Reviews | A-7, A-8, A-9 (Software Architect) |
+| OBJ-2 assessment (High-Risk Elements) | Risk List R001/R003/R004 (MITIGATING, unexecuted); Test Evaluation Summary (0 of 3 evidenced); Review Record LCA-3, F-CR-E1-1 | Reviews | A-1…A-6, A-8, A-11 (Integrator, Implementer, Code Reviewer, Test Designer, Architect) |
+| OBJ-3 assessment (Refine Requirements) | Use-Case Model (10/10 FULL, 0 findings); Supplementary Specification (0 findings); stakeholder decisions (timestamp convention, America/Havana, PoC empirical) | Reviews | Construction iteration plans (baselined schedule) |
+| OBJ-4 assessment (Detailed Plan) | Iteration Plan (Construction baseline, LCA-4 PASS); Review Record (PRA Part 1 feasible; F3/F4/F5 findings) | Reviews | A-11, A-12, A-13 (Project Manager) |
+| Budget variance root cause | Work Order measured actuals (12,523,281 tokens; 6:00:59; 0:35:14); Inception phase-level record (1,347,939) | DependsOn | Elaboration Iter 2 budget box (re-sized from measured iteration actual) |
+| Token record reconciliation | Inception phase-level record (governs); prior Inception assessment (3,550,308 — superseded) | Replaces | All later phase-level accounting |
+| Work item reconciliation (7 Complete / 5 roll forward) | Iteration Plan work items 1–12; SCM state (zero PRs, iteration/E1 skeleton); Review Record F-CR-E1-1, Iteration Plan F3 | Reviews | Convergence-cycle work items (A-1…A-15) |
+| Exit criteria score (3 of 8) | Iteration Plan Layer 2 criteria 1–8; Test Evaluation Summary; Review Record | Reviews | LCA re-presentation entry gate (empty findings ledger + evidence package) |
+| Test results record | Test Evaluation Summary (NOT YET ACHIEVED; 20/20 BLOCKED; CI green run 33492338439; 0 defects) | DependsOn | TC-001…TC-020 execution (convergence cycle); defect removal efficiency baseline |
+| Stakeholder sanction record | Stakeholder answers (this cycle): "No" to sanction; "Please fix all the findings even if they are minors prior to move to next phase"; "Fix all the issues and close all findings" | Authorizes | Convergence-cycle execution path (A-1…A-15); fresh sanction request at LCA re-presentation |
+| Convergence-cycle entry plan | Review Record actions A-1…A-15; Consolidated Finding Tracker (10 findings); stakeholder all-findings directive | Refines | Elaboration Iteration 2 Iteration Plan (BUILDING → CURRENT) |
+| Lessons learned (box calibration, status honesty, one-defect-three-gates, all-findings directive, in-round answering) | This iteration's measured variance; Review Record findings; stakeholder interactions (28, 0:35:14 queue) | Refines | Every later Iteration Plan and Iteration Assessment |
