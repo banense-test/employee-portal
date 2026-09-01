@@ -315,30 +315,59 @@ The portal database stores **only** what is not in Active Directory. Per CON-006
 | Data volume | Low (200 employees × ~2 clockings/day × 250 workdays = ~100K rows/year) | Derived | PostgreSQL handles this trivially; no sharding or partitioning needed |
 
 ## Quality
+### PoC Plan for Elaboration
 
-### Analysis Mechanisms
+The following risks are architecturally significant and require empirical validation through a Proof-of-Concept in Elaboration. The PoC optional artifact trigger has not fired in Inception — it fires in Elaboration. This plan is documented here so the Project Manager can schedule PoC work in Elaboration Iteration 1.
 
-Analysis mechanisms describe the **capability** the architecture must provide and the **properties** it must hold. Product selection is deferred to Elaboration design mechanisms, except where the stakeholder declared a specific technology.
+| Risk ID | Risk | Magnitude | PoC Needed? | PoC Scope | Success Criteria |
+|---|---|---|---|---|---|
+| R001 | AD LDAP attribute consistency across 3 offices | HIGH | **Yes** | Query AD over LDAP from each of the 3 offices. Verify that job title, department, office, email, and extension attributes are populated for a sample of users per office. Identify which attributes are missing and define fallback display behavior. | All 5 corporate attributes (name, job title, department, office, email, extension) are populated for >90% of users in each office. Missing attributes are identified and graceful degradation behavior is defined. |
+| R003 | OIDC integration with Keycloak | SIGNIFICANT | **Yes** | Register an OIDC client in Keycloak. Implement token validation and role-claim mapping in COMP-006. Test the full auth flow: redirect → login → token return → role extraction → authorized access. | Employee and HR Administrator roles are correctly extracted from Keycloak claims. Token validation works. Redirect flow completes without errors. |
+| R004 | Offline fault tolerance (NFR-004, AC-005) | SIGNIFICANT | **Yes** | Implement the idempotent clocking endpoint with client-side retry and localStorage queue (ADR-003). Simulate a 5-minute network drop: queue a clocking event, reconnect, verify sync without duplicates. | Clocking event queued during network drop is synced to PostgreSQL on reconnect. No duplicate records created. User sees immediate confirmation from queued data. Idempotency key prevents duplicates on retry. |
+| R005 | LDAP query performance | MODERATE | **No (monitor)** | If R001 PoC reveals slow queries, add a performance test. Otherwise, LDAP query performance for 200 users is expected to be well within the 3-second target. | Directory search completes in <2 seconds for typical queries. If exceeded, implement in-memory cache with 60s TTL. |
+| R008 | PostgreSQL + .NET 10 compatibility | MODERATE | **No (validate during skeleton setup)** | Implementer validates Npgsql 10.0.3 + EF Core compatibility during project skeleton setup in Elaboration. Not a separate PoC — it is a build-time validation. | Basic CRUD test against PostgreSQL succeeds. EF Core migrations run without errors. |
 
-| Mechanism | Capability | Properties | Component | Status |
-|---|---|---|---|---|
-| Persistence | Store and retrieve portal data (clockings, news, categories, audit) | ACID transactions; referential integrity; timestamp precision; soft-delete support | COMP-008 (PG Persistence) | Technology declared: PostgreSQL (CON-003), Npgsql 10.0.3 |
-| Authentication | Verify user identity and extract roles | OIDC protocol compliance; token validation; role extraction from claims; session management | COMP-006 (OIDC Auth Provider) | Technology declared: Keycloak (CON-004) |
-| Directory Access | Query employee corporate data from AD | LDAP v3 read-only; query by name/department/office; graceful degradation for missing attributes; connection pooling | COMP-007 (LDAP Gateway) | Technology declared: Active Directory (CON-005) |
-| Audit Trail | Record who, what, when for news operations and category changes | Immutable records; author + timestamp for every action; before/after for category changes; survives soft-delete | COMP-005 (Audit Service) | No product declared — application-level audit logging to PostgreSQL |
-| Offline Resilience | Tolerate 5-minute network disruptions and sync data on reconnect | Local queue for clocking events; idempotent server endpoint (prevent duplicates on retry); sync-on-reconnect; user sees immediate feedback | COMP-009 (Offline Resilience Handler) | No product declared — architectural mechanism to be resolved in Elaboration PoC |
-| Caching | Reduce LDAP query latency for directory search | Short TTL (60s); per-query cache; invalidation on TTL expiry | COMP-007 (LDAP Gateway) | No product declared — in-memory cache (ASP.NET Core IMemoryCache) |
+### PoC Sequencing for Elaboration
 
-### NFR-to-Tactic Mapping
+```plantuml
+@startuml
+!theme plain
+title Elaboration PoC Sequencing
 
-| NFR | Tactic | Component | Risk |
+start
+:R001 PoC: LDAP attribute consistency
+(Query AD from 3 offices);
+note right: HIGH magnitude — first priority
+:R003 PoC: OIDC integration
+(Register client, test auth flow);
+note right: SIGNIFICANT — second priority
+:R004 PoC: Offline resilience
+(Idempotent endpoint + queue + sync);
+note right: SIGNIFICANT — third priority
+:Validate R008: Npgsql + EF Core
+(Basic CRUD test during skeleton);
+note right: MODERATE — concurrent with PoCs
+stop
+
+note bottom
+  R005 (LDAP performance) is monitored during R001 PoC.
+  If queries are slow, add caching and re-test.
+  No separate PoC needed unless R001 reveals a problem.
+end note
+
+@enduml
+```
+
+### PoC Dependencies on External Parties
+
+| PoC | External Dependency | Provider | Action Needed |
 |---|---|---|---|
-| NFR-001 (page load <3s) | Server-rendered pages; LDAP cache (60s TTL) | COMP-007, Presentation | R005 |
-| NFR-002 (clocking <1s) | Idempotent endpoint; offline queue for immediate feedback | COMP-001, COMP-009 | R004 |
-| NFR-003 (availability M–F 7–19) | Single server; no HA needed | Deployment | — |
-| NFR-004 (fault tolerance) | Client-side retry + server-side idempotent endpoint + local queue | COMP-009 | R004 |
-| NFR-005 (audit trail) | Cross-cutting audit service; every operation logged | COMP-005 | R006 |
+| R001 (LDAP) | LDAP read access to AD (service account) | STK-004 (Infra) | Request service account with LDAP read permissions before Elaboration Iteration 1 |
+| R003 (OIDC) | Keycloak client registration | STK-004 (Infra) | Request OIDC client registration with redirect URIs before Elaboration Iteration 1 |
+| R004 (Offline) | None — internal to the portal | — | No external dependency |
+| R008 (PG compatibility) | PostgreSQL instance | STK-004 (Infra) or local dev instance | Local dev instance sufficient for validation |
 
+**Critical path:** R001 and R003 PoCs are blocked by STK-004 deliverables. The Project Manager must engage STK-004 at the start of Elaboration to secure LDAP access and Keycloak client registration. If STK-004 cannot deliver by Elaboration Iteration 1, mock LDAP and mock OIDC providers should be used for development, with integration deferred to early Construction (per R010 contingency).
 ## ADRs
 
 ### ADR-001: Architectural Style — Layered Monolith
