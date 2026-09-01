@@ -67,11 +67,11 @@ jobs:
         run: |
           rm -f *.sln
           dotnet new sln --name EmployeePortal
-          find src tests -name '*.csproj' -print0 | xargs -0 -n1 dotnet sln EmployeePortal.sln add
+          for f in $(find src tests -name '*.csproj'); do dotnet sln add "$f"; done
       - name: Restore dependencies
-        run: dotnet restore EmployeePortal.sln
+        run: dotnet restore
       - name: Build
-        run: dotnet build EmployeePortal.sln --no-restore --configuration Release
+        run: dotnet build --no-restore --configuration Release
 
   test:
     name: Test
@@ -87,10 +87,10 @@ jobs:
         run: |
           rm -f *.sln
           dotnet new sln --name EmployeePortal
-          find src tests -name '*.csproj' -print0 | xargs -0 -n1 dotnet sln EmployeePortal.sln add
+          for f in $(find src tests -name '*.csproj'); do dotnet sln add "$f"; done
       - name: Restore dependencies
-        run: dotnet restore EmployeePortal.sln
+        run: dotnet restore
       - name: Build
-        run: dotnet build EmployeePortal.sln --no-restore --configuration Release
+        run: dotnet build --no-restore --configuration Release
       - name: Run tests
-        run: dotnet test EmployeePortal.sln --no-build --configuration Release --verbosity normal --logger trx
+        run: dotnet test --no-build --configuration Release --verbosity normal --logger trx
