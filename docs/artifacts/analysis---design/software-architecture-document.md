@@ -381,9 +381,51 @@ end note
 @enduml
 ```
 ## Process View
+The Employee Portal is a single-process web application for ~200 peak users. Concurrency is handled by .NET 10's async request pipeline; no background jobs or scheduled tasks exist (none declared). The architecturally significant runtime behavior is the **offline sync mechanism** (COMP-009, ADR-003) — the only place where control flow forks between user feedback and persistence — and the **audit atomicity rule** (DAT-002): every audit write is committed in the same database transaction as the state change it records, so no state change can exist without its trail entry.
 
-**Deferred to Elaboration.** The Employee Portal is a single-server web application for 200 concurrent users at peak. Concurrency concerns are minimal: .NET 10's built-in thread pool and async request handling are sufficient. The Process view will address the offline resilience handler's sync-on-reconnect behavior (COMP-009) and LDAP connection pooling (COMP-007) in Elaboration.
+```plantuml
+@startuml
+title Employee Portal — Process View: Offline Sync and Concurrency (COMP-009, ADR-003)
 
+start
+:Browser: clocking button pressed;
+:Capture UTC timestamp at press (DAT-001);\ngenerate idempotency key;
+fork
+  :UI thread: disable button,\nignore repeat press < 2 s (AF-3),\nrender confirmation;
+fork again
+  :Submit: POST clocking event\n(idempotency key in payload);
+  if (Portal server reachable?) then (yes)
+    :Server worker (Kestrel thread pool):\nINSERT ... ON CONFLICT (idempotency key)\nDO NOTHING — duplicate returns original result;
+  else (no — AF-1, NFR-004 / AC-005)
+    :Queue event in localStorage\n(ordered by recorded timestamp;\ncapacity >= 10 events — REL-002);
+    :Render confirmation from queued data\n(PRF-002 offline path);
+    :On connectivity restored:\nreplay queue via sync endpoint;
+    :Server worker: persist each event;\nexact duplicates rejected (REL-002);\nall queued events persisted <= 60 s (REL-003);
+  endif
+end fork
+:Status chip updates\n(America/Havana local — USA-008);
+stop
+
+note right
+  Single .NET process (ADR-001):
+  Kestrel async request handling
+  serves ~200 peak users; no
+  background jobs, no scheduled
+  tasks (none declared). LDAP
+  calls are async with a 5 s hard
+  timeout (PRF-003). Audit writes
+  are synchronous in the SAME
+  transaction as the state change
+  (DAT-002, NFR-005 atomicity).
+end note
+@enduml
+```
+
+**Process-view decisions:**
+- **Single process, thread-pool concurrency** — no custom threads, no synchronization primitives beyond the database's own constraints. The idempotency key is a UNIQUE constraint in PostgreSQL, which is the synchronization point for duplicate suppression (REL-002 conflict policy) — not application-level locking.
+- **Client-side queue is ordered by recorded timestamp, not arrival order** (REL-002) — replay preserves the employee's actual event sequence.
+- **Audit atomicity** — COMP-005 writes are in-transaction with the caller's state change; a failed audit write rolls back the state change. This is the architectural guarantee behind NFR-005's "mandatory" traceability.
+- **Fault tolerance scope** — the "network drop" (NFR-004) is between browser and portal server on the corporate LAN; the portal server itself is Infrastructure's responsibility (CON-014). The mechanism tolerates client-side drops only; server crash recovery is out of scope.
 ## Deployment View
 
 The deployment is a **single-node topology** on an internal Windows Server. This is proportional to the declared scope: 200 users, 3 offices, no cloud, no external access. No load balancers, no clusters, no container orchestration — those would be over-engineering for this scale.
