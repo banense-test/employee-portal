@@ -342,13 +342,16 @@ stop
 
 **Alternative Flows:**
 - **AF-1: No results.** At step 5, if AD returns no matches, the system displays "No colleagues found" with a suggestion to refine the search.
-- **AF-2: LDAP attribute missing (R001).** At step 5, if a returned entry has missing attributes (e.g., extension not populated), the system displays the available fields and leaves missing fields blank rather than hiding the entry.
+- **AF-2: LDAP attribute missing (R001).** At step 5, if a returned entry has missing attributes (e.g., extension not populated), the system displays the available fields and leaves missing fields blank rather than hiding the entry. **R001 behavioural bar (stakeholder decision, Elaboration Iter 2) — all three clauses hold:** (a) every employee is rendered whether or not their attributes are complete; (b) a missing attribute never removes someone from search results; (c) a missing attribute never raises an error.
 - **AF-3: LDAP connection failure.** At step 4, if the LDAP connection fails, the system displays "Directory temporarily unavailable." There is no local fallback — CON-006 forbids a local copy of employee data.
+
+**R001 empirical validation bar (stakeholder decision, Elaboration Iter 2 — replaces the prior >90% statistical criterion, which is dropped as invented):** The bar is **behavioural, not statistical**. The prior ">90% of sampled users per office with all six corporate attributes populated" figure had no declared source (the declared R001 names no percentage; the PoC decision names none) and, measured against a disposable directory the team seeds itself, it would measure the team's own test data — it cannot fail, so it proves nothing. The architectural risk is what the portal DOES when an attribute is absent, not how many attributes are missing (a property of the real directory nobody can know until STK-004 delivers). **The bar, in the stakeholder's words:** "every employee is rendered whether or not their attributes are complete; a missing attribute never removes someone from search results; a missing attribute never raises an error. Seed the gaps deliberately and prove those three hold. That retires R001 empirically, this phase, without the production directory." The percentage belongs to a different activity — measuring the real AD's data quality once STK-004 delivers — tracked in Construction (R011 residual), kept out of the LCA evidence package.
 
 **Scenarios (discovery walk):**
 - **S1:** Employee searches "Gómez" → sees all colleagues named Gómez with their title, department, office, email, and extension.
 - **S2:** Employee filters by department "IT" → sees all IT department colleagues.
 - **S3:** Employee searches by office → sees all colleagues in that office; some entries have missing extension numbers (R001) and show blank fields, not hidden entries.
+- **S4 (R001 bar walk, Elaboration Iter 2):** The disposable directory is deliberately seeded with gaps — one entry missing extension, one missing job title, one missing department. A search matching all three returns all three entries (clause a); none is removed from the results (clause b); no error is raised and the missing fields render blank (clause c). The same search against a fully-populated disposable directory renders identically for the complete entries.
 
 **Activity Diagram:**
 
@@ -366,7 +369,7 @@ if (LDAP connection to AD succeeds?) then (yes)
   if (Matching entries returned?) then (yes)
     :Display entries: name, job title, department,\noffice, email, extension;
     if (Some corporate attributes missing? (R001)) then (yes - AF-2)
-      :Show missing fields blank - entry NOT hidden;
+      :Show missing fields blank - entry NOT hidden,\nno error raised (R001 behavioural bar);
     endif
     :Employee views colleague contact information;
   else (no - AF-1)
