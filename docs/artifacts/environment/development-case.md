@@ -2,218 +2,357 @@
 
 | Field | Value |
 |---|---|
-| Phase | Inception |
-| Status | Draft |
-| Milestone Target | End of Inception |
-| Iteration | 2 (Cycle 1) |
+| Phase | Elaboration |
+| Status | Draft — Elaboration evolution submitted for LCA-track review |
+| Milestone Target | End of Elaboration (LCA) — NOT yet achieved; this iteration produces the baseline the milestone review will evaluate |
+| Iteration | 1 (Cycle 1) |
 | Date | 2026-09-01 |
-| Prior Review | 0 findings on Development Case — artifact passed LCO review cleanly |
-| Governance Re-recorded | DC §4 classification, optional triggers, version policy — all re-recorded iteration 2 |
+| Prior Review | 0 findings on Development Case across both Inception iterations (LCO verdict: GO; stakeholder sanction granted) — valid content preserved, evolved for Elaboration |
+| Governance Re-recorded (Elab Iter 1) | DC §4 classification: unchanged — not business-process-led. Version policy: unchanged — .NET 10 framework pin (CON-001). Optional triggers: **CHANGED — Architectural Proof-of-Concept FIRED** (0/6 → 1/6) |
 
 ## Tailoring Overview
 
 This Development Case specifies project-specific **deltas** over the IARI DC baseline. The baseline defines 25 active roles, 16 CORE artifacts, 6 OPTIONAL artifacts, fixed ownership, and a canonical discipline-intensity matrix. This document declares only deviations; it never restates the baseline.
 
-### Organization Assessment
+### Organization Assessment (updated with measured Inception experience)
 
 | Factor | Finding |
 |---|---|
 | Agent role count | 25 roles per IARI baseline roster — all active except BPA (Business Modeling inactive) |
 | Project type | Internal intranet web application for Cuba Corp (200 employees, 3 offices) |
-| Complexity | Moderate — CRUD-centric portal with 10 functional requirements, 2 external integrations (AD/LDAP read-only, Keycloak OIDC), single-server deployment |
-| Risk profile | R001 (AD LDAP attribute consistency, exposure=9 — HIGH), R002 (adoption resistance, exposure=6 — MEDIUM) |
-| Process maturity | First RUP project for this organization; incremental rollout recommended |
+| Complexity | Moderate — CRUD-centric portal with 10 FRs, 2 external integrations (AD/LDAP read-only, Keycloak OIDC), single-server deployment |
+| Risk profile | R001 (HIGH, exposure=9); R002/R003/R004/R010 (SIGNIFICANT); R005–R009 (MODERATE) — 10 risks, all OPEN |
+| Process maturity | First RUP project for this organization; Inception closed in 2 iterations (1 rework) with LCO achieved |
+| Inception experience (measured) | 2 findings raised and resolved (1 Major UC-ID mismatch, 1 Minor stale statuses); rework iteration cost 1,347,939 tokens + 0:28:16 agent time; 3 stakeholder decisions retired [SCOPE_QUESTION]s in Elaboration Iter 1 — the escalation path is proven. Process changes adopted below (§ Guidelines, Assessment-Driven Improvements) |
 
-### Tool Assessment
+### Tool Assessment (verified this iteration — S4)
 
-| Tool Category | Declared (from Constraints) | Status |
+| Tool Category | Declared (from Constraints) | Verified Status (2026-09-01) |
 |---|---|---|
-| Runtime / Framework | .NET 10 (CON-001) | Framework pin recorded |
+| Runtime / Framework | .NET 10 (CON-001) | Framework pin recorded; CI builds on .NET 10 (`ci.yml` verified) |
 | Frontend | Razor Pages, no SPA (CON-002) | Part of .NET 10 ecosystem |
-| Database | PostgreSQL (CON-003) | Declared; no version pinned by stakeholder |
-| Auth | Keycloak OIDC, pre-existing (CON-004) | External — not deployed by this project |
-| Directory | Active Directory over LDAP, read-only (CON-005, CON-006) | External — read on demand, no sync |
-| Hosting | Internal Windows Server (CON-008) | Single node, corporate network only |
-| UI Design | Mandatory custom design at `docs/inputs/employee-portal-design.html` (CON-011) | Provided — authoritative for UI |
+| Database | PostgreSQL (CON-003) | Declared; no version pinned by stakeholder; Npgsql 10.0.3 resolved by Software Architect against the registry |
+| Auth | Keycloak OIDC, pre-existing (CON-004) | External — client registration pending STK-004 (R010) |
+| Directory | Active Directory over LDAP, read-only (CON-005, CON-006) | External — service account pending STK-004 (R010) |
+| Hosting | Internal Windows Server (CON-008) | Single node; provisioning pending STK-004 (R010) |
+| UI Design | `docs/inputs/employee-portal-design.html` (CON-011) | Provided — mandatory and authoritative |
 | Browsers | Chrome + Edge (CON-010) | Current versions |
-| SCM / CI | Git-based repository with GitHub workflows | To be configured by ConfigurationManager |
+| SCM / CI | Git-based repository, GitHub workflows | **`ci.yml` and `deploy.yml` VERIFIED** (see § Guidelines, Tool Configuration References) |
 
-### Gaps Identified
+### Gaps Identified (re-verified 2026-09-01)
 
-1. `CONTRIBUTING.md` — not yet created; discipline experts (Architect, Implementer, UI Designer) must author coding standards, design conventions, and UI guidelines during Elaboration S3 integration.
-2. Lint configuration — not yet created; Implementer owns `.editorconfig` and analyzer rules.
-3. CI/CD pipeline — not yet configured; ConfigurationManager owns `.github/workflows` setup.
+1. `CONTRIBUTING.md` — **still absent** (verified via SCM). Coding standards and branch-strategy documentation are owned by Implementer / Software Architect / ConfigurationManager. Branch conventions are already *enforced* by `ci.yml` triggers (`main`, `iteration/**`, `chore/**`, `feature/**`, `hotfix/**`), but the documenting section does not exist.
+2. `.editorconfig` + `Directory.Build.props` — **still absent** (verified via SCM). Lint / analyzer rules owned by Implementer.
+3. STK-004 deliverables (R010) — LDAP service account, Keycloak client registration, Windows Server provisioning. Blocks empirical execution of the R001/R003 PoC validations; Project Manager owns the engagement.
 
 ## Disciplines and Intensity
 
-Intensity per discipline/phase is **per the canonical IARI DC matrix** — confirmed, not reassigned.
+Intensity per discipline/phase is **per the canonical IARI DC matrix** — confirmed, not reassigned. No deviation is proposed; none is self-granted. Validation against the actual risk profile: R001 (HIGH) → Analysis & Design Critical in Elaboration is consistent with the canonical matrix — no REQUIRES_USER_INPUT warranted.
 
-| Discipline | Inception | Active? | Notes |
-|---|---|---|---|
-| Business Modeling | High | **INACTIVE** | Project is software-feature-led, not business-process-led (see §4 classification below) |
-| Requirements | Critical | Yes | System Analyst produces Use-Case Model + Supplementary Specification |
-| Analysis & Design | Medium | Yes | Architect drafts SAD; Designer starts Design Model |
-| Implementation | Medium | Yes | Implementer sets up project skeleton + build pipeline |
-| Test | Low | Yes | Test Manager defines test strategy |
-| Deployment | Low | Yes | Single Windows Server — deployment noted in SAD |
-| Configuration & Change Mgmt | Medium | Yes | CM configures repo, branch strategy, CI pipeline |
-| Project Management | High | Yes | PM produces Iteration Plan + Risk List |
-| Environment | High | Yes | Process Engineer configures Development Case (this document) |
-
-**Business Modeling INACTIVE rationale:** The stakeholder declared 10 concrete functional requirements (FR-001 through FR-010) for a software replacement of manual tools (Excel, email, PDF directory). There is no business process reengineering, no business object model, and no workflow transformation. The project automates existing, well-understood manual workflows into a web application. Per DC §4 criteria, this project is **not business-process-led**.
+**Inactive discipline (delta):** Business Modeling — INACTIVE. The stakeholder declared 10 concrete functional requirements (FR-001–FR-010) for a software replacement of manual tools (Excel, email, PDF directory). No business-process reengineering, no business object model, no workflow transformation. Per DC §4 criteria, this project is **not business-process-led** (re-recorded this iteration; verdict unchanged).
 
 ```plantuml
 @startuml
 !theme plain
-title Employee Portal — Inception Discipline Workflow
+title Employee Portal — Elaboration Discipline Workflow (Iter 1; intensity per canonical matrix)
 
 start
-:Environment (High);
-note right: Process Engineer configures\nDevelopment Case + tool environment;
-:Project Management (High);
-note right: PM produces Iteration Plan,\nRisk List for Inception;
-:Requirements (Critical);
-note right: System Analyst produces\nUse-Case Model, Supplementary Spec;
-:Analysis & Design (Medium);
-note right: Architect produces SAD draft;\nDesigner starts Design Model;
+:Environment (Medium);
+note right: Process Engineer: re-record DC §4 classification,\noptional triggers (PoC FIRED), version policy;\nrefine Development Case from Inception experience;
+:Project Management (Medium);
+note right: PM: monitor R001-R010;\nengage STK-004 on R010 deliverables\n(LDAP service account, Keycloak client);
+:Requirements (High);
+note right: SA + RS: all 10 UCs at full depth;\nquantify PRF/REL/USA thresholds;\nstakeholder decisions retire [SCOPE_QUESTION]s;
+:Analysis & Design (Critical);
+note right: Architect: SAD 4+1 baseline, ADR-001..004;\nDesigner: Design Model;\nUI Designer: storyboards + screen registry;
+if (PoC trigger fired this iteration?) then (yes)
+  :Software Architect produces\nArchitectural Proof-of-Concept;
+  note right: Owner: Software Architect (baseline-fixed).\nContent basis: SAD per-risk retirement dispositions.\nR010 blocks R001/R003 empirical execution\nuntil STK-004 delivers access;
+else (no)
+  :Risks retired by designed mechanisms only;
+endif
 :Implementation (Medium);
-note right: Implementer sets up project\nskeleton, build pipeline;
-:Test (Low);
-note right: Test Manager defines test\nstrategy for Inception;
+note right: Implementer: skeleton evolution;\nR008 build-time validation (Npgsql + EF Core);
+:Test (Medium);
+note right: Test Designer: test cases for UC-001, UC-004, UC-010\n(risk priority R001 > R003 > R004);
 :Deployment (Low);
-note right: Deployment scope noted\nin SAD (single Windows Server);
+note right: Single Windows Server topology\nbaselined in SAD Deployment View;
 :Configuration & Change Mgmt (Medium);
-note right: CM configures repo,\nbranch strategy, CI pipeline;
+note right: CM: CI gates every push to main;\nbranch strategy enforced;
+:Project Management (Medium);
+note right: PM: Iteration Assessment;\nLCA milestone review preparation;
 stop
 @enduml
 ```
+
+**Active-discipline tailoring notes (Elaboration):**
+
+| Discipline | Tailoring Note |
+|---|---|
+| Requirements | All 10 UCs at full depth (Use-Case Model is the UC-ID authority); RS quantifies PRF/REL/USA thresholds; stakeholder decisions recorded this iteration retire markers in-place |
+| Analysis & Design | SAD 4+1 baseline complete; Design Model is **co-owned** (Designer / DatabaseDesigner / UserInterfaceDesigner) — section-scoped upserts only; PoC artifact produced by Software Architect |
+| Implementation | Skeleton evolution only; R008 (PostgreSQL + .NET 10) validated at build time; layering rule: dependencies point down, interfaces only |
+| Test | Test cases target UC-001, UC-004, UC-010 first (risk priority); regression of prior results each iteration |
+| Deployment | Single-node topology baselined in SAD; deploy jobs deferred to Construction pending R010 |
+| Configuration & Change Mgmt | CI verified green on main; branch families enforced in `ci.yml` |
+| Project Management | R010 engagement is critical path; budget from measured Inception actuals |
+| Environment | This document; trigger re-evaluation each iteration (mandatory) |
 
 ## Artifacts and Templates
 
 ### CORE Artifacts (16) — All Confirmed
 
-All 16 CORE artifacts from the IARI baseline are produced per their standard ownership and phase schedule. No CORE artifact is omitted. No ownership is reassigned.
+All 16 CORE artifacts are produced per their standard ownership and phase schedule. No CORE artifact is omitted; no ownership is reassigned. Primary ownership per IARI baseline — unchanged, not restated here. Elaboration-phase activity mapping:
 
-| CORE Artifact | Primary Owner | Inception Activity |
-|---|---|---|
-| Vision | Business Process Analyst / System Analyst | Drafted from stakeholder declaration |
-| Use-Case Model | System Analyst | Primary Inception deliverable |
-| Supplementary Specification | System Analyst | NFRs from declared constraints |
-| Software Architecture Document | Software Architect | Initial draft |
-| Design Model | Designer | Started in Inception |
-| Implementation Model | Implementer | Project skeleton setup |
-| Test Case | Test Designer | Test strategy defined |
-| Test Evaluation Summary | Test Manager | Deferred to Construction |
-| User Documentation | Technical Writer | Deferred to Construction |
-| Release Notes | Technical Writer | Deferred to Transition |
-| Iteration Plan | Project Manager | Produced for Inception |
-| Iteration Assessment | Project Manager | Produced at iteration end |
-| Risk List | Project Manager | R001, R002 from declaration |
-| Review Record | Reviewer | Produced at iteration review |
-| Development Case | Process Engineer | This document |
-| Change Request | ChangeControlManager | Construction onwards |
+| CORE Artifact | Elaboration Activity |
+|---|---|
+| Vision | Preserved (Inception baseline; 0 findings) |
+| Use-Case Model | All 10 UCs full-depth + UI flow references (Elab Iter 1) |
+| Supplementary Specification | Thresholds quantified; 3 stakeholder decisions incorporated |
+| Software Architecture Document | 4+1 baseline; ADR-001..004; PoC plan corrected per DC oracle |
+| Design Model | Co-owned evolution: analysis/design + data + UI sections |
+| Implementation Model | Skeleton evolution; R008 build-time validation |
+| Test Case | First cases: UC-001, UC-004, UC-010 |
+| Test Evaluation Summary | Per-iteration test results (Construction execution) |
+| User Documentation | Deferred to Construction |
+| Release Notes | Deferred to Transition |
+| Iteration Plan | Per-iteration plan (PM) |
+| Iteration Assessment | Per-iteration assessment (PM) |
+| Risk List | Monitored each iteration; R001–R010 all OPEN |
+| Review Record | Per-iteration review (Reviewer) |
+| Development Case | This document (Elaboration evolution) |
+| Change Request | Construction onwards (CCM) |
 
-### OPTIONAL Artifacts (6) — Trigger Evaluation
+### OPTIONAL Artifacts (6) — Trigger Evaluation (Elaboration Iter 1)
 
 | Optional Artifact | §5.2 Trigger Condition | Fired? | Justification |
 |---|---|---|---|
-| Glossary | Domain uses specialist vocabulary requiring stakeholder-validated definitions | **No** | Domain is standard HR/IT intranet — "clocking", "worker category", "OIDC", "LDAP" are well-understood terms; no regulated/medical/financial jargon |
-| Architectural Proof-of-Concept | Elaboration phase + at least one technical risk requiring empirical validation | **No** | Inception phase — trigger requires Elaboration. R001 (AD LDAP attribute consistency) may justify a PoC in Elaboration; re-evaluate next iteration |
-| Data Model | Data-centric system OR >10 entities OR data-migration in scope | **No** | ~4-5 entities (clockings, news, worker categories, audit entries). Not data-centric. No data migration. Data lives inline in Design Model |
-| Deployment Model | Distributed / multi-node topology, OR multi-environment non-trivial | **No** | Single internal Windows Server (CON-008). Single node, corporate network only (CON-009). Deployment is a section in SAD |
-| User-Interface Prototype | UX-critical OR UI complexity requiring stakeholder validation | **No** | CON-011 provides a mandatory, authoritative custom design at `docs/inputs/employee-portal-design.html`. The design already exists — a prototype would be redundant |
-| Test Plan | Formal delivery / regulatory audit / contractual test reporting | **No** | Internal intranet app, no regulatory or contractual test reporting requirements. Iteration Plan defines per-iteration testing scope |
+| Glossary | Domain uses specialist vocabulary requiring stakeholder-validated definitions | **No** | Standard HR/IT intranet vocabulary; no regulated/medical/financial jargon |
+| Architectural Proof-of-Concept | Elaboration phase + at least one technical risk requiring empirical validation (per Risk List) | **YES — FIRED** | Elaboration Iter 1 + R001 (HIGH, P=3 I=3): the Risk List's declared mitigation is an Architectural PoC in Elaboration Iteration 1 ("if not tested early, the directory shows gaps"); R003/R004 (SIGNIFICANT) are PoC-planned. Condition genuinely holds — see § Optional Artifact Triggers |
+| Data Model | Data-centric system OR >10 entities OR data-migration in scope | **No** | ~5 tables (clockings, news_items, news_audit, worker_categories, category_audit); not data-centric; no migration; data lives inline in Design Model |
+| Deployment Model | Distributed / multi-node topology, OR multi-environment non-trivial | **No** | Single internal Windows Server (CON-008), corporate network only (CON-009); deployment is a section in SAD |
+| User-Interface Prototype | UX-critical OR UI complexity requiring stakeholder validation before implementation | **No** | CON-011 provides the mandatory, authoritative design; interaction design is carried by Use-Case Model storyboards + Design Model boundary classes/navigation map |
+| Test Plan | Formal delivery / regulatory audit / contractual test reporting | **No** | Internal intranet app; no regulatory or contractual test reporting; per-iteration testing scope lives in the Iteration Plan |
 
-**Result: 0 of 6 OPTIONAL artifacts triggered.** All optional triggers will be re-evaluated each iteration per DC §5.2.
+**Result: 1 of 6 OPTIONAL artifacts triggered** (Inception recorded 0/6 — the PoC trigger newly fires now that its phase condition holds; the Inception NOT-FIRED verdict was valid only because the trigger requires the Elaboration phase).
 
 ## Optional Artifact Triggers
 
-Recorded via `record_optional_artifact_triggers`: `[]` (empty — no optional artifact triggers fired).
-
-Re-evaluation schedule: every iteration. A trigger may newly fire via a Change Request or scope expansion. Specifically, **Architectural Proof-of-Concept** is a candidate for Elaboration if R001 (AD LDAP attribute consistency) remains unresolved.
-
-## Roles and Ownership
-
-The 25-role IARI baseline roster is confirmed unchanged. No roles are merged, added, or removed.
-
-**Role with no artifact output this project:**
-- **BusinessProcessAnalyst (BPA)** — Business Modeling discipline is INACTIVE. The BPA role exists in the roster but produces no artifacts. The Vision artifact is co-owned by System Analyst per baseline ownership rules.
-
-**Key contributor relationships for this project:**
+Recorded via `record_optional_artifact_triggers` (Elaboration Iter 1): `["Architectural Proof-of-Concept"]`. This replaces the Inception set (`[]`) — the whole set is re-evaluated every iteration.
 
 ```plantuml
 @startuml
 !theme plain
-title Employee Portal — Role-Artifact Ownership (Inception Deltas)
+title Employee Portal — DC §5.2 Optional Trigger Re-evaluation (Elaboration Iter 1)
 
-class ProcessEngineer <<PE>> {
-  + Development Case
-}
-class SystemAnalyst <<SA>> {
-  + Use-Case Model
-  + Supplementary Specification
-}
-class SoftwareArchitect <<SA>> {
-  + Software Architecture Document
-}
-class Designer <<DS>> {
-  + Design Model
-}
-class Implementer <<IM>> {
-  + Implementation Model
-}
-class ProjectManager <<PM>> {
-  + Iteration Plan
-  + Risk List
-  + Iteration Assessment
-}
-class TestManager <<TM>> {
-  + Test Case
-  + Test Evaluation Summary
-}
-class TechnicalWriter <<TW>> {
-  + User Documentation
-  + Release Notes
-}
-class ChangeControlManager <<CCM>> {
-  + Change Request
-}
-class Reviewer <<RV>> {
-  + Review Record
-}
-class ConfigurationManager <<CM>> {
-  + CI/CD Pipeline Config
-}
-class BusinessProcessAnalyst <<BPA>> {
-  - INACTIVE this project
-}
-
-ProcessEngineer --> SystemAnalyst : governs process
-SystemAnalyst --> SoftwareArchitect : UC Model feeds SAD
-SoftwareArchitect --> Designer : SAD guides Design Model
-Designer --> Implementer : Design Model guides code
-ProjectManager --> SystemAnalyst : Iteration Plan sets scope
-TestManager --> SystemAnalyst : Test Cases trace to UCs
-TechnicalWriter --> SystemAnalyst : Docs trace to UCs
-ChangeControlManager --> Reviewer : CRs feed Review Record
-ConfigurationManager --> Implementer : CI pipeline gates builds
-
-note right of BusinessProcessAnalyst
-  Business Modeling discipline INACTIVE.
-  Project is software-feature-led,
-  not business-process-led.
-  BPA role exists in roster but
-  produces no artifacts this project.
-end note
-
+start
+:Load current phase, Risk List,\nand project facts;
+:Check each of the 6 OPTIONAL artifacts\nagainst its §5.2 condition;
+if (Architectural Proof-of-Concept condition holds?) then (holds)
+  :FIRE the trigger — record the new trigger set\nvia record_optional_artifact_triggers;
+  :PoC artifact sanctioned;\nowner: Software Architect (baseline-fixed);
+  note right
+    Condition: Elaboration phase (YES — iter 1)
+    AND at least one technical risk requiring
+    empirical validation per Risk List.
+    R001 (HIGH, P=3 I=3): declared mitigation
+    is an Architectural PoC in Elaboration
+    Iter 1 — "if not tested early, the
+    directory shows gaps."
+    R003, R004 (SIGNIFICANT): PoC-planned.
+    R010 blocks R001/R003 empirical
+    execution until STK-004 delivers.
+  end note
+else (not held)
+  :NOT FIRED — auditable justification recorded;
+endif
+:Remaining 5 OPTIONALs re-checked\n(Glossary, Data Model, Deployment Model,\nUI Prototype, Test Plan) — none hold;
+:Record the complete trigger set\n(replaces the prior iteration's set);
+:Upsert Development Case —\nowning roles consume the disposition;
+stop
 @enduml
 ```
 
+**PoC disposition reconciliation (binding for downstream roles):** the SAD's PoC plan (per-risk retirement dispositions: R001/R003/R004 analysis-only + designed mechanism) was written against the Inception trigger recording and explicitly deferred to this Development Case as oracle. With the trigger now FIRED, the **Software Architect produces the Architectural Proof-of-Concept artifact**; the SAD dispositions remain its content basis — the designed mechanisms (COMP-006 OIDC, COMP-007 LDAP, COMP-009 offline resilience) and their quantified acceptance criteria carry into the PoC unchanged. R010 (STK-004 deliverables) blocks empirical execution of the R001/R003 validations; the PoC must record this dependency explicitly rather than fabricating results. Ownership is baseline-fixed (Software Architect) — this Development Case does not reassign it.
+
+Re-evaluation schedule: every iteration, mandatory. A trigger may newly fire via a Change Request or scope expansion; a fired trigger is re-verified against its condition (an auditable claim, checked at review).
+
+## Roles and Ownership
+
+The 25-role IARI baseline roster is confirmed unchanged. No roles are merged, added, or removed. Primary artifact ownership is baseline-fixed and not restated or reassigned here.
+
+**Role with no artifact output this project:** BusinessProcessAnalyst (BPA) — Business Modeling discipline INACTIVE; the BPA role exists in the roster but produces no artifacts. The Vision artifact is co-owned by System Analyst per baseline ownership rules.
+
+```plantuml
+@startuml
+!theme plain
+title Employee Portal — Role-Artifact Responsibility Matrix (Elaboration Iter 1 deltas)
+
+skinparam classAttributeIconSize 0
+
+package "Requirements (High)" {
+  class SystemAnalyst <<SA>> {
+    + Use-Case Model (UC-001..010, authority)
+    + Supplementary Specification
+  }
+  class RequirementsSpecifier <<RS>> {
+    + UC threshold quantification
+    + CSV column set v1 (UC-006)
+  }
+}
+
+package "Analysis & Design (Critical)" {
+  class SoftwareArchitect <<ARCH>> {
+    + Software Architecture Document
+    + Architectural Proof-of-Concept
+      (FIRED this iteration)
+  }
+  class Designer <<DS>> {
+    + Design Model (analysis/design sections)
+  }
+  class UserInterfaceDesigner <<UID>> {
+    + Design Model (UI sections: screens,
+      storyboards, navigation)
+  }
+  class DatabaseDesigner <<DBD>> {
+    + Design Model (data sections)
+  }
+}
+
+package "Implementation (Medium)" {
+  class Implementer <<IM>> {
+    + Implementation Model
+    + src/ skeleton evolution
+  }
+}
+
+package "Test (Medium)" {
+  class TestManager <<TM>> {
+    + Test Evaluation Summary
+  }
+  class TestDesigner <<TD>> {
+    + Test Case (UC-001, UC-004, UC-010 first)
+  }
+}
+
+package "Project Management (Medium)" {
+  class ProjectManager <<PM>> {
+    + Iteration Plan
+    + Risk List
+    + Iteration Assessment
+  }
+}
+
+package "Environment (Medium)" {
+  class ProcessEngineer <<PE>> {
+    + Development Case (this document)
+  }
+}
+
+package "Configuration & Change Mgmt (Medium)" {
+  class ConfigurationManager <<CM>> {
+    + .github/workflows/ci.yml, deploy.yml
+    + Branch strategy
+  }
+  class ChangeControlManager <<CCM>> {
+    + Change Request (Construction onwards)
+  }
+}
+
+package "Review" {
+  class Reviewer <<RV>> {
+    + Review Record
+  }
+}
+
+RequirementsSpecifier --> SystemAnalyst : quantifies UC thresholds\n(UC-001 AF-1, PRF/REL/USA)
+SystemAnalyst --> SoftwareArchitect : UC Model feeds SAD
+SoftwareArchitect --> ProcessEngineer : consumes PoC trigger\ndisposition (DC 5.2)
+SoftwareArchitect --> Designer : SAD guides Design Model
+SoftwareArchitect --> Implementer : layering rule:\ninterfaces only, down only
+UserInterfaceDesigner --> SystemAnalyst : storyboards realize\nUC interaction parts
+Designer --> Implementer : Design Model guides code
+TestDesigner --> SystemAnalyst : test cases trace to UCs
+ProjectManager --> SoftwareArchitect : R010 engagement\n(STK-004 deliverables)
+ConfigurationManager --> Implementer : CI gates every push
+ProcessEngineer --> SystemAnalyst : governs process
+ChangeControlManager --> Reviewer : CRs feed Review Record
+
+note bottom of SoftwareArchitect
+  Elaboration delta: the Architectural
+  Proof-of-Concept trigger FIRED
+  (DC 5.2) — the Architect owns the
+  new OPTIONAL artifact. Content basis:
+  SAD per-risk retirement dispositions
+  (R001, R003, R004).
+end note
+
+note right of UserInterfaceDesigner
+  CON-011 design reference is
+  mandatory; screen registry
+  SCR-01..SCR-09, M-01, EX-01.
+end note
+@enduml
+```
+
+**Co-ownership discipline (binding):** the Design Model is co-authored by Designer (analysis/design sections), DatabaseDesigner (data sections), and UserInterfaceDesigner (UI sections). Each owns ONLY their sections; every evolution uses section-scoped upserts. A full-document overwrite of a co-owned artifact destroys collaborator sections and is the worst failure in collaborative work.
+
 ## Guidelines and Procedures
+
+### Elaboration Entry Criteria (verified met at phase start)
+
+| Criterion | Evidence |
+|---|---|
+| LCO achieved — 0 open findings, stakeholder sanction granted, Review Coordinator confirmed | Review Record (Inception Iter 2): GO (APPROVED) |
+| Scope baselined — 10 FRs → 10 UCs, Use-Case Model is UC-ID authority | Use-Case Model; Iteration Plan (F1 resolved) |
+| Entry conditions monitored (advisory, not blockers) | STK-004 engagement for LDAP service account + Keycloak client registration (R010); R001/R003/R004 PoC scheduling — Project Manager owns |
+
+### Elaboration Exit Criteria (LCA) — the gate this phase works toward
+
+| # | Criterion | DC Contribution |
+|---|---|---|
+| 1 | Product vision stable | All 10 UCs full-depth; stakeholder decisions recorded (timestamp convention, offline mechanism) |
+| 2 | Architecture stable | SAD 4+1 baseline; ADR-001..004 decided |
+| 3 | Major risks addressed | **Architectural Proof-of-Concept (FIRED)** — R001/R003/R004 dispositions executed or R010 block documented; no fabricated results |
+| 4 | Construction plan sufficiently detailed | UC assignments cross-checked against Use-Case Model (F1 lesson) |
+| 5 | Stakeholders agree vision achievable | LCA review sanction — stakeholder's decision, never self-declared |
+| 6 | Actual vs planned expenditure acceptable | Two clocks measured apart; never summed |
+| 7 | **DC-specific:** every active discipline has a tailoring section in this Development Case | § Disciplines and Intensity + § Guidelines — met this iteration |
+| 8 | **DC-specific:** tool environment passes verification | CI verified ✓; guideline gaps closed by owning roles or explicitly deferred with rationale |
+
+### Assessment-Driven Process Improvements (adopted from measured Inception data)
+
+```plantuml
+@startuml
+!theme plain
+title Employee Portal — Assessment-Driven Process Improvement (Inception data → Elaboration DC changes)
+
+start
+:Load Iteration Assessment + Review Record\n(Inception measured actuals);
+partition "Observed data (Inception, measured)" {
+  :F1 (Major): Iteration Plan mapped FR-001 to UC-001\nsequentially; Use-Case Model (authority) maps FR-001 to UC-005;
+  :F2 (Minor): 5 work items showed "Pending"\nwhile their artifacts existed as Draft;
+  :Rework iteration cost: 1,347,939 tokens,\n0:28:16 agent time — re-reading authority\nartifacts dominates over output volume;
+  :Lesson: REQUIRES_USER_INPUT payloads with\noptions / recommendation / reason fields break the parser;
+}
+:Root-cause analysis (process gap, not role error);
+partition "Process changes adopted (this DC)" {
+  :UC-ID cross-check gate: every artifact referencing\nUC IDs cross-checks against Use-Case Model\n§Use-Case Survey before first upsert;
+  :Status-reconciliation step: work item statuses\nreconciled against the repository at iteration close;
+  :Question format: minimal JSON\n(question / type / isRequired only);
+  :Budgeting note: rework iterations are re-read\nexpensive — plan for authority-artifact re-reads;
+}
+:Upsert Development Case (this document);
+:Verify adoption at the next Iteration Assessment;
+stop
+@enduml
+```
+
+Each change is traceable to a specific observed defect with data (F1, F2, rework cost, parser lesson) — no speculative process change was adopted. Adoption is verified at the next Iteration Assessment.
 
 ### Measurement Policy
 
-IARI measures two quantities: **tokens consumed** and **elapsed time** (split into agent time and human queue time). This project applies them as follows:
+IARI measures two quantities: **tokens consumed** and **elapsed time** (split into agent time and human queue time). The two clocks are reported side by side and **never summed**. Person-weeks, story points, and function points are not producible in this system and are never used.
 
 | Metric | Decision It Enables | Who Reads It | When |
 |---|---|---|---|
@@ -221,17 +360,20 @@ IARI measures two quantities: **tokens consumed** and **elapsed time** (split in
 | Agent time vs human queue time ratio | Process bottleneck identification — if human queue time dominates, Process Engineer adjusts review cadence or parallelism | Process Engineer | End of each iteration |
 | Total tokens per phase | Cost-box compliance — iteration ends when exit criteria pass OR budget is spent | Project Manager, Process Engineer | Phase boundary |
 
-No other metrics are tracked. Person-weeks, story points, and function points are not producible in this system and are never used.
+**Recorded phase actuals (Inception, closed):** 2 iterations, 28 min agent time, 0s stakeholder queue, 1,347,939 tokens, 11 agent runs, 10 artifacts (work-order recorded actuals). **Data-integrity note for the Project Manager:** the Iteration Assessment's cumulative figures (3,550,308 tokens; 1:52:46 agent time across both iterations) differ from the phase-level row above; the PM owns reconciling the two records at the next Iteration Assessment. Elaboration figures are recorded at phase close — none exist yet; no per-iteration velocity is quoted.
 
-### Tool Configuration References
+### Tool Configuration References (verified 2026-09-01)
 
-| Configuration | Owner | File Path | Status |
+| Configuration | Owner | File Path | Verified Status |
 |---|---|---|---|
-| Coding standards | Implementer / Architect | `CONTRIBUTING.md` | **Gap — to be created in Elaboration** |
-| Lint / analyzer rules | Implementer | `.editorconfig`, `Directory.Build.props` | **Gap — to be created in Elaboration** |
-| CI/CD pipeline | ConfigurationManager | `.github/workflows/ci.yml` | **Gap — to be created in Elaboration** |
-| UI design specification | UI Designer | `docs/inputs/employee-portal-design.html` | **Provided by stakeholder (CON-011)** |
-| Branch strategy | ConfigurationManager | `CONTRIBUTING.md` (section) | **Gap — to be created in Elaboration** |
+| CI pipeline | ConfigurationManager | `.github/workflows/ci.yml` | **✅ VERIFIED** — build + test jobs, .NET 10, triggers on `main`, `iteration/**`, `chore/**`, `feature/**`, `hotfix/**` (push + PR); green on main per Test Evaluation Summary |
+| Deploy pipeline skeleton | ConfigurationManager | `.github/workflows/deploy.yml` | **✅ VERIFIED** — build/publish artifact; deploy-dev/deploy-production jobs correctly deferred to Construction pending R010 (two-gate model) |
+| Coding standards | Implementer / Software Architect | `CONTRIBUTING.md` | **❌ GAP** — file absent (verified via SCM); flagged for owners |
+| Lint / analyzer rules | Implementer | `.editorconfig`, `Directory.Build.props` | **❌ GAP** — files absent (verified via SCM); flagged for owner |
+| Branch strategy documentation | ConfigurationManager | `CONTRIBUTING.md` (section) | **❌ GAP** — conventions enforced in `ci.yml` triggers but not yet documented; flagged for owner |
+| UI design specification | UserInterfaceDesigner | `docs/inputs/employee-portal-design.html` | **✅ Provided by stakeholder (CON-011)** — mandatory and authoritative |
+
+Guideline content itself (coding standards, UI patterns, test conventions) is authored by the owning discipline experts in the files above — this Development Case references those files and does not duplicate their content. The three gaps are process-support items: the Process Engineer flags them; the owners close them.
 
 ### Process Support
 
@@ -239,26 +381,35 @@ During active iterations, the Process Engineer serves as the process help desk:
 - Process questions (which template, which artifact, which workflow step) are answered within the same iteration cycle.
 - Blocking process issues are escalated immediately via `REQUIRES_USER_INPUT`.
 - Tool configuration problems are logged and assigned to the owning discipline role.
+- **Question format (binding, from measured Inception lesson):** `REQUIRES_USER_INPUT` payloads use minimal JSON — `question` / `type` / `isRequired` only. `options`, `recommendation`, and `reason` fields break the parser.
+- **Marker retirement (binding):** when the stakeholder answers a `[SCOPE_QUESTION]` / `[DERIVED]` / `[ASSUMPTION]`, the owning role retires the marker in the artifact itself, writing the stakeholder's literal values. Three markers were retired this way in Elaboration Iter 1 (offline mechanism; timestamp convention; office local timezone = America/Havana) — the discipline is proven and mandatory.
 
 ### Incremental Rollout Plan
 
-| Iteration | Disciplines Introduced | Rationale |
+| Iteration | Disciplines Introduced | Status |
 |---|---|---|
-| Inception (this) | Environment, PM, Requirements, A&D (draft), Implementation (skeleton), Test (strategy), CM | Critical path: process + requirements + architecture must stabilize first |
-| Elaboration | Full A&D, Test (detailed), CM (full CI) | Architecture risk resolution; R001 PoC candidate |
-| Construction | Full Implementation, Test (execution), Deployment | Build and verify |
-| Transition | Documentation, Release Notes, Deployment (final) | Deliver |
+| Inception | Environment, PM, Requirements, A&D (draft), Implementation (skeleton), Test (strategy), CM | **Complete** — LCO achieved |
+| Elaboration (this) | Full A&D (4+1 baseline + PoC), Test (detailed cases), CM (full CI verified) | **In progress** — Iter 1 |
+| Construction | Full Implementation, Test (execution), Deployment | Planned |
+| Transition | Documentation, Release Notes, Deployment (final) | Planned |
 
 ## Traceability
 
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
 | Development Case (this) | IARI DC Baseline | Refines | All project artifacts (governs production) |
-| Business Modeling INACTIVE | DC §4 classification | Derives | record_dc_classification(isBusinessProcessLed=false) |
-| Optional triggers = [] | DC §5.2 trigger conditions | Derives | record_optional_artifact_triggers([]) |
+| Business Modeling INACTIVE | DC §4 classification (re-recorded Elab Iter 1, verdict unchanged) | Derives | record_dc_classification(isBusinessProcessLed=false) |
+| PoC trigger FIRED | DC §5.2 condition + R001 declared mitigation (Risk List) + Elaboration phase | Derives | record_optional_artifact_triggers(["Architectural Proof-of-Concept"]); SoftwareArchitect (owner); SAD PoC plan (content basis) |
 | Framework pin .NET 10 | CON-001 | Derives | record_version_policy(framework, .NET, 10) |
-| R001 (AD LDAP risk) | Declared risk R001 | Refines | Architectural Proof-of-Concept candidate (Elaboration) |
-| R002 (adoption risk) | Declared risk R002 | Refines | Iteration Plan risk mitigation |
-| UI design reference | CON-011 | Derives | UI Designer workflow (mandatory design) |
-| CONTRIBUTING.md gap | Tool assessment | DependsOn | Implementer, Architect, UI Designer (Elaboration) |
-| CI/CD pipeline gap | Tool assessment | DependsOn | ConfigurationManager (Elaboration) |
+| Elaboration entry criteria | Review Record (LCO disposition, stakeholder sanction) | Refines | Elaboration Iteration Plan |
+| LCA exit criteria | RUP LCA milestone criteria + SAD §LCA Review | Refines | End-of-Elaboration milestone gate |
+| UC-ID cross-check gate | Review Record F1 (Major, resolved) + Iteration Assessment lesson 1 | Derives | All artifacts referencing UC IDs |
+| Status-reconciliation step | Review Record F2 (Minor, resolved) + Iteration Assessment lesson 2 | Derives | Iteration Plan work items |
+| Question format rule | Iteration Assessment lesson (REQUIRES_USER_INPUT parser) | Derives | All REQUIRES_USER_INPUT emissions |
+| Marker-retirement discipline | Stakeholder decisions (Elab Iter 1): offline mechanism, timestamp convention, office timezone America/Havana | Authorizes | Use-Case Model, Supplementary Specification (markers retired in-place) |
+| CI verification | `.github/workflows/ci.yml` (SCM read, 2026-09-01) | DependsOn | Implementer, ConfigurationManager |
+| Deploy skeleton verification | `.github/workflows/deploy.yml` (SCM read, 2026-09-01) | DependsOn | DeploymentManager (Construction), R010 |
+| Guideline gaps (CONTRIBUTING.md, .editorconfig, Directory.Build.props) | Tool assessment (SCM read — not found, 2026-09-01) | DependsOn | Implementer, SoftwareArchitect, ConfigurationManager |
+| R010 dependency | Risk List R010; SAD External Dependencies | DependsOn | ProjectManager (STK-004 engagement); PoC empirical execution |
+| Measurement actuals note | Work Order Measured Actuals + Iteration Assessment | Refines | ProjectManager (reconciliation at next Iteration Assessment) |
+| Co-ownership discipline | Design Model structure (Designer / DatabaseDesigner / UserInterfaceDesigner) | Refines | Design Model section-scoped upserts |
