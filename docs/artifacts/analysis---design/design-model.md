@@ -1,15 +1,13 @@
 ## Document Control
-
 | Field | Value |
 |---|---|
 | Phase | Elaboration |
 | Status | Draft |
 | Milestone Target | End of Elaboration (LCA) |
 | Iteration | 1 (Cycle 1) |
-| Contributions (Elab Iter 1) | **User Interface Designer** — §Boundary Classes and Navigation Map (screen registry SCR-01…SCR-09, M-01, EX-01; UI boundary classes; Navigation Map; UI Patterns P-01…P-07) — PRESERVED verbatim. **Designer** — §Design Overview, §Domain Model (analysis classes ACL-001…ACL-026 + attribution), §Use-Case Realizations (SEQ-001…SEQ-010), §Design Packages and Classes (CLS-001…CLS-027, state machines), §Interface Contracts (INT-006…INT-019), §Capsules omission note, §Traceability (merged) — this update. **Database Designer** — §Persistent Data Classes — PENDING (not yet contributed this iteration; the SAD §Data View schema is the interim reference; entity attributes in §Domain Model are the design-side specification). |
+| Contributions (Elab Iter 1) | **User Interface Designer** — §Boundary Classes and Navigation Map (screen registry SCR-01…SCR-09, M-01, EX-01; UI boundary classes; Navigation Map; UI Patterns P-01…P-07) — PRESERVED verbatim. **Designer** — §Design Overview, §Domain Model (analysis classes ACL-001…ACL-026 + attribution), §Use-Case Realizations (SEQ-001…SEQ-010), §Design Packages and Classes (CLS-001…CLS-027, state machines), §Interface Contracts (INT-006…INT-019), §Capsules omission note, §Traceability (merged) — this update. **Database Designer** — §Persistent Data Classes — CONTRIBUTED this iteration: physical schema (5 tables mapped from CLS-021…CLS-025, PostgreSQL per CON-003/ADR-002; CLS-026/027 transient, never persisted per CON-006), O/R mapping (identity strategy, loading policy, write policy per class), index strategy (7 indexes, each justified by PRF-001/002, REL-002/003, AUD-002/004), baseline migration V1 (idempotent DDL; append-only REVOKE on audit tables per DAT-002), performance baseline for critical access paths — this update. |
 | Upstream inputs | Use-Case Model (UC-001…UC-010, all FULL, UI Flow References); Supplementary Specification (SEC-001…007, AUD-001…005, DAT-001/002, USA-001…009, REL-001…004, PRF-001…003, SUP-004, DC-001…010, INT-001…005, STD-001…005); Software Architecture Document (COMP-001…COMP-011, subsystem interfaces, ADR-001…004, timestamp convention: store UTC / display America/Havana / export ISO-8601 with explicit offset / payroll day = local calendar day); Review Record (zero open findings on the Design Model) |
 | Optional artifacts | Data Model — [OMITTED: trigger not fired per Development Case §5.2 (data lives inline in this Design Model)] |
-
 ## Design Overview
 
 The Design Model translates the ten declared use cases (UC-001…UC-010) into collaborations of design classes **within** the Software Architecture Document's subsystem baseline (COMP-001…COMP-011, ADR-001…004). It is the single design model for the portal — every class, interface, realization, and state machine below belongs to it. The Implementer codes from this model; nothing is implemented that is not realized here.
