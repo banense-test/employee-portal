@@ -75,7 +75,6 @@ The convention is encapsulated in COMP-011 so that a future multi-zone reality c
 | Availability (7:00–19:00 M–F) | Low | NFR-003, REL-001 | Single server sufficient; no HA needed for 200-user intranet |
 | Data integrity (timestamp convention) | High | DAT-001, USA-008 | COMP-011 Time Service — single owner of UTC storage, America/Havana display, ISO-8601 offset export |
 ## Use-Case View
-
 ### Architecturally Significant Use Cases (Prioritized)
 
 | Priority | UC | Name | Architectural Significance | Risk |
@@ -86,20 +85,145 @@ The convention is encapsulated in COMP-011 so that a future multi-zone reality c
 | 4 | UC-008 | Publish News | Audit trail (author + timestamp), news lifecycle | R006 (MODERATE) |
 | 5 | UC-007 | Assign Worker Category | AD user id → category persistence, audit trail for changes | R006 (MODERATE) |
 
-**Sequencing rationale for Project Manager:** UC-001 is prioritized first because it exercises OIDC auth (R003), offline resilience (R004), and PostgreSQL persistence simultaneously — the highest-risk convergence point. UC-004 is second because R001 (LDAP attribute consistency) is the only HIGH-magnitude risk and must be validated via PoC in Elaboration. UC-010 is third because it validates the audit trail mechanism and soft-delete pattern shared by all news operations.
+**Sequencing rationale for Project Manager:** UC-001 is prioritized first because it exercises OIDC auth (R003), offline resilience (R004), PostgreSQL persistence, and the timestamp convention simultaneously — the highest-risk convergence point. UC-004 is second because R001 (LDAP attribute consistency) is the only HIGH-magnitude risk. UC-010 is third because it validates the audit trail mechanism and soft-delete pattern shared by all news operations. Elaboration test priority (per Test Evaluation Summary): UC-001, UC-004, UC-010.
 
 ### Volatility Analysis (Decompose by Change)
 
 | Area of Change | Volatility | Encapsulated By | Rationale |
 |---|---|---|---|
-| Offline resilience strategy | High | COMP-009 Offline Resilience Handler | NFR-004/AC-005 mechanism is architecturally unresolved; the queuing/sync approach may change after Elaboration PoC |
-| LDAP query strategy | High | COMP-007 LDAP Gateway | R001 risk: attribute availability varies across offices; query filters and fallback display may need adjustment |
-| OIDC integration details | High | COMP-006 OIDC Auth Provider | R003 risk: token validation, role-claim mapping may have Keycloak configuration nuances |
-| Audit trail implementation | Medium | COMP-005 Audit Service | NFR-005 mechanism is stable in intent but implementation detail (DB triggers vs. application-level) may change |
-| Category list source | Medium | COMP-004 Category Service | CON-013: list is externally configured; source mechanism may change (file, DB table, config service) |
+| Offline resilience strategy | High | COMP-009 Offline Resilience Handler | NFR-004/AC-005 mechanism; decided by ADR-003, thresholds quantified (REL-002/003) |
+| LDAP query strategy | High | COMP-007 LDAP Gateway | R001: attribute availability varies across offices; query filters and fallback display may need adjustment |
+| OIDC integration details | High | COMP-006 OIDC Auth Provider | R003: token validation, role-claim mapping may have Keycloak configuration nuances |
+| Timestamp convention | Medium | COMP-011 Time Service | Stakeholder-decided (UTC / America/Havana / ISO-8601 offset); encapsulated so a future multi-zone reality changes one component |
+| CSV export format | Medium | COMP-010 Report Export Service | UC-006 column set v1 is volatile — downstream payroll/records consumers may reshape it |
+| Audit trail implementation | Medium | COMP-005 Audit Service | NFR-005 mechanism stable in intent; implementation detail may change |
+| Category list source | Medium | COMP-004 Category Service + ADR-004 | CON-013: list is externally configured; mechanism DECIDED this iteration (ADR-004: JSON config file) |
 | News lifecycle rules | Low | COMP-002 News Service | CON-012 (no hard delete) is stable; soft-delete + audit is a well-understood pattern |
 | Clocking data model | Low | COMP-001 Clocking Service | Timestamp + employee id + in/out is a stable domain model |
 
+**Elaboration refinement:** two volatility areas the Inception candidate left unencapsulated are now closed — the CSV export format (UC-006) is encapsulated by COMP-010, and the timestamp convention by COMP-011. The category list source (UC-007) is decided by ADR-004.
+
+### Use-Case Realizations — Architecturally Significant Scenarios
+
+The three scenarios below validate every 4+1 view: UC-001 exercises the offline resilience mechanism (COMP-009), idempotent persistence (COMP-008), the time convention (COMP-011), and OIDC auth (COMP-006); UC-004 exercises the LDAP gateway (COMP-007) and graceful degradation (R001); UC-010 exercises the audit mechanism (COMP-005) and soft-delete pattern (CON-012).
+
+**UC-001 — Clock In and Clock Out (FR-004, NFR-002, NFR-004, AC-005):**
+
+```plantuml
+@startuml
+title UC-001: Clock In and Clock Out — Architectural Scenario (FR-004, NFR-002, NFR-004, AC-005)
+
+actor "Employee (ACT-001)" as EMP
+participant "HomeView / ClockingController\n(SCR-01)" as UI
+participant "OIDC Auth Middleware\n(COMP-006)" as MW
+participant "Clocking Service\n(COMP-001)" as CLK
+participant "Time Service\n(COMP-011)" as TIME
+participant "Offline Resilience Handler\n(COMP-009)" as OFF
+database "PostgreSQL\n(COMP-008)" as PG
+
+== Main flow (online) ==
+EMP -> UI : open portal
+UI -> MW : request (session cookie)
+MW -> MW : validate OIDC token\n(redirect to Keycloak if expired — AF-2)
+MW --> UI : authenticated identity + roles
+UI -> CLK : GetCurrentStatus(employeeUid)
+CLK --> UI : current status
+UI --> EMP : status-aware button\n(green Clock In / red Clock Out)
+EMP -> UI : press button
+UI -> UI : disable button;\nignore repeat press < 2 s (AF-3)
+UI -> TIME : NowUtc()
+TIME --> UI : UTC timestamp (DAT-001)
+UI -> CLK : RecordEvent(employeeUid, type,\ntimestampUtc, idempotencyKey)
+CLK -> PG : INSERT clocking\n(idempotency key UNIQUE)
+PG --> CLK : ok
+CLK --> UI : confirmed event
+UI -> TIME : ToLocal(America/Havana)
+TIME --> UI : local display time (USA-008)
+UI --> EMP : "Clocked in at 08:58:12"\n(< 1 s — PRF-002)
+
+== AF-1: network disruption (NFR-004, AC-005) ==
+alt portal server unreachable
+  UI -> OFF : enqueue(event, idempotencyKey)\n[localStorage, ordered by recorded timestamp]
+  OFF --> UI : queued
+  UI --> EMP : confirmation from queued data\n+ "will sync when connection returns"
+  ... connectivity restored ...
+  OFF -> CLK : replay queued events\n(sync endpoint)
+  CLK -> PG : INSERT ... ON CONFLICT\n(idempotency key) DO NOTHING
+  PG --> CLK : exact duplicates rejected\n(REL-002 conflict policy)
+  CLK --> OFF : sync complete\n(all events persisted, <= 60 s — REL-003)
+end
+@enduml
+```
+
+**UC-004 — Search Employee Directory (FR-010, R001, PRF-003, AC-003):**
+
+```plantuml
+@startuml
+title UC-004: Search Employee Directory — Architectural Scenario (FR-010, R001, PRF-003, AC-003)
+
+actor "Employee (ACT-001)" as EMP
+participant "DirectoryView / DirectoryController\n(SCR-04)" as UI
+participant "OIDC Auth Middleware\n(COMP-006)" as MW
+participant "Directory Service\n(COMP-003)" as DIR
+participant "LDAP Gateway\n(COMP-007)" as LDAP
+database "Active Directory\n(ACT-003)" as AD
+
+EMP -> UI : enter criteria\n(name / department / office)
+UI -> MW : request
+MW --> UI : authenticated
+UI -> DIR : Search(criteria)
+DIR -> LDAP : query (read-only, on demand — CON-006)
+LDAP -> AD : LDAP v3 search (STD-002)
+alt AD responds within 5 s (PRF-003)
+  AD --> LDAP : matching entries
+  LDAP --> DIR : mapped entries (name, job title,\ndepartment, office, email, extension)
+  alt some attributes missing (R001 — AF-2)
+    DIR --> UI : entries with blank fields\n(entry NOT hidden)
+  else all attributes present
+    DIR --> UI : complete entries
+  end
+  UI --> EMP : person cards — all six fields\non the card (USA-003, AC-003)
+else timeout or connection failure (AF-3)
+  LDAP --> DIR : failure (5 s hard timeout)
+  DIR --> UI : DirectoryUnavailable
+  UI --> EMP : "Directory temporarily unavailable"\n(no local fallback — CON-006)
+end
+@enduml
+```
+
+**UC-010 — Unpublish News (FR-009, NFR-005, CON-012, R006):**
+
+```plantuml
+@startuml
+title UC-010: Unpublish News — Architectural Scenario (FR-009, NFR-005, CON-012, R006)
+
+actor "HR Administrator (ACT-002)" as HR
+participant "NewsManagementView\n(SCR-08, M-01)" as UI
+participant "OIDC Auth Middleware\n(COMP-006)" as MW
+participant "News Service\n(COMP-002)" as NEWS
+participant "Audit Service\n(COMP-005)" as AUD
+database "PostgreSQL\n(COMP-008)" as PG
+
+HR -> UI : press "Unpublish"\n(offered on published items only — AF-2)
+UI -> MW : request
+MW -> MW : validate token; verify HR Administrator\nrole from claims (SEC-006)
+MW --> UI : authorized\n(else SCR-09 Access Denied — EF-1)
+UI --> HR : M-01 confirmation modal:\n"record is retained for the audit trail"
+alt HR confirms
+  HR -> UI : confirm
+  UI -> NEWS : Unpublish(newsId, actorUid)
+  NEWS -> PG : UPDATE news_items\nSET status = 'unpublished'\n(record NOT deleted — CON-012)
+  PG --> NEWS : ok
+  NEWS -> AUD : Append(actorUid, action=unpublish,\nnewsId, timestampUtc)
+  AUD -> PG : INSERT news_audit\n(append-only — DAT-002)
+  PG --> AUD : ok
+  NEWS --> UI : confirmed
+  UI --> HR : item hidden from employees (UC-003)
+else HR cancels (AF-1)
+  UI --> HR : modal closed — no change,\nno audit entry
+end
+@enduml
+```
 ## Logical View
 
 The candidate architecture is a **layered application** with **subsystem decomposition by area of change**. This is proportional to the declared scope: 200 users, single server, 10 FRs, 2 external integrations. No microservices, no message queues, no workflow engines — those would be architecture by buzzword for a system of this scale.
