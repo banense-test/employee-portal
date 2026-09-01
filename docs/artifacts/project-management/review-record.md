@@ -629,7 +629,12 @@ stop
 | **A-7** | **Re-correct the SAD PoC Plan to the empirical disposition** (§Quality per-risk retirement: R001 disposable directory / R003 stub issuer / R004 direct, citing the stakeholder decision; §External Dependencies: R010 blocks production-instance integration only; LCA criterion 3 corrected; name the Architectural Proof-of-Concept artifact as validation vehicle) — closes SAD F1 | Software Architect | Critical | LCA exit criterion 3 (technical lens); SAD F1 |
 | **A-8** | **Produce the Architectural Proof-of-Concept artifact** (DC-sanctioned, Architect-owned) carrying the empirical results for R001/R003/R004 once the mechanisms are validated — closes SAD F2 | Software Architect | Critical | LCA evidence package; SAD F2 |
 | **A-9** | **Reconcile SAD §Logical View component dependencies with the Design Model's documented reconciliations** (COMP-001 IAUD removal, COMP-010 ILDAP → IDirectoryService) — closes SAD F3 | Software Architect | Minor | SAD/Design Model boundary consistency |
-| **A-10** | **Tag the R001 >90% acceptance criterion `[ASSUMPTION — requires validation]` with its basis** (or escalate to the stakeholder as the R001 validation bar); propagate the tag to the SAD PoC Plan, Test Evaluation Summary, and Test Case on next evolution — closes Risk List F1 | Project Manager (Risk List owner) | Minor | R001 validation-bar traceability |
+| **A-10** | **Tag the R001 >90% acceptance criterion `[ASSUMPTION — requires validation]` with its basis** (or escalate to the stakeholder as the R001 validation bar); propagate the tag to the SAD PoC Plan, Test Evaluation Summary, and Test Case on next evolution — closes Risk List F1 (Reviewer) | Project Manager (Risk List owner) | Minor | R001 validation-bar traceability |
+| **A-11** | **Execute the convergence cycle (Elaboration Iter 2) per A-1…A-6 + A-8**: deliver the three mechanisms as evolutionary code with dual-coverage tests, terminal PR dispositions, TC-001…TC-020 execution, empirical results into the PoC artifact; reconcile Work Item 7–9 statuses to SCM evidence at iteration close — closes Iteration Plan F3 (Critical) | Project Manager (plan owner) / Implementer / Code Reviewer / Test Designer / Software Architect | Critical | LCA re-presentation; stakeholder sanction |
+| **A-12** | **Add the all-findings-closure exit criterion** to the Iteration Plan Layer 2 table and the Elab Iter 2 preview's primary objective: zero open findings across ALL lenses and ALL severities before phase transition; verify via the findings ledger at each iteration close — closes Iteration Plan F4 (Major) | Project Manager (plan owner) | Major | Phase transition sanction (stakeholder directive) |
+| **A-13** | **Remove the human-gate queue-time forecasts from the milestone table** (retain measured Inception 0s as a recorded actual); report measured actuals only at each Iteration Assessment — closes Iteration Plan F5 (Minor) | Project Manager (plan owner) | Minor | Planning-rule conformance |
+| **A-14** | **Add a trend column to the Risk Register** (direction since last review + evidence pointer), updated at each iteration reappraisal — closes Risk List F1 (Management, part 1) | Project Manager (Risk List owner) | Minor | Risk-retirement trend verification at every review |
+| **A-15** | **Add a Risk List entry bounding the human-gate queue risk** (strategy Accept; mitigation: in-round stakeholder answering as measured at LCO and at this review's consultation; contingency: process suspends at 14 days per the planning rule — nothing is auto-filled) — closes Risk List F1 (Management, part 2) | Project Manager (Risk List owner) | Minor | Human-gate risk bounded in the Risk List, not forecast in the plan |
 
 ### Historical Resolutions (Inception — preserved)
 
@@ -681,6 +686,56 @@ empirical R001/R003/R004 results
 :Record actuals in the Iteration
 Assessment; assemble the LCA
 evidence package;
+stop
+@enduml
+```
+
+### Management-Lens Remediation Chain (convergence cycle — Elaboration Iter 2)
+
+```plantuml
+@startuml
+title Management-Lens Remediation Chain — Elaboration Iter 2 Convergence
+
+|Project Manager|
+start
+:A-12 Add the all-findings-closure exit
+criterion to the Iteration Plan Layer 2
+table and Elab Iter 2 preview objective
+(closes Iteration Plan F4, Major);
+:A-13 Remove human-gate queue forecasts
+from the milestone table; keep measured
+Inception 0s as recorded actual
+(closes Iteration Plan F5, Minor);
+:A-14 Add trend column to the Risk
+Register - direction since last review
++ evidence pointer (closes Risk List F1
+part 1, Minor);
+:A-15 Add Risk List entry bounding the
+human-gate queue risk - 14-day suspension
+ceiling, in-round answering as mitigation
+(closes Risk List F1 part 2, Minor);
+
+|Implementer / Code Reviewer / Test Designer / Architect|
+:A-11 Execute the convergence cycle:
+three mechanisms as evolutionary code,
+terminal PR dispositions, TC-001..TC-020
+executed, empirical results into the
+Architectural Proof-of-Concept artifact;
+Work Item 7-9 statuses reconciled to SCM
+evidence (closes Iteration Plan F3,
+Critical);
+
+|Project Manager|
+:Reconcile the 1,347,939 vs 3,550,308
+token records at the Iteration Assessment
+(phase-level record governs);
+:Assemble the LCA evidence package:
+empirical results + empty findings ledger
+across ALL lenses and ALL severities;
+
+|Management Reviewer|
+:Re-present LCA with the evidence package;
+fresh sanction request to the stakeholder;
 stop
 @enduml
 ```
