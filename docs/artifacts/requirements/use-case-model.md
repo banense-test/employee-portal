@@ -909,7 +909,6 @@ The design reference is authoritative for the visual layer; three reconciliation
 
 Storyboards SB-01…SB-04 are submitted for stakeholder validation with this iteration's review (STK-001 sponsor, STK-003 end-user representatives). Any feedback is recorded in the Review Record and traced to requirement impacts — the prototype-as-probe principle. The User-Interface Prototype artifact is **[OMITTED — trigger not fired per Development Case §5.2]**; these storyboards inside the Use-Case Model, plus the Boundary Classes and Navigation Map in the Design Model, carry the interaction design. Full UI traceability: Design Model §Traceability.
 ## Traceability
-
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
 | UC-001 | FR-004 | Refines | Use-Case Realizations (Designer); Test priority 1 (Test Designer); R003/R004 PoCs (Architect) |
@@ -932,7 +931,7 @@ Storyboards SB-01…SB-04 are submitted for stakeholder validation with this ite
 | UC-001 AF-3 ignore window | NFR-002, FR-004 | Refines | PRF-002 (Supplementary Specification) |
 | UC-002 EF-1 | NFR-004 | Refines | REL-002 (Supplementary Specification) |
 | UC-003 EF-1 | NFR-004 | Refines | REL-002 (Supplementary Specification) |
-| UC-004 AF-2 | R001 | Mitigates | LDAP attribute consistency PoC (Architect) |
+| UC-004 AF-2 | R001 + stakeholder decision (Elaboration Iter 2): behavioural bar — every employee is rendered whether or not their attributes are complete; a missing attribute never removes someone from search results; a missing attribute never raises an error; validated against deliberately-seeded gaps in the disposable LDAP directory; prior >90% statistical criterion dropped (invented, unsourceable) | Mitigates | R001 PoC (Architect, Work Item 7 — deliberately-seeded gaps); Test Case TC-011 (Test Designer — fixture re-seeded to include attribute gaps); real-AD data-quality measurement → Construction (R011 residual, STK-004-dependent), excluded from the LCA evidence package |
 | UC-005 EF-1 | SEC-006 | Refines | (Supplementary Specification — role enforcement) |
 | UC-006 CSV column set | FR-002, CON-005, CON-006, INT-005 + stakeholder decisions (ISO-8601 offset export, local payroll day, office zone America/Havana) | Refines | STD-003 (CSV format); UC-006 AF-2 (abort on AD unavailable) |
 | UC-009 EF-1 | SEC-006 | Refines | (Supplementary Specification — role enforcement) |
