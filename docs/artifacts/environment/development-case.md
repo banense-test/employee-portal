@@ -9,7 +9,7 @@
 | Date | 2026-09-01 |
 | Prior Review | 0 findings on Development Case across both Inception iterations (LCO verdict: GO; stakeholder sanction granted) — valid content preserved, evolved for Elaboration |
 | Governance Re-recorded (Elab Iter 1) | DC §4 classification: unchanged — not business-process-led. Version policy: unchanged — .NET 10 framework pin (CON-001). Optional triggers: **CHANGED — Architectural Proof-of-Concept FIRED** (0/6 → 1/6) |
-| Open Question | PoC empirical scope under the R010 block — escalated to the stakeholder this iteration (see § Optional Artifact Triggers); blocks completion until answered |
+| Stakeholder Decision (Elab Iter 1) | PoC empirical scope question ANSWERED and retired in-place (see § Optional Artifact Triggers): the PoC is produced in Elaboration AND validated empirically — R001 against a disposable directory, R003 against a stub OIDC issuer, R004 direct; production-instance integration is a separate, smaller risk taken to Construction |
 
 ## Tailoring Overview
 
@@ -44,7 +44,7 @@ This Development Case specifies project-specific **deltas** over the IARI DC bas
 
 1. `CONTRIBUTING.md` — **still absent** (verified via SCM). Coding standards and branch-strategy documentation are owned by Implementer / Software Architect / ConfigurationManager. Branch conventions are already *enforced* by `ci.yml` triggers (`main`, `iteration/**`, `chore/**`, `feature/**`, `hotfix/**`), but the documenting section does not exist.
 2. `.editorconfig` + `Directory.Build.props` — **still absent** (verified via SCM). Lint / analyzer rules owned by Implementer.
-3. STK-004 deliverables (R010) — LDAP service account, Keycloak client registration, Windows Server provisioning. Blocks empirical execution of the R001/R003 PoC validations; Project Manager owns the engagement.
+3. STK-004 deliverables (R010) — LDAP service account, Keycloak client registration, Windows Server provisioning. Per the stakeholder's decision (Elab Iter 1), these block only **integration with the specific production instances** — a separate, smaller risk tracked on its own and taken to Construction; they do NOT block the PoC's empirical validation, which runs against a disposable directory (R001) and a stub OIDC issuer (R003). Project Manager owns the engagement.
 
 ## Disciplines and Intensity
 
@@ -61,14 +61,14 @@ start
 :Environment (Medium);
 note right: Process Engineer: re-record DC §4 classification,\noptional triggers (PoC FIRED), version policy;\nrefine Development Case from Inception experience;
 :Project Management (Medium);
-note right: PM: monitor R001-R010;\nengage STK-004 on R010 deliverables\n(LDAP service account, Keycloak client);
+note right: PM: monitor R001-R010;\nengage STK-004 on production-instance\nintegration (Construction);\ntrack production-integration risk separately;
 :Requirements (High);
 note right: SA + RS: all 10 UCs at full depth;\nquantify PRF/REL/USA thresholds;\nstakeholder decisions retire [SCOPE_QUESTION]s;
 :Analysis & Design (Critical);
 note right: Architect: SAD 4+1 baseline, ADR-001..004;\nDesigner: Design Model;\nUI Designer: storyboards + screen registry;
 if (PoC trigger fired this iteration?) then (yes)
   :Software Architect produces\nArchitectural Proof-of-Concept;
-  note right: Owner: Software Architect (baseline-fixed).\nContent basis: SAD per-risk retirement dispositions.\nR010 blocks R001/R003 empirical execution\nuntil STK-004 delivers access;
+  note right: Owner: Software Architect (baseline-fixed).\nStakeholder decision: produced in Elaboration\nAND validated empirically - R001 vs a disposable\ndirectory; R003 vs a stub OIDC issuer;\nR004 direct (nothing blocks it).\nProduction-instance integration -> Construction\n(separate, smaller risk);
 else (no)
   :Risks retired by designed mechanisms only;
 endif
@@ -91,12 +91,12 @@ stop
 | Discipline | Tailoring Note |
 |---|---|
 | Requirements | All 10 UCs at full depth (Use-Case Model is the UC-ID authority); RS quantifies PRF/REL/USA thresholds; stakeholder decisions recorded this iteration retire markers in-place |
-| Analysis & Design | SAD 4+1 baseline complete; Design Model is **co-owned** (Designer / DatabaseDesigner / UserInterfaceDesigner) — section-scoped upserts only; PoC artifact produced by Software Architect |
+| Analysis & Design | SAD 4+1 baseline complete; Design Model is **co-owned** (Designer / DatabaseDesigner / UserInterfaceDesigner) — section-scoped upserts only; PoC artifact produced by Software Architect and **validated empirically in Elaboration** (stakeholder decision) |
 | Implementation | Skeleton evolution only; R008 (PostgreSQL + .NET 10) validated at build time; layering rule: dependencies point down, interfaces only |
 | Test | Test cases target UC-001, UC-004, UC-010 first (risk priority); regression of prior results each iteration |
 | Deployment | Single-node topology baselined in SAD; deploy jobs deferred to Construction pending R010 |
 | Configuration & Change Mgmt | CI verified green on main; branch families enforced in `ci.yml` |
-| Project Management | R010 engagement is critical path; budget from measured Inception actuals |
+| Project Management | Production-instance integration (STK-004) is a separate, smaller risk taken to Construction — tracked on its own, not inheriting R001's HIGH; budget from measured Inception actuals |
 | Environment | This document; trigger re-evaluation each iteration (mandatory) |
 
 ## Artifacts and Templates
@@ -152,10 +152,8 @@ and project facts;
 :Check each of the 6 OPTIONAL artifacts
 against its §5.2 condition;
 if (Architectural Proof-of-Concept condition holds?) then (holds)
-  :FIRE the trigger — record the new trigger set
-via record_optional_artifact_triggers;
-  :PoC artifact sanctioned;
-owner: Software Architect (baseline-fixed);
+  :FIRE the trigger — record the new trigger set\nvia record_optional_artifact_triggers;
+  :PoC artifact sanctioned;\nowner: Software Architect (baseline-fixed);
   note right
     Condition: Elaboration phase (YES — iter 1)
     AND at least one technical risk requiring
@@ -165,8 +163,13 @@ owner: Software Architect (baseline-fixed);
     Iter 1 — "if not tested early, the
     directory shows gaps."
     R003, R004 (SIGNIFICANT): PoC-planned.
-    R010 blocks R001/R003 empirical
-    execution until STK-004 delivers.
+    Stakeholder decision (Elab Iter 1): the PoC
+    is produced in Elaboration AND validated
+    empirically — R001 against a disposable
+    directory, R003 against a stub OIDC
+    issuer, R004 direct. Production-instance
+    integration is a separate, smaller risk
+    taken to Construction.
   end note
 else (not held)
   :NOT FIRED — auditable justification recorded;
@@ -182,9 +185,17 @@ stop
 @enduml
 ```
 
-**PoC disposition reconciliation (binding for downstream roles):** the SAD's PoC plan (per-risk retirement dispositions: R001/R003/R004 analysis-only + designed mechanism) was written against the Inception trigger recording and explicitly deferred to this Development Case as oracle. With the trigger now FIRED, the **Software Architect produces the Architectural Proof-of-Concept artifact**; the SAD dispositions remain its content basis — the designed mechanisms (COMP-006 OIDC, COMP-007 LDAP, COMP-009 offline resilience) and their quantified acceptance criteria carry into the PoC unchanged. R010 (STK-004 deliverables) blocks empirical execution of the R001/R003 validations; the PoC must record this dependency explicitly rather than fabricating results. Ownership is baseline-fixed (Software Architect) — this Development Case does not reassign it.
+**PoC disposition reconciliation (binding for downstream roles):** the SAD's PoC plan (per-risk retirement dispositions: R001/R003/R004 analysis-only + designed mechanism) was written against the Inception trigger recording and explicitly deferred to this Development Case as oracle. With the trigger now FIRED, the **Software Architect produces the Architectural Proof-of-Concept artifact**; the SAD dispositions remain its content basis — the designed mechanisms (COMP-006 OIDC, COMP-007 LDAP, COMP-009 offline resilience) and their quantified acceptance criteria carry into the PoC unchanged. Ownership is baseline-fixed (Software Architect) — this Development Case does not reassign it.
 
-**Open consequential question — asked this iteration; blocks completion until answered:** [SCOPE_QUESTION — PoC empirical scope under the R010 block: not declared in scope, but consequential for the Elaboration milestone's deliverable set and exit condition] The fired trigger sanctions the Architectural Proof-of-Concept, but the approved SAD was written under the not-fired assumption and positions empirical validation of R001/R003 as a Construction test activity blocked on STK-004 deliverables (R010 — no LDAP service account or Keycloak client registration confirmed by end of Elaboration Iteration 1; R010's declared trigger condition is therefore met). Whether the PoC is produced in Elaboration carrying the designed mechanisms and acceptance criteria with the R010 block documented and empirical validation deferred to Construction (confirming the SAD's approved position), or whether STK-004 delivery becomes a hard condition of Elaboration exit so that R001/R003 validate empirically before the LCA milestone, is a milestone-scope decision the stakeholder owns. Escalated to the stakeholder this iteration; the answer retires this marker in place, written with the stakeholder's literal words.
+**Stakeholder decision recorded (Elaboration Iter 1 — question asked and answered this iteration; marker retired):** the PoC is **produced in Elaboration and validated empirically**. The stakeholder's decision, in their own words:
+
+- *"I will not accept an LCA that validates a HIGH architectural risk on paper only — preventing exactly that is what Elaboration is for. And I will not make a phase exit conditional on when another team closes a ticket."*
+- **R001** — *"R001 is about the shape of the data: attributes not filled consistently. The portal reads those attributes DIRECTLY over LDAP, so validating this needs a directory — not the production one. Stand one up, disposable, and answer it empirically this phase. How you do that is yours to work out."*
+- **R003** — *"R003 you mock. Wiring Active Directory into Keycloak is infrastructure work outside this project's boundary, and Keycloak is authentication only — it is not a directory you query. What the PoC has to prove is that the portal consumes and validates an OIDC token correctly, not how the identity provider got its users. A stub issuer is enough. Do not wait on STK-004 for this and do not build it against a real realm."*
+- **R004** — *"By your own account R010 blocks R001 and R003. You listed R004 alongside them — nothing you described stops it."* R004 is validated directly, with no external dependency.
+- **STK-004 / R010** — *"What STK-004 genuinely blocks is integration with those specific production instances. That is a separate risk and a smaller one. Track it on its own, do not let it inherit R001's HIGH, and take it to Construction."*
+
+**Binding consequences for this phase:** (1) the Architectural Proof-of-Concept carries empirical results for R001 (disposable directory), R003 (stub OIDC issuer), and R004 (direct) — a paper-only PoC does not satisfy the LCA gate; (2) the production-instance integration risk is tracked separately in the Risk List (Project Manager owns the entry) and does not inherit R001's HIGH; (3) no Elaboration exit condition depends on STK-004's ticket closure; (4) the disposable directory and stub issuer are PoC scaffolding, not production components — they do not alter the declared architecture (ADR-001..004 unchanged).
 
 Re-evaluation schedule: every iteration, mandatory. A trigger may newly fire via a Change Request or scope expansion; a fired trigger is re-verified against its condition (an auditable claim, checked at review).
 
@@ -324,7 +335,7 @@ end note
 |---|---|---|
 | 1 | Product vision stable | All 10 UCs full-depth; stakeholder decisions recorded (timestamp convention, offline mechanism) |
 | 2 | Architecture stable | SAD 4+1 baseline; ADR-001..004 decided |
-| 3 | Major risks addressed | **Architectural Proof-of-Concept (FIRED)** — R001/R003/R004 dispositions executed or R010 block documented; no fabricated results. Empirical scope of the R001/R003 validations under the R010 block is pending the stakeholder's answer to the open question in § Optional Artifact Triggers |
+| 3 | Major risks addressed | **Architectural Proof-of-Concept (FIRED)** — produced in Elaboration AND validated empirically per the stakeholder's decision: R001 against a disposable directory, R003 against a stub OIDC issuer, R004 direct; no fabricated results. Production-instance integration is a separate, smaller risk taken to Construction — no LCA condition depends on STK-004 ticket closure |
 | 4 | Construction plan sufficiently detailed | UC assignments cross-checked against Use-Case Model (F1 lesson) |
 | 5 | Stakeholders agree vision achievable | LCA review sanction — stakeholder's decision, never self-declared |
 | 6 | Actual vs planned expenditure acceptable | Two clocks measured apart; never summed |
@@ -405,15 +416,15 @@ During active iterations, the Process Engineer serves as the process help desk:
 - Tool configuration problems are logged and assigned to the owning discipline role.
 - **Question format (binding, from measured Inception lesson):** stakeholder-input payloads use minimal JSON — `question` / `type` / `isRequired` only. `options`, `recommendation`, and `reason` fields break the parser.
 - **Emission discipline (binding, from this iteration's measured incident):** the emission marker string must NEVER appear in artifact prose, diagrams, or response narration — the parser scans every occurrence, and a marker not immediately followed by a valid JSON array invalidates the turn. Observed this iteration: the marker string appeared three times in this document's prose (two Process Support bullets, one activity-diagram line) and in the completion narration; the turn was invalidated and the question had to be re-emitted. All occurrences are removed in this revision. The marker is written ONLY as an actual emission — marker immediately followed by the JSON array, nothing else on that line, no other bracketed construct between them.
-- **Marker retirement (binding):** when the stakeholder answers a `[SCOPE_QUESTION]` / `[DERIVED]` / `[ASSUMPTION]`, the owning role retires the marker in the artifact itself, writing the stakeholder's literal values. Three markers were retired this way in Elaboration Iter 1 (offline mechanism; timestamp convention; office local timezone = America/Havana) — the discipline is proven and mandatory.
+- **Marker retirement (binding):** when the stakeholder answers a `[SCOPE_QUESTION]` / `[DERIVED]` / `[ASSUMPTION]`, the owning role retires the marker in the artifact itself, writing the stakeholder's literal values. Four markers were retired this way in Elaboration Iter 1 (offline mechanism; timestamp convention; office local timezone = America/Havana; PoC empirical scope) — the discipline is proven and mandatory.
 
 ### Incremental Rollout Plan
 
 | Iteration | Disciplines Introduced | Status |
 |---|---|---|
 | Inception | Environment, PM, Requirements, A&D (draft), Implementation (skeleton), Test (strategy), CM | **Complete** — LCO achieved |
-| Elaboration (this) | Full A&D (4+1 baseline + PoC), Test (detailed cases), CM (full CI verified) | **In progress** — Iter 1 |
-| Construction | Full Implementation, Test (execution), Deployment | Planned |
+| Elaboration (this) | Full A&D (4+1 baseline + PoC, empirically validated), Test (detailed cases), CM (full CI verified) | **In progress** — Iter 1 |
+| Construction | Full Implementation, Test (execution), Deployment, production-instance integration (STK-004) | Planned |
 | Transition | Documentation, Release Notes, Deployment (final) | Planned |
 
 ## Traceability
@@ -423,18 +434,19 @@ During active iterations, the Process Engineer serves as the process help desk:
 | Development Case (this) | IARI DC Baseline | Refines | All project artifacts (governs production) |
 | Business Modeling INACTIVE | DC §4 classification (re-recorded Elab Iter 1, verdict unchanged) | Derives | record_dc_classification(isBusinessProcessLed=false) |
 | PoC trigger FIRED | DC §5.2 condition + R001 declared mitigation (Risk List) + Elaboration phase | Derives | record_optional_artifact_triggers(["Architectural Proof-of-Concept"]); SoftwareArchitect (owner); SAD PoC plan (content basis) |
+| PoC empirical scope (stakeholder decision, marker retired) | Stakeholder answer (Elab Iter 1): "The PoC is produced in Elaboration and validated empirically" — R001 via disposable directory, R003 via stub OIDC issuer, R004 direct; production-instance integration tracked separately, taken to Construction | Authorizes | Architectural Proof-of-Concept (empirical results required); LCA exit criterion 3; Risk List (production-integration entry — ProjectManager) |
+| Production-instance integration risk (separate, smaller) | Stakeholder answer (Elab Iter 1): "What STK-004 genuinely blocks is integration with those specific production instances. That is a separate risk and a smaller one. Track it on its own, do not let it inherit R001's HIGH, and take it to Construction." | Derives | Risk List (ProjectManager — new entry, own magnitude, not inheriting R001's HIGH); Construction integration test activities |
 | Framework pin .NET 10 | CON-001 | Derives | record_version_policy(framework, .NET, 10) |
 | Elaboration entry criteria | Review Record (LCO disposition, stakeholder sanction) | Refines | Elaboration Iteration Plan |
-| LCA exit criteria | RUP LCA milestone criteria + SAD §LCA Review | Refines | End-of-Elaboration milestone gate |
-| Open question (PoC empirical scope under R010 block) | R010 trigger condition met (Risk List) + SAD PoC plan (Construction deferral) + fired PoC trigger | DependsOn | Stakeholder answer (pending — blocks completion); LCA exit criterion 3 |
+| LCA exit criteria | RUP LCA milestone criteria + SAD §LCA Review + stakeholder decision (empirical PoC required) | Refines | End-of-Elaboration milestone gate |
 | UC-ID cross-check gate | Review Record F1 (Major, resolved) + Iteration Assessment lesson 1 | Derives | All artifacts referencing UC IDs |
 | Status-reconciliation step | Review Record F2 (Minor, resolved) + Iteration Assessment lesson 2 | Derives | Iteration Plan work items |
 | Question format rule | Iteration Assessment lesson (stakeholder-input parser) | Derives | All stakeholder-input emissions |
 | Emission discipline rule | This iteration's measured incident (invalidated turn; marker string in prose) | Derives | All stakeholder-input emissions; artifact authoring (no marker string in prose) |
-| Marker-retirement discipline | Stakeholder decisions (Elab Iter 1): offline mechanism, timestamp convention, office timezone America/Havana | Authorizes | Use-Case Model, Supplementary Specification (markers retired in-place) |
+| Marker-retirement discipline | Stakeholder decisions (Elab Iter 1): offline mechanism, timestamp convention, office timezone America/Havana, PoC empirical scope | Authorizes | Use-Case Model, Supplementary Specification, this document (markers retired in-place) |
 | CI verification | `.github/workflows/ci.yml` (SCM read, 2026-09-01) | DependsOn | Implementer, ConfigurationManager |
 | Deploy skeleton verification | `.github/workflows/deploy.yml` (SCM read, 2026-09-01) | DependsOn | DeploymentManager (Construction), R010 |
 | Guideline gaps (CONTRIBUTING.md, .editorconfig, Directory.Build.props) | Tool assessment (SCM read — not found, 2026-09-01) | DependsOn | Implementer, SoftwareArchitect, ConfigurationManager |
-| R010 dependency | Risk List R010; SAD External Dependencies | DependsOn | ProjectManager (STK-004 engagement); PoC empirical execution |
+| R010 dependency (production instances only) | Risk List R010; SAD External Dependencies; stakeholder decision (Elab Iter 1) | DependsOn | ProjectManager (STK-004 engagement); Construction integration testing — NOT the PoC's empirical validation |
 | Measurement actuals note | Work Order Measured Actuals + Iteration Assessment | Refines | ProjectManager (reconciliation at next Iteration Assessment) |
 | Co-ownership discipline | Design Model structure (Designer / DatabaseDesigner / UserInterfaceDesigner) | Refines | Design Model section-scoped upserts |
