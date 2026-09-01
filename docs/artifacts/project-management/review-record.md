@@ -44,42 +44,85 @@ This review applies the **feasibility and acceptability** lens per RUP Project A
 - **CI build status:** Green on main (verified by Test Evaluation Summary).
 
 ## Findings
+### Business Modeling Lens (Reviewer: Business Reviewer)
 
-### Finding Summary
+**Verdict: [BR-OK-INACTIVE] — Discipline NOT APPLICABLE per DC §4**
 
-| Finding Key | Artifact | Severity | Description | Verdict |
-|---|---|---|---|---|
-| F1 | Iteration Plan | Major | UC ID numbering inconsistency — Iteration Plan uses sequential FR=UC mapping that contradicts the Use-Case Model's authority | NeedsRework |
-| F2 | Iteration Plan | Minor | Work item statuses stale — 5 items show "Pending" for artifacts already produced as Draft | NeedsRework |
+DC §4 trigger evaluation: project does not exhibit business-process-led characteristics. No ERP / BPM / workflow-redesign / M&A signals found in Vision. No Business Use Cases / Workers / Entities sections present in Use-Case Model. No business-domain specialist terms in Glossary (Glossary not produced — no specialist vocabulary trigger).
 
-### F1 — Iteration Plan: UC ID Numbering Inconsistency (Major)
+Conclusion: BPA + BR are correctly INACTIVE for this engagement. No findings, no recommendations. Downstream reviewers (MR, RC) may treat the BM discipline as out-of-scope for the LCO milestone.
 
-**Location:** "Use Cases and Scenarios Addressed" table, Iteration Plan.
+#### DC §4 Classification Evidence
 
-**Description:** The table maps FR-001→UC-001, FR-002→UC-002, FR-003→UC-003, etc. (sequential FR=UC numbering). The Use-Case Model — the authority for UC IDs — maps UC-001→FR-004 (Clock In/Out), UC-002→FR-005 (View Own Clocking History), UC-003→FR-007 (Browse News), UC-004→FR-010 (Search Employee Directory), UC-005→FR-001 (Review Employee Clockings), etc. The SAD, Vision system boundary diagram, and Test Evaluation Summary ALL follow the UC Model's numbering. The Iteration Plan is the sole outlier. Downstream consumers reading the Iteration Plan will reference incorrect UC IDs, breaking traceability.
-
-**Remediation:** Update the "Use Cases and Scenarios Addressed" table to use the correct UC IDs from the Use-Case Model: FR-001→UC-005, FR-002→UC-006, FR-003→UC-007, FR-004→UC-001, FR-005→UC-002, FR-006→UC-008, FR-007→UC-003, FR-008→UC-009, FR-009→UC-010, FR-010→UC-004. Also update any other references to UC IDs in the Iteration Plan body text.
-
-### F2 — Iteration Plan: Stale Work Item Statuses (Minor)
-
-**Location:** "Work Items — Inception Iteration 1" table, Iteration Plan.
-
-**Description:** Work Items 4 (Vision), 5 (Use-Case Model), 6 (Supplementary Specification), 7 (SAD), 10 (Test strategy) all show status "Pending" — but these artifacts have all been produced as Draft. The work item status column does not reflect actual completion state at the time of LCO review.
-
-**Remediation:** Update the Work Items table status column to reflect actual completion: Work Items 4, 5, 6, 7, 10 → "Complete" (Draft produced); Work Item 8 → update based on actual Design Model status; Work Item 9 → update based on actual project skeleton status; Work Item 11 → update based on actual repository configuration status.
-
-### Artifacts with No Findings (6 of 8)
-
-| Artifact | Checklist Result | Notes |
+| Check | Result | Evidence |
 |---|---|---|
-| Development Case | All criteria PASS | DC baseline conformance verified: 25 roles, 16 CORE artifacts, 0 optional triggers (all NOT-FIRED justified), no forbidden overrides |
-| Vision | All criteria PASS | Scope alignment, stakeholder coverage, constraint coverage, feature traceability, UML system boundary diagram |
-| Use-Case Model | All criteria PASS | 10 UCs with Source: FR-NNN, 1:1 mapping, no cross-cutting UCs, no multi-actor split, 3 detailed + 7 outlined, alt flows specified |
-| Risk List | All criteria PASS | R001/R002 declared risks present; R003–R010 derived risks legitimate; all classified with mitigation + contingency |
-| Supplementary Specification | All criteria PASS | 5 NFRs in FURPS+ categories; cross-cutting mechanisms in Supp Spec not UCs; [SCOPE_QUESTION] retired with stakeholder confirmation |
-| Software Architecture Document | All criteria PASS | Layered monolith proportional to scope; 9 components with interfaces; 3 ADRs; deployment + data views; PoC plan for Elaboration |
-| Test Evaluation Summary | All criteria PASS | Mission achieved; risk-driven priority; UC-to-AC coverage 5/5; CI baseline green; [OMITTED: Test Plan] correctly declared |
+| DC §4 `isBusinessProcessLed` | `false` | Process Engineer classification recorded 2026-09-01T07:50:58Z |
+| BPL Trigger 1: ERP / large system replacement | NOT TRIGGERED | Employee Portal is an intranet web app, not an ERP replacement |
+| BPL Trigger 2: BPM / workflow redesign | NOT TRIGGERED | Project automates existing manual workflows (Excel → web), no process reengineering |
+| BPL Trigger 3: M&A / organizational restructuring | NOT TRIGGERED | No organizational changes declared |
+| BPL Trigger 4: New business / greenfield | NOT TRIGGERED | Existing organization (Cuba Corp, 200 employees), existing processes, new tool only |
+| BM sections in Use-Case Model | 0 BUCs, 0 Workers, 0 Entities | Use-Case Model contains only system-level UCs (UC-001–UC-010) with system actors |
+| BM sections in Vision | 0 | Vision contains product position, features, system boundary — no business process models |
+| Glossary specialist terms | N/A | Glossary not produced (no specialist vocabulary trigger per DC §5.2) |
 
+#### Classification Coverage Diagram
+
+```plantuml
+@startuml
+!theme plain
+title Employee Portal — DC §4 Business-Process-Led Classification
+
+rectangle "DC §4 Trigger Evaluation" {
+  note as N1
+    **BPL Signal Assessment**
+
+    Trigger 1: ERP / large system replacement
+    → NOT TRIGGERED (intranet portal, not ERP)
+
+    Trigger 2: BPM / workflow redesign
+    → NOT TRIGGERED (automates existing manual
+      workflows, no process reengineering)
+
+    Trigger 3: M&A / organizational restructuring
+    → NOT TRIGGERED (no org changes)
+
+    Trigger 4: New business / greenfield
+    → NOT TRIGGERED (existing org, existing
+      processes, new tool only)
+  end note
+
+  note as N2
+    **BM Section Coverage Check**
+
+    Use-Case Model: 0 BUCs, 0 workers, 0 entities
+    Vision: 0 business process models
+    Glossary: NOT PRODUCED (no specialist vocabulary)
+
+    → ZERO business modeling sections found
+  end note
+
+  note as N3
+    **Verdict: BR-OK-INACTIVE**
+
+    BPA + BR correctly INACTIVE.
+    No findings, no recommendations.
+    BM discipline out-of-scope for LCO.
+  end note
+
+  N1 -[hidden]-> N2
+  N2 -[hidden]-> N3
+}
+
+@enduml
+```
+
+#### BR Traceability
+
+| Element | Traces From | Link Type | Traces To |
+|---|---|---|---|
+| BR-OK-INACTIVE verdict | DC §4 classification (`isBusinessProcessLed: false`) | Refines | LCO Milestone Gate |
+| BM section coverage check | Use-Case Model (0 BUCs), Vision (0 BPMs) | Tests | DC §4 BPL trigger conditions |
+| BPL trigger evaluation | DC §4 criteria (ERP, BPM, M&A, greenfield) | Tests | Vision, Use-Case Model |
 ## Compliance Matrix
 
 ```plantuml
