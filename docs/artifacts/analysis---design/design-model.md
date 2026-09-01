@@ -2231,20 +2231,20 @@ Coordination artifact for the Designer (view-class detailing), the Implementer (
 | **Design classes (Designer — Elaboration Iter 1)** | | | |
 | CLS-001 ClockingService | UC-001, UC-002, UC-005 (ACL-014), FR-004, FR-005, FR-001, DAT-001, REL-002 | Derives | INT-006; CLS-007, CLS-012; sync endpoint CLS-017.OnPostSync |
 | CLS-002 NewsService | UC-003, UC-008, UC-009, UC-010 (ACL-015), FR-006/007/008/009, CON-012 | Derives | INT-007; CLS-005, CLS-013 |
-| CLS-003 DirectoryService | UC-004 (ACL-016), FR-010, R001 | Derives | INT-008; CLS-009 |
+| CLS-003 DirectoryService | UC-004 (ACL-016), FR-010, R001 + R001 behavioural bar (stakeholder-confirmed, Elab Iter 2 — GetDisplayData map completeness, D-9) | Derives | INT-008; CLS-009 |
 | CLS-004 CategoryService | UC-007 (ACL-017), FR-003, CON-006, CON-013, ADR-004 | Derives | INT-009; CLS-005, CLS-014 |
 | CLS-005 AuditService | NFR-005, AUD-001…004, DAT-002 (ACL-018) | Derives | INT-012; CLS-015, CLS-016 |
-| CLS-006 ReportExportService | UC-006 (ACL-019), FR-002, INT-005, STD-003 | Derives | INT-013; CLS-003, CLS-007, CLS-012 |
+| CLS-006 ReportExportService | UC-006 (ACL-019), FR-002, INT-005, STD-003, UC-006 AF-3 (R001 behavioural bar, stakeholder-confirmed Elab Iter 2 — blank cells, every row written) | Derives | INT-013; CLS-003, CLS-007, CLS-012 |
 | CLS-007 TimeService | DAT-001, USA-008 + stakeholder decisions (store UTC, America/Havana, ISO-8601 offset, local payroll day) (ACL-020) | Derives | INT-014; consumed by CLS-001, CLS-006, CLS-017 |
 | CLS-008 OfflineQueueClient | NFR-004, AC-005, REL-002/003, ADR-003 | Derives | sync endpoint (CLS-017.OnPostSync → CLS-001.SyncEvents) |
-| CLS-009 LdapGateway | CON-005, CON-006, CON-007, R001, PRF-003 | Derives | INT-010; Active Directory (external) |
+| CLS-009 LdapGateway | CON-005, CON-006, CON-007, R001 + R001 behavioural bar (stakeholder-confirmed, Elab Iter 2 — one contract, four consumers), PRF-003 | Derives | INT-010; Active Directory (external) |
 | CLS-010 KeycloakAuthProvider | CON-004, SEC-001/002/003/006, R003 | Derives | INT-011; Keycloak (external) |
 | CLS-011 PgPersistence | CON-003, ADR-002, DAT-002 | Derives | INT-015; PostgreSQL (external) |
 | CLS-012…CLS-016 repositories | CON-003, ADR-002, DAT-002, REL-002 | Derives | INT-016…INT-019 |
-| CLS-017 ClockingController | UC-001, UC-002, UC-005, UC-006 (ACL-010) | Derives | INT-006, INT-013, INT-014 |
+| CLS-017 ClockingController | UC-001, UC-002, UC-005, UC-006 (ACL-010), UC-005 AF-3 (R001 bar — renders every event row with blank display fields) | Derives | INT-006, INT-013, INT-014 |
 | CLS-018 NewsController | UC-003, UC-008, UC-009, UC-010 (ACL-011) | Derives | INT-007 |
 | CLS-019 DirectoryController | UC-004 (ACL-012) | Derives | INT-008 |
-| CLS-020 CategoryController | UC-007 (ACL-013) | Derives | INT-009, INT-008 |
+| CLS-020 CategoryController | UC-007 (ACL-013), UC-007 AF-3 (R001 bar — renders employee locatable/selectable with blank fields) | Derives | INT-009, INT-008 |
 | CLS-021 ClockingEvent | UC-001/002/005/006 (ACL-021), DAT-001, REL-002 | Derives | clockings table (SAD Data View); sync state machine |
 | CLS-022 NewsItem | UC-003/008/009/010 (ACL-022), CON-012 | Derives | news_items table; lifecycle state machine |
 | CLS-023 NewsAuditEntry | AUD-001…003, DAT-002 (ACL-023) | Derives | news_audit table |
@@ -2257,9 +2257,9 @@ Coordination artifact for the Designer (view-class detailing), the Implementer (
 | SEQ-002 | UC-002 (FR-005) | Realizes | CLS-017, CLS-001, CLS-007, CLS-011, CLS-012 |
 | SEQ-003 | UC-003 (FR-007) | Realizes | CLS-018, CLS-002, CLS-013 |
 | SEQ-004 | UC-004 (FR-010) | Realizes | CLS-019, CLS-003, CLS-009 |
-| SEQ-005 | UC-005 (FR-001) | Realizes | CLS-017, CLS-001, CLS-003, CLS-009, CLS-011 |
-| SEQ-006 | UC-006 (FR-002) | Realizes | CLS-017, CLS-006, CLS-007, CLS-003, CLS-009, CLS-011 |
-| SEQ-007 | UC-007 (FR-003) | Realizes | CLS-020, CLS-004, CLS-003, CLS-009, CLS-005, CLS-011 |
+| SEQ-005 | UC-005 (FR-001) + UC-005 AF-3 (R001 behavioural bar, stakeholder-confirmed Elab Iter 2 — every event row rendered, blank display fields, no removal, no error) | Realizes | CLS-017, CLS-001, CLS-003, CLS-009, CLS-011 |
+| SEQ-006 | UC-006 (FR-002) + UC-006 AF-3 (R001 behavioural bar, stakeholder-confirmed Elab Iter 2 — every event row written, blank cells, no abort) | Realizes | CLS-017, CLS-006, CLS-007, CLS-003, CLS-009, CLS-011 |
+| SEQ-007 | UC-007 (FR-003) + UC-007 AF-3 (R001 behavioural bar, stakeholder-confirmed Elab Iter 2 — employee locatable and selectable with blank fields) | Realizes | CLS-020, CLS-004, CLS-003, CLS-009, CLS-005, CLS-011 |
 | SEQ-008 | UC-008 (FR-006) | Realizes | CLS-018, CLS-002, CLS-005, CLS-011 |
 | SEQ-009 | UC-009 (FR-008) | Realizes | CLS-018, CLS-002, CLS-005, CLS-011 |
 | SEQ-010 | UC-010 (FR-009) | Realizes | CLS-018, CLS-002, CLS-005, CLS-011 |
@@ -2275,6 +2275,11 @@ Coordination artifact for the Designer (view-class detailing), the Implementer (
 | COMP-001 IAUD omission | NFR-005 scope (AUD-001…004), DAT-001 | Refines | SAD Logical View (coupling reduction) |
 | COMP-010 ILDAP via IDirectoryService | CON-005, CON-006 | Refines | SAD Logical View (single display-data path) |
 | COMP-009 browser-side realization | ADR-003, SAD Deployment View | Refines | CLS-008 + CLS-001.SyncEvents |
+| **Designer evolution (Elaboration Iter 2 — convergence cycle)** | | | |
+| D-9 GetDisplayData map completeness | R001 behavioural bar (stakeholder decision, Elab Iter 2) + CON-006 — a uid AD cannot resolve maps to an all-null EmployeeDisplayData, so clause (a) holds mechanically for UC-005/UC-006 | Derives | INT-008 GetDisplayData, INT-010; SEQ-005, SEQ-006; R001 PoC (Architect, Work Item 7 — deliberately-seeded gaps) |
+| INT-008 GetDisplayData postcondition extension | UC-005 AF-3, UC-006 AF-3 + R001 behavioural bar (stakeholder-confirmed Elab Iter 2 — answer "Yes") | Refines | CLS-003, CLS-009; R001 PoC (Architect, Work Item 7) |
+| INT-010 postcondition extension | UC-004 AF-2, UC-005 AF-3, UC-006 AF-3, UC-007 AF-3 + R001 behavioural bar (stakeholder-confirmed Elab Iter 2 — one contract, four consumers) | Refines | CLS-009; R001 PoC (Architect, Work Item 7 — deliberately-seeded gaps); Test Case TC-011 (fixture re-seeded to include attribute gaps) |
+| INT-013 postcondition extension | UC-006 AF-3 + R001 behavioural bar (stakeholder-confirmed Elab Iter 2) | Refines | CLS-006; STD-003 (CSV — blank cells on missing display attributes, every event row present) |
 | **Boundary classes and navigation (User Interface Designer — Elaboration Iter 1, evolved Iter 2)** | | | |
 | SCR-01 Home | UC-001 (FR-004), UC-003 (FR-007), CON-011 | Derives | HomeView (CLS), ClockingController, ICLK, INEWS |
 | SCR-02 My Clocking History | UC-002 (FR-005), SEC-007 | Derives | ClockingHistoryView, ClockingController, ICLK |
@@ -2295,3 +2300,18 @@ Coordination artifact for the Designer (view-class detailing), the Implementer (
 | SB-05 storyboard (R001 bar on HR AD-reading screens) | UC-005 AF-3, UC-006 AF-3, UC-007 AF-3 + R001 behavioural bar (stakeholder decision, Elaboration Iter 2) + stakeholder confirmation (Elaboration Iter 2: asked whether the bar applies to all four AD-reading use cases, answer "Yes") | Refines | SCR-05, SCR-06; R001 PoC (Architect, Work Item 7 — deliberately-seeded gaps); P-05 (this artifact) |
 | Salt wireframes SCR-01 Home / SCR-04 Directory | CON-011, USA-002, USA-003, USA-004, AC-001, AC-003, AC-004, UC-004 AF-2 (R001 bar) | Derives | HomeView, DirectoryView (view classes); Implementer screen construction; SB-01, SB-02 (Use-Case Model) |
 | P-05 R001-bar extension (all four AD-reading UCs) | UC-004 AF-2, UC-005 AF-3, UC-006 AF-3, UC-007 AF-3 (stakeholder-confirmed, Elaboration Iter 2) | Refines | Designer view classes (blank-value rendering); Implementer screens; SB-05 (Use-Case Model) |
+| **Persistent data classes (Database Designer — Elaboration Iter 1)** | | | |
+| `clockings` table | CLS-021, FR-004, FR-005, DAT-001, CON-003 | Derives | INT-016 (CLS-012); Q1–Q5 access paths |
+| `news_items` table | CLS-022, FR-006, FR-007, FR-008, FR-009, CON-012 | Derives | INT-017 (CLS-013); Q6 access path |
+| `news_audit` table | CLS-023, NFR-005, AUD-001, AUD-002, AUD-003, DAT-002 | Derives | INT-019 (CLS-015); Q8 access path |
+| `worker_categories` table | CLS-024, FR-003, CON-006, ADR-004 | Derives | INT-018 (CLS-014); Q7 access path |
+| `category_audit` table | CLS-025, NFR-005, AUD-004, DAT-002 | Derives | INT-019 (CLS-016); Q8 access path |
+| `uk_clockings_idempotency_key` | REL-002, ADR-003, AC-005 | Realizes | Q5 sync duplicate suppression (UC-001 AF-1) |
+| `ix_clockings_employee_recorded` | PRF-002, PRF-001, UC-001, UC-002, UC-005 | Realizes | Q1, Q2, Q3 |
+| `ix_clockings_timestamp` | PRF-001, UC-006 | Realizes | Q4 monthly export |
+| `ix_news_items_published`, `ix_news_items_category_published` | PRF-001, UC-003 | Realizes | Q6 browse + category filter |
+| `ix_news_audit_news`, `ix_category_audit_employee` | NFR-005, AUD-002, AUD-004 | Realizes | Q8 audit reads |
+| Append-only REVOKE (audit tables) | DAT-002, NFR-005 | Realizes | INT-019 Add-only interface (compiler + DB dual enforcement) |
+| `timestamptz` UTC storage | DAT-001 + stakeholder decision (store UTC) | Realizes | CLS-007 display conversion; CLS-006 ISO-8601 offset export |
+| Migration V1 (baseline DDL) | CON-003, ADR-002, R008 | Realizes | Implementer initial EF migration (Construction) |
+| No-Employee-table rule | CON-005, CON-006, CON-007 | Derives | CLS-009 live LDAP resolution (R001 graceful degradation) |
