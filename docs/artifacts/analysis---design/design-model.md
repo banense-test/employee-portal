@@ -2193,7 +2193,6 @@ Coordination artifact for the Designer (view-class detailing), the Implementer (
 [OMITTED — no capsule-based elements exist in this system. The portal is a request/response web application (ADR-001: layered monolith, single process); it contains no real-time capsules, no signal protocols, and no asynchronous message-passing elements. The only asynchronous behavior is the offline sync replay (CLS-008 → sync endpoint), which is an HTTP request/response exchange specified in SEQ-001 — not a signal protocol.]
 
 ## Traceability
-
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
 | **Design classes (Designer — Elaboration Iter 1)** | | | |
@@ -2243,7 +2242,7 @@ Coordination artifact for the Designer (view-class detailing), the Implementer (
 | COMP-001 IAUD omission | NFR-005 scope (AUD-001…004), DAT-001 | Refines | SAD Logical View (coupling reduction) |
 | COMP-010 ILDAP via IDirectoryService | CON-005, CON-006 | Refines | SAD Logical View (single display-data path) |
 | COMP-009 browser-side realization | ADR-003, SAD Deployment View | Refines | CLS-008 + CLS-001.SyncEvents |
-| **Boundary classes and navigation (User Interface Designer — Elaboration Iter 1, PRESERVED)** | | | |
+| **Boundary classes and navigation (User Interface Designer — Elaboration Iter 1, evolved Iter 2)** | | | |
 | SCR-01 Home | UC-001 (FR-004), UC-003 (FR-007), CON-011 | Derives | HomeView (CLS), ClockingController, ICLK, INEWS |
 | SCR-02 My Clocking History | UC-002 (FR-005), SEC-007 | Derives | ClockingHistoryView, ClockingController, ICLK |
 | SCR-03 News | UC-003 (FR-007), CON-011 | Derives | NewsView, NewsController, INEWS |
@@ -2259,3 +2258,7 @@ Coordination artifact for the Designer (view-class detailing), the Implementer (
 | UI Patterns P-01…P-07 | CON-011, USA-001…USA-009, SEC-006, CON-012, CON-013, USA-008 (stakeholder decision) | Refines | Designer view classes; Implementer screens; Technical Writer terminology |
 | Boundary classes (view/controller) | SAD COMP-001–COMP-004 interfaces (ICLK, INEWS, IDIR, ICAT), ADR-001 | Derives | SAD Logical View (Presentation Layer) |
 | Design-reference reconciliations 1–3 | CON-011, CON-007, CON-012, UC-006 step 1, Use-Case Model (UC-ID authority) | Mitigates | R007 (UI fidelity risk) |
+| **UI evolution (User Interface Designer — Elaboration Iter 2, convergence cycle)** | | | |
+| SB-05 storyboard (R001 bar on HR AD-reading screens) | UC-005 AF-3, UC-006 AF-3, UC-007 AF-3 + R001 behavioural bar (stakeholder decision, Elaboration Iter 2) + stakeholder confirmation (Elaboration Iter 2: asked whether the bar applies to all four AD-reading use cases, answer "Yes") | Refines | SCR-05, SCR-06; R001 PoC (Architect, Work Item 7 — deliberately-seeded gaps); P-05 (this artifact) |
+| Salt wireframes SCR-01 Home / SCR-04 Directory | CON-011, USA-002, USA-003, USA-004, AC-001, AC-003, AC-004, UC-004 AF-2 (R001 bar) | Derives | HomeView, DirectoryView (view classes); Implementer screen construction; SB-01, SB-02 (Use-Case Model) |
+| P-05 R001-bar extension (all four AD-reading UCs) | UC-004 AF-2, UC-005 AF-3, UC-006 AF-3, UC-007 AF-3 (stakeholder-confirmed, Elaboration Iter 2) | Refines | Designer view classes (blank-value rendering); Implementer screens; SB-05 (Use-Case Model) |
