@@ -1,5 +1,3 @@
-# Use-Case Model
-
 ## Document Control
 
 | Field | Value |
@@ -8,7 +6,7 @@
 | Status | Draft |
 | Milestone Target | End of Elaboration |
 | Iteration | 1 (Cycle 1) |
-| Elaboration Changes | All 10 UCs fully specified (was: 3 detailed / 7 outlined); AD display-data dependencies of UC-005/006/007 made explicit (CON-005, CON-006); offline clocking AF-1 confirmed in-scope by stakeholder; volatility updated with PoC learnings (R001, R003, R004) |
+| Elaboration Changes | All 10 UCs fully specified (was: 3 detailed / 7 outlined); AD display-data dependencies of UC-005/006/007 made explicit (CON-005, CON-006); offline clocking AF-1 confirmed in-scope by stakeholder; volatility updated with PoC learnings (R001, R003, R004). **RS Iter 1 additions:** activity diagrams completed for UC-002/003/005/009 (all 10 UCs now diagrammed); exception flows added (UC-002/003 EF-1 data-source unavailability; UC-005/009 EF-1 role denial per SEC-006); UC-001 AF-1 offline-sync thresholds + AF-3 ignore window quantified (delegated to RS by recorded stakeholder decision); UC-006 CSV column set v1 detailed |
 
 ## Use-Case Diagram
 
@@ -161,12 +159,23 @@ end note
 **Alternative Flows:**
 - **AF-1: Network disruption (NFR-004, AC-005).** At step 7, if the network is temporarily unavailable, the system queues the clocking locally with the recorded timestamp and syncs it to the database once connectivity is restored. The confirmation at step 8 is shown from the queued data so the employee sees immediate feedback. *Stakeholder decision recorded: this mechanism is architectural, within declared scope — design ownership: Software Architect (R004 PoC); thresholds (max queue size, sync timeout, conflict policy): Requirements Specifier.*
 - **AF-2: Session expired.** At step 2, if the OIDC session has expired, the system redirects to Keycloak for re-authentication before proceeding.
-- **AF-3: Repeated press.** At step 5, presses repeated before the status refreshes are treated as a single transition (the button is status-aware; a stray second press must not produce an accidental opposite event). The ignore window is quantified by the Requirements Specifier.
+- **AF-3: Repeated press.** At step 5, presses repeated before the status refreshes are treated as a single transition (the button is status-aware; a stray second press must not produce an accidental opposite event). **Ignore window: 2 seconds** — a second press within 2 seconds of the first is treated as the same transition and produces no additional event. [ASSUMPTION — requires validation] Basis: 2 × the NFR-002 response budget of 1 second — a stray repeat lands inside the response window; a deliberate opposite transition cannot occur before the status refreshes.
+
+**AF-1 quantified thresholds (Requirements Specifier, Elaboration Iter 1 — per the recorded stakeholder decision delegating threshold quantification to this role):**
+
+| Threshold | Value | Source / Basis |
+|---|---|---|
+| Offline tolerance window | Network disruptions of at least 5 minutes are tolerated; queued events are never lost | AC-005 (declared) |
+| Per-client queue capacity | ≥ 10 clocking events per employee browser | [ASSUMPTION — requires validation] Basis: at most 2 transitions per employee per workday (FR-004 in/out); 10 events covers 5 full workdays of total outage — far beyond the declared 5-minute window |
+| Sync completion | All queued events persisted ≤ 60 seconds after connectivity is restored | [ASSUMPTION — requires validation] Basis: worst case 200 employees × 1 queued event each (STK-003 population), small records, restored corporate LAN |
+| Conflict policy | Idempotent: an exact duplicate (same employee, same event type, same recorded timestamp) is rejected, never duplicated; events are ordered by recorded timestamp, not arrival order | DAT-001 (timestamp fixed at button press), AF-3 |
+| Timestamp convention | Queued timestamps are captured at the moment of the button press and persisted unchanged on sync; all timestamps recorded and displayed in the portal server's timezone | DAT-001; [ASSUMPTION — requires validation] Basis: single-node Windows Server (CON-008); per-office timezone conversion not declared |
 
 **Scenarios (discovery walk):**
 - **S1:** María (Employee, Havana) opens the portal at 08:58, sees "Clock In", presses → confirmation "Clocked in at 08:58:12".
 - **S2:** At 17:30 she returns; the button now reads "Clock Out"; she presses → confirmation; her history (UC-002) shows both events.
 - **S3:** The network drops at 09:00 for 5 minutes; Luis presses "Clock In" during the outage → confirmation is shown from the queued data; the event syncs when connectivity returns (AC-005).
+- **S4 (threshold walk):** Luis double-presses "Clock In" 0.8 s apart → one event only (AF-3, 2 s window); the stray press is ignored.
 
 **Activity Diagram:**
 
@@ -222,7 +231,36 @@ stop
 - **AF-1: No events this month.** At step 3, if no events exist for the current month, the system displays an empty-state message.
 - **AF-2: Offline-queued events not yet synced.** Events queued locally under UC-001 AF-1 appear in the history only once the sync completes; until then the history reflects the last synced state.
 
+**Exception Flows:**
+- **EF-1: PostgreSQL unreachable.** At step 3, if the portal database cannot be reached, the system displays "History temporarily unavailable" and shows no partial or cached list (NFR-004 fault tolerance; no local copy of portal data exists to fall back on). The employee may retry; locally queued, not-yet-synced events (AF-2) are unaffected.
+
 **Scope notes:** Current month only (declared). Read-only — no editing, no export from this view. The employee sees only their own events (SEC-007).
+
+**Activity Diagram:**
+
+```plantuml
+@startuml
+title UC-002 View Own Clocking History - Activity Diagram (FR-005)
+|Employee|
+start
+:Select "My Clocking History";
+|Portal|
+:Authenticate employee via Keycloak OIDC\n(redirect to Keycloak if session expired);
+if (PostgreSQL reachable?) then (yes)
+  :Query own clocking events for current month;
+  if (Events exist for current month?) then (yes)
+    :Display list of in/out timestamps;
+  else (no - AF-1)
+    :Display empty-state message;
+  endif
+else (no - EF-1)
+  :Display "History temporarily unavailable";
+endif
+|Employee|
+:See history, empty state, or unavailable message;
+stop
+@enduml
+```
 
 ### UC-003: Browse News — FULL
 
@@ -246,7 +284,45 @@ stop
 - **AF-1: Filter yields no items.** At step 6, if the selected category has no published items, the system displays "No news in this category."
 - **AF-2: No published news at all.** At step 3, if no published items exist, the system displays an empty-state message.
 
+**Exception Flows:**
+- **EF-1: PostgreSQL unreachable.** At step 3, if the portal database cannot be reached, the system displays "News temporarily unavailable" and shows no partial list (NFR-004 fault tolerance).
+
 **Scope notes:** Read-only for employees — no comments, no reactions (declared). Unpublished items (UC-010) are never shown here.
+
+**Activity Diagram:**
+
+```plantuml
+@startuml
+title UC-003 Browse News - Activity Diagram (FR-007)
+|Employee|
+start
+:Navigate to main page or news section;
+|Portal|
+:Authenticate employee via Keycloak OIDC\n(redirect to Keycloak if session expired);
+if (PostgreSQL reachable?) then (yes)
+  :Load published news sorted by date (newest first);
+  if (Published news exist?) then (yes)
+    :Display featured news with banner at top;
+    :Display news list sorted by date;
+  else (no - AF-2)
+    :Display empty-state message;
+  endif
+  if (Employee selects a category filter?) then (yes)
+    :Filter by category (General, HR, IT, Events);
+    if (Items in selected category?) then (yes)
+      :Display filtered list;
+    else (no - AF-1)
+      :Display "No news in this category";
+    endif
+  endif
+else (no - EF-1)
+  :Display "News temporarily unavailable";
+endif
+|Employee|
+:Browse news read-only (no comments, no reactions);
+stop
+@enduml
+```
 
 ### UC-004: Search Employee Directory — FULL (architecturally significant)
 
@@ -328,6 +404,45 @@ stop
 - **AF-1: No events match the filter.** At step 5, the system displays a message that no clocking records match.
 - **AF-2: AD unavailable.** At step 5, events remain viewable from PostgreSQL (they are portal data), but employee display attributes cannot be resolved; the system shows the AD user id and marks display attributes as unavailable. No local fallback exists (CON-006).
 
+**Exception Flows:**
+- **EF-1: Role denial.** At step 2, if the authenticated session holds only the Employee role, the system denies access to the clocking review page (SEC-006). No clocking data for other employees is revealed.
+
+**Activity Diagram:**
+
+```plantuml
+@startuml
+title UC-005 Review Employee Clockings - Activity Diagram (FR-001)
+|HR Administrator|
+start
+:Navigate to clocking review page;
+|Portal|
+:Authenticate HR via Keycloak OIDC;
+if (HR Administrator role in claims?) then (yes)
+  :Load clocking events for all employees from PostgreSQL;
+  |HR Administrator|
+  :Optionally set filter (employee and/or date range);
+  |Portal|
+  if (Events match the filter?) then (yes)
+    |Active Directory|
+    :Read employee display attributes on demand\n(read-only - CON-005, CON-006);
+    |Portal|
+    if (AD display attributes resolved?) then (yes)
+      :Display matching events with employee names;
+    else (no - AF-2)
+      :Display events with AD user id only;\ndisplay attributes marked unavailable;
+    endif
+  else (no - AF-1)
+    :Display "No clocking records match";
+  endif
+else (no - EF-1)
+  :Deny access - SEC-006 requires HR Administrator role;
+endif
+|HR Administrator|
+:See review results or access-denied message;
+stop
+@enduml
+```
+
 ### UC-006: Export Monthly Clocking Report — FULL
 
 | Field | Value |
@@ -350,7 +465,19 @@ stop
 - **AF-1: No events for the month.** At step 3, if no clocking records exist for the selected month, the system informs HR and produces no file.
 - **AF-2: AD unavailable.** At step 4, if AD cannot be reached, the system aborts the export with "Directory temporarily unavailable" — no partial file is produced (a report with unresolved employee identities would be misleading for payroll/records use).
 
-**Scope notes:** CSV column set is detailed by the Requirements Specifier (volatility: Medium — downstream consumers may reshape it). Export is HR-only; employees have no export (FR-005 is view-only).
+**CSV column set v1 (Requirements Specifier, Elaboration Iter 1) — one row per clocking event, columns in this order:**
+
+| # | Column | Content | Source |
+|---|---|---|---|
+| 1 | ad_user_id | AD user id of the employee | CON-006 (the only employee identifier the portal stores) |
+| 2 | employee_name | Full name, read from AD on demand | CON-005, FR-010 attribute set |
+| 3 | department | Department, read from AD on demand | CON-005, FR-010 |
+| 4 | office | Office, read from AD on demand | CON-005, FR-010 |
+| 5 | event_date | Date of the event (YYYY-MM-DD) | FR-004 recorded timestamp |
+| 6 | event_type | IN or OUT | FR-004 |
+| 7 | event_time | Time of the event (HH:MM:SS, portal server timezone) | FR-004 recorded timestamp |
+
+**CSV scope notes:** Job title, email, and extension are excluded — they are directory attributes (FR-010), not clocking data. All timestamps are exported in the portal server's timezone [ASSUMPTION — requires validation] Basis: single-node Windows Server (CON-008), DAT-001 system-recorded timestamps; per-office timezone conversion not declared. Volatility: Medium — downstream payroll/records consumers may reshape the column set; the export format must be encapsulated so column changes do not ripple (Use-Case Survey volatility rationale). AF-2 guarantees every exported row resolves employee display data. Export is HR-only; employees have no export (FR-005 is view-only).
 
 **Activity Diagram:**
 
@@ -492,7 +619,45 @@ stop
 - **AF-1: Validation failure.** At step 5, the system highlights missing or invalid fields; HR corrects and resubmits.
 - **AF-2: Concurrent unpublish.** At step 5, if another administrator unpublished the item while it was being edited, the system informs HR that the item is no longer published and the edit is not applied (editing an unpublished record would muddy the audit trail; the record is retained read-only for audit).
 
+**Exception Flows:**
+- **EF-1: Role denial.** At step 2, if the authenticated session holds only the Employee role, the system denies access to news editing (SEC-006). No news item is loaded for editing.
+
 **Business rules:** NFR-005 — every edit audited exactly like the original publication. CON-012 — no hard delete; editing never removes prior versions from the trail.
+
+**Activity Diagram:**
+
+```plantuml
+@startuml
+title UC-009 Edit Published News - Activity Diagram (FR-008)
+|HR Administrator|
+start
+:Open news management and\nselect published item to edit;
+|Portal|
+:Authenticate HR via Keycloak OIDC;
+if (HR Administrator role in claims?) then (yes)
+  :Load current version of the news item;
+  |HR Administrator|
+  :Modify fields (title, body, date,\ncategory, featured flag) and save;
+  |Portal|
+  if (Required fields valid?) then (yes)
+    if (Item still published - no concurrent unpublish?) then (yes)
+      :Persist updated news item;
+      :Append audit entry: editor + timestamp\n(AUD-002, NFR-005 - all versions traceable);
+      :Confirm - updated item visible to employees (UC-003);
+    else (no - AF-2)
+      :Inform HR: item no longer published;\nedit not applied - record retained read-only;
+    endif
+  else (no - AF-1)
+    :Highlight missing or invalid fields;\nHR corrects and resubmits;
+  endif
+else (no - EF-1)
+  :Deny access - SEC-006 requires HR Administrator role;
+endif
+|HR Administrator|
+:See confirmation, notice, or validation errors;
+stop
+@enduml
+```
 
 ### UC-010: Unpublish News — FULL (architecturally significant)
 
@@ -556,7 +721,7 @@ stop
 | UC-003 | FR-007 | Refines | Use-Case Realizations (Designer) |
 | UC-004 | FR-010 | Refines | Use-Case Realizations (Designer); Test priority 1 (Test Designer); R001 PoC (Architect) |
 | UC-005 | FR-001 | Refines | Use-Case Realizations (Designer) |
-| UC-006 | FR-002 | Refines | Use-Case Realizations (Designer); CSV columns — Requirements Specifier |
+| UC-006 | FR-002 | Refines | Use-Case Realizations (Designer); CSV column set v1 detailed (RS, Elab Iter 1) |
 | UC-007 | FR-003 | Refines | Use-Case Realizations (Designer) |
 | UC-008 | FR-006 | Refines | Use-Case Realizations (Designer) |
 | UC-009 | FR-008 | Refines | Use-Case Realizations (Designer) |
@@ -566,4 +731,11 @@ stop
 | ACT-003 | CON-005, CON-006 | Derives | UC-004, UC-005, UC-006, UC-007 (display data read on demand — Elaboration refinement) |
 | ACT-004 | CON-004 | Derives | All UCs (<<include>> auth) |
 | UC-001 AF-1 | NFR-004, AC-005 | Refines | Offline Sync Mechanism (Supplementary Specification; Architect — R004 PoC) |
+| UC-001 AF-1 thresholds | NFR-004, AC-005, DAT-001 | Refines | REL-002, REL-003 (Supplementary Specification — quantified by RS, Elab Iter 1) |
+| UC-001 AF-3 ignore window | NFR-002, FR-004 | Refines | PRF-002 (Supplementary Specification) |
+| UC-002 EF-1 | NFR-004 | Refines | REL-002 (Supplementary Specification) |
+| UC-003 EF-1 | NFR-004 | Refines | REL-002 (Supplementary Specification) |
 | UC-004 AF-2 | R001 | Mitigates | LDAP attribute consistency PoC (Architect) |
+| UC-005 EF-1 | SEC-006 | Refines | (Supplementary Specification — role enforcement) |
+| UC-006 CSV column set | FR-002, CON-005, CON-006, INT-005 | Refines | STD-003 (CSV format); UC-006 AF-2 (abort on AD unavailable) |
+| UC-009 EF-1 | SEC-006 | Refines | (Supplementary Specification — role enforcement) |
