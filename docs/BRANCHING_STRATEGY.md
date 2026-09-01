@@ -2,8 +2,9 @@
 
 **Project:** Employee Portal (Cuba Corp)
 **Phase:** Inception → Transition
+**Current Phase:** Elaboration (Iteration 1)
 **Maintainer:** Configuration Manager
-**Last Updated:** 2026-09-01
+**Last Updated:** 2026-09-01 (Elaboration Iter 1, Cycle 1 — baseline identification scheme added: §7.1 Baseline Register, §7.2 content map, §5.2 E1 lifecycle)
 
 ---
 
@@ -126,7 +127,7 @@ end note
 
 ## 5. Per-Phase Branching Model
 
-### 5.1 Inception (Current Phase)
+### 5.1 Inception (closed — LCO GO, Inception Iter 2)
 
 - **Documentation only** — normally no implementation code.
 - A feasibility mechanism, if genuinely required for risk reduction, is built
@@ -136,7 +137,7 @@ end note
   are the primary deliverables; they are persisted via `upsert_artifact` and tracked
   in SCM as Markdown.
 
-### 5.2 Elaboration — Evolutionary Architectural Mechanism
+### 5.2 Elaboration — Evolutionary Architectural Mechanism (Current Phase)
 
 The architectural prototype is **evolutionary** — it becomes the Construction
 baseline, not throwaway sample code.
@@ -154,6 +155,66 @@ baseline, not throwaway sample code.
 - At LAM (Late Elaboration close), the Integrator opens `iteration/E{n} → main`;
   the Architect reviews; the merge produces the Elaboration baseline.
 - **There is no `samples/poc/` directory and no ephemeral `poc/*` branch.**
+
+#### Baseline Identification Lifecycle — Elaboration E1 (current position)
+
+```plantuml
+@startuml
+title Baseline Identification Lifecycle — Elaboration E1 (position recorded 2026-09-01)
+
+[*] --> WS
+state "WorkspaceSetup\nIntegrator creates iteration/E1" as WS {
+  WS : only the Integrator writes iteration/* (invariant 8.1)
+  WS : iteration/E1 is the base of every mechanism PR
+}
+WS --> MW : workspace exists
+state "MechanismWork\nfeature/E1-{risk-id} -> iteration/E1" as MW {
+  MW : Implementer builds R001 / R003 / R004
+  MW : mechanisms evolutionarily in src/ (no poc/ branch)
+  MW : Code Reviewer opens + reviews one PR
+  MW : per mechanism (checklist CR-1..CR-7)
+  MW : Integrator merges APPROVED PRs
+}
+MW --> LAM : all mechanisms integrated
+state "LAMClosePR\niteration/E1 -> main" as LAM {
+  LAM : opened by the Integrator at LAM close
+  LAM : reviewed by the Architect
+}
+LAM --> GATE
+state GATE <<choice>>
+GATE --> TAG : [review state == APPROVED\nAND main CI == green]
+GATE --> BLK : [gate failure]
+state "Tagged\nbaseline-elaboration-E1-v1" as TAG {
+  TAG : scm_create_tag — audit message carries
+  TAG : PR number + head SHA + review ID + CI URL
+  TAG : register row flips PENDING -> ESTABLISHED
+}
+state "BlockerIssue\nseverity:blocker + nature:defect" as BLK {
+  BLK : DO NOT tag — a tag on a red build
+  BLK : or an unreviewed commit is a defect
+  BLK : fix applied, then gates re-verified
+}
+BLK --> GATE : re-check both gates
+TAG --> [*] : architecture baseline established
+
+note right of WS
+  CURRENT POSITION (2026-09-01, Elab Iter 1, Cycle 1):
+  NOT YET ENTERED — iteration/E1 is ABSENT,
+  0 ready-for-review branches, 0 PRs (any state),
+  no mechanism code in the build tree.
+  Open blockers: SCM issue #1 (mechanism code
+  absent) and Review Record F-CR-E1-1 (Critical).
+  main CI is GREEN (run 33492338439) but the tree
+  holds only the pre-Elaboration skeleton —
+  nothing architecture-bearing to freeze yet.
+end note
+
+note right of TAG
+  Re-tag (v2, v3...) only after an explicit
+  rollback or post-baseline critical fix.
+end note
+@enduml
+```
 
 ### 5.3 Construction — Feature Branches
 
@@ -262,6 +323,75 @@ Every baseline tag message MUST contain:
 - `main` CI run URL at tag time
 - Notable findings (naming violations, deferred items, re-tag justifications)
 
+### 7.1 Baseline Register — Baseline Identification Scheme
+
+The register is the **authoritative identification record** of every baseline tag
+(the CM plan's baseline identification scheme, per the Elaboration Iter 1 work order).
+One row per tag, appended at iteration close by the Configuration Manager **after**
+dual-gate verification. A row is never edited after its tag is written — a re-tag
+(`v{x+1}`) appends a NEW row and flips the prior row's status to `SUPERSEDED`, with
+the rollback justification recorded in the superseding row.
+
+| Tag | Status | Iteration-close PR | Head SHA | Architect review ID | `main` CI run URL (tag time) | Notable findings |
+|---|---|---|---|---|---|---|
+| `baseline-elaboration-E1-v1` | **PENDING** — dual gate not yet evaluable | — (no `iteration/E1 → main` PR exists) | — | — | — (`main` CI green at 2026-09-01, run 33492338439 — pre-merge state, NOT tag-time evidence) | Open blockers: SCM issue #1 (R001/R003/R004 mechanism code absent from SCM); Review Record F-CR-E1-1 (Critical — no Implementer handoff); `iteration/E1` absent (Integrator action A-1) |
+
+**Status vocabulary:** `PENDING` (iteration in progress; gates not yet evaluable) →
+`ESTABLISHED` (tag written on an APPROVED + CI-green commit) → `SUPERSEDED` (replaced
+by `v{x+1}` after rollback or post-baseline critical fix — justification mandatory).
+
+**Register discipline:** the Configuration Manager re-verifies both gates
+(`scm_get_pull_request_review_state` + `scm_get_build_status("main")`) immediately
+before every `scm_create_tag`, then flips the row to `ESTABLISHED` in the same
+commit cycle. A register row claiming `ESTABLISHED` without both gate values
+recorded is a defect.
+
+### 7.2 Baseline Identification Content Map — what each baseline freezes
+
+```plantuml
+@startuml
+title Baseline Identification Scheme — configuration items frozen per baseline family
+
+skinparam componentStyle rectangle
+
+package "baseline-elaboration-E{n}-v{x}\n(architecture baseline)" as ELAB {
+  component "SAD 4+1 baseline\n(7 diagrams · 11 COMP · 4 ADR)" as SAD_V
+  component "Evolutionary mechanism code (src/)\nR001 LDAP gateway · R003 OIDC client\nR004 offline queue + idempotent sync" as MECH_C
+  component "Dual-coverage mechanism tests" as MECH_T
+}
+
+package "baseline-construction-C{n}-v{x}\n(iteration baseline)" as CONS {
+  component "UC realizations\n(feature/C{n}-{uc-id} merges)" as UC_R
+  component "Regression suite green on main" as REG_S
+}
+
+package "baseline-transition-T{n}-v{x}\n(release baseline)" as TRANS {
+  component "Release candidate on main" as REL_C
+  component "hotfix/{issue-id} patches\n(re-tag v{x+1} after critical fix)" as HOT_P
+}
+
+component "Baseline Register\nBRANCHING_STRATEGY.md - Baseline Register" as REG
+
+ELAB ..> REG : one row per tag
+CONS ..> REG : one row per tag
+TRANS ..> REG : one row per tag
+
+note bottom of ELAB
+  E1 v1 status: PENDING — dual gate not
+  evaluable (no LAM-close PR exists).
+  See Baseline Register (§7.1).
+end note
+
+note right of REG
+  Register row = the audit record:
+  Tag | Status (PENDING / ESTABLISHED /
+  SUPERSEDED) | Iteration-close PR |
+  Head SHA | Architect review ID |
+  main CI run URL | Notable findings
+end note
+@enduml
+```
+
 ---
 
 ## 8. Cross-Phase Invariants
@@ -327,7 +457,12 @@ branches and PRs they authorize:
 - **Directory:** Live LDAP read from AD (CON-005, CON-006). No sync, no local copy.
 - **DB:** PostgreSQL (CON-003). Stores only `uid → category` (CON-006).
 - **Tech stack:** .NET 10 REST API + Razor Pages (CON-001, CON-002).
-- **Key risks:** R001 (LDAP attribute gaps), R002 (clocking adoption).
+- **Key risks:** R001 (LDAP attribute gaps — HIGH), R002 (clocking adoption); Risk List
+  entries R003 (OIDC), R004 (offline resilience), R010 (STK-004 deliverables).
+- **Elaboration mechanism work (stakeholder decision, Elab Iter 1):** the PoC is
+  produced in Elaboration and validated **empirically** — R001 against a disposable
+  LDAP directory, R003 against a stub OIDC issuer, R004 direct — all evolutionary in
+  `src/` on `feature/E1-{risk-id}` branches based on `iteration/E1`.
 - **Elaboration test priority:** R001 > R003 > R004; first test cases target UC-001, UC-004, UC-010.
 - **Three blocking deployment dependencies on STK-004:** server, LDAP, Keycloak client.
 
@@ -344,3 +479,7 @@ branches and PRs they authorize:
 | Escalation procedures | RUP Ch.13 (CCB) | DependsOn | scm_create_issue |
 | R001 (LDAP risk) | Declared risk | DependsOn | feature/E1-R001-* branch family |
 | STK-004 (Infra Team) | Declared stakeholder | DependsOn | Deployment dependencies (server, LDAP, Keycloak client) |
+| Baseline Register (§7.1) | RUP Ch.13; Elaboration Iter 1 work order (baseline identification scheme) | Refines | `baseline-elaboration-E1-v1` (PENDING); every future baseline tag |
+| Baseline Identification Content Map (§7.2) | RUP Ch.13; SAD (4+1 baseline, COMP-001…011, ADR-001…004) | Refines | SAD, mechanism code (`src/`), regression suite, release candidates |
+| E1 lifecycle diagram (§5.2) | BRANCHING_STRATEGY §5.2, §6; Review Record F-CR-E1-1 (current position) | Refines | `iteration/E1 → main` flow; `baseline-elaboration-E1-v1` |
+| CONTRIBUTING.md (branch-strategy section) | Review Record F-CR-E1-2 / A-5 (CM share) | Implements | CR-1 citable rule baseline (branch/PR/merge matters) |
