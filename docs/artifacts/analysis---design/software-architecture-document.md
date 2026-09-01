@@ -668,21 +668,29 @@ The Lifecycle Architecture Milestone is **NOT yet declared achieved** — this i
 | Consequences | R004 (offline fault tolerance) must be validated in Elaboration with a PoC: simulate a 5-minute network drop, queue a clocking, reconnect, and verify sync without duplicates. The idempotency key mechanism must be designed in detail by the Designer. |
 
 ## Traceability
-
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
-| COMP-001 (Clocking Service) | UC-001, FR-004, FR-005 | Derives | COMP-008, COMP-009, COMP-005, COMP-006 |
-| COMP-002 (News Service) | UC-003, UC-008, UC-009, UC-010, FR-006, FR-007, FR-008, FR-009 | Derives | COMP-008, COMP-005, COMP-006 |
-| COMP-003 (Directory Service) | UC-004, FR-010 | Derives | COMP-007, COMP-006 |
-| COMP-004 (Category Service) | UC-007, FR-003 | Derives | COMP-008, COMP-005, COMP-006 |
-| COMP-005 (Audit Service) | NFR-005, AUD-001–004 | Derives | COMP-008 |
-| COMP-006 (OIDC Auth Provider) | CON-004, SEC-001, SEC-002, R003 | Derives | Keycloak (external) |
-| COMP-007 (LDAP Gateway) | CON-005, CON-006, CON-007, R001, R005 | Derives | Active Directory (external) |
-| COMP-008 (PG Persistence) | CON-003, DC-003 | Derives | PostgreSQL (external) |
-| COMP-009 (Offline Resilience Handler) | NFR-004, AC-005, R004 | Derives | COMP-008 |
-| ADR-001 (Architectural Style) | CON-001, CON-002, CON-008, CON-009 | Refines | All COMP-* |
-| ADR-002 (Persistence) | CON-003, R008 | Refines | COMP-008 |
-| ADR-003 (Offline Resilience) | NFR-004, AC-005, R004 | Refines | COMP-009, COMP-001 |
-| Deployment Topology | CON-008, CON-009, CON-010 | Refines | All COMP-* |
-| Data View (schema) | CON-006, FR-003, FR-004, FR-006, NFR-005 | Derives | COMP-008 |
-| Analysis Mechanisms | CON-003, CON-004, CON-005, NFR-001, NFR-002, NFR-004, NFR-005 | Refines | COMP-005–COMP-009 |
+| COMP-001 (Clocking Service) | UC-001, FR-004, FR-005, DAT-001 | Derives | COMP-008, COMP-009, COMP-005, COMP-011 |
+| COMP-002 (News Service) | UC-003, UC-008, UC-009, UC-010, FR-006, FR-007, FR-008, FR-009, CON-012 | Derives | COMP-008, COMP-005 |
+| COMP-003 (Directory Service) | UC-004, FR-010, R001 | Derives | COMP-007 |
+| COMP-004 (Category Service) | UC-007, FR-003, CON-006, CON-013 | Derives | COMP-008, COMP-005, ADR-004 |
+| COMP-005 (Audit Service) | NFR-005, AUD-001–004, DAT-002 | Derives | COMP-008 |
+| COMP-006 (OIDC Auth Provider) | CON-004, SEC-001, SEC-002, SEC-006, R003 | Derives | Keycloak (external) |
+| COMP-007 (LDAP Gateway) | CON-005, CON-006, CON-007, R001, R005, PRF-003 | Derives | Active Directory (external) |
+| COMP-008 (PG Persistence) | CON-003, DC-003, R008 | Derives | PostgreSQL (external) |
+| COMP-009 (Offline Resilience Handler) | NFR-004, AC-005, REL-002, REL-003, R004 | Derives | COMP-008, COMP-001 |
+| COMP-010 (Report Export Service) | UC-006, FR-002, INT-005, STD-003 | Derives | COMP-008, COMP-007, COMP-011 |
+| COMP-011 (Time Service) | DAT-001, USA-008 + stakeholder decisions (Elab Iter 1): store UTC, display America/Havana, export ISO-8601 with explicit offset, payroll day = local calendar day | Derives | COMP-001, COMP-010, Presentation Layer |
+| ADR-001 (Layered Monolith) | CON-001, CON-002, CON-008, CON-009 | Refines | All COMP-* |
+| ADR-002 (PostgreSQL / EF Core / Npgsql 10.0.3) | CON-003, R008, enterprise version policy (re-anchored Elab Iter 1) | Refines | COMP-008 |
+| ADR-003 (Offline Resilience) | NFR-004, AC-005, REL-002, REL-003, R004 | Refines | COMP-009, COMP-001 |
+| ADR-004 (Category List JSON File) | CON-013, SUP-004, UC-007 (delegation) | Refines | COMP-004, Implementation View (worker-categories.json) |
+| Deployment Topology | CON-008, CON-009, CON-010, CON-014, R010 | Refines | All COMP-*; STK-004 deliverables |
+| Data View (schema) | CON-006, FR-003, FR-004, FR-006, NFR-005, DAT-001, DAT-002, REL-002 | Derives | COMP-008 |
+| Process View (offline sync, audit atomicity) | NFR-004, AC-005, REL-002, REL-003, DAT-002, PRF-002, PRF-003 | Derives | COMP-009, COMP-005, COMP-001 |
+| Implementation View (repo mapping) | CON-001, CON-002, ADR-001, ADR-004 | Refines | src/EmployeePortal (Pages/, Services/, Infrastructure/), tests/EmployeePortal.Tests |
+| Use-Case View (3 sequence diagrams) | UC-001, UC-004, UC-010 | Realizes | All 4+1 views (validation scenarios) |
+| Timestamp Convention (§ Goals and Constraints) | DAT-001, USA-008 + stakeholder decisions (Elab Iter 1) | Authorizes | COMP-011, COMP-010, UC-006 event_timestamp column |
+| PoC Plan (risk dispositions) | R001, R003, R004, R005, R006, R008, R010 | Mitigates | Construction test activities; COMP-006, COMP-007, COMP-009, COMP-005, COMP-008 |
+| LCA Review (§ Quality) | LCA milestone criteria (RUP) | Refines | End-of-Elaboration milestone gate |
+| Stack reconciliation | CON-001, CON-003, enterprise version policy | DependsOn | COMP-008, Implementation Model (Implementer) |
