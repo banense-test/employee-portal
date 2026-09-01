@@ -185,7 +185,7 @@ object "main (release branch)" as MAIN {
   src/EmployeePortal (Program.cs,
   Pages/Index.cshtml, appsettings.json)
   tests/EmployeePortal.Tests (SmokeTests.cs)
-  NO Services/ · NO Infrastructure/ ·
+  NO Services/ · No Infrastructure/ ·
   NO mechanism code · NO PoC scaffolding
 }
 
@@ -379,6 +379,212 @@ stop
 ```
 
 **Prior-findings reconciliation (this lens):** the findings ledger holds zero findings emitted by the BusinessReviewer role — the Inception findings (F1/F2) belong to the Reviewer and ManagementReviewer lenses and are all RESOLVED. Nothing to close; no `resolve_artifact_finding` calls owed.
+
+### Management LCA Lens — Scope and Criteria (Management Reviewer — PRA, this cycle)
+
+**Scope:** the two-part review the PRA owns at the end-of-Elaboration milestone. Part 1 — **Project Planning Review** (feasibility and acceptability of the Iteration Plan). Part 2 — **LCA exit criteria** (the six RUP lifecycle-architecture criteria, pass/fail per criterion with evidence). Artifacts inspected in full before any conclusion: Software Architecture Document (architecture baseline), Iteration Plan (planning baseline — coarse roadmap + fine plan), Risk List (risk status), Iteration Assessment (Inception — prior-phase actuals; the Elaboration assessment is authored by the Project Manager in the Assess touchpoint AFTER this review, so its absence here is expected and is never a finding), Development Case (PoC trigger correction verified: trigger FIRED, stakeholder decision binding), Review Record (cumulative — all lenses), and the Work Order's Measured Actuals (Inception: 28 min agent time, 1,347,939 tokens, 11 runs, 10 artifacts — phase-level record governs).
+
+**Part 1 — Project Planning Review (feasibility and acceptability):**
+
+| Dimension | Assessment | Evidence |
+|---|---|---|
+| Budget box traces to measured actuals | **PASS** | 1,200K box [ASSUMPTION — scaled from measured Inception actual 1,347,939 tokens, phase-level record; basis named]; work items sum ~1,180K within box; Construction sizing tagged with basis; the disproven 185K assumption explicitly replaced |
+| Units discipline | **PASS** | No person-weeks/story points; two clocks (agent tokens/time vs. human queue days) never summed — verified in milestone table, Two Clocks section, sizing note; gantt bars disclaimed as structural sequencing units, unanchored |
+| UC-ID authority (LCO F1 lesson) | **PASS** | All 10 FR→UC rows verified against Use-Case Model authority (FR-001→UC-005, FR-004→UC-001, FR-010→UC-004 …) |
+| Status honesty (LCO F2 lesson) | **PASS with one Critical exception** | WI 2–10 "In progress" with reconciliation note — but WI 7–9 (PoC code) have zero SCM evidence (no Services/, no Infrastructure/, no packages; iteration/E1 skeleton only; SCM Issue #1 blocker) → Iteration Plan F3 (Critical) |
+| Human gate queue handling | **DEFECT (Minor)** | Plan forecasts gate queues ([ASSUMPTION — up to 2 days LCA; up to 5 days STK-004]) — the planning rule requires estimate NONE, bounded in the Risk List → Iteration Plan F5 + Risk List F1 (Minor) |
+| Architecture stability | **NOT stable for Construction entry this cycle** | 4+1 baseline structurally complete and sound (7 diagrams, 11 components, ADR-001..004) — but the SAD still carries the superseded analysis-only PoC record (§Quality cites "trigger NOT fired" while the Development Case records it FIRED), and the riskiest mechanisms are empirically unvalidated |
+| Risk retirement trend | **FLAT — not occurring yet** | R001 HIGH since Inception, still HIGH; R003/R004 SIGNIFICANT unchanged. The re-scoped empirical validation paths are correct but unexecuted; the Risk List carries no per-risk trend direction to surface this → Risk List F1 (Minor) |
+| Stakeholder acceptability | **OBTAINED by asking** | Consulted at this review with the full defect inventory; answer: "No" — sanction REFUSED; directive recorded verbatim and binding |
+
+**Part 2 — LCA Milestone Compliance Table (criterion / status / evidence / verdict):**
+
+```plantuml
+@startuml
+title LCA Milestone Compliance Table - Management Lens (Elaboration Iter 1, 2026-09-01)
+
+object "LCA-1: Product vision stable" as C1 {
+  Status: PASS
+  Evidence: 10 UCs FULL (Use-Case Model,
+  0 findings); 3 stakeholder decisions
+  incorporated, markers retired in place
+  Verdict: MET
+}
+object "LCA-2: Architecture stable" as C2 {
+  Status: FAIL this cycle
+  Evidence: 4+1 baseline structurally sound
+  (7 diagrams, 11 COMP, ADR-001..004) BUT
+  SAD F1 Critical open (superseded PoC
+  record) + SAD F2 Critical open (PoC
+  artifact + code evidence absent)
+  Verdict: NOT MET
+}
+object "LCA-3: Major risks addressed empirically" as C3 {
+  Status: FAIL
+  Evidence: R001 (HIGH, exposure=9)
+  unvalidated; zero mechanism code in SCM
+  (iteration/E1 skeleton only, Issue #1
+  blocker); exit criteria 1-3 unmet;
+  stakeholder: paper-only HIGH-risk
+  validation not acceptable
+  Verdict: NOT MET
+}
+object "LCA-4: Construction plan sufficiently detailed" as C4 {
+  Status: PASS
+  Evidence: all 10 UCs assigned across
+  3 Construction iterations; UC IDs verified
+  vs Use-Case Model authority; sized from
+  measured actuals, assumptions tagged
+  Verdict: MET
+}
+object "LCA-5: Stakeholders agree vision achievable" as C5 {
+  Status: REFUSED this cycle
+  Evidence: stakeholder sanction REFUSED
+  (consulted at this review); directive:
+  fix ALL findings incl. Minors before
+  phase transition
+  Verdict: NOT MET this cycle
+}
+object "LCA-6: Actual vs planned expenditure acceptable" as C6 {
+  Status: PASS as measurable
+  Evidence: Inception actuals recorded
+  (28 min agent time, 1,347,939 tokens,
+  11 runs); Elaboration actuals at iteration
+  close; phase-level record governs; PM owns
+  the 1,347,939 vs 3,550,308 reconciliation
+  Verdict: MET (measurement discipline)
+}
+
+C1 -[hidden]-> C2
+C2 -[hidden]-> C3
+C3 -[hidden]-> C4
+C4 -[hidden]-> C5
+C5 -[hidden]-> C6
+
+note bottom of C3
+  LCA verdict (management lens): NO-GO.
+  Criteria 2, 3 NOT MET; criterion 5 REFUSED.
+  The architecture baseline structure is
+  sound - do NOT rework it; the gap is the
+  unexecuted empirical validation and the
+  superseded SAD record. Convergence cycle
+  (Elab Iter 2) re-presents LCA with the
+  evidence package.
+end note
+@enduml
+```
+
+**Risk Retirement Trend (Inception → Elaboration Iter 1 — the management heuristic: high-magnitude risks must show DECREASING trend lines):**
+
+```plantuml
+@startuml
+title Risk Retirement Trend - Inception to Elaboration Iter 1 (Management Lens)
+
+[*] --> R001_INC
+state "R001 Inception:\nHIGH (P=3, I=3) OPEN" as R001_INC
+state "R001 Elab Iter 1:\nHIGH MITIGATING\n(path designed, NOT executed)\nTREND: FLAT" as R001_E1
+R001_INC --> R001_E1 : re-scoped per stakeholder\ndecision - disposable LDAP directory
+state "R001 target at LCA re-presentation:\nRETIRED on empirical evidence\n(disposable-directory validation)" as R001_TGT
+R001_E1 --> R001_TGT : convergence cycle executes\nWork Item 7 (A-2)
+
+[*] --> R003_INC
+state "R003 Inception:\nSIGNIFICANT OPEN" as R003_INC
+state "R003 Elab Iter 1:\nSIGNIFICANT MITIGATING\n(stub issuer designed, NOT executed)\nTREND: FLAT" as R003_E1
+R003_INC --> R003_E1 : re-scoped - stub OIDC issuer
+state "R003 target at LCA re-presentation:\nRETIRED on empirical evidence\n(stub-issuer validation)" as R003_TGT
+R003_E1 --> R003_TGT : convergence cycle executes\nWork Item 8 (A-3)
+
+[*] --> R004_INC
+state "R004 Inception:\nSIGNIFICANT OPEN" as R004_INC
+state "R004 Elab Iter 1:\nSIGNIFICANT MITIGATING\n(direct, NOT executed)\nTREND: FLAT" as R004_E1
+R004_INC --> R004_E1 : re-scoped - direct,\nnothing blocks it
+state "R004 target at LCA re-presentation:\nRETIRED on empirical evidence\n(5-min drop simulation)" as R004_TGT
+R004_E1 --> R004_TGT : convergence cycle executes\nWork Item 9 (A-4)
+
+[*] --> R010_INC
+state "R010 Inception:\nSIGNIFICANT - blocks\nElaboration PoCs" as R010_INC
+state "R010 Elab Iter 1:\nSIGNIFICANT re-scoped - blocks\nproduction-instance integration\nONLY (Construction)\nTREND: NARROWED" as R010_E1
+R010_INC --> R010_E1 : re-scoped per stakeholder\ndecision - does NOT inherit\nR001 HIGH, not an LCA condition
+R010_E1 --> [*] : Construction integration\n(R010 + R011)
+
+note bottom of R001_E1
+  Management heuristic 3: high-magnitude
+  risks must show DECREASING trend lines.
+  R001 has been HIGH since Inception with
+  zero retirement evidence - the empirical
+  path is correctly designed (Risk List
+  reappraisal) but unexecuted. Primary
+  LCA blocker this cycle. A risk unchanged
+  across two reviews is evidence that
+  retirement is not occurring.
+end note
+@enduml
+```
+
+**Project Health Scorecard (four dimensions — a project green on three and red on one is NOT a green project):**
+
+```plantuml
+@startuml
+title Project Health Scorecard - Four Dimensions (Management Lens, Elaboration Iter 1)
+
+object "SCOPE - GREEN" as SC {
+  All 10 FRs traced to UCs
+  (Use-Case Model authority);
+  zero scope-creep findings
+  (all lenses); 3 stakeholder
+  decisions incorporated;
+  declared scope held as ceiling
+}
+object "SCHEDULE - AMBER" as SCH {
+  Iteration sequencing sound
+  (7 iterations, 2 Elaboration);
+  BUT exit criteria 1-3 unmet
+  this cycle - convergence cycle
+  (Elab Iter 2) required before
+  LCA; gate-queue forecasts
+  violate no-estimate rule
+  (MR-F3)
+}
+object "COST - GREEN" as CO {
+  Budget box 1,200K [ASSUMPTION,
+  basis named] traces to measured
+  Inception actual (1,347,939
+  tokens, phase-level record);
+  work items sum ~1,180K within
+  box; two clocks never summed;
+  no fabricated units
+}
+object "QUALITY - RED" as QU {
+  4 Critical findings open across
+  lenses (SAD F1, SAD F2,
+  F-CR-E1-1, MR-F1); empirical
+  validation unexecuted; 7 of 9
+  artifacts clean from technical
+  lens - defect concentration
+  known and executable
+}
+
+SC -[hidden]-> SCH
+SCH -[hidden]-> CO
+CO -[hidden]-> QU
+
+note bottom of QU
+  Anti-pattern 3 check: a project
+  green on three dimensions and
+  red on one is NOT a green
+  project. Overall health:
+  AT-RISK. The red quality
+  dimension carries an explicit
+  mitigation commitment before
+  this review concludes: the
+  A-1..A-15 action chain, owned
+  and scheduled in the
+  convergence cycle (Elab Iter 2).
+end note
+@enduml
+```
+
+**Prior-findings reconciliation (this lens):** all four prior ManagementReviewer findings (Iteration Plan F1 Major, F2 Minor — Inception) are RESOLVED with successful `resolve_artifact_finding` closures recorded in Inception Iter 2; zero findings carried open into Elaboration Iteration 1 from this lens. The one open finding on the Risk List (untagged >90% criterion) was emitted by the Reviewer lens — per the cross-lens ownership invariant it is not this lens's to resolve.
 ## Findings
 ### Elaboration Iteration 1 — New Findings (Code-Review Lens)
 
