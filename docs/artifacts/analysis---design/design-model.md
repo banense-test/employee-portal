@@ -10,10 +10,9 @@
 | Upstream inputs | Use-Case Model (UC-001…UC-010, all FULL, UI Flow References incl. SB-01…SB-05; UC-005/006/007 AF-3 flows stakeholder-confirmed); Supplementary Specification (SEC-001…007, AUD-001…005, DAT-001/002, USA-001…009, REL-001…004, PRF-001…003, SUP-004, DC-001…010, INT-001…005, STD-001…005; R001 Behavioural Bar — one contract, four consumers); Software Architecture Document (COMP-001…COMP-011, subsystem interfaces, ADR-001…004, timestamp convention: store UTC / display America/Havana / export ISO-8601 with explicit offset / payroll day = local calendar day); Review Record (zero open findings on the Design Model); stakeholder decisions (Elaboration Iter 2: R001 behavioural bar — behavioural, not statistical, prior >90% criterion dropped as invented; bar applies to all four AD-reading use cases — answer "Yes") |
 | Optional artifacts | Data Model — [OMITTED: trigger not fired per Development Case §5.2 — re-verified via the trigger oracle this iteration (fired: false); data lives inline in this Design Model]. Architectural Proof-of-Concept — trigger FIRED, owned by the Software Architect (not a Designer artifact) |
 ## Design Overview
-
 The Design Model translates the ten declared use cases (UC-001…UC-010) into collaborations of design classes **within** the Software Architecture Document's subsystem baseline (COMP-001…COMP-011, ADR-001…004). It is the single design model for the portal — every class, interface, realization, and state machine below belongs to it. The Implementer codes from this model; nothing is implemented that is not realized here.
 
-### Design Decisions (Elaboration Iter 1)
+### Design Decisions (Elaboration Iter 1: D-1…D-8; Elaboration Iter 2: D-9)
 
 1. **Layering (ADR-001):** dependencies point DOWN only — Presentation (CLS-017…CLS-020) → Application services (CLS-001…CLS-007) → Infrastructure (CLS-008…CLS-016). Every cross-package reference is an interface, never a concrete class (SAD cohesion rule).
 2. **Authentication at the request boundary (SAD Elaboration refinement):** the OIDC middleware (COMP-006 / CLS-010) authenticates and authorizes before a controller executes; controllers receive an `AuthenticatedUser` (uid + roles from claims) as a parameter. No service calls IAUTH — the per-service coupling of the Inception candidate is removed.
@@ -23,6 +22,7 @@ The Design Model translates the ten declared use cases (UC-001…UC-010) into co
 6. **Idempotent receiver (REL-002):** CLS-001 ClockingService.RecordEvent carries a client-generated idempotency key; the UNIQUE constraint in PostgreSQL (not application locking) is the duplicate-suppression point.
 7. **No Employee entity (CON-006):** `EmployeeUid: string` references the AD user id everywhere; display data is resolved live from AD via CLS-009 LdapGateway. The portal stores no name, title, department, office, email, or extension.
 8. **Timestamp capture at the boundary (DAT-001):** the HomeView page script captures `recordedAtUtc` (UTC) and the idempotency key at the moment of the button press — the SAME capture on the online and offline paths, so a queued event replays with its original recorded timestamp unchanged.
+9. **R001 behavioural bar — one contract, four consumers (stakeholder decision, Elaboration Iter 2; bar reach stakeholder-confirmed — asked whether the bar applies to all four AD-reading use cases and not only the directory search, the stakeholder answered "Yes"):** the bar's three clauses — (a) every employee is rendered whether or not their attributes are complete; (b) a missing attribute never removes someone from results; (c) a missing attribute never raises an error — are realized as POSTCONDITIONS on the existing LDAP Query Mechanism classes. No new class, no signature change. CLS-009 LdapGateway maps missing attributes to null and never drops an entry (Search); CLS-003 DirectoryService.GetDisplayData returns a map **complete over the requested uid set** — a uid AD cannot resolve (e.g., a departed employee with clocking history) maps to an all-null `EmployeeDisplayData`, so clause (a) holds mechanically for UC-005/UC-006 without TryGetValue scattering across consumers; CLS-006 ReportExportService writes every event row with blank cells for missing display fields (ad_user_id resolves identity — CON-006); CLS-017/CLS-020 render blank display fields without removing the row/entry. AF-2 (AD unreachable) remains a distinct condition with a distinct contract (uid-only table for UC-005, abort for UC-006, blocked lookup for UC-007) — the bar does not waive it.
 
 ### Mechanism Resolution (Three-Level Chain)
 
@@ -35,8 +35,8 @@ Every analysis mechanism is resolved to a design mechanism (pattern + properties
 | Time convention | CLS-007 TimeService: capture UTC at button press (DAT-001); convert display to America/Havana; format export as ISO-8601 with the offset in force at event time; compute month boundaries as local calendar days | .NET 10 `TimeZoneInfo` (IANA zones) — declared stack CON-001 |
 | Offline resilience | Client-side ordered queue (CLS-008 OfflineQueueClient, localStorage, capacity ≥ 10, ordered by recorded timestamp) + idempotent sync endpoint; UNIQUE key rejects exact duplicates; sync ≤ 60 s (REL-002/003) | Browser localStorage + PostgreSQL UNIQUE constraint (ADR-003) |
 | Authentication | OIDC middleware at the request boundary; roles read from claims (SEC-002/006); services receive the authenticated identity as a parameter | Keycloak OIDC (CON-004 — external, portal is client only) |
-| Directory query | CLS-009 LdapGateway: read-only LDAP v3 queries, 5 s hard timeout (PRF-003), graceful degradation — missing attributes are null, the entry is NOT hidden (R001); no local copy (CON-006) | Active Directory over LDAP v3 (CON-005, CON-007) |
-| Report export | CLS-006 ReportExportService encapsulates CSV column set v1; month boundaries computed in America/Havana local time; aborts on AD unavailable — no partial file (UC-006 AF-2) | CSV per STD-003 |
+| Directory query | CLS-009 LdapGateway: read-only LDAP v3 queries, 5 s hard timeout (PRF-003), graceful degradation — missing attributes are null, the entry is NOT hidden; **R001 behavioural bar (stakeholder-confirmed, Elab Iter 2): every employee rendered, no removal, no error — one contract, four consumers (UC-004/005/006/007)**; GetDisplayData map complete over the requested uid set (D-9); no local copy (CON-006) | Active Directory over LDAP v3 (CON-005, CON-007) |
+| Report export | CLS-006 ReportExportService encapsulates CSV column set v1; month boundaries computed in America/Havana local time; aborts on AD unavailable — no partial file (UC-006 AF-2); missing display attributes → every event row written with blank cells, no abort (UC-006 AF-3 — R001 bar; ad_user_id resolves identity) | CSV per STD-003 |
 | Category list | Fixed list loaded from external configuration at startup; no CRUD path exists anywhere in the portal (CON-013) | `worker-categories.json` (ADR-004) |
 
 ### Design Patterns Applied
@@ -56,10 +56,9 @@ Every analysis mechanism is resolved to a design mechanism (pattern + properties
 
 - **Every subsystem boundary is an interface** (INT-006…INT-019): the Implementer injects fakes for IPersistence, ILdapGateway, ITimeConvention, IAuditService in unit tests — no database, AD, or Keycloak required.
 - **CLS-007 TimeService is injectable everywhere time is read** — tests fix the clock; DST-boundary behavior (USA-008) is testable without waiting for a clock change.
-- **CLS-009 LdapGateway is fakeable** — R001 graceful-degradation tests (missing attributes → blank fields, entry not hidden) run without AD; the real-AD integration test waits on R010 (STK-004 service account).
+- **CLS-009 LdapGateway is fakeable** — R001 graceful-degradation tests (missing attributes → blank fields, entry not hidden) run without AD; the confirmed bar's three clauses (render / no removal / no error) are assertable against a fake ILdapGateway returning deliberately-gapped entries — the same fixture shape the R001 PoC uses against the disposable directory; the real-AD integration test waits on R010 (STK-004 service account).
 - **CLS-005 AuditService is observable** — every state-changing operation's test asserts an append-only audit row committed in the same transaction (DAT-002).
 - **CLS-008 OfflineQueueClient** is exercised by the AC-005 automated test (5-minute drop simulation) against the idempotent sync endpoint.
-
 ## Domain Model
 
 ### Analysis Classes (ACL-001…ACL-026)
