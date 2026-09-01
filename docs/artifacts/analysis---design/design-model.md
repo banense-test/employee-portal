@@ -294,18 +294,19 @@ end note
 **No-Employee-entity rule (CON-006):** every table and every transient object references the AD user id as a string. `CLS-026 DirectoryEntry` (six corporate fields, FR-010) and `CLS-027 EmployeeDisplayData` (three display fields for HR views, UC-005/006/007) are read-only projections of AD — constructed by CLS-009 LdapGateway, never persisted, never cached beyond the request.
 
 ## Use-Case Realizations
-
 One realization per declared use case — the collaboration of design objects that implements the flow of events. Main flow, alternative flows (AF), and exception flows (EF) are shown in each sequence diagram. Participant IDs reference the design classes in §Design Packages and Classes.
+
+**Elaboration Iter 2 evolution (Designer — convergence cycle):** SEQ-005, SEQ-006, SEQ-007 extended with the **R001 behavioural bar AF-3 flows** (stakeholder decision, Elaboration Iter 2; bar reach stakeholder-confirmed — asked whether the bar applies to all four AD-reading use cases and not only the directory search, the stakeholder answered "Yes"). SEQ-001…SEQ-004, SEQ-008…SEQ-010 preserved exactly as reviewed at the Elaboration Iter 1 LCA review (zero findings).
 
 | SEQ | Use Case | Participating design classes | Flows realized |
 |---|---|---|---|
 | SEQ-001 | UC-001 Clock In and Clock Out | CLS-017, CLS-001, CLS-007, CLS-008, CLS-011, CLS-012 | Main, AF-1 (offline queue + sync), AF-2 (session), AF-3 (2 s ignore) |
 | SEQ-002 | UC-002 View Own Clocking History | CLS-017, CLS-001, CLS-007, CLS-011, CLS-012 | Main, AF-1 (empty), AF-2 (queued note), EF-1 (PG down) |
 | SEQ-003 | UC-003 Browse News | CLS-018, CLS-002, CLS-013 | Main, AF-1 (empty category), AF-2 (no news), EF-1 (PG down) |
-| SEQ-004 | UC-004 Search Employee Directory | CLS-019, CLS-003, CLS-009 | Main, AF-1 (no results), AF-2 (missing attrs), AF-3 (LDAP down) |
-| SEQ-005 | UC-005 Review Employee Clockings | CLS-017, CLS-001, CLS-003, CLS-009, CLS-011 | Main, AF-1 (no match), AF-2 (AD down), EF-1 (role denial) |
-| SEQ-006 | UC-006 Export Monthly Clocking Report | CLS-017, CLS-006, CLS-007, CLS-003, CLS-009, CLS-011 | Main, AF-1 (no data), AF-2 (AD down — abort) |
-| SEQ-007 | UC-007 Assign Worker Category | CLS-020, CLS-004, CLS-003, CLS-009, CLS-005, CLS-011 | Main, AF-1 (unchanged), AF-2 (AD down) |
+| SEQ-004 | UC-004 Search Employee Directory | CLS-019, CLS-003, CLS-009 | Main, AF-1 (no results), AF-2 (missing attrs — R001 bar), AF-3 (LDAP down) |
+| SEQ-005 | UC-005 Review Employee Clockings | CLS-017, CLS-001, CLS-003, CLS-009, CLS-011 | Main, AF-1 (no match), AF-2 (AD down), **AF-3 (missing AD attributes — every event row rendered, R001 bar)**, EF-1 (role denial) |
+| SEQ-006 | UC-006 Export Monthly Clocking Report | CLS-017, CLS-006, CLS-007, CLS-003, CLS-009, CLS-011 | Main, AF-1 (no data), AF-2 (AD down — abort), **AF-3 (missing AD attributes — blank cells, every row written, no abort — R001 bar)** |
+| SEQ-007 | UC-007 Assign Worker Category | CLS-020, CLS-004, CLS-003, CLS-009, CLS-005, CLS-011 | Main, AF-1 (unchanged), AF-2 (AD down), **AF-3 (missing AD attributes — locatable and selectable — R001 bar)** |
 | SEQ-008 | UC-008 Publish News | CLS-018, CLS-002, CLS-005, CLS-011 | Main, AF-1 (validation) |
 | SEQ-009 | UC-009 Edit Published News | CLS-018, CLS-002, CLS-005, CLS-011 | Main, AF-1 (validation), AF-2 (concurrent unpublish), EF-1 (role denial) |
 | SEQ-010 | UC-010 Unpublish News | CLS-018, CLS-002, CLS-005, CLS-011 | Main, AF-1 (cancel), AF-2 (already unpublished) |
@@ -532,11 +533,11 @@ end note
 @enduml
 ```
 
-### SEQ-005 — UC-005: Review Employee Clockings (FR-001, SEC-006, CON-005/006)
+### SEQ-005 — UC-005: Review Employee Clockings (FR-001, SEC-006, CON-005/006, R001 behavioural bar)
 
 ```plantuml
 @startuml
-title SEQ-005: UC-005 Review Employee Clockings — Realization (FR-001, SEC-006, CON-005/006)
+title SEQ-005: UC-005 Review Employee Clockings — Realization (FR-001, SEC-006, CON-005/006, R001 behavioural bar)
 
 actor "HR Administrator (ACT-002)" as HR
 participant "ClockingReportView\n(SCR-05)" as VIEW
@@ -563,12 +564,18 @@ PG --> CLK : Task<IReadOnlyList<ClockingEvent>>
 CLK --> CTL : events (all employees matching filter)
 CTL -> DIR : GetDisplayData(distinct uids)
 DIR -> LDAP : GetDisplayData(uids)
-alt AD resolves display data
-  LDAP --> DIR : uid -> EmployeeDisplayData\n(name, department, office)
+alt AD reachable
+  LDAP --> DIR : uid -> EmployeeDisplayData map\n(name, department, office) — COMPLETE over\nthe requested uid set (design decision D-9):\na uid AD cannot resolve maps to all-null\nfields; missing attributes null within\nresolved entries (R001 bar)
   DIR --> CTL : IReadOnlyDictionary<string, EmployeeDisplayData>
-  CTL -> CTL : merge events + display data;\nconvert times via TimeService (USA-008)
-  CTL --> VIEW : model: table rows with names
-  VIEW --> HR : clocking review table
+  alt some employees have missing AD attributes (AF-3 — R001 behavioural bar, stakeholder-confirmed Elab Iter 2)
+    CTL -> CTL : merge events + display data;\nconvert times via TimeService (USA-008)
+    CTL --> VIEW : model: EVERY event row rendered;\nmissing display fields blank (em-dash),\nemployee NOT removed, no error\n(bar clauses a/b/c)
+    VIEW --> HR : review table — every event row present;\nclocking columns (event type, timestamp)\nalways complete — portal data, never AD data
+  else all display attributes complete
+    CTL -> CTL : merge events + display data;\nconvert times via TimeService (USA-008)
+    CTL --> VIEW : model: table rows with names
+    VIEW --> HR : clocking review table
+  end
 else AD unavailable (AF-2)
   LDAP --> DIR : throws DirectoryUnavailableException
   DIR --> CTL : propagates
@@ -580,14 +587,25 @@ note over CLK
   renders "No clocking records match"
   (P-05) — same path, empty result.
 end note
+note over LDAP
+  R001 bar (stakeholder decision, Elab Iter 2,
+  confirmed for UC-005): every employee is
+  rendered whether or not their attributes
+  are complete; a missing attribute never
+  removes someone from results; a missing
+  attribute never raises an error. AF-2
+  (AD unreachable) is a distinct condition
+  with a distinct contract — not waived
+  by the bar.
+end note
 @enduml
 ```
 
-### SEQ-006 — UC-006: Export Monthly Clocking Report (FR-002, SEC-006, INT-005, STD-003)
+### SEQ-006 — UC-006: Export Monthly Clocking Report (FR-002, SEC-006, INT-005, STD-003, R001 behavioural bar)
 
 ```plantuml
 @startuml
-title SEQ-006: UC-006 Export Monthly Clocking Report — Realization (FR-002, SEC-006, INT-005, STD-003)
+title SEQ-006: UC-006 Export Monthly Clocking Report — Realization (FR-002, SEC-006, INT-005, STD-003, R001 behavioural bar)
 
 actor "HR Administrator (ACT-002)" as HR
 participant "ClockingReportView\n(SCR-05)" as VIEW
@@ -611,9 +629,14 @@ alt events exist for the month
   EXP -> DIR : GetDisplayData(distinct uids)
   EXP -> LDAP : GetDisplayData(uids)
   alt AD reachable
-    LDAP --> DIR : uid -> EmployeeDisplayData
+    LDAP --> DIR : uid -> EmployeeDisplayData map\nCOMPLETE over the requested uid set\n(design decision D-9): a uid AD cannot\nresolve maps to all-null fields;\nmissing attributes null within entries
     DIR --> EXP : display data map
     EXP -> EXP : build rows: ad_user_id, employee_name,\ndepartment, office, event_timestamp, event_type
+    alt some employees have missing AD attributes (AF-3 — R001 behavioural bar, stakeholder-confirmed Elab Iter 2)
+      EXP -> EXP : EVERY event row written;\nmissing display fields (employee_name,\ndepartment, office) as BLANK CELLS;\nno abort, no error\n(ad_user_id resolves identity — CON-006;\nclocking columns always complete — portal data)
+    else all display attributes complete
+      EXP -> EXP : rows with complete display fields
+    end
     EXP -> TIME : ToIso8601WithOffset(each event)\n(offset in force at event time per IANA zone db)
     TIME --> EXP : "2026-09-01T08:58:12-04:00"
     EXP -> EXP : serialize CSV (column set v1, STD-003)
@@ -638,15 +661,20 @@ note over EXP
   set (Medium volatility — downstream
   payroll/records consumers may reshape
   it). Column changes touch CLS-006 only.
+  AF-2 (AD unreachable) and AF-3 (attribute
+  gaps) are distinct conditions: AF-2 aborts
+  because NO identity data can be resolved;
+  AF-3 exports because ad_user_id resolves
+  identity and only display fields are blank.
 end note
 @enduml
 ```
 
-### SEQ-007 — UC-007: Assign Worker Category (FR-003, CON-006, CON-013, AUD-004, ADR-004)
+### SEQ-007 — UC-007: Assign Worker Category (FR-003, CON-006, CON-013, AUD-004, ADR-004, R001 behavioural bar)
 
 ```plantuml
 @startuml
-title SEQ-007: UC-007 Assign Worker Category — Realization (FR-003, CON-006, CON-013, AUD-004, ADR-004)
+title SEQ-007: UC-007 Assign Worker Category — Realization (FR-003, CON-006, CON-013, AUD-004, ADR-004, R001 behavioural bar)
 
 actor "HR Administrator (ACT-002)" as HR
 participant "WorkerCategoriesView\n(SCR-06)" as VIEW
@@ -673,10 +701,16 @@ VIEW -> CTL : GET /hr/categories/search (DirectorySearchCriteria)
 CTL -> DIR : Search(criteria)
 DIR -> LDAP : Search(criteria)
 alt AD reachable
-  LDAP --> DIR : IReadOnlyList<DirectoryEntry>
-  DIR --> CTL : entries
-  CTL --> VIEW : employee list (AD display data)
-  VIEW --> HR : employee list
+  LDAP --> DIR : IReadOnlyList<DirectoryEntry>\n(missing attributes null — entry NOT dropped,\nno error raised; R001 bar)
+  alt located employee has missing AD attributes (AF-3 — R001 behavioural bar, stakeholder-confirmed Elab Iter 2)
+    DIR --> CTL : entries (some with null fields)
+    CTL --> VIEW : employee list — missing fields blank,\nentry NOT hidden, no error\n(bar clauses a/b/c)
+    VIEW --> HR : employee rendered with blank fields —\nSTILL LOCATABLE AND SELECTABLE;\nselection stores the AD user id,\nwhich is always present (CON-006)
+  else complete display data
+    DIR --> CTL : entries (complete display fields)
+    CTL --> VIEW : employee list (AD display data)
+    VIEW --> HR : employee list
+  end
 else AD unavailable (AF-2)
   LDAP --> DIR : throws DirectoryUnavailableException
   DIR --> CTL : propagates
@@ -860,7 +894,6 @@ else HR cancels (AF-1)
 end
 @enduml
 ```
-
 ## Design Packages and Classes
 
 One design model, three packages inside the single deployable (ADR-001). Dependencies point DOWN only; every cross-package reference is an interface.
