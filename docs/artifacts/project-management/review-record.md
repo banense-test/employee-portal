@@ -348,7 +348,6 @@ end note
 @enduml
 ```
 ## Findings
-
 ### Elaboration Iteration 1 — New Findings (Code-Review Lens)
 
 | Finding Key | Severity | Location | Description | Remediation |
@@ -356,7 +355,7 @@ end note
 | **F-CR-E1-1** | **Critical** | SCM state vs. Iteration Plan WIs 7–9; exit criteria 1–3 | **No Implementer handoff exists.** Zero `ready-for-review` branches, zero PRs in any state, and the build tree at `main` contains no mechanism code (no `Services/`, no `Infrastructure/`, no PoC scaffolding — only the pre-Elaboration skeleton). `iteration/E1`, the mandatory PR base (BRANCHING_STRATEGY §5.2), does not exist. Consequence: the iteration's exit criteria 1–3 (empirical validation of R001/R003/R004) have **no code evidence**, and the LCA evidence package cannot be assembled — the stakeholder explicitly refused an LCA that validates a HIGH architectural risk on paper only. The code-review gate for this iteration is OPEN. | (1) Integrator creates `iteration/E1` (invariant 8.1 — only the Integrator writes `iteration/*`). (2) Implementer builds the three mechanisms **evolutionarily in `src/`** (never a `poc/` branch or `samples/` directory — invariant 8.4): R001 → COMP-007/CLS-009 against a disposable LDAP directory; R003 → COMP-006/CLS-010 against a stub OIDC issuer; R004 → COMP-009/CLS-008 offline queue + idempotent sync. (3) Each mechanism ships dual-coverage unit tests (black-box contract + white-box paths). (4) Implementer labels each `feature/E1-{risk-id}` branch `ready-for-review`. (5) Code Reviewer opens one PR per branch (base `iteration/E1`) and applies CR-1…CR-7 with terminal dispositions. |
 | **F-CR-E1-2** | **Minor** | Repository root — `CONTRIBUTING.md` (also flagged in Development Case § Tool Configuration References) | **Programming-guidelines baseline absent.** `CONTRIBUTING.md` does not exist in the repository, so checklist item CR-1 has no citable rule baseline for the first mechanism PR. Without it, guideline findings cannot cite a rule (a violation without a rule citation is personal taste, not a finding). The Development Case already records this as a gap owned by Implementer / Software Architect / ConfigurationManager. | Commit `CONTRIBUTING.md` before or together with the first mechanism PR: coding standards (naming, error handling, async conventions, test conventions) plus the branch-strategy documentation section. Until it exists, CR-1 findings in the first PR will be limited to rules citable from the SAD layering rule (dependencies point down, interfaces only) and the Design Model contracts. |
 
-### Defect Distribution (severity × scope)
+### Defect Distribution (severity × scope — Code-Review Lens)
 
 ```plantuml
 @startuml
@@ -386,6 +385,59 @@ D2 -[hidden]-> D3
 @enduml
 ```
 
+### Elaboration Iteration 1 — New Findings (Technical LCA Lens — Reviewer)
+
+All four findings emitted via `record_artifact_finding` (2026-09-01); each carries severity, location, description, and remediation. Two Critical findings block the LCA disposition this cycle.
+
+| Finding Key | Severity | Artifact | Description (summary) | Remediation (summary) |
+|---|---|---|---|---|
+| **SAD F1** | **Critical** | Software Architecture Document — §Quality PoC Plan; §Deployment View External Dependencies; §LCA Review criterion 3 | **Superseded analysis-only PoC disposition persists in the SAD.** The PoC Plan states the Development Case oracle reports the Architectural Proof-of-Concept trigger NOT fired and retires R001/R003/R004 as "Analysis-only + designed mechanism" with empirical validation deferred to Construction "blocked on R010". This contradicts the binding stakeholder decision ("The PoC is produced in Elaboration and validated empirically" — R001 disposable LDAP directory, R003 stub OIDC issuer, R004 direct), the corrected Development Case (trigger FIRED), the Risk List reappraisal (R001/R003/R004 "MITIGATING — empirical validation this phase"; R010 re-scoped to production-instance integration only), and Iteration Plan exit criteria 1–4. Three stale locations: §Quality PoC Plan table + rationale; §External Dependencies ("blocks R001 validation", "blocks auth integration"); §LCA Review criterion 3 ("PARTIAL — by design... did not fire the... trigger... blocked on R010"). | Software Architect re-corrects the SAD (Active Constraint: "SAD PoC Plan superseded — Architect owns correction"): rewrite §Quality per-risk retirement to EMPIRICAL validation this phase citing the stakeholder decision; update §External Dependencies so R010 blocks production-instance integration only (Construction, R011 residual); correct LCA criterion 3; name the Architectural Proof-of-Concept artifact (DC-sanctioned, Architect-owned) as the validation vehicle. |
+| **SAD F2** | **Critical** | Software Architecture Document (as architecture baseline) + artifact inventory + SCM state | **The DC-sanctioned Architectural Proof-of-Concept artifact is absent, and zero mechanism code exists in SCM.** The Test Case Cycle 1 execution record empirically confirms `iteration/E1` holds skeleton only (no Services/, no Infrastructure/, no Npgsql/LDAP/JWT packages; file shas 5a1f720/9a04a31/10f68b8/dc835d2), all 20 test cases are BLOCKED, and SCM Issue #1 (severity:blocker) formalizes the absence. Empirical validation of R001 (HIGH, exposure=9), R003, R004 has NOT been performed; Iteration Plan exit criteria 1–3 are unmet. The stakeholder's binding decision: "I will not accept an LCA that validates a HIGH architectural risk on paper only." The LCA evidence package cannot be assembled this cycle. | Convergence cycle (Elaboration Iter 2, already planned): (1) Software Architect produces the Architectural Proof-of-Concept artifact carrying empirical results for R001/R003/R004; (2) Implementer delivers the three mechanisms as evolutionary code in src/ with dual-coverage tests (Issue #1 remediation; actions A-2…A-4) on feature/E1-{risk} branches → PRs to iteration/E1; (3) Test Designer executes TC-001…TC-020 against the validation fixtures; (4) empirical results recorded and the LCA evidence package assembled. The architecture baseline itself (4+1 views, 11 components, ADR-001…004) is structurally sound — the gap is execution of the mandated validation, not the design. |
+| **SAD F3** | **Minor** | Software Architecture Document — §Logical View component table | **Stale component dependencies vs the Design Model's documented reconciliations.** COMP-001 lists IAUD but CLS-001 deliberately omits IAuditService (NFR-005 scopes audit to news operations AUD-001…003 and category changes AUD-004; clocking events carry their own actor and are immutable per DAT-001); COMP-010 lists ILDAP but CLS-006 resolves display data transitively via IDirectoryService (INT-008). The Design Model documents both as "SAD Boundary Reconciliations — coupling reductions, not violations" with sound justification, but the SAD — the architecture authority — still carries the pre-reconciliation dependency lists, so the two artifacts contradict at the same subsystem boundary. | With the §Quality correction (SAD F1), update the SAD §Logical View dependency column for COMP-001 (remove IAUD) and COMP-010 (replace ILDAP with IDirectoryService via COMP-003), or add the Design Model's reconciliation notes verbatim so the SAD and Design Model agree at every subsystem boundary. |
+| **Risk List F1** | **Minor** | Risk List — R001 acceptance criteria | **Untagged quantitative threshold.** R001's "All six corporate attributes populated for >90% of sampled users per office" has no declared source (the declared R001 names no percentage; the stakeholder's PoC decision names none) and carries no `[ASSUMPTION — requires validation]` tag, while every sibling quantified threshold in the artifact set is tagged (UC-001 AF-3 2 s window, REL-002 queue capacity ≥ 10, REL-003 sync ≤ 60 s, PRF-003 5 s query split). The same untagged figure propagates into the SAD PoC Plan, the Test Evaluation Summary acceptance thresholds, and Test Case TC-011 (whose disposable-directory fixture is constructed at 95%/95%/100% — passing the criterion by construction). | Tag the >90% criterion `[ASSUMPTION — requires validation]` with its basis (a mechanism-validation bar set by the risk owner against the disposable directory's representative data — the production-AD residual is R011, retired in Construction), or escalate the threshold to the stakeholder for confirmation as the R001 validation bar. Apply the tag consistently in the SAD PoC Plan, Test Evaluation Summary, and Test Case when those artifacts are next evolved. |
+
+### Defect Distribution (severity × artifact — both lenses, consolidated)
+
+```plantuml
+@startuml
+title Elaboration Iter 1 - Defect Distribution\nseverity x artifact, both review lenses (2026-09-01)
+
+object "Software Architecture Document" as D1 {
+  Critical 2 : F1 superseded PoC plan,
+  F2 PoC artifact and code evidence absent
+  Minor 1 : F3 stale component dependencies
+}
+object "Risk List" as D2 {
+  Minor 1 : F1 untagged 90 percent criterion
+}
+object "SCM state and implementation scope" as D3 {
+  Critical 1 : F-CR-E1-1 no mechanism handoff
+  (Code Reviewer lens)
+  Minor 1 : F-CR-E1-2 CONTRIBUTING.md absent
+}
+object "Seven clean artifacts" as D4 {
+  Design Model, Use-Case Model,
+  Supplementary Specification,
+  Iteration Plan, Development Case,
+  Test Case, Test Evaluation Summary
+  Critical 0, Major 0, Minor 0
+}
+
+D1 -[hidden]-> D2
+D2 -[hidden]-> D3
+D3 -[hidden]-> D4
+
+note bottom of D3
+  F-CR-E1-1 and SAD F2 observe the same
+  gap from two lenses: the Code Reviewer
+  gates the PR loop, the technical lens
+  gates the LCA evidence package.
+  Remediation converges on actions
+  A-1..A-6 plus the SAD correction A-7.
+end note
+@enduml
+```
+
 ### Prior Findings (Inception — historical ledger, all RESOLVED; never overwritten)
 
 | Finding Key | Lens | Artifact | Severity | Finding (summary) | Status |
@@ -395,8 +447,7 @@ D2 -[hidden]-> D3
 | F2 (Reviewer) | Technical | Iteration Plan | Minor | Work item statuses stale ("Pending" while artifacts existed as Draft). | **RESOLVED** (Inception Iter 2) |
 | F2 (ManagementReviewer) | Management | Iteration Plan | Minor | Same defect as F2 (Reviewer). | **RESOLVED** (Inception Iter 2) |
 
-**Reconciliation status:** zero findings carried open into Elaboration Iteration 1. The two findings raised this cycle (F-CR-E1-1, F-CR-E1-2) are NEW defects in the implementation scope, not recurrences of Inception findings — they carry fresh keys.
-
+**Reconciliation status:** zero findings carried open into Elaboration Iteration 1. The two Code-Reviewer findings (F-CR-E1-1, F-CR-E1-2) and the four technical-lens findings (SAD F1/F2/F3, Risk List F1) are NEW defects, not recurrences — they carry fresh keys. SAD F2 and F-CR-E1-1 observe the same underlying gap (no mechanism code / no empirical validation) from two different lenses and two different gates; their remediation converges on the same action chain (A-1…A-6 + A-7) and they are expected to close together in the convergence cycle.
 ## Resolutions and Actions
 
 ### Remediation — Closing the Elaboration Iter 1 Code-Review Gate
