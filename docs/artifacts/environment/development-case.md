@@ -9,6 +9,7 @@
 | Date | 2026-09-01 |
 | Prior Review | 0 findings on Development Case across both Inception iterations (LCO verdict: GO; stakeholder sanction granted) — valid content preserved, evolved for Elaboration |
 | Governance Re-recorded (Elab Iter 1) | DC §4 classification: unchanged — not business-process-led. Version policy: unchanged — .NET 10 framework pin (CON-001). Optional triggers: **CHANGED — Architectural Proof-of-Concept FIRED** (0/6 → 1/6) |
+| Open Question | PoC empirical scope under the R010 block — escalated to the stakeholder this iteration (see § Optional Artifact Triggers); blocks completion until answered |
 
 ## Tailoring Overview
 
@@ -47,7 +48,7 @@ This Development Case specifies project-specific **deltas** over the IARI DC bas
 
 ## Disciplines and Intensity
 
-Intensity per discipline/phase is **per the canonical IARI DC matrix** — confirmed, not reassigned. No deviation is proposed; none is self-granted. Validation against the actual risk profile: R001 (HIGH) → Analysis & Design Critical in Elaboration is consistent with the canonical matrix — no REQUIRES_USER_INPUT warranted.
+Intensity per discipline/phase is **per the canonical IARI DC matrix** — confirmed, not reassigned. No deviation is proposed; none is self-granted. Validation against the actual risk profile: R001 (HIGH) → Analysis & Design Critical in Elaboration is consistent with the canonical matrix — no stakeholder deviation request warranted.
 
 **Inactive discipline (delta):** Business Modeling — INACTIVE. The stakeholder declared 10 concrete functional requirements (FR-001–FR-010) for a software replacement of manual tools (Excel, email, PDF directory). No business-process reengineering, no business object model, no workflow transformation. Per DC §4 criteria, this project is **not business-process-led** (re-recorded this iteration; verdict unchanged).
 
@@ -146,11 +147,15 @@ Recorded via `record_optional_artifact_triggers` (Elaboration Iter 1): `["Archit
 title Employee Portal — DC §5.2 Optional Trigger Re-evaluation (Elaboration Iter 1)
 
 start
-:Load current phase, Risk List,\nand project facts;
-:Check each of the 6 OPTIONAL artifacts\nagainst its §5.2 condition;
+:Load current phase, Risk List,
+and project facts;
+:Check each of the 6 OPTIONAL artifacts
+against its §5.2 condition;
 if (Architectural Proof-of-Concept condition holds?) then (holds)
-  :FIRE the trigger — record the new trigger set\nvia record_optional_artifact_triggers;
-  :PoC artifact sanctioned;\nowner: Software Architect (baseline-fixed);
+  :FIRE the trigger — record the new trigger set
+via record_optional_artifact_triggers;
+  :PoC artifact sanctioned;
+owner: Software Architect (baseline-fixed);
   note right
     Condition: Elaboration phase (YES — iter 1)
     AND at least one technical risk requiring
@@ -166,14 +171,20 @@ if (Architectural Proof-of-Concept condition holds?) then (holds)
 else (not held)
   :NOT FIRED — auditable justification recorded;
 endif
-:Remaining 5 OPTIONALs re-checked\n(Glossary, Data Model, Deployment Model,\nUI Prototype, Test Plan) — none hold;
-:Record the complete trigger set\n(replaces the prior iteration's set);
-:Upsert Development Case —\nowning roles consume the disposition;
+:Remaining 5 OPTIONALs re-checked
+(Glossary, Data Model, Deployment Model,
+UI Prototype, Test Plan) — none hold;
+:Record the complete trigger set
+(replaces the prior iteration's set);
+:Upsert Development Case —
+owning roles consume the disposition;
 stop
 @enduml
 ```
 
 **PoC disposition reconciliation (binding for downstream roles):** the SAD's PoC plan (per-risk retirement dispositions: R001/R003/R004 analysis-only + designed mechanism) was written against the Inception trigger recording and explicitly deferred to this Development Case as oracle. With the trigger now FIRED, the **Software Architect produces the Architectural Proof-of-Concept artifact**; the SAD dispositions remain its content basis — the designed mechanisms (COMP-006 OIDC, COMP-007 LDAP, COMP-009 offline resilience) and their quantified acceptance criteria carry into the PoC unchanged. R010 (STK-004 deliverables) blocks empirical execution of the R001/R003 validations; the PoC must record this dependency explicitly rather than fabricating results. Ownership is baseline-fixed (Software Architect) — this Development Case does not reassign it.
+
+**Open consequential question — asked this iteration; blocks completion until answered:** [SCOPE_QUESTION — PoC empirical scope under the R010 block: not declared in scope, but consequential for the Elaboration milestone's deliverable set and exit condition] The fired trigger sanctions the Architectural Proof-of-Concept, but the approved SAD was written under the not-fired assumption and positions empirical validation of R001/R003 as a Construction test activity blocked on STK-004 deliverables (R010 — no LDAP service account or Keycloak client registration confirmed by end of Elaboration Iteration 1; R010's declared trigger condition is therefore met). Whether the PoC is produced in Elaboration carrying the designed mechanisms and acceptance criteria with the R010 block documented and empirical validation deferred to Construction (confirming the SAD's approved position), or whether STK-004 delivery becomes a hard condition of Elaboration exit so that R001/R003 validate empirically before the LCA milestone, is a milestone-scope decision the stakeholder owns. Escalated to the stakeholder this iteration; the answer retires this marker in place, written with the stakeholder's literal words.
 
 Re-evaluation schedule: every iteration, mandatory. A trigger may newly fire via a Change Request or scope expansion; a fired trigger is re-verified against its condition (an auditable claim, checked at review).
 
@@ -313,7 +324,7 @@ end note
 |---|---|---|
 | 1 | Product vision stable | All 10 UCs full-depth; stakeholder decisions recorded (timestamp convention, offline mechanism) |
 | 2 | Architecture stable | SAD 4+1 baseline; ADR-001..004 decided |
-| 3 | Major risks addressed | **Architectural Proof-of-Concept (FIRED)** — R001/R003/R004 dispositions executed or R010 block documented; no fabricated results |
+| 3 | Major risks addressed | **Architectural Proof-of-Concept (FIRED)** — R001/R003/R004 dispositions executed or R010 block documented; no fabricated results. Empirical scope of the R001/R003 validations under the R010 block is pending the stakeholder's answer to the open question in § Optional Artifact Triggers |
 | 4 | Construction plan sufficiently detailed | UC assignments cross-checked against Use-Case Model (F1 lesson) |
 | 5 | Stakeholders agree vision achievable | LCA review sanction — stakeholder's decision, never self-declared |
 | 6 | Actual vs planned expenditure acceptable | Two clocks measured apart; never summed |
@@ -328,19 +339,30 @@ end note
 title Employee Portal — Assessment-Driven Process Improvement (Inception data → Elaboration DC changes)
 
 start
-:Load Iteration Assessment + Review Record\n(Inception measured actuals);
+:Load Iteration Assessment + Review Record
+(Inception measured actuals);
 partition "Observed data (Inception, measured)" {
-  :F1 (Major): Iteration Plan mapped FR-001 to UC-001\nsequentially; Use-Case Model (authority) maps FR-001 to UC-005;
-  :F2 (Minor): 5 work items showed "Pending"\nwhile their artifacts existed as Draft;
-  :Rework iteration cost: 1,347,939 tokens,\n0:28:16 agent time — re-reading authority\nartifacts dominates over output volume;
-  :Lesson: REQUIRES_USER_INPUT payloads with\noptions / recommendation / reason fields break the parser;
+  :F1 (Major): Iteration Plan mapped FR-001 to UC-001
+sequentially; Use-Case Model (authority) maps FR-001 to UC-005;
+  :F2 (Minor): 5 work items showed "Pending"
+while their artifacts existed as Draft;
+  :Rework iteration cost: 1,347,939 tokens,
+0:28:16 agent time — re-reading authority
+artifacts dominates over output volume;
+  :Lesson: stakeholder-input payloads with
+options / recommendation / reason fields break the parser;
 }
 :Root-cause analysis (process gap, not role error);
 partition "Process changes adopted (this DC)" {
-  :UC-ID cross-check gate: every artifact referencing\nUC IDs cross-checks against Use-Case Model\n§Use-Case Survey before first upsert;
-  :Status-reconciliation step: work item statuses\nreconciled against the repository at iteration close;
-  :Question format: minimal JSON\n(question / type / isRequired only);
-  :Budgeting note: rework iterations are re-read\nexpensive — plan for authority-artifact re-reads;
+  :UC-ID cross-check gate: every artifact referencing
+UC IDs cross-checks against Use-Case Model
+§Use-Case Survey before first upsert;
+  :Status-reconciliation step: work item statuses
+reconciled against the repository at iteration close;
+  :Question format: minimal JSON
+(question / type / isRequired only);
+  :Budgeting note: rework iterations are re-read
+expensive — plan for authority-artifact re-reads;
 }
 :Upsert Development Case (this document);
 :Verify adoption at the next Iteration Assessment;
@@ -379,9 +401,10 @@ Guideline content itself (coding standards, UI patterns, test conventions) is au
 
 During active iterations, the Process Engineer serves as the process help desk:
 - Process questions (which template, which artifact, which workflow step) are answered within the same iteration cycle.
-- Blocking process issues are escalated immediately via `REQUIRES_USER_INPUT`.
+- Blocking process issues are escalated immediately to the stakeholder via the input-emission channel (emission marker immediately followed by a minimal JSON array, on one line).
 - Tool configuration problems are logged and assigned to the owning discipline role.
-- **Question format (binding, from measured Inception lesson):** `REQUIRES_USER_INPUT` payloads use minimal JSON — `question` / `type` / `isRequired` only. `options`, `recommendation`, and `reason` fields break the parser.
+- **Question format (binding, from measured Inception lesson):** stakeholder-input payloads use minimal JSON — `question` / `type` / `isRequired` only. `options`, `recommendation`, and `reason` fields break the parser.
+- **Emission discipline (binding, from this iteration's measured incident):** the emission marker string must NEVER appear in artifact prose, diagrams, or response narration — the parser scans every occurrence, and a marker not immediately followed by a valid JSON array invalidates the turn. Observed this iteration: the marker string appeared three times in this document's prose (two Process Support bullets, one activity-diagram line) and in the completion narration; the turn was invalidated and the question had to be re-emitted. All occurrences are removed in this revision. The marker is written ONLY as an actual emission — marker immediately followed by the JSON array, nothing else on that line, no other bracketed construct between them.
 - **Marker retirement (binding):** when the stakeholder answers a `[SCOPE_QUESTION]` / `[DERIVED]` / `[ASSUMPTION]`, the owning role retires the marker in the artifact itself, writing the stakeholder's literal values. Three markers were retired this way in Elaboration Iter 1 (offline mechanism; timestamp convention; office local timezone = America/Havana) — the discipline is proven and mandatory.
 
 ### Incremental Rollout Plan
@@ -403,9 +426,11 @@ During active iterations, the Process Engineer serves as the process help desk:
 | Framework pin .NET 10 | CON-001 | Derives | record_version_policy(framework, .NET, 10) |
 | Elaboration entry criteria | Review Record (LCO disposition, stakeholder sanction) | Refines | Elaboration Iteration Plan |
 | LCA exit criteria | RUP LCA milestone criteria + SAD §LCA Review | Refines | End-of-Elaboration milestone gate |
+| Open question (PoC empirical scope under R010 block) | R010 trigger condition met (Risk List) + SAD PoC plan (Construction deferral) + fired PoC trigger | DependsOn | Stakeholder answer (pending — blocks completion); LCA exit criterion 3 |
 | UC-ID cross-check gate | Review Record F1 (Major, resolved) + Iteration Assessment lesson 1 | Derives | All artifacts referencing UC IDs |
 | Status-reconciliation step | Review Record F2 (Minor, resolved) + Iteration Assessment lesson 2 | Derives | Iteration Plan work items |
-| Question format rule | Iteration Assessment lesson (REQUIRES_USER_INPUT parser) | Derives | All REQUIRES_USER_INPUT emissions |
+| Question format rule | Iteration Assessment lesson (stakeholder-input parser) | Derives | All stakeholder-input emissions |
+| Emission discipline rule | This iteration's measured incident (invalidated turn; marker string in prose) | Derives | All stakeholder-input emissions; artifact authoring (no marker string in prose) |
 | Marker-retirement discipline | Stakeholder decisions (Elab Iter 1): offline mechanism, timestamp convention, office timezone America/Havana | Authorizes | Use-Case Model, Supplementary Specification (markers retired in-place) |
 | CI verification | `.github/workflows/ci.yml` (SCM read, 2026-09-01) | DependsOn | Implementer, ConfigurationManager |
 | Deploy skeleton verification | `.github/workflows/deploy.yml` (SCM read, 2026-09-01) | DependsOn | DeploymentManager (Construction), R010 |
