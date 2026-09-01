@@ -1484,8 +1484,9 @@ end note
 | COMP-009 Offline Resilience Handler "internal to COMP-001" | CLS-008 OfflineQueueClient is browser-side (localStorage), calling the sync endpoint (CLS-017.OnPostSync → CLS-001.SyncEvents); the server half is ClockingService.SyncEvents | Consistent with ADR-003 and the SAD Deployment View, which places the localStorage queue on the employee workstation node. "Internal to COMP-001" is realized as: the queue's only server counterpart is COMP-001's sync path. |
 
 ## Interface Contracts
-
 Operation signatures with preconditions / postconditions for every subsystem-boundary interface. Interfaces INT-001…INT-005 (external system interfaces) are specified in the Supplementary Specification; INT-006…INT-019 are the portal's internal subsystem boundaries.
+
+**Elaboration Iter 2 evolution (Designer):** INT-008 GetDisplayData, INT-010, and INT-013 postconditions extended with the R001 behavioural bar (stakeholder decision, Elaboration Iter 2; bar reach stakeholder-confirmed — answer "Yes"). All other rows preserved exactly as reviewed.
 
 | ID | Interface | Operation | Precondition | Postcondition |
 |---|---|---|---|---|
@@ -1500,15 +1501,15 @@ Operation signatures with preconditions / postconditions for every subsystem-bou
 | INT-007 | INewsService | Edit(id, request, actor) | item exists AND Status=Published at save time (AF-2 re-read) | Updated item + audit entry (Edit, post-edit snapshot) in ONE transaction (AUD-002); if concurrently unpublished → NewsResult.NotPublished, NO change, NO audit entry |
 | INT-007 | INewsService | Unpublish(id, actor) | item exists AND Status=Published | Status=Unpublished (record retained — CON-012) + audit entry (Unpublish) in ONE transaction (AUD-003); item hidden from employees |
 | INT-008 | IDirectoryService | Search(criteria) | caller authenticated | Entries read LIVE from AD (CON-006); missing attributes null, entry NOT hidden (R001); throws DirectoryUnavailableException on timeout/failure — no local fallback (AF-3) |
-| INT-008 | IDirectoryService | GetDisplayData(uids) | caller authenticated | Map uid → EmployeeDisplayData (name, department, office); missing attributes null; throws on AD unavailable |
+| INT-008 | IDirectoryService | GetDisplayData(uids) | caller authenticated | Map uid → EmployeeDisplayData (name, department, office) **COMPLETE over the requested uid set (design decision D-9)**: every requested uid has a map entry — a uid AD cannot resolve maps to an all-null EmployeeDisplayData; missing attributes null within resolved entries — **R001 behavioural bar (stakeholder-confirmed, Elab Iter 2): every employee rendered, no removal, no error**; throws on AD unavailable |
 | INT-009 | ICategoryService | GetCategoryList() | — | FIXED list from worker-categories.json (ADR-004); never mutated at runtime (CON-013) |
 | INT-009 | ICategoryService | Assign(employeeUid, category, actor) | category ∈ fixed list; caller holds HR Administrator role | If category ≠ current: mapping upserted (two data columns — CON-006) + audit entry (old, new, actor, timestamp) in ONE transaction (AUD-004). If equal: NO change, NO audit entry (AF-1) |
-| INT-010 | ILdapGateway | Search(criteria) / GetDisplayData(uids) | connection configured (R010 service account) | Read-only LDAP v3 (CON-007); 5 s hard timeout (PRF-003); missing attributes mapped null (R001) |
+| INT-010 | ILdapGateway | Search(criteria) / GetDisplayData(uids) | connection configured (R010 service account) | Read-only LDAP v3 (CON-007); 5 s hard timeout (PRF-003); missing attributes mapped null, entry NOT dropped, no error raised — **R001 behavioural bar (stakeholder-confirmed, Elab Iter 2): one contract, four consumers (UC-004/005/006/007)**; GetDisplayData map complete over the requested uid set (D-9) |
 | INT-011 | IAuthProvider | ConfigureOidc(builder, options) | Keycloak client settings present in configuration | OIDC middleware registered at the request boundary; all pages require authentication (SEC-003); roles mapped from claims (SEC-002) |
 | INT-011 | IAuthProvider | GetAuthenticatedUser(context) | — | AuthenticatedUser (Uid + Roles) or null if unauthenticated |
 | INT-012 | IAuditService | AppendNewsAction(newsId, action, actorUid, timestampUtc, snapshot) | called within an active unit of work whose orchestrator will SaveChanges | Entry STAGED (not committed); append-only — no update/delete path exists (DAT-002) |
 | INT-012 | IAuditService | AppendCategoryChange(employeeUid, oldCategory, newCategory, actorUid, timestampUtc) | as above | Entry staged; old + new value recorded (AUD-004) |
-| INT-013 | IReportExport | ExportMonth(year, month) | caller holds HR Administrator role | Month boundaries computed as local calendar days in America/Havana (payroll day = local day); CSV column set v1 (ad_user_id, employee_name, department, office, event_timestamp ISO-8601 with explicit offset, event_type); ExportAborted.DirectoryUnavailable if AD unreachable — NO partial file (AF-2); NoData if no events (AF-1) |
+| INT-013 | IReportExport | ExportMonth(year, month) | caller holds HR Administrator role | Month boundaries computed as local calendar days in America/Havana (payroll day = local day); CSV column set v1 (ad_user_id, employee_name, department, office, event_timestamp ISO-8601 with explicit offset, event_type); **missing display attributes → EVERY event row written with blank cells, no abort (UC-006 AF-3 — R001 bar; ad_user_id resolves identity)**; ExportAborted.DirectoryUnavailable if AD unreachable — NO partial file (AF-2); NoData if no events (AF-1) |
 | INT-014 | ITimeConvention | NowUtc() | — | Current UTC time (DAT-001 capture source) |
 | INT-014 | ITimeConvention | ToLocalDisplay(timestampUtc) | — | America/Havana local time string, DST-aware (USA-008); raw UTC or server time is NEVER returned for display |
 | INT-014 | ITimeConvention | ToIso8601WithOffset(timestampUtc) | — | "YYYY-MM-DDThh:mm:ss±hh:mm" with the offset in force at the event time per the IANA zone database |
@@ -1518,7 +1519,6 @@ Operation signatures with preconditions / postconditions for every subsystem-bou
 | INT-017 | INewsRepository | Add / GetById / Update / GetPublished / GetAll | — | GetPublished filters Status=Published, sorted desc; Update stages only (commit via INT-015) |
 | INT-018 | IWorkerCategoryRepository | GetByUid / Upsert | — | Two data columns only (CON-006); Upsert stages only |
 | INT-019 | IAuditEntryRepository | AddNewsEntry / AddCategoryEntry | — | Add ONLY — the interface exposes no Update, no Delete (DAT-002); the compiler enforces the audit trail's immutability |
-
 ## Persistent Data Classes
 **Database Designer contribution (Elaboration Iter 1).** The Development Case did not fire the Data Model trigger (§5.2: data lives inline in the Design Model) — this section IS the data model: physical schema, O/R mapping, index strategy, and baseline migration for the five persistent classes CLS-021…CLS-025. CLS-026 DirectoryEntry and CLS-027 EmployeeDisplayData are transient AD projections and are deliberately NOT mapped — **no table stores any AD attribute** (CON-006); `employee_uid` is an untyped string reference with no foreign key, resolved live via CLS-009 (CON-005).
 
