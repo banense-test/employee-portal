@@ -1,14 +1,12 @@
 ## Document Control
-
 | Field | Value |
 |---|---|
 | Phase | Elaboration |
 | Status | Draft |
-| Milestone Target | End of Elaboration |
+| Milestone Target | End of Elaboration (LCA) |
 | Iteration | 1 (Cycle 1) |
-| Initialized by | User Interface Designer — this iteration contributes the **Boundary Classes and Navigation Map** section (UI view classes, Navigation Map, UI Patterns). The remaining canonical sections (Design Overview, Domain Model, Use-Case Realizations, Design Packages and Classes, Interface Contracts, Persistent Data Classes, Capsules, Protocols and Signals) are owned by the Designer / Database Designer and are contributed by those roles. |
-| Upstream inputs | Use-Case Model (UC-001–UC-010, UI Flow References); Supplementary Specification (USA-001–USA-009, SEC-006, PRF-002/003, REL-002/003); Software Architecture Document (COMP-001–COMP-009, interfaces ICLK/INEWS/IDIR/ICAT, ADR-001/003); design reference docs/inputs/employee-portal-design.html (CON-011) |
-
+| Contributions (Elab Iter 1) | **User Interface Designer** — §Boundary Classes and Navigation Map (screen registry SCR-01…SCR-09, M-01, EX-01; UI boundary classes; Navigation Map; UI Patterns P-01…P-07) — PRESERVED. **Designer** — §Design Overview, §Domain Model (analysis classes ACL-001…ACL-026 + attribution), §Use-Case Realizations (SEQ-001…SEQ-010), §Design Packages and Classes (CLS-001…CLS-026), §Interface Contracts (INT-006…INT-019), §Capsules, Protocols and Signals (omission note), §Traceability (merged) — this update. **Database Designer** — §Persistent Data Classes — PENDING (not yet contributed this iteration; the SAD §Data View schema is the interim reference for entity mapping). |
+| Upstream inputs | Use-Case Model (UC-001…UC-010, all FULL, UI Flow References); Supplementary Specification (SEC-001…007, AUD-001…005, DAT-001/002, USA-001…009, REL-001…004, PRF-001…003, SUP-004, DC-001…010, INT-001…005, STD-001…005); Software Architecture Document (COMP-001…COMP-011, subsystem interfaces, ADR-001…004, timestamp convention: store UTC / display America/Havana / export ISO-8601 with explicit offset / payroll day = local calendar day); Review Record (zero open findings on the Design Model) |
 ## Boundary Classes and Navigation Map
 
 (User Interface Designer — Elaboration Iter 1. This section realizes the user-interface-specific parts of the use cases: the boundary classes the user operates, the formal navigation topology, and the UI patterns every implementer follows. Interaction flows per UC are in the Use-Case Model §Use-Case Specifications → UI Flow References; usability criteria are quantified in the Supplementary Specification §Usability.)
