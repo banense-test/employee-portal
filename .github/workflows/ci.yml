@@ -65,12 +65,13 @@ jobs:
           dotnet-version: '10.0.x'
       - name: Regenerate solution from src/ and tests/ tree
         run: |
-          dotnet new sln --force --name EmployeePortal
-          find src tests -name '*.csproj' -print0 | xargs -0 -n1 dotnet sln add
+          rm -f *.sln
+          dotnet new sln --name EmployeePortal
+          find src tests -name '*.csproj' -print0 | xargs -0 -n1 dotnet sln EmployeePortal.sln add
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore EmployeePortal.sln
       - name: Build
-        run: dotnet build --no-restore --configuration Release
+        run: dotnet build EmployeePortal.sln --no-restore --configuration Release
 
   test:
     name: Test
@@ -84,11 +85,12 @@ jobs:
           dotnet-version: '10.0.x'
       - name: Regenerate solution from src/ and tests/ tree
         run: |
-          dotnet new sln --force --name EmployeePortal
-          find src tests -name '*.csproj' -print0 | xargs -0 -n1 dotnet sln add
+          rm -f *.sln
+          dotnet new sln --name EmployeePortal
+          find src tests -name '*.csproj' -print0 | xargs -0 -n1 dotnet sln EmployeePortal.sln add
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore EmployeePortal.sln
       - name: Build
-        run: dotnet build --no-restore --configuration Release
+        run: dotnet build EmployeePortal.sln --no-restore --configuration Release
       - name: Run tests
-        run: dotnet test --no-build --configuration Release --verbosity normal --logger trx
+        run: dotnet test EmployeePortal.sln --no-build --configuration Release --verbosity normal --logger trx
