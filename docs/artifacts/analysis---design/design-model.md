@@ -1489,9 +1489,385 @@ Operation signatures with preconditions / postconditions for every subsystem-bou
 | INT-019 | IAuditEntryRepository | AddNewsEntry / AddCategoryEntry | — | Add ONLY — the interface exposes no Update, no Delete (DAT-002); the compiler enforces the audit trail's immutability |
 
 ## Persistent Data Classes
+**Database Designer contribution (Elaboration Iter 1).** The Development Case did not fire the Data Model trigger (§5.2: data lives inline in the Design Model) — this section IS the data model: physical schema, O/R mapping, index strategy, and baseline migration for the five persistent classes CLS-021…CLS-025. CLS-026 DirectoryEntry and CLS-027 EmployeeDisplayData are transient AD projections and are deliberately NOT mapped — **no table stores any AD attribute** (CON-006); `employee_uid` is an untyped string reference with no foreign key, resolved live via CLS-009 (CON-005).
 
-**Pending contribution by the Database Designer (Elaboration).** This section is NOT owned by the Designer — no content is invented here. Interim references until that contribution lands: (a) the SAD §Data View schema (tables `clockings`, `news_items`, `news_audit`, `worker_categories`, `category_audit`) is the authoritative table-level baseline; (b) the entity attribute specifications in §Domain Model (CLS-021…CLS-025) are the design-side attribute definitions those tables map to; (c) the mapping constraints that the design model already fixes: `clockings.idempotency_key` UNIQUE (REL-002), `clockings.timestamp_utc` stored in UTC (stakeholder decision), `worker_categories` carries exactly two data columns (CON-006), audit tables are append-only with no UPDATE/DELETE path (DAT-002).
+### Persistence Mechanism Resolution (three-level chain)
 
+| Level | Resolution |
+|---|---|
+| Analysis mechanism | Persistence — objects stored between sessions (SAD cross-cutting) |
+| Design mechanism | Repository + Unit-of-Work over a transactional relational store (ADR-002): 3NF schema, append-only audit tables, idempotency via UNIQUE key, UTC `timestamptz` storage, audit writes share the orchestrator's transaction (DAT-002) |
+| Implementation mechanism | **PostgreSQL** (declared — CON-003) via EF Core + Npgsql 10.0.3 (ADR-002). Engine is stakeholder-declared, so the chain reaches level (c); all DDL below targets PostgreSQL syntax |
+
+### Physical Schema (PostgreSQL — CON-003, ADR-002)
+
+```plantuml
+@startuml
+title Employee Portal - Physical Schema (PostgreSQL, CON-003 / ADR-002)\nCLS-021..CLS-025 mapped to tables; CLS-026/CLS-027 transient, never persisted (CON-006)
+skinparam classAttributeIconSize 0
+skinparam fontSize 10
+skinparam packageStyle rectangle
+
+class "Active Directory (external)" as AD <<external>>
+
+class "clockings" as T1 <<table>> {
+  +id : integer <<PK, identity>>
+  employee_uid : text <<NOT NULL>>
+  event_type : text <<NOT NULL, CHECK (in,out)>>
+  timestamp_utc : timestamptz <<NOT NULL>>
+  idempotency_key : text <<NOT NULL, UNIQUE>>
+  synced_at_utc : timestamptz <<NULL>>
+}
+
+class "news_items" as T2 <<table>> {
+  +id : integer <<PK, identity>>
+  title : text <<NOT NULL>>
+  body : text <<NOT NULL>>
+  category : text <<NOT NULL, CHECK (general,hr,it,events)>>
+  is_featured : boolean <<NOT NULL>>
+  status : text <<NOT NULL, CHECK (published,unpublished)>>
+  published_at_utc : timestamptz <<NOT NULL>>
+  created_by_uid : text <<NOT NULL>>
+  created_at_utc : timestamptz <<NOT NULL>>
+  updated_by_uid : text <<NULL>>
+  updated_at_utc : timestamptz <<NULL>>
+}
+
+class "news_audit" as T3 <<table>> {
+  +id : bigint <<PK, identity>>
+  news_id : integer <<NOT NULL, FK>>
+  action : text <<NOT NULL, CHECK (publish,edit,unpublish)>>
+  actor_uid : text <<NOT NULL>>
+  timestamp_utc : timestamptz <<NOT NULL>>
+  snapshot : text <<NOT NULL>>
+}
+
+class "worker_categories" as T4 <<table>> {
+  +employee_uid : text <<PK, natural key>>
+  category : text <<NOT NULL>>
+  assigned_by_uid : text <<NOT NULL>>
+  assigned_at_utc : timestamptz <<NOT NULL>>
+}
+
+class "category_audit" as T5 <<table>> {
+  +id : bigint <<PK, identity>>
+  employee_uid : text <<NOT NULL>>
+  old_category : text <<NULL>>
+  new_category : text <<NOT NULL>>
+  actor_uid : text <<NOT NULL>>
+  timestamp_utc : timestamptz <<NOT NULL>>
+}
+
+T2 "1" -- "0..*" T3 : news_id\nfk_news_audit_news_items\nON DELETE RESTRICT
+
+T1 ..> AD : employee_uid - string ref, no FK (CON-006)
+T4 ..> AD : employee_uid
+T5 ..> AD : employee_uid
+T2 ..> AD : created_by_uid / updated_by_uid
+T3 ..> AD : actor_uid
+
+note bottom of T1
+  Maps CLS-021 ClockingEvent.
+  timestamp_utc = press-time UTC
+  capture (DAT-001); column name fixed
+  by the SAD Data View and this model's
+  interim note. synced_at_utc NULL =
+  direct online insert; set = arrived
+  via offline sync replay (ADR-003).
+  No UPDATE path exists (DAT-001).
+end note
+
+note right of T2
+  Maps CLS-022 NewsItem. No 'deleted'
+  status value exists (CON-012) and no
+  row is ever deleted. updated_* stay
+  NULL until the first edit (UC-009).
+end note
+
+note bottom of T3
+  Maps CLS-023 NewsAuditEntry.
+  Append-only (DAT-002): the baseline
+  migration REVOKEs UPDATE and DELETE
+  (SAD Data View). snapshot = the item
+  version at the action - every version
+  traceable (AUD-002).
+end note
+
+note right of T4
+  Maps CLS-024 WorkerCategory. Two data
+  columns only (CON-006); assigned_* are
+  audit metadata (NFR-005). Natural PK:
+  one row per employee, the UC-007
+  upsert target. No CHECK on category -
+  the fixed list lives in
+  worker-categories.json (ADR-004); a
+  CHECK would require a migration per
+  list edit (SUP-004).
+end note
+
+note bottom of T5
+  Maps CLS-025 CategoryAuditEntry.
+  old_category NULL = first assignment
+  (AUD-004). No FK to worker_categories:
+  the trail is keyed by the person (AD
+  user id), independent of the current
+  mapping row. Append-only (DAT-002) -
+  REVOKE UPDATE, DELETE.
+end note
+@enduml
+```
+
+**Schema decisions (what the diagram cannot carry):**
+
+- **Normalization:** every table is in 3NF — no repeating groups, no partial or transitive dependencies. **No denormalization is applied**: at ~100K clocking rows/year (SAD sizing) and 200 users, no declared NFR justifies one; every read is served by an index below, not by duplication.
+- **Naming convention:** `snake_case` throughout; constraint prefixes `pk_` / `uk_` / `fk_` / `ix_`. Table names are fixed by the SAD §Data View baseline (`clockings`, `news_items`, `news_audit`, `worker_categories`, `category_audit`) — `clockings` is the one plural name and is retained for SAD consistency; renaming it would be uncoordinated drift.
+- **`timestamptz` everywhere** — the column type enforces instant semantics; the stored value is always UTC (stakeholder decision; DAT-001). Display conversion to America/Havana (CLS-007) and ISO-8601 offset export (CLS-006) happen at render time — a local time is never stored.
+- **`worker_categories` has no CHECK on `category`** — the fixed list lives in `worker-categories.json` (ADR-004); a CHECK constraint would require a schema migration per list edit, violating SUP-004 (list changes without code deployment). CLS-004 validates assignments against the loaded list; the DB does not duplicate that rule.
+- **`category_audit` has no FK to `worker_categories`** — the audit trail is keyed by the person (AD user id), not by the current mapping row; the trail must survive independently of the mapping (AUD-004).
+- **`news_audit.news_id` → `news_items.id` ON DELETE RESTRICT** — no hard delete exists in the portal (CON-012); RESTRICT is defense-in-depth so no operational path can ever orphan or cascade-destroy a trail.
+
+### O/R Mapping (EF Core + Npgsql 10.0.3 — ADR-002)
+
+| Design class | Table | Identity strategy | Loading policy | Type conversions | Write policy |
+|---|---|---|---|---|---|
+| CLS-021 ClockingEvent | `clockings` | `GENERATED ALWAYS AS IDENTITY` — DB-generated, EF reads back after insert (`UseIdentityAlwaysColumn`) | Eager, explicit — repositories return materialized `IReadOnlyList`; no lazy loading, no navigation properties | `DateTimeOffset` → `timestamptz` (UTC); `ClockingEventType` enum → `text` via value converter, DB CHECK as second line | INSERT only (`Add`/`AddRange`, INT-016); **no UPDATE path** — immutability is DAT-001; sync uses `ON CONFLICT (idempotency_key) DO NOTHING` |
+| CLS-022 NewsItem | `news_items` | `GENERATED ALWAYS AS IDENTITY` | Eager, explicit | `NewsCategory`/`NewsStatus` enums → `text` + CHECK; `DateTimeOffset` → `timestamptz` | INSERT + UPDATE (status/fields); **no DELETE** — soft delete via `status` (CON-012); concurrent unpublish handled by status re-read (SEQ-009 AF-2), not a version column |
+| CLS-023 NewsAuditEntry | `news_audit` | `GENERATED ALWAYS AS IDENTITY` (`bigint` — append-only grows unbounded) | Eager, explicit | `NewsAuditAction` enum → `text` + CHECK; `snapshot` = serialized item version, `text` (format owned by CLS-005) | INSERT only; **UPDATE/DELETE revoked at the DB** (DAT-002) |
+| CLS-024 WorkerCategory | `worker_categories` | Natural key `employee_uid` — one row per employee; no surrogate | Eager, explicit | `DateTimeOffset` → `timestamptz` | Upsert: `ON CONFLICT (employee_uid) DO UPDATE` (UC-007); no delete path declared |
+| CLS-025 CategoryAuditEntry | `category_audit` | `GENERATED ALWAYS AS IDENTITY` (`bigint`) | Eager, explicit | `old_category` NULL = first assignment (AUD-004) | INSERT only; **UPDATE/DELETE revoked at the DB** (DAT-002) |
+| CLS-026 DirectoryEntry, CLS-027 EmployeeDisplayData | — none | — | — | — | **Never persisted** (CON-006); constructed per-request by CLS-009 |
+
+**Transaction policy (DAT-002):** CLS-011 `SaveChanges()` is the single commit boundary — a state change and its staged audit entry commit in ONE transaction; a failed audit write rolls back the state change. The audit repositories (INT-019) expose `Add` only — the compiler and the DB REVOKE enforce append-only together.
+
+### Index Strategy and Performance Contract
+
+```plantuml
+@startuml
+title Employee Portal - Index Strategy: every index justified by a declared access path
+skinparam classAttributeIconSize 0
+skinparam fontSize 10
+skinparam packageStyle rectangle
+
+package "Access paths - repository operations INT-016 to INT-019" {
+  class "Q1 GetCurrentStatus - UC-001" as Q1 <<query>> {
+    WHERE employee_uid, latest event
+    ORDER BY timestamp_utc DESC LIMIT 1
+    uses ix_clockings_employee_recorded
+    budget PRF-002: under 1 s end to end
+  }
+  class "Q2 GetHistory - UC-002" as Q2 <<query>> {
+    WHERE employee_uid AND timestamp_utc in month range
+    uses ix_clockings_employee_recorded range scan
+    budget PRF-001: under 3 s page load
+  }
+  class "Q3 GetByFilter - UC-005" as Q3 <<query>> {
+    WHERE employee_uid and/or timestamp_utc range
+    uses ix_clockings_employee_recorded or ix_clockings_timestamp
+  }
+  class "Q4 GetByRange - UC-006" as Q4 <<query>> {
+    WHERE timestamp_utc in month range, all employees
+    uses ix_clockings_timestamp range scan
+    about 8 to 9K rows per month, streamed to CSV
+  }
+  class "Q5 SyncEvents - UC-001 AF-1" as Q5 <<query>> {
+    INSERT ON CONFLICT idempotency_key DO NOTHING
+    uses uk_clockings_idempotency_key
+    budget REL-003: all persisted under 60 s
+  }
+  class "Q6 GetPublished - UC-003" as Q6 <<query>> {
+    WHERE status published, ORDER BY published_at_utc DESC
+    optional AND category filter
+    uses ix_news_items_published or ix_news_items_category_published
+    budget PRF-001: under 3 s page load
+  }
+  class "Q7 GetByUid and Upsert - UC-007" as Q7 <<query>> {
+    WHERE employee_uid - primary key lookup
+    INSERT ON CONFLICT employee_uid DO UPDATE
+  }
+  class "Q8 Audit reads - AUD-002 and AUD-004" as Q8 <<query>> {
+    WHERE news_id ORDER BY timestamp_utc - item versions
+    WHERE employee_uid ORDER BY timestamp_utc
+    uses ix_news_audit_news, ix_category_audit_employee
+  }
+}
+
+package "Tables - constraints and indexes" {
+  class "clockings" as T1 <<table>> {
+    pk_clockings on id
+    uk_clockings_idempotency_key on idempotency_key
+    --
+    ix_clockings_employee_recorded on employee_uid, timestamp_utc
+    ix_clockings_timestamp on timestamp_utc
+  }
+  class "news_items" as T2 <<table>> {
+    pk_news_items on id
+    --
+    ix_news_items_published on published_at_utc, partial WHERE status published
+    ix_news_items_category_published on category, published_at_utc, partial WHERE status published
+  }
+  class "news_audit" as T3 <<table>> {
+    pk_news_audit on id
+    --
+    ix_news_audit_news on news_id, timestamp_utc
+  }
+  class "worker_categories" as T4 <<table>> {
+    pk_worker_categories on employee_uid
+  }
+  class "category_audit" as T5 <<table>> {
+    pk_category_audit on id
+    --
+    ix_category_audit_employee on employee_uid, timestamp_utc
+  }
+}
+
+Q1 ..> T1
+Q2 ..> T1
+Q3 ..> T1
+Q4 ..> T1
+Q5 ..> T1
+Q6 ..> T2
+Q7 ..> T4
+Q8 ..> T3
+Q8 ..> T5
+
+note bottom of T1
+  No partitioning: about 100K rows per year
+  (SAD sizing) is orders of magnitude
+  below where partitioning pays; single
+  node (CON-008), 200 users. Revisit only
+  with measured evidence, never speculation.
+end note
+
+note right of T2
+  Partial indexes (WHERE status published)
+  stay minimal: unpublished rows, retained
+  forever per CON-012, are excluded from
+  the browse index. The management list
+  GetAll reads a small table - no further
+  index justified.
+end note
+@enduml
+```
+
+**Index justifications (each tied to a declared NFR):**
+
+| Index | Serves | NFR / UC |
+|---|---|---|
+| `uk_clockings_idempotency_key` (UNIQUE) | Q5 duplicate suppression — the physical enforcement point of the REL-002 conflict policy; no application locking | REL-002, ADR-003, UC-001 AF-1 |
+| `ix_clockings_employee_recorded` (employee_uid, timestamp_utc) | Q1 status lookup (LIMIT 1, index-ordered — no sort), Q2 month history, Q3 HR filter | PRF-002, PRF-001, UC-001/002/005 |
+| `ix_clockings_timestamp` (timestamp_utc) | Q4 monthly export range scan across all employees | PRF-001, UC-006 |
+| `ix_news_items_published` (partial) | Q6 browse, newest first | PRF-001, UC-003 |
+| `ix_news_items_category_published` (partial, composite) | Q6 with category chip filter (leftmost-prefix: category, then date order) | PRF-001, UC-003 |
+| `ix_news_audit_news` (news_id, timestamp_utc) | Q8 item version trail, chronological | AUD-002, NFR-005 |
+| `ix_category_audit_employee` (employee_uid, timestamp_utc) | Q8 per-employee category change trail | AUD-004, NFR-005 |
+
+No other index is justified: `worker_categories` is ≤ 200 rows (PK lookup suffices); `GetAllNews` (SCR-08) reads a small table sequentially; over-indexing would tax the write path for no declared requirement.
+
+### Baseline Migration (V1) and Evolution Policy
+
+The DDL below is the **authoritative baseline specification**. The Implementer applies it as the initial EF Core migration (Npgsql supports partial indexes via `HasFilter("status = 'published'")` and identity via `UseIdentityAlwaysColumn`); the generated schema must be equivalent to this DDL — column types, constraints, index predicates included.
+
+```sql
+-- Migration V1 — baseline schema (PostgreSQL, CON-003 / ADR-002)
+-- Idempotent: IF NOT EXISTS guards make re-runs safe. Forward-only version sequence.
+
+CREATE TABLE IF NOT EXISTS clockings (
+    id              integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    employee_uid    text        NOT NULL,
+    event_type      text        NOT NULL CHECK (event_type IN ('in', 'out')),
+    timestamp_utc   timestamptz NOT NULL,
+    idempotency_key text        NOT NULL,
+    synced_at_utc   timestamptz NULL,
+    CONSTRAINT uk_clockings_idempotency_key UNIQUE (idempotency_key)
+);
+CREATE INDEX IF NOT EXISTS ix_clockings_employee_recorded ON clockings (employee_uid, timestamp_utc);
+CREATE INDEX IF NOT EXISTS ix_clockings_timestamp         ON clockings (timestamp_utc);
+
+CREATE TABLE IF NOT EXISTS news_items (
+    id               integer GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    title            text        NOT NULL,
+    body             text        NOT NULL,
+    category         text        NOT NULL CHECK (category IN ('general', 'hr', 'it', 'events')),
+    is_featured      boolean     NOT NULL DEFAULT false,
+    status           text        NOT NULL CHECK (status IN ('published', 'unpublished')),
+    published_at_utc timestamptz NOT NULL,
+    created_by_uid   text        NOT NULL,
+    created_at_utc   timestamptz NOT NULL,
+    updated_by_uid   text        NULL,
+    updated_at_utc   timestamptz NULL
+);
+CREATE INDEX IF NOT EXISTS ix_news_items_published          ON news_items (published_at_utc)              WHERE status = 'published';
+CREATE INDEX IF NOT EXISTS ix_news_items_category_published ON news_items (category, published_at_utc)   WHERE status = 'published';
+
+CREATE TABLE IF NOT EXISTS news_audit (
+    id            bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    news_id       integer     NOT NULL REFERENCES news_items (id) ON DELETE RESTRICT,
+    action        text        NOT NULL CHECK (action IN ('publish', 'edit', 'unpublish')),
+    actor_uid     text        NOT NULL,
+    timestamp_utc timestamptz NOT NULL,
+    snapshot      text        NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_news_audit_news ON news_audit (news_id, timestamp_utc);
+
+CREATE TABLE IF NOT EXISTS worker_categories (
+    employee_uid    text PRIMARY KEY,
+    category        text        NOT NULL,
+    assigned_by_uid text        NOT NULL,
+    assigned_at_utc timestamptz NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS category_audit (
+    id            bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    employee_uid  text        NOT NULL,
+    old_category  text        NULL,
+    new_category  text        NOT NULL,
+    actor_uid     text        NOT NULL,
+    timestamp_utc timestamptz NOT NULL
+);
+CREATE INDEX IF NOT EXISTS ix_category_audit_employee ON category_audit (employee_uid, timestamp_utc);
+
+-- Append-only enforcement (DAT-002 / NFR-005): the application role is granted
+-- SELECT + INSERT only on the audit tables; UPDATE and DELETE are revoked.
+-- The migration/owner role retains full rights for operational recovery only.
+REVOKE UPDATE, DELETE ON news_audit     FROM PUBLIC;
+REVOKE UPDATE, DELETE ON category_audit FROM PUBLIC;
+```
+
+**Evolution policy (schema stability — end-of-Elaboration baseline):**
+- **V1 is the stable core.** Construction iterations may ADD tables; existing tables change only via a reviewed EF migration with a forward script and, where data-safe, a down-migration. Audit tables are never dropped and never lose their append-only REVOKE.
+- **Rollback:** EF down-migrations revert structure where no data loss occurs; any change touching `clockings` or the audit tables requires a documented data-preservation step first.
+- **No migration exists for a category-list change** — by design (ADR-004): the list is a JSON file, not schema.
+
+### Performance Baseline (critical access paths)
+
+| Path | Expected plan | Row estimate | Budget |
+|---|---|---|---|
+| Q1 status lookup (every Home load) | index scan `ix_clockings_employee_recorded`, LIMIT 1, no sort | 1 row | < 5 ms DB — PRF-002 (< 1 s end-to-end) |
+| Q2 own month history | index range scan, employee prefix | ≤ ~40 rows/employee-month | PRF-001 (< 3 s page) |
+| Q4 monthly CSV export | range scan `ix_clockings_timestamp`, streamed | ~8–9K rows/month (200 employees × ~2 events × ~21 workdays) | well inside PRF-001; REL-003 unaffected |
+| Q5 sync replay (worst case) | 200 × unique-index probe + INSERT | ≤ 200 events | REL-003 (≤ 60 s) — trivially met |
+| Q6 news browse | partial index scan, pre-ordered | tens of rows | PRF-001 (< 3 s page) |
+
+Growth: `clockings` ~100K rows/year (SAD sizing) — years of headroom on a single node (CON-008) before any tactic beyond these indexes is warranted.
+
+### Traceability (Database Designer contribution)
+
+| Element | Traces From | Link Type | Traces To |
+|---|---|---|---|
+| `clockings` table | CLS-021, FR-004, FR-005, DAT-001, CON-003 | Derives | INT-016 (CLS-012); Q1–Q5 access paths |
+| `news_items` table | CLS-022, FR-006, FR-007, FR-008, FR-009, CON-012 | Derives | INT-017 (CLS-013); Q6 access path |
+| `news_audit` table | CLS-023, NFR-005, AUD-001, AUD-002, AUD-003, DAT-002 | Derives | INT-019 (CLS-015); Q8 access path |
+| `worker_categories` table | CLS-024, FR-003, CON-006, ADR-004 | Derives | INT-018 (CLS-014); Q7 access path |
+| `category_audit` table | CLS-025, NFR-005, AUD-004, DAT-002 | Derives | INT-019 (CLS-016); Q8 access path |
+| `uk_clockings_idempotency_key` | REL-002, ADR-003, AC-005 | Realizes | Q5 sync duplicate suppression (UC-001 AF-1) |
+| `ix_clockings_employee_recorded` | PRF-002, PRF-001, UC-001, UC-002, UC-005 | Realizes | Q1, Q2, Q3 |
+| `ix_clockings_timestamp` | PRF-001, UC-006 | Realizes | Q4 monthly export |
+| `ix_news_items_published`, `ix_news_items_category_published` | PRF-001, UC-003 | Realizes | Q6 browse + category filter |
+| `ix_news_audit_news`, `ix_category_audit_employee` | NFR-005, AUD-002, AUD-004 | Realizes | Q8 audit reads |
+| Append-only REVOKE (audit tables) | DAT-002, NFR-005 | Realizes | INT-019 Add-only interface (compiler + DB dual enforcement) |
+| `timestamptz` UTC storage | DAT-001 + stakeholder decision (store UTC) | Realizes | CLS-007 display conversion; CLS-006 ISO-8601 offset export |
+| Migration V1 (baseline DDL) | CON-003, ADR-002, R008 | Realizes | Implementer initial EF migration (Construction) |
+| No-Employee-table rule | CON-005, CON-006, CON-007 | Derives | CLS-009 live LDAP resolution (R001 graceful degradation) |
 ## Boundary Classes and Navigation Map
 
 (User Interface Designer — Elaboration Iter 1. This section realizes the user-interface-specific parts of the use cases: the boundary classes the user operates, the formal navigation topology, and the UI patterns every implementer follows. Interaction flows per UC are in the Use-Case Model §Use-Case Specifications → UI Flow References; usability criteria are quantified in the Supplementary Specification §Usability.)
