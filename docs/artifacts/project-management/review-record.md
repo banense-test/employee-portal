@@ -578,21 +578,45 @@ stop
 @enduml
 ```
 ## Disposition
-
 ### Elaboration Iteration 1, Cycle 1 — Code-Review Gate Disposition
 
 **No-PRs-To-Review.** The S1 guard fired: zero `ready-for-review` branches and zero PRs in any state. No PR received a terminal SCM review decision because no PR existed; the guard disposition is recorded here as the cycle's terminal outcome, and the checklist (CR-1…CR-7) is declared PREPARED, not waived — it applies unchanged to the first mechanism PR.
 
 **Iteration completion verdict (Iteration Acceptance lens):** the iteration's code objectives are **NOT met as of this cycle** — Work Items 7–9 have no SCM evidence, and exit criteria 1–3 (empirical R001/R003/R004 validation) therefore have no code evidence. This is recorded as finding F-CR-E1-1 (Critical). The milestone is NOT declared achieved; no iteration, phase, or milestone is marked complete by this record. The gate remains open: the moment handoffs arrive, the Code Reviewer opens PRs against `iteration/E1` and issues terminal dispositions per PR.
 
-**SCM evidence summary:** CI green on `main` (run 33492338439) — no red-build finding applies; `iteration/E1` absent; no open PRs; no mechanism code in the build tree.
+**SCM evidence summary:** CI green on `main` (run 33492338439) — no red-build finding applies; `iteration/E1` absent at the code-review cycle (created since, skeleton only); no open PRs; no mechanism code in the build tree.
 
 **Scope adherence:** no scope-creep finding — the absence of code cannot inflate scope. The expected mechanisms trace cleanly to declared scope: R001→FR-010/CON-005, R003→CON-004, R004→NFR-004/AC-005, all via the Development Case's FIRED PoC trigger and the stakeholder's empirical-validation decision.
 
+### Technical LCA Lens — Per-Artifact Verdicts (Reviewer, 2026-09-01)
+
+| Artifact | Verdict (this lens) | Basis |
+|---|---|---|
+| Software Architecture Document | **NeedsRework** | 2 Critical open (F1 superseded PoC plan; F2 PoC artifact + code evidence absent) + 1 Minor (F3 stale dependencies). The 4+1 baseline itself is structurally sound — the defect is the superseded risk-retirement record, not the architecture. |
+| Design Model | **Approved** | Zero findings. All 10 UCs realized (SEQ-001…010), full signatures (CLS-001…027), interface contracts with pre/postconditions (INT-006…019), state machines, inline data model with NFR-justified indexes, co-owned sections intact, SAD reconciliations documented with sound justification. |
+| Use-Case Model | **Approved** | Zero findings. All 10 UCs FULL with correct `Source: FR-NNN` (1:1 to declared FRs — no phantom UCs), authentication correctly a cross-cutting `<<include>>` (no standalone auth UC), actor set complete, timestamp convention + America/Havana incorporated, markers retired in place. |
+| Supplementary Specification | **Approved** | Zero findings. FURPS+ quantified and testable, thresholds tagged with named bases, traceable to declared NFRs/ACs, no gold-plating. |
+| Risk List | **Approved** | 1 Minor (F1 untagged >90% criterion) — non-blocking. The R001/R003/R004 empirical re-scope, R010 re-scope, and R011 addition correctly implement the stakeholder decision. |
+| Iteration Plan | **Approved** | Zero findings. UC IDs verified against the Use-Case Model authority (LCO F1 lesson applied), honest work-item statuses (LCO F2 lesson applied), two clocks never summed, exit criteria 1–8 correctly specified. |
+| Development Case | **Approved** | Zero findings. IARI baseline conformance verified (25-role roster intact, 16 CORE artifacts intact, ownership fixed, no forbidden overrides); the PoC trigger FIRED genuinely holds (Elaboration phase + R001 HIGH requiring empirical validation per Risk List); all 5 NOT-FIRED triggers audited and justified. |
+| Test Case | **Approved** | Zero findings. 20 cases with adversarial intent, complete UC/flow coverage, honest BLOCKED verdicts backed by real SCM evidence (CI run 33492338439, file shas, Issue #1/#2), no fabricated results. |
+| Test Evaluation Summary | **Approved** | Zero findings. Honest NOT YET ACHIEVED mission verdict, INC-1/INC-2 recorded, thresholds upstream-sourced, regression policy mandatory. |
+
+### Technical LCA Lens — Milestone Disposition (Elaboration Iter 1, Cycle 1)
+
+**Sanction WITHHELD at LCA — NEEDS REWORK.** The technical-lens disposition for the end-of-Elaboration milestone is withheld this cycle. Two Critical findings are open on the Software Architecture Document (F1 — the superseded analysis-only PoC disposition contradicts the binding stakeholder decision; F2 — the DC-sanctioned Architectural Proof-of-Concept artifact is absent and empirical validation of R001/R003/R004 has no code evidence), and the Code Reviewer's Critical finding F-CR-E1-1 (no mechanism handoff) remains open. Per the stakeholder's binding decision — "I will not accept an LCA that validates a HIGH architectural risk on paper only" — the LCA evidence package cannot be assembled this cycle: exit criteria 1–3 (empirical R001/R003/R004 validation) are unmet, and the SAD's risk-retirement record misstates how the phase's central risks are retired.
+
+**Withholding is a verdict, not a skip.** The convergence path is fully specified and already planned (Iteration Plan: Elaboration Iter 2 "BUILDING" — "Close residual findings from Iter 1 review; complete any PoC acceptance criteria not met; finalize LCA evidence package"): actions A-1…A-10 (§ Resolutions and Actions) unblock the PR loop, deliver the three mechanisms, execute the 20 test cases, produce the PoC artifact, and correct the SAD. The milestone is NOT declared achieved; no iteration, phase, or milestone is marked complete by this record.
+
+**What is sound and must not be reworked:** the architecture baseline (4+1 views, 11 change-area components, ADR-001…004, interface-based boundaries), the complete requirements set (10 FULL UCs, quantified Supplementary Specification), the complete design (10 realizations, full signatures, inline data model), the honest test instrument (20 regression-ready cases), and the plan/risk/DC governance chain. Seven of nine artifacts are clean from this lens. The gap is concentrated and executable: the SAD's superseded PoC record and the absent empirical validation.
+
+**SCM evidence for the disposition:** zero open PRs (nothing to sanction or withhold on — no PR carries the baseline); CI green on `main` (run 33492338439); `iteration/E1` exists but holds skeleton only (no Services/, no Infrastructure/, no Npgsql/LDAP/JWT packages); SCM Issue #1 (severity:blocker) formalizes the mechanism-code absence; Issue #2 (severity:minor) formalizes the CONTRIBUTING.md gap.
+
+**Scope adherence (technical lens):** no scope-creep findings. Every element in every artifact traces to the declared scope (10 FRs, 5 NFRs, 5 ACs, 14 CONs, 2 declared risks); the three stakeholder decisions are incorporated with markers retired in place; the only untagged quantitative figure is recorded as Risk List F1 (Minor).
+
 ### Historical — LCO Disposition (Inception, preserved)
 
-**GO (APPROVED)** — all 9 artifacts passed all 9 LCO exit criteria; both prior findings resolved; zero new findings; stakeholder sanction GRANTED and confirmed; `requiresIteration: false`. The project was sanctioned to proceed to Elaboration. Elaboration entry conditions (STK-004 engagement, R001/R003/R004 PoC scheduling) were recorded as advisory, non-blocking items — of which the PoC items are now the subject of this cycle's Critical finding.
-
+**GO (APPROVED)** — all 9 artifacts passed all 9 LCO exit criteria; both prior findings resolved; zero new findings; stakeholder sanction GRANTED and confirmed; `requiresIteration: false`. The project was sanctioned to proceed to Elaboration. Elaboration entry conditions (STK-004 engagement, R001/R003/R004 PoC scheduling) were recorded as advisory, non-blocking items — of which the PoC items are now the subject of this cycle's Critical findings.
 ## Traceability
 
 | Element | Traces From | Link Type | Traces To |
