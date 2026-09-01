@@ -58,7 +58,7 @@
 | REL-003 | If network drops for 5 minutes, data syncs once connectivity is restored | AC-005 | Medium |
 | REL-004 | Backup and server crash recovery are Infrastructure's responsibility, not a portal requirement | CON-014 | Low |
 
-**[SCOPE_QUESTION — not declared, but potentially critical: offline clocking persistence mechanism]** — NFR-004 and AC-005 require the system to tolerate 5-minute network disruptions and sync data afterward. The mechanism for local queuing/persistence during network outage is not specified. This affects the architecture (local storage strategy, sync conflict resolution). The Requirements Specifier will quantify thresholds in Elaboration; the Architect must decide the technical mechanism.
+**Architectural note — offline clocking persistence (NFR-004, AC-005):** The scope of fault tolerance is declared: the system must tolerate 5-minute network disruptions and sync data once connectivity is restored. The implementation mechanism (local queuing strategy, sync conflict resolution, persistence layer for offline clockings) is an architectural concern for the Software Architect to resolve in Elaboration — confirmed by the stakeholder as an architectural decision, not a missing scope item. The Requirements Specifier will quantify thresholds (max queue size, sync timeout, conflict policy) in Elaboration.
 
 ## Performance
 
@@ -184,8 +184,8 @@ end note
 | USA-004 | AC-004 | Refines | UC-001 |
 | USA-005 | AC-002 | Refines | UC-008 |
 | REL-001 | NFR-003 | Refines | (All UCs) |
-| REL-002 | NFR-004 | Refines | UC-001 |
-| REL-003 | AC-005 | Refines | UC-001 |
+| REL-002 | NFR-004 | Refines | UC-001 (architectural mechanism — Architect, Elaboration) |
+| REL-003 | AC-005 | Refines | UC-001 (architectural mechanism — Architect, Elaboration) |
 | PRF-001 | NFR-001 | Refines | (All UCs) |
 | PRF-002 | NFR-002 | Refines | UC-001 |
 | PRF-003 | AC-003, FR-010 | Refines | UC-004 |
