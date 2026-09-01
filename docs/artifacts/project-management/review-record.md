@@ -13,8 +13,7 @@
 | Cycle Dispositions | Code-review gate: **No-PRs-To-Review** (S1 guard fired — zero ready-for-review branches, zero PRs, iteration/E1 absent at that cycle; branch since created, skeleton only). Technical LCA lens: **NEEDS REWORK — sanction withheld** (2 Critical findings on the SAD; empirical validation of R001/R003/R004 has no code evidence) |
 | Open Findings (this cycle) | Technical lens: 2 Critical (SAD F1 — superseded PoC plan; SAD F2 — PoC artifact + code evidence absent), 2 Minor (SAD F3 — stale component dependencies; Risk List F1 — untagged >90% criterion). Code Reviewer lens: 1 Critical (F-CR-E1-1 — no mechanism handoff), 1 Minor (F-CR-E1-2 — CONTRIBUTING.md absent) |
 ## Review Scope and Criteria
-
-### This Cycle's Scope — Elaboration Iteration 1, Cycle 1
+### This Cycle's Scope — Elaboration Iteration 1, Cycle 1 (Code-Review Lens)
 
 Per the Work Order and BRANCHING_STRATEGY §5.2, the Elaboration architectural prototype is **evolutionary production code**: the Implementer builds each risk-retirement mechanism in `src/` on `feature/E1-{risk-id}` branches based on `iteration/E1`, labels them `ready-for-review`, and the Code Reviewer opens and reviews one PR per mechanism (base `iteration/E1`) exactly as a Construction feature PR — never rejecting prototype code as throwaway, never waiving the checklist.
 
@@ -38,7 +37,7 @@ Per the Work Order and BRANCHING_STRATEGY §5.2, the Elaboration architectural p
 | CR-6 | Build-tree coverage — every changed file under `src/` or `tests/` inside the build tree | S2 checklist |
 | CR-7 | Terminal disposition per PR — approve or request_changes; no PR left undecided | Gate-enforcement mandate |
 
-### Gate Execution — What Was Run This Cycle
+### Gate Execution — What Was Run This Cycle (Code-Review Lens)
 
 ```plantuml
 @startuml
@@ -81,7 +80,7 @@ endif
 @enduml
 ```
 
-### Compliance Matrix — Checklist × Status
+### Compliance Matrix — Checklist × Status (Code-Review Lens)
 
 ```plantuml
 @startuml
@@ -190,9 +189,11 @@ object "main (release branch)" as MAIN {
 }
 
 object "iteration/E1 (integration workspace)" as ITER {
-  Status: ABSENT
-  Tree read: Not Found
-  CI runs: none
+  Status: ABSENT at code-review cycle;
+  CREATED since (Test Case Cycle 1
+  record: branch exists, 51 entries,
+  skeleton only — no Services/,
+  no Infrastructure/, no packages)
   Required as the base of every
   Elaboration mechanism PR
   (BRANCHING_STRATEGY 5.2)
@@ -242,6 +243,110 @@ end note
 
 The Inception record reviewed 9 artifacts + the Review Record against 9 LCO exit criteria (feasibility lens) across 2 iterations. Iteration 1 raised 2 findings on the Iteration Plan (F1 Major — UC-ID mapping mismatch; F2 Minor — stale work-item statuses); the stakeholder REFUSED sanction pending rework. Iteration 2 verified both corrections, raised zero new findings, and recorded stakeholder sanction GRANTED ("Let's go to elaboration."). Full LCO compliance matrices, health state machine, risk retirement status, and milestone timeline diagrams are preserved in SCM history at the Inception revision of this artifact.
 
+### Technical LCA Lens — Scope and Criteria (Reviewer, this cycle)
+
+**Scope:** ALL 9 technical artifacts produced this phase, reviewed against the **LCA exit-criteria lens** (are the artifacts collectively sufficient for phase transition?) — the correct evaluative lens for a lifecycle milestone, not a completion lens. Priority order: SAD first (architecture gate), then Design Model, then Use-Case Model, then remaining. Upstream consumption completed before findings: all 9 artifacts read in full; the Work Order's declared scope (10 FRs, 5 NFRs, 5 ACs, 14 CONs, 2 declared risks), the stakeholder's recorded decisions (timestamp convention, America/Havana, PoC empirical validation), and the SCM state (zero open PRs; `iteration/E1` skeleton-only per the Test Case's empirical inspection) were cross-checked.
+
+**Checklists applied per artifact type:** SAD → architecture checklist (4+1 views, NFR→tactic mapping, change-area subsystems, interface-based boundaries, PoC plan vs stakeholder decision); Design Model → design checklist (UC realizations per-UC, full signatures, interface contracts, volatility encapsulation, co-owned section integrity); Use-Case Model → requirements checklist (actors, flows, pre/post conditions, alternatives, `Source: FR-NNN` guard, cross-cutting-mechanism guard); Supplementary Specification → NFR checklist (FURPS+ quantified, testable, traceable, no gold-plating); Risk List → mitigation/acceptance-criteria checklist; Iteration Plan → plan-integrity checklist (UC-ID authority, honest statuses, two clocks); Development Case → IARI baseline conformance + optional-trigger justification audit; Test Case / Test Evaluation Summary → test-design checklist (coverage, adversarial intent, honest verdicts, no fabricated results).
+
+**Scope-marker verification:** all non-literal elements carry correct markers; three stakeholder decisions retired their markers in place (offline mechanism, timestamp convention, office timezone America/Havana) — no marker survives its own answer. The `[ASSUMPTION]` tags on quantified thresholds (2 s window, queue ≥ 10, sync ≤ 60 s, 95th percentile) carry named bases — compliant, with one exception recorded as Risk List F1.
+
+**Compliance Matrix — Technical LCA Lens (9 artifacts × checklist dimensions):**
+
+```plantuml
+@startuml
+title Elaboration Iter 1 - Technical LCA Review Compliance Matrix\n9 artifacts x checklist dimensions (Reviewer lens, 2026-09-01)
+
+object "Software Architecture Document" as SAD {
+  4+1 views complete : PASS (7 diagrams)
+  NFR-to-tactic mapping : PASS
+  Subsystems encapsulate change areas : PASS (11 COMP)
+  No layer- or feature-named subsystems : PASS
+  Interface-based boundaries : PASS
+  PoC plan matches stakeholder decision : FAIL - F1 Critical
+  Sanctioned PoC artifact and code evidence : FAIL - F2 Critical
+  Dependencies consistent with Design Model : FAIL - F3 Minor
+}
+object "Design Model" as DM {
+  UC realizations 10 of 10 : PASS (SEQ-001..010)
+  Full operation signatures : PASS (CLS-001..027)
+  Interface contracts pre and post : PASS (INT-006..019)
+  Volatility encapsulation : PASS
+  Co-owned sections intact : PASS
+  Findings : NONE - clean
+}
+object "Use-Case Model" as UCM {
+  Every UC cites Source FR-NNN : PASS (10 of 10)
+  No cross-cutting UCs : PASS (auth is include)
+  Actor set complete : PASS (ACT-001..004)
+  Flows and pre or post conditions : PASS (all FULL)
+  Markers retired in place : PASS
+  Findings : NONE - clean
+}
+object "Supplementary Specification" as SUP {
+  FURPS+ quantified and testable : PASS
+  Thresholds tagged as ASSUMPTION : PASS
+  Traceable to declared NFR and AC : PASS
+  No gold-plating : PASS
+  Findings : NONE - clean
+}
+object "Risk List" as RISK {
+  Re-scope per stakeholder decision : PASS
+  R011 added and R010 re-scoped : PASS
+  Mitigations with acceptance criteria : PASS
+  Quantified criteria tagged : FAIL - F1 Minor
+}
+object "Iteration Plan" as PLAN {
+  UC IDs vs Use-Case Model authority : PASS
+  Work item statuses honest : PASS
+  Two clocks never summed : PASS
+  Exit criteria 1 to 8 specified : PASS
+  Findings : NONE - clean
+}
+object "Development Case" as DC {
+  IARI baseline conformance : PASS
+  CORE 16 intact, ownership fixed : PASS
+  PoC trigger FIRED condition holds : PASS (audited)
+  Five NOT-FIRED triggers justified : PASS (audited)
+  Findings : NONE - clean
+}
+object "Test Case" as TC {
+  20 cases, adversarial design : PASS
+  UC and flow coverage complete : PASS
+  Honest BLOCKED verdicts, real evidence : PASS
+  No fabricated results : PASS
+  Findings : NONE - clean
+}
+object "Test Evaluation Summary" as TES {
+  Thresholds upstream-sourced : PASS
+  Honest NOT YET ACHIEVED verdict : PASS
+  INC-1 and INC-2 recorded : PASS
+  Findings : NONE - clean
+}
+
+SAD -[hidden]-> DM
+DM -[hidden]-> UCM
+UCM -[hidden]-> SUP
+SUP -[hidden]-> RISK
+RISK -[hidden]-> PLAN
+PLAN -[hidden]-> DC
+DC -[hidden]-> TC
+TC -[hidden]-> TES
+
+note bottom of SAD
+  Verdict NEEDS REWORK - 2 Critical open.
+  The architecture baseline itself is
+  structurally sound; the gap is the
+  superseded risk-retirement record
+  and the absent code evidence.
+end note
+note bottom of TES
+  7 of 9 artifacts clean from this lens
+  (silence equals clean). 2 artifacts
+  carry 4 findings: 2 Critical, 2 Minor.
+end note
+@enduml
+```
 ## Findings
 
 ### Elaboration Iteration 1 — New Findings (Code-Review Lens)
