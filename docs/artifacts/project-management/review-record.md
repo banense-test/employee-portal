@@ -1,5 +1,4 @@
 ## Document Control
-
 | Field | Value |
 |---|---|
 | Phase | Inception |
@@ -11,9 +10,10 @@
 | Review Type | LCO Milestone Review — Feasibility & Exit Criteria |
 | Prior Iteration | 1 (Cycle 1) — 2 findings on Iteration Plan (1 Major, 1 Minor), both now RESOLVED |
 | Stakeholder Sanction (Iter 1) | REFUSED — scope accepted, advance withheld pending Iteration Plan rework |
-| Stakeholder Sanction (Iter 2) | **GRANTED** — "Yes" to advancing past LCO; "Let's go to elaboration." |
-| Iteration 2 Disposition | **GO (APPROVED)** — all prior findings resolved, zero new findings, all 9 artifacts pass LCO exit criteria, stakeholder sanction granted |
-
+| Stakeholder Sanction (Iter 2 — Mgmt Reviewer) | **GRANTED** — "Yes" to advancing past LCO; "Let's go to elaboration." |
+| Stakeholder Sanction (Iter 2 — Review Coordinator) | **CONFIRMED** — "Yes" to advancing to next milestone; "Nothing else to add for this new phase." |
+| Iteration 2 Disposition | **GO (APPROVED)** — all prior findings resolved, zero new findings, all 9 artifacts pass LCO exit criteria, stakeholder sanction granted and confirmed |
+| Milestone Verdict | **requiresIteration: false** — Inception scope complete, phase gate opened for Elaboration |
 ## Review Scope and Criteria
 
 ### Artifacts Reviewed (9 + Review Record)
