@@ -21,19 +21,21 @@ This document is the **architectural baseline** for the Employee Portal — the 
 
 **Diagram inventory (7):** component (Logical), activity (Process), deployment (Physical), package (Implementation), sequence ×3 (UC-001, UC-004, UC-010 — Use-Case view validation). Every view is exercised by at least one architecturally significant use-case scenario: UC-001 (clocking — offline resilience, idempotent persistence, time convention, OIDC), UC-004 (directory — LDAP, graceful degradation), UC-010 (unpublish — audit trail, soft delete). No view exists without a UC scenario exercising it.
 ## Architectural Goals and Constraints
-
-### Declared Technology Stack
+### Declared Technology Stack (re-anchored, Elaboration Iter 1)
 
 | Layer | Technology | Constraint | Version |
 |---|---|---|---|
-| Backend | .NET 10 with REST API | CON-001 | 10 (enterprise pin) |
+| Backend | .NET 10 with REST API | CON-001 | 10 (enterprise pin — unchanged) |
 | Frontend | Razor Pages (server-rendered) | CON-002 | (framework-managed) |
 | Database | PostgreSQL | CON-003 | (latest stable via Npgsql 10.0.3) |
+| ORM | EF Core + Npgsql.EntityFrameworkCore.PostgreSQL | CON-001, CON-003 | 10.0.3 |
 | Auth | Keycloak OIDC (existing, external) | CON-004 | (external — not our concern) |
 | Directory | Active Directory over LDAP v3 | CON-005 | (external — read-only) |
 | Hosting | Internal Windows Server (no cloud) | CON-008 | (Infrastructure-managed) |
 | Access | Internal corporate network only | CON-009 | — |
 | Browsers | Chrome, Edge (current versions) | CON-010 | — |
+
+**Stack reconciliation (Elaboration Iter 1):** verified against the enterprise version policy and the NuGet registry — the .NET 10 framework pin is unchanged; Npgsql 10.0.3 is confirmed latest stable with no policy pin governing it; the EF Core PostgreSQL provider resolves to 10.0.3. No change from the Inception anchor — **PRESERVED**. R008 (PostgreSQL + .NET 10 compatibility) remains a build-time validation owned by the Implementer.
 
 ### Architectural Constraints (from Supplementary Specification)
 
@@ -44,20 +46,34 @@ This document is the **architectural baseline** for the Employee Portal — the 
 | DC-006 | AD data read on demand, no local copy | No sync job, no reconciliation, no stale-data risk; LDAP query is live |
 | DC-007 | No write-back to AD | LDAP gateway is read-only by design |
 | DC-009 | No hard delete of news items | Soft-delete pattern (status flag); records persist for audit |
-| DC-010 | Worker category list is externally configured | Category list is a read-only lookup; no CRUD for categories in the portal |
+| DC-010 | Worker category list is externally configured | Category list is a read-only lookup; no CRUD for categories in the portal (ADR-004 decides the mechanism) |
+
+### Timestamp Convention (stakeholder decision — Elaboration Iter 1)
+
+The stakeholder decided the clocking timestamp convention; it is an architectural constraint on every component that records, stores, displays, or exports a time. All 3 offices share the one timezone (stakeholder-confirmed).
+
+| Facet | Decision | Architectural Owner |
+|---|---|---|
+| Storage | Every clocking timestamp stored in UTC | COMP-008 (schema), COMP-001 (write path) |
+| Display | Office local timezone — **America/Havana** (IANA identifier, DST-aware); raw UTC or server time is never shown to users | COMP-011 Time Service (USA-008) |
+| Export | ISO-8601 with explicit offset (YYYY-MM-DDThh:mm:ss±hh:mm; the offset in force at the event time per the IANA zone database) | COMP-010 Report Export Service (UC-006 column 5) |
+| Payroll day | The local calendar day in America/Havana — never the server's; month boundaries for UC-006 computed in local time | COMP-010, COMP-011 |
+| Capture | Timestamp fixed at the moment of the button press (DAT-001); queued events persist their recorded timestamp unchanged on sync | COMP-001, COMP-009 |
+
+The convention is encapsulated in COMP-011 so that a future multi-zone reality changes one component, not the system.
 
 ### Quality Attribute Priorities (FURPS+)
 
 | Attribute | Priority | Source | Architectural Tactic |
 |---|---|---|---|
 | Performance (page load <3s) | High | NFR-001, PRF-001 | Server-rendered Razor Pages (no SPA overhead); LDAP result caching with short TTL |
-| Performance (clocking <1s) | High | NFR-002, PRF-002 | Idempotent clocking endpoint; offline queue for immediate user feedback |
+| Performance (clocking <1s) | High | NFR-002, PRF-002 | Idempotent clocking endpoint; offline queue for immediate user feedback (both paths < 1 s) |
 | Reliability (offline tolerance) | High | NFR-004, AC-005, REL-002/003 | Client-side retry + server-side idempotent endpoint; local queue for clocking events |
-| Security (OIDC auth) | High | CON-004, SEC-001/002 | All endpoints behind OIDC authentication; role-based authorization from Keycloak claims |
-| Auditability | High | NFR-005, AUD-001–004 | Cross-cutting audit service; every news operation and category change logged |
-| Usability (10s directory lookup) | Medium | AC-003, USA-003 | LDAP query optimization; graceful degradation for missing attributes (R001) |
+| Security (OIDC auth) | High | CON-004, SEC-001/002/006 | Authentication enforced at the request boundary (middleware); role-based authorization from Keycloak claims |
+| Auditability | High | NFR-005, AUD-001–004, DAT-002 | Cross-cutting audit service; every news operation and category change logged, append-only, atomic with the state change |
+| Usability (10s directory lookup) | Medium | AC-003, USA-003 | LDAP query optimization (5 s hard timeout — PRF-003); graceful degradation for missing attributes (R001) |
 | Availability (7:00–19:00 M–F) | Low | NFR-003, REL-001 | Single server sufficient; no HA needed for 200-user intranet |
-
+| Data integrity (timestamp convention) | High | DAT-001, USA-008 | COMP-011 Time Service — single owner of UTC storage, America/Havana display, ISO-8601 offset export |
 ## Use-Case View
 
 ### Architecturally Significant Use Cases (Prioritized)
