@@ -470,6 +470,77 @@ end note
 @enduml
 ```
 
+### Elaboration Iteration 1 — New Findings (Management LCA Lens — Management Reviewer, PRA)
+
+All four findings emitted via `record_artifact_finding` (2026-09-01). The Critical finding records the stakeholder's REFUSED sanction; the Major finding records the stakeholder's binding all-findings directive as a phase-exit condition.
+
+| Finding Key | Severity | Artifact | Description (summary) | Remediation (summary) |
+|---|---|---|---|---|
+| **Iteration Plan F3** | **Critical** | Iteration Plan — Layer 2 exit criteria 1–3; Work Items 7–9 | **LCA exit criteria 1–3 (empirical validation of R001/R003/R004) have no code evidence, and Work Items 7–9 show "In progress" with zero SCM evidence** (no Services/, no Infrastructure/, no Npgsql/LDAP/JWT packages; iteration/E1 skeleton only; SCM Issue #1 blocker). The stakeholder's binding decision makes empirical risk retirement the phase's central objective — it is unmet, and the LCA gate cannot close this cycle. The stakeholder, consulted at this review, REFUSED sanction to advance past LCA. | Execute the convergence cycle (Elaboration Iteration 2, already planned as BUILDING) per actions A-1…A-6: Implementer delivers the three mechanisms as evolutionary code in src/ with dual-coverage tests on feature/E1-{risk} branches labeled ready-for-review; Code Reviewer issues terminal dispositions per PR (base iteration/E1); Test Designer executes TC-001…TC-020; empirical results feed the Architectural Proof-of-Concept artifact (A-8). Reconcile Work Item 7–9 statuses to SCM evidence at iteration close. LCA is then re-presented with the evidence package and a fresh sanction request. |
+| **Iteration Plan F4** | **Major** | Iteration Plan — Layer 2 exit criteria table; Elab Iter 2 preview | **The plan's exit criteria do not make closure of ALL open review findings a phase-exit condition.** The Layer 2 table (criteria 1–8) verifies PoC validation, artifact corrections, schedule baselining, and AC accounting, but carries no criterion that every open finding from every review lens is resolved before phase transition. The stakeholder, refusing sanction at this review, directed verbatim: "Please fix all the findings even if they are minors prior to move to next phase." As written, the plan permits a phase close with Minor findings open (e.g., SAD F3, Risk List F1, F-CR-E1-2) — contrary to the stakeholder's binding directive. | Add an explicit exit criterion to the Layer 2 table and the Elaboration Iter 2 preview's primary objective: zero open findings across ALL review lenses and ALL severities (Critical, Major, Minor) before phase transition is sanctioned. Verify via the findings ledger (read_artifact_findings per artifact) at each iteration close; the milestone verdict must confirm the ledger is empty, not merely that Criticals are closed. |
+| **Iteration Plan F5** | **Minor** | Iteration Plan — Plan and Milestones table (human gate queue forecasts) | **The plan forecasts human gate queue times** ([ASSUMPTION — up to 2 days LCA; up to 3 days IOC; up to 2 days PR; up to 5 days STK-004 response]). The planning rule for human gates: a human gate is a RISK, not an estimate — ceiling 14 days (then the process suspends, nothing is auto-filled), actual measured and reported apart, estimate NONE; bound it in the Risk List, never forecast it in the plan. The Inception gate measured 0s; no comparable actual exists for LCA/IOC/PR, so no queue figure should appear in the plan. | Remove the queue-time forecasts from the milestone table (retain the measured Inception 0s as a recorded actual); bound the human-gate queue risk in the Risk List instead (companion finding on the Risk List) with the 14-day suspension ceiling; report measured actuals only, at each Iteration Assessment. |
+| **Risk List F1** | **Minor** | Risk List — Risk Register (trend direction); human-gate queue risk | **Two risk-monitoring gaps.** (1) No per-risk trend direction: the Risk Register carries status (OPEN/MITIGATING/RETIRED) but no trend field (better/worse/stable since last review), so a static risk list cannot be challenged at review — R001 has been HIGH since Inception with zero retirement evidence, and the register does not surface that flatness. (2) The human-gate queue risk is unbounded: the LCA/IOC/PR review gates are human gates (a risk, not an estimate — ceiling 14 days, then the process suspends), but no Risk List entry bounds them; the queue figures instead appear as forecasts inside the Iteration Plan milestone table (companion finding on the Iteration Plan). | (1) Add a trend column to the Risk Register (direction since last review + evidence pointer), updated at each iteration reappraisal — a risk whose magnitude is unchanged across two reviews must show why. (2) Add a Risk List entry bounding the human-gate queue risk (strategy Accept; mitigation: in-round stakeholder answering as measured at LCO and at this review's consultation; contingency: process suspends at 14 days per the planning rule — nothing is auto-filled). |
+
+### Defect Distribution (severity × artifact — all lenses, consolidated)
+
+```plantuml
+@startuml
+title Elaboration Iter 1 - Consolidated Defect Distribution\nall lenses, severity x artifact (2026-09-01)
+
+object "Software Architecture Document" as D1 {
+  Critical 2 : SAD F1 (Reviewer) superseded
+  PoC plan; SAD F2 (Reviewer) PoC artifact
+  and code evidence absent
+  Minor 1 : SAD F3 (Reviewer) stale
+  component dependencies
+}
+object "Iteration Plan" as D2 {
+  Critical 1 : F3 (Management) exit criteria
+  1-3 no code evidence; sanction REFUSED
+  Major 1 : F4 (Management) all-findings
+  closure not a phase-exit condition
+  Minor 1 : F5 (Management) human-gate
+  queue forecasts violate no-estimate rule
+}
+object "Risk List" as D3 {
+  Minor 2 : F1 (Reviewer) untagged 90
+  percent criterion; F1 (Management) no
+  trend direction, gate-queue risk
+  unbounded
+}
+object "SCM state and implementation scope" as D4 {
+  Critical 1 : F-CR-E1-1 (Code Reviewer)
+  no mechanism handoff
+  Minor 1 : F-CR-E1-2 (Code Reviewer)
+  CONTRIBUTING.md absent
+}
+object "Clean artifacts (this cycle)" as D5 {
+  Design Model, Use-Case Model,
+  Supplementary Specification,
+  Development Case, Test Case,
+  Test Evaluation Summary,
+  Iteration Assessment (Inception),
+  Review Record (BR lens: 0 findings)
+  Critical 0, Major 0, Minor 0
+}
+
+D1 -[hidden]-> D2
+D2 -[hidden]-> D3
+D3 -[hidden]-> D4
+D4 -[hidden]-> D5
+
+note bottom of D5
+  TOTAL OPEN: 4 Critical, 1 Major, 5 Minor
+  across 4 artifacts. Stakeholder
+  directive (binding): fix ALL findings
+  including Minors before phase
+  transition. Owners: A-1..A-6 (code
+  evidence), A-7..A-10 (SAD + Risk List
+  technical), A-11..A-15 (management).
+end note
+@enduml
+```
+
 ### Prior Findings (Inception — historical ledger, all RESOLVED; never overwritten)
 
 | Finding Key | Lens | Artifact | Severity | Finding (summary) | Status |
@@ -479,7 +550,7 @@ end note
 | F2 (Reviewer) | Technical | Iteration Plan | Minor | Work item statuses stale ("Pending" while artifacts existed as Draft). | **RESOLVED** (Inception Iter 2) |
 | F2 (ManagementReviewer) | Management | Iteration Plan | Minor | Same defect as F2 (Reviewer). | **RESOLVED** (Inception Iter 2) |
 
-**Reconciliation status:** zero findings carried open into Elaboration Iteration 1. The two Code-Reviewer findings (F-CR-E1-1, F-CR-E1-2) and the four technical-lens findings (SAD F1/F2/F3, Risk List F1) are NEW defects, not recurrences — they carry fresh keys. SAD F2 and F-CR-E1-1 observe the same underlying gap (no mechanism code / no empirical validation) from two different lenses and two different gates; their remediation converges on the same action chain (A-1…A-6 + A-7) and they are expected to close together in the convergence cycle.
+**Reconciliation status:** zero findings carried open into Elaboration Iteration 1. The two Code-Reviewer findings (F-CR-E1-1, F-CR-E1-2), the four technical-lens findings (SAD F1/F2/F3, Risk List F1), and the four management-lens findings (Iteration Plan F3/F4/F5, Risk List F1) are NEW defects, not recurrences — they carry fresh keys. SAD F2, F-CR-E1-1, and Iteration Plan F3 observe the same underlying gap (no mechanism code / no empirical validation) from three different lenses and three different gates; their remediation converges on the same action chain (A-1…A-6 + A-7/A-8) and they are expected to close together in the convergence cycle.
 
 ### Business Modeling Lens — Findings (Business Reviewer, this cycle)
 
