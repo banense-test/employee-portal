@@ -1,0 +1,56 @@
+# Employee Portal — Deploy Workflow Skeleton
+# Inception baseline: structure only. Deploy steps filled in Construction/Transition.
+#
+# Deployment mode: Custom-built (internal Windows Server, no cloud)
+# Target: single-node Windows Server on corporate network (CON-008, CON-009)
+
+name: Deploy Employee Portal
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Target environment'
+        required: true
+        default: 'dev'
+        type: choice
+        options:
+          - dev
+          - pilot
+          - production
+
+env:
+  DOTNET_VERSION: '10.0'
+  PROJECT_NAME: 'EmployeePortal'
+
+jobs:
+  build:
+    name: Build
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+      - name: Restore
+        run: dotnet restore
+      - name: Build
+        run: dotnet build --configuration Release --no-restore
+      - name: Publish
+        run: dotnet publish ${{ env.PROJECT_NAME }} --configuration Release --output ./publish
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: portal-build
+          path: ./publish
+
+  # Deploy steps to be defined in Construction when:
+  # - Windows Server target is provisioned by STK-004
+  # - OIDC client is registered in Keycloak
+  # - LDAP service account is configured
+  # Deploy target: internal Windows Server via Web Deploy or file copy + IIS restart
+  # Rollback: previous artifact redeployed from prior tag
