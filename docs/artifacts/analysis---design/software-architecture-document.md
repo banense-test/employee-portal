@@ -225,143 +225,161 @@ end
 @enduml
 ```
 ## Logical View
-
-The candidate architecture is a **layered application** with **subsystem decomposition by area of change**. This is proportional to the declared scope: 200 users, single server, 10 FRs, 2 external integrations. No microservices, no message queues, no workflow engines — those would be architecture by buzzword for a system of this scale.
+The baseline architecture is a **layered application** with **subsystem decomposition by area of change** — proportional to the declared scope: 200 users, single server, 10 FRs, 2 external integrations. No microservices, no message queues, no workflow engines (ADR-001).
 
 ### Layers
 
-1. **Presentation Layer** (Razor Pages, CON-002): Server-rendered pages for clocking, news browsing, directory search, and HR admin functions. No SPA complexity.
-2. **Application Layer** (.NET 10, CON-001): Subsystem services implementing business logic. Each subsystem encapsulates one area of change.
-3. **Infrastructure Layer**: Adapters for external systems (Keycloak OIDC, AD LDAP, PostgreSQL) and cross-cutting mechanisms (offline resilience).
+1. **Presentation Layer** (Razor Pages, CON-002): server-rendered pages for clocking, news browsing, directory search, and HR admin functions, plus the OIDC authentication middleware that guards every request. No SPA complexity.
+2. **Application Layer** (.NET 10, CON-001): subsystem services implementing business logic. Each subsystem encapsulates one area of change.
+3. **Infrastructure Layer**: adapters for external systems (Keycloak OIDC, AD LDAP, PostgreSQL) and cross-cutting mechanisms (offline resilience).
 
-### Subsystem Decomposition
+### Subsystem Decomposition (Elaboration baseline — 11 components)
 
 | Component | ID | Encapsulates | Interfaces | Dependencies |
 |---|---|---|---|---|
-| Clocking Service | COMP-001 | Clocking data model, time recording, idempotent endpoint | ICLK | IPERSIST, IAUTH, IAUD, COMP-009 |
-| News Service | COMP-002 | News lifecycle (publish, edit, unpublish, browse), soft-delete | INEWS | IPERSIST, IAUTH, IAUD |
-| Directory Service | COMP-003 | Directory search, LDAP query delegation, graceful degradation | IDIR | ILDAP, IAUTH |
-| Category Service | COMP-004 | AD user id → category mapping, audit on change | ICAT | IPERSIST, IAUTH, IAUD |
+| Clocking Service | COMP-001 | Clocking data model, time recording, idempotent endpoint | ICLK | IPERSIST, IAUD, ITIME, COMP-009 |
+| News Service | COMP-002 | News lifecycle (publish, edit, unpublish, browse), soft-delete | INEWS | IPERSIST, IAUD |
+| Directory Service | COMP-003 | Directory search, LDAP query delegation, graceful degradation | IDIR | ILDAP |
+| Category Service | COMP-004 | AD user id → category mapping, audit on change | ICAT | IPERSIST, IAUD |
 | Audit Service | COMP-005 | Cross-cutting audit trail (who, what, when, before/after) | IAUD | IPERSIST |
 | OIDC Auth Provider | COMP-006 | Token validation, role extraction from claims | IAUTH | Keycloak (external) |
 | LDAP Gateway | COMP-007 | LDAP query construction, connection management, result mapping | ILDAP | AD (external) |
 | PG Persistence | COMP-008 | Database access, EF Core / Npgsql, repository pattern | IPERSIST | PostgreSQL (external) |
 | Offline Resilience Handler | COMP-009 | Client-side retry, local queue, sync-on-reconnect | (internal to COMP-001) | IPERSIST |
+| Report Export Service | COMP-010 | CSV column set v1, ISO-8601 offset formatting, month boundaries in local time | IEXPORT | IPERSIST, ILDAP, ITIME |
+| Time Service | COMP-011 | Timestamp convention: UTC storage, America/Havana display, offset export, payroll-day boundaries | ITIME | — |
+
+**Elaboration refinements vs the Inception candidate:**
+1. **COMP-010 Report Export Service (new)** — FR-002/UC-006 was never assigned to a component; the CSV column set is a declared Medium-volatility area (downstream payroll/records consumers may reshape it). Encapsulated so column changes do not ripple.
+2. **COMP-011 Time Service (new)** — the stakeholder-decided timestamp convention (store UTC, display America/Havana, export ISO-8601 with explicit offset, payroll day = local calendar day) is an area of change designed to survive a future multi-zone reality; it is encapsulated in one component rather than scattered across every screen and service.
+3. **Authentication enforcement moved to the request boundary** — the Inception candidate showed every service calling IAUTH. In the Elaboration baseline, the OIDC middleware authenticates and authorizes at the request boundary; services receive the authenticated identity (claims) as a parameter. This removes per-service IAUTH coupling while keeping COMP-006 the single encapsulation of OIDC details (R003).
 
 ### Cohesion and Coupling Assessment
 
-- **High cohesion**: Each subsystem has a single clear purpose (clocking, news, directory, category, audit).
-- **Low coupling**: All subsystem boundaries are defined by interfaces (ICLK, INEWS, IDIR, ICAT, IAUD). No direct class-to-class dependencies across subsystem boundaries.
-- **Cross-cutting concerns**: Auth (COMP-006) and Audit (COMP-005) are referenced by multiple subsystems via interfaces — this is correct for cross-cutting mechanisms, not a coupling violation.
+- **High cohesion:** each subsystem has a single clear purpose; each encapsulates exactly one area of change from the Volatility Analysis.
+- **Low coupling:** all subsystem boundaries are defined by interfaces (ICLK, INEWS, IDIR, ICAT, IEXPORT, IAUD, ILDAP, IPERSIST, ITIME). No direct class-to-class dependencies across subsystem boundaries. Cross-cutting mechanisms (audit, time) are referenced via interfaces — correct for cross-cutting concerns, not a coupling violation.
+- **No feature-named subsystems:** components encapsulate change areas (offline strategy, LDAP strategy, export format, time convention), not features.
 
 ```plantuml
 @startuml
 skinparam componentStyle rectangle
 skinparam fontSize 11
-title Employee Portal — Candidate Architecture (Logical View)
+title Employee Portal — Logical View (Elaboration Baseline)
 
-package "Presentation Layer\n(Razor Pages — CON-002)" as PRES {
-  [Clocking Pages] as CLK_P
-  [News Pages] as NEWS_P
-  [Directory Pages] as DIR_P
-  [HR Admin Pages] as HR_P
+package "Presentation Layer (Razor Pages — CON-002)" as PRES {
+  component "Clocking Pages\n(SCR-01, SCR-02)" as CLK_P
+  component "News Pages\n(SCR-03, SCR-07, SCR-08)" as NEWS_P
+  component "Directory Pages\n(SCR-04)" as DIR_P
+  component "HR Admin Pages\n(SCR-05, SCR-06)" as HR_P
+  component "OIDC Auth Middleware" as MW
 }
 
-package "Application Layer\n(.NET 10 — CON-001)" as APP {
+package "Application Layer (.NET 10 — CON-001)" as APP {
   component "Clocking Service\n(COMP-001)" as CLK_S
   component "News Service\n(COMP-002)" as NEWS_S
   component "Directory Service\n(COMP-003)" as DIR_S
   component "Category Service\n(COMP-004)" as CAT_S
   component "Audit Service\n(COMP-005)" as AUD_S
+  component "Report Export Service\n(COMP-010)" as EXP_S
+  component "Time Service\n(COMP-011)" as TIME_S
 }
 
 package "Infrastructure Layer" as INFRA {
   component "OIDC Auth Provider\n(COMP-006)" as AUTH
   component "LDAP Gateway\n(COMP-007)" as LDAP_GW
   component "PG Persistence\n(COMP-008)" as PG_P
-  component "Offline Resilience\nHandler (COMP-009)" as OFFLINE
+  component "Offline Resilience Handler\n(COMP-009)" as OFFLINE
 }
 
 interface "IClockingService" as ICLK
 interface "INewsService" as INEWS
 interface "IDirectoryService" as IDIR
 interface "ICategoryService" as ICAT
+interface "IReportExport" as IEXPORT
 interface "IAuditService" as IAUD
 interface "IAuthProvider" as IAUTH
 interface "ILdapGateway" as ILDAP
 interface "IPersistence" as IPERSIST
+interface "ITimeConvention" as ITIME
 
+MW ..> IAUTH
 CLK_P ..> ICLK
 NEWS_P ..> INEWS
 DIR_P ..> IDIR
 HR_P ..> ICLK
 HR_P ..> ICAT
+HR_P ..> IEXPORT
 
-CLK_S --|> ICLK
-NEWS_S --|> INEWS
-DIR_S --|> IDIR
-CAT_S --|> ICAT
-AUD_S --|> IAUD
+CLK_S ..|> ICLK
+NEWS_S ..|> INEWS
+DIR_S ..|> IDIR
+CAT_S ..|> ICAT
+EXP_S ..|> IEXPORT
+AUD_S ..|> IAUD
+TIME_S ..|> ITIME
 
-AUTH --|> IAUTH
-LDAP_GW --|> ILDAP
-PG_P --|> IPERSIST
+AUTH ..|> IAUTH
+LDAP_GW ..|> ILDAP
+PG_P ..|> IPERSIST
 
 CLK_S ..> IPERSIST
 NEWS_S ..> IPERSIST
 CAT_S ..> IPERSIST
 AUD_S ..> IPERSIST
+EXP_S ..> IPERSIST
 DIR_S ..> ILDAP
+EXP_S ..> ILDAP
 
 CLK_S ..> IAUD
 NEWS_S ..> IAUD
 CAT_S ..> IAUD
 
-CLK_S ..> IAUTH
-NEWS_S ..> IAUTH
-DIR_S ..> IAUTH
-CAT_S ..> IAUTH
+CLK_S ..> ITIME
+EXP_S ..> ITIME
+CLK_P ..> ITIME
 
 CLK_S ..> OFFLINE
 OFFLINE ..> IPERSIST
 
-database "PostgreSQL\n(CON-003)" as PG <<external>>
-component "Keycloak OIDC\n(CON-004)" as KC <<external>>
-component "Active Directory LDAP\n(CON-005)" as AD <<external>>
+database "PostgreSQL (CON-003)" as PG <<external>>
+component "Keycloak OIDC (CON-004)" as KC <<external>>
+component "Active Directory LDAP (CON-005)" as AD <<external>>
 
 PG_P ..> PG
 AUTH ..> KC
 LDAP_GW ..> AD
 
-note right of CLK_S
-  Encapsulates: offline resilience
-  (R004, NFR-004)
-  Volatility: High
-end note
-
-note right of DIR_S
-  Encapsulates: LDAP query
-  strategy, graceful degradation
-  (R001, R005)
-  Volatility: High
-end note
-
-note right of AUTH
-  Encapsulates: OIDC token
-  validation, role mapping
-  (R003)
-  Volatility: High
-end note
-
-note right of AUD_S
-  Cross-cutting: audit trail
-  (NFR-005)
+note right of TIME_S
+  Encapsulates: timestamp convention
+  (stakeholder decision, Elab Iter 1).
+  Store UTC; display America/Havana
+  (IANA, DST-aware); export ISO-8601
+  with explicit offset; payroll day =
+  local calendar day.
   Volatility: Medium
 end note
 
+note right of EXP_S
+  Encapsulates: CSV column set v1
+  (UC-006, Medium volatility).
+  Aborts on AD unavailable (UC-006 AF-2).
+end note
+
+note right of OFFLINE
+  Browser localStorage queue
+  + idempotent sync endpoint
+  (ADR-003). Volatility: High
+end note
+
+note bottom of AUTH
+  Elaboration refinement: authentication
+  enforced at request boundary (middleware);
+  services receive authenticated identity
+  (claims) - no per-service IAUTH calls.
+  Reduces subsystem coupling.
+end note
 @enduml
 ```
-
 ## Process View
 
 **Deferred to Elaboration.** The Employee Portal is a single-server web application for 200 concurrent users at peak. Concurrency concerns are minimal: .NET 10's built-in thread pool and async request handling are sufficient. The Process view will address the offline resilience handler's sync-on-reconnect behavior (COMP-009) and LDAP connection pooling (COMP-007) in Elaboration.
