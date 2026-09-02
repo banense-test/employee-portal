@@ -5,153 +5,158 @@
 | Field | Value |
 |---|---|
 | Phase | Elaboration |
-| Status | Draft — Elaboration Iteration 2 (Cycle 1) close-out record |
+| Status | Draft — Elaboration Iteration 3 (Cycle 1) close-out record; EVOLVED from the Iter 2 close-out, not recreated |
 | Milestone Target | End of Elaboration (LCA) — **NOT achieved this cycle; NOT declared by this assessment** (the milestone verdict is the Review Coordinator's, already issued) |
-| Iteration | 2 (Cycle 1) — convergence cycle |
+| Iteration | 3 (Cycle 1) — convergence cycle, code-delivering |
 | Date | 2026-09-02 |
-| Review Coordinator Verdict (recorded, not declared here) | **LCA: iteration REQUIRED (scope incomplete)** — NO-GO CONFIRMED; `requiresIteration: TRUE`; the convergence cycle continues against the same R6 entry gate |
-| Stakeholder Sanction (standing) | **REFUSED** at the Iter 1 LCA review — "No" to sanctioning advance past LCA. Binding directive, verbatim: "Please fix all the findings even if they are minors prior to move to next phase"; escalation resolution, verbatim: "Fix all the issues and close all findings". Fresh sanction request fires at the R6 re-presentation with the evidence package |
-| Prior Version | Elaboration Iteration 1 close-out (2026-09-01); Inception Iteration Assessment (Approved at LCO — mission ACHIEVED); EVOLVED, not recreated. Prior records are preserved in SCM history |
-| Elaboration Changes (Iter 2 close-out) | 4 phase objectives assessed (1 MET, 2 PARTIALLY MET, 1 NOT MET — genuine record-side movement vs Iter 1's 1/1/2); 6 of 13 exit criteria met (Iter 1: 3 of 8); measured actuals recorded (13,363,814 tokens; agent 4:41:27; stakeholder queue 10:01:08 — never summed); budget-box variance root-caused (the binding re-size adjustment was recorded but NOT applied at plan-build time — Iteration Plan F6, corrected this close pass); work items reconciled to SCM evidence (4 Complete, 2 In progress, 6 Pending/blocked); 12 tracked findings recorded with next-pass entry plan; PM-owned findings corrected this close pass (F6, F7, F3-Reviewer, Risk List F2, A-30); lessons learned + next-pass adjustments |
+| Review Coordinator Verdict (recorded, not declared here) | **LCA: iteration REQUIRED (scope incomplete)** — NO-GO CONFIRMED; `requiresIteration: TRUE`; the substantive blocker is RETIRED (zero Critical open for the first time in the phase) and the phase auto-iterates into the record-propagation pass toward the R6 re-presentation |
+| Stakeholder Sanction (standing) | **REFUSED** at the Iter 1 LCA review — binding directive, verbatim: "Please fix all the findings even if they are minors prior to move to next phase"; escalation resolution, verbatim: "Fix all the issues and close all findings". **R6 path CONFIRMED this cycle** ("Yes") with the BLOCKED-cases framing directive, verbatim: "the 8 BLOCKED test cases are a recorded SCOPE decision (production AD and Keycloak integration belongs to Construction), not an open gap. State it that way in the evidence package so the LCA reads them as deferred, not as missing." Fresh sanction request fires at R6 |
+| Prior Version | Elaboration Iteration 2 close-out (2026-09-02); Iteration 1 close-out (2026-09-01); Inception Iteration Assessment (Approved at LCO — mission ACHIEVED); EVOLVED, not recreated. Prior records are preserved in SCM history |
+| Elaboration Changes (Iter 3 close-out) | 4 phase objectives assessed — **4 MET** (Iter 2: 1 MET, 2 PARTIALLY MET, 1 NOT MET; Iter 1: 1/1/2); 10 of 14 exit criteria met (Iter 2: 6 of 13; Iter 1: 3 of 8) — criteria 1–3 MET ON OBSERVED EVIDENCE for the first time; measured actuals recorded (27,143,633 tokens; agent 3:35:12; stakeholder queue 0:00:00 — never summed); budget variance root-caused (CONTENT CLASS — the box was sized from record-side iterations; Iter 3 carried the full code-delivery chain); work items reconciled to observed SCM state (10 Complete, 1 obligation carried, 1 Pending); risk retirement RECORDED (R001/R003/R004 RETIRED; R013 RESOLVED); Iteration Plan F8 remediated (concrete blocker recorded, obligation carried to Construction Iter 1); 9 tracked findings recorded with the record-propagation entry plan; lessons learned + next-pass adjustments |
 
 ## Iteration Objectives Reached
 
-The phase planned four objectives. Assessed against the Review Record (verified findings ledger, 2026-09-02) and the Test Evaluation Summary (mission verdict: NOT YET ACHIEVED), the record is: **1 MET, 2 PARTIALLY MET, 1 NOT MET** — genuine movement on the record side; the code-evidence side unchanged.
+The phase planned four objectives. Assessed against the Review Record (verified findings ledger, 2026-09-02) and the Test Case execution authority (formal pass 15 PASS / 0 FAIL / 8 BLOCKED, trace CI 33617748483), the record is: **4 MET** — with residuals that are record-propagation class only.
 
 ```plantuml
 @startuml
 !theme plain
-title Employee Portal — Elaboration Iter 2: Phase Objective Assessment
+title Employee Portal — Elaboration Iter 3: Phase Objective Assessment\nAssessed against the Review Record (verified ledger 2026-09-02) and the Test Case execution authority
 
 state "OBJ-1 Establish Architecture Baseline" as OBJ1 {
-  OBJ1 : Status: PARTIALLY MET
-  OBJ1 : (improved from NOT MET at Iter 1)
-  OBJ1 : Record side CLOSED: SAD F1 and F3
-  OBJ1 : RESOLVED, ledger-closed 2026-09-02;
-  OBJ1 : PoC artifact exists with a sound
-  OBJ1 : protocol and an honest PENDING
-  OBJ1 : ledger; SAD and Design Model agree
-  OBJ1 : at every subsystem boundary
-  OBJ1 : Evidence side ABSENT: SAD F2 persists
-  OBJ1 : (2nd occurrence) - zero mechanism
-  OBJ1 : code, zero PRs, Issue #1 open
-  OBJ1 : LCA-2: NOT MET
+  OBJ1 : Status: MET (first time)
+  OBJ1 : Architecture stable as RECORD and
+  OBJ1 : EVIDENCE: SAD F2 Critical RESOLVED
+  OBJ1 : on OBSERVED evidence; PR 6
+  OBJ1 : baseline-close merged to main
+  OBJ1 : (APPROVED); main CI GREEN
+  OBJ1 : 33620993027; four-clause contract
+  OBJ1 : verified in code (LdapGateway b8df8b7)
+  OBJ1 : LCA-2: MET (Management lens)
+  OBJ1 : Residual: SAD F4 (Minor, A-33) -
+  OBJ1 : record propagation only
 }
 state "OBJ-2 Address High-Risk Elements" as OBJ2 {
-  OBJ2 : Status: NOT MET - the persisting blocker
-  OBJ2 : R001 R003 R004: paths designed,
-  OBJ2 : FOUR-clause bar defined, build
-  OBJ2 : executing - but ZERO code evidence;
-  OBJ2 : TC-001..TC-023 all BLOCKED
-  OBJ2 : TES mission: NOT YET ACHIEVED
-  OBJ2 : Trend IMPROVING - not RETIRED
-  OBJ2 : LCA-3: NOT MET
-  OBJ2 : Stakeholder: Implementer blocked by
-  OBJ2 : a technical problem beyond its
-  OBJ2 : control; code push is the priority
+  OBJ2 : Status: MET (first time)
+  OBJ2 : Formal TC-001..TC-023 pass COMPLETE:
+  OBJ2 : 15 PASS / 0 FAIL / 8 BLOCKED
+  OBJ2 : (trace CI 33617748483)
+  OBJ2 : R001 FOUR clauses x FOUR consumers
+  OBJ2 : PASS (TC-011 + TC-021/022/023,
+  OBJ2 : clause d vs substitution fixtures)
+  OBJ2 : R003 matrix PASS; R004 simulation PASS
+  OBJ2 : Issue 1 CLOSED; R013 RESOLVED
+  OBJ2 : Retirement recorded this close pass
+  OBJ2 : LCA-3: MET; the 8 BLOCKED = recorded
+  OBJ2 : SCOPE decision (stakeholder directive)
 }
 state "OBJ-3 Refine Requirements" as OBJ3 {
-  OBJ3 : Status: MET - and extended
-  OBJ3 : UC Model 10 of 10 FULL, 0 findings;
-  OBJ3 : AF-3 flows stakeholder-confirmed
-  OBJ3 : Supp Spec: behavioural bar as one
-  OBJ3 : contract, four consumers, 0 findings
-  OBJ3 : Three Iter 2 answers incorporated,
-  OBJ3 : markers retired in place; FOURTH
-  OBJ3 : clause received at the verdict gate
-  OBJ3 : (binding; propagation A-25..A-31)
+  OBJ3 : Status: MET
+  OBJ3 : Fourth-clause propagation A-25..A-31
+  OBJ3 : COMPLETE and verified (UC Model,
+  OBJ3 : Supp Spec, Design Model, Test Case,
+  OBJ3 : PoC protocol, Risk List, SAD)
   OBJ3 : LCA-1: MET
+  OBJ3 : Residual: ARCH-6 in CONTRIBUTING.md
+  OBJ3 : (A-36, DC F3) - guidelines baseline
 }
 state "OBJ-4 Develop Detailed Plan" as OBJ4 {
-  OBJ4 : Status: PARTIALLY MET
-  OBJ4 : Construction baseline MET (LCA-4);
-  OBJ4 : plan disciplines PASS; F4, F5 and
-  OBJ4 : Risk List F1 RESOLVED, ledger-closed
-  OBJ4 : BUT F6 (Major, budget box), F7
-  OBJ4 : (Minor, WI statuses), F3-Reviewer
-  OBJ4 : (Minor, TC enumeration) - corrected
-  OBJ4 : THIS close pass (A-22, A-23, A-18)
-  OBJ4 : LCA-6: measurement PASS; plan
-  OBJ4 : response corrected this pass
+  OBJ4 : Status: MET
+  OBJ4 : F6 RESOLVED (box from measured
+  OBJ4 : actuals); F7 RESOLVED (statuses
+  OBJ4 : evidence-cited); Construction
+  OBJ4 : baseline verified (LCA-4 MET);
+  OBJ4 : LCA-6 MET
+  OBJ4 : Residual: F8 (Minor) - remediated
+  OBJ4 : this close pass (concrete blocker
+  OBJ4 : recorded; obligation carried to
+  OBJ4 : Construction Iter 1)
 }
 OBJ1 -[hidden]-> OBJ2
 OBJ2 -[hidden]-> OBJ3
 OBJ3 -[hidden]-> OBJ4
 
 note bottom of OBJ4
-  Record: 1 MET, 2 PARTIALLY MET,
-  1 NOT MET (Iter 1: 1 MET, 1 PARTIALLY
-  MET, 2 NOT MET). Genuine movement on
-  the record side; the code-evidence
-  side is unchanged. RC verdict (already
-  issued, recorded not declared here):
-  LCA iteration REQUIRED - scope incomplete.
+  Record: 4 MET (Iter 2: 1 MET, 2 PARTIALLY
+  MET, 1 NOT MET; Iter 1: 1/1/2). The
+  substance is delivered and OBSERVED;
+  what remains per the RC verdict
+  (recorded, not declared here): record
+  propagation (A-32..A-36) + the R6 gate
+  itself. LCA sanction still REFUSED
+  (standing) - fresh request at R6.
 end note
 @enduml
 ```
 
-**Objective 1 — Establish Architecture Baseline: PARTIALLY MET (improved from NOT MET).** The record side closed this cycle: SAD F1 (superseded PoC disposition) and SAD F3 (stale component dependencies) are RESOLVED and ledger-closed (2026-09-02) — the SAD now carries the empirical disposition with an explicit supersession note, and the SAD and Design Model agree at every subsystem boundary. The DC-sanctioned Architectural Proof-of-Concept artifact EXISTS with a sound validation protocol, per-risk single-mechanism dispositions, the behavioural bar as acceptance criteria, and an honest PENDING ledger. The evidence side is absent: SAD F2 persists (2nd occurrence) — zero mechanism code in SCM, zero PRs in any state, SCM Issue #1 open. LCA criterion 2 (architecture stable): NOT MET — stable as a RECORD, unproven as EVIDENCE.
+**Objective 1 — Establish Architecture Baseline: MET (first time).** The architecture is stable as RECORD and now as EVIDENCE: SAD F2 (Critical, 2nd occurrence) is RESOLVED on observed evidence — the three mechanisms merged as evolutionary production code (PRs #3/#4/#5 to `iteration/E1`, APPROVED ×3, reviews 5088169328/5088169517/5088169685), the baseline-close PR #6 merged to main under review state APPROVED, main CI GREEN (run 33620993027), and the four-clause graceful-degradation contract is verified first-hand in code (LdapGateway sha b8df8b7). The management lens records LCA-2 MET for the first time. Residual: SAD F4 (Minor, A-33) — the criterion-3 evidence row lags the observed state; record propagation only.
 
-**Objective 2 — Address High-Risk Elements: NOT MET — the persisting blocker.** The empirical validation paths for R001 (disposable LDAP directory), R003 (stub OIDC issuer), R004 (direct) are designed, re-scoped per the binding stakeholder decision, and the FOUR-clause behavioural bar is now defined (stakeholder Iter 2 answer + verdict-gate fourth clause) — but the validation is unexecuted: zero `ready-for-review` branches, zero PRs in any state, no mechanism code, TC-001…TC-023 all BLOCKED. R001 (HIGH, exposure=9) trend: IMPROVING — the first genuine movement since Inception — but IMPROVING is not RETIRED; retirement is claimed only on OBSERVED results. The Test Evaluation Summary's mission verdict: NOT YET ACHIEVED (0 of 3 validations evidenced). The stakeholder attributed the Implementer's two-iteration code absence to a technical problem beyond its control and stated the code push as the priority for the next pass — recorded so convergence tracking does not misread the absence as non-compliance.
+**Objective 2 — Address High-Risk Elements: MET (first time).** The formal TC-001…TC-023 execution pass is COMPLETE: 15 PASS / 0 FAIL / 8 BLOCKED (execution trace CI run 33617748483). R001 (HIGH, exposure=9) — FOUR clauses × FOUR consumers PASS via TC-011 + TC-021/022/023, clause (d) verified against the substitution-attempt fixtures (NOT "General", NOT "Central", NOT "N/A", no cross-entry inheritance). R003 — token-validation matrix PASS. R004 — 5-minute drop simulation PASS (zero duplicates, zero losses, sync ≤ 60 s, confirmations < 1 s). Issue #1 CLOSED cr:complete. The stakeholder's binding bar — "I will not accept an LCA that validates a HIGH architectural risk on paper only" — is satisfied by observed, CI-traced results. The 8 BLOCKED cases are a recorded SCOPE decision per the stakeholder's framing directive: deferred to Construction, not missing. Retirement is RECORDED in the Risk List this close pass (R001/R003/R004 RETIRED in Elaboration scope; R013 RESOLVED). LCA-3: MET.
 
-**Objective 3 — Refine Requirements: MET — and extended.** All 10 UCs FULL with correct `Source: FR-NNN` (0 findings); the UC-005/006/007 AF-3 behavioural-bar flows are stakeholder-confirmed with markers retired in place; the Supplementary Specification carries the behavioural bar as one reliability contract with four consumers (0 findings); the >90% figure is verified absent. Three stakeholder answers incorporated this iteration (behavioural bar; four-UC confirmation "Yes"; featured banner "newest first" — faithfully recorded in the Design Model as banners STACK, newest first). At the verdict gate the stakeholder added the FOURTH clause (binding, verbatim: "a missing attribute is displayed as missing. It is never replaced by a default, a placeholder, a guessed value, or another employee's value") — propagation tracked as A-25…A-31 across the seven carrying artifacts; the Risk List (A-30) and this plan's exit criterion 1 carry it already. LCA criterion 1 (vision stable): MET.
+**Objective 3 — Refine Requirements: MET.** The fourth-clause propagation (A-25…A-31) is COMPLETE and verified this cycle across all seven carrying artifacts: UC Model (A-25), Supplementary Specification (A-26), Design Model (A-27 — landed with the build; the code implements four clauses), Test Case (A-28 — executed BEFORE the pass), PoC protocol (A-29), Risk List (A-30), SAD (A-31). LCA-1: MET. Residual: ARCH-6 in CONTRIBUTING.md still carries the three-clause rule (A-36, DC F3) — a guidelines-baseline correction, not a requirements defect; the merged code already complies with all four clauses.
 
-**Objective 4 — Develop Detailed Plan: PARTIALLY MET.** The Construction schedule baseline remains MET (LCA-4 PASS; UC IDs verified against the Use-Case Model authority). The plan's structural disciplines all PASS (units, two clocks, UC-ID authority, queue handling, all-findings criterion 11, status discipline 12), and three of this lens's Iter 1 findings are RESOLVED and ledger-closed (Iteration Plan F4, F5; Risk List F1). But the plan carried three new findings this cycle — F6 (Major: budget box not re-sized from the measured 12,523,281 actual, contradicting the Iter 1 assessment's first binding adjustment), F7 (Minor: WI 2/9 statuses understated verified delivery), F3-Reviewer (Minor: stale TC-001…TC-020 enumerations vs the 23-case authority) — **all three corrected in this close pass** (A-22, A-23, A-18): the box is re-sized to ~12,500K from the measured iteration actual, the statuses cite their evidence, and every TC enumeration reads TC-001…TC-023. LCA-6: measurement PASS; plan response corrected this pass.
+**Objective 4 — Develop Detailed Plan: MET.** The plan's own findings closed on verified corrections: F6 (Major — budget box) RESOLVED (box ~12,500K from measured actuals, all five named locations updated); F7 (Minor — WI statuses) RESOLVED (statuses evidence-cited); F3-Reviewer (Minor — TC enumerations) RESOLVED. The Construction baseline is verified (LCA-4 MET at all three reviews); LCA-6 MET. Residual: F8 (Minor) — the STK-004 written request unevidenced a third pass — **remediated this close pass**: the concrete blocker is recorded (no direct STK-004 channel exists in this runtime; the stakeholder questionnaire reaches STK-001 only; the stakeholder's Iter 3 directive confirms production AD/Keycloak integration is Construction scope) and the obligation is carried to the Construction Iter 1 plan with R010's own trigger. The RESPONSE remains NOT an Elaboration exit condition (stakeholder decision).
 
 ## Adherence to Plan
 
 ```plantuml
 @startuml
 !theme plain
-title Employee Portal — Elaboration Iter 2: Budget vs Actuals\nTwo clocks, never summed
+title Employee Portal — Elaboration Iter 3: Budget vs Actuals\nTwo clocks, never summed
 
 object "Token Spend" as TS {
-  Box as planned (disproven): 1,200K
-  [ASSUMPTION chain - Iteration Plan F6]
-  Actual: 13,363,814 (measured)
-  Variance: ~11.1x the box as planned
-  Corrected box (F6, this close pass):
-  ~12,500K [ASSUMPTION - scaled from the
-  measured Iter 1 actual 12,523,281]
-  Variance vs corrected box: ~1.07x
-  Root cause: the binding re-size
-  adjustment from the Iter 1 assessment
-  was recorded but NOT applied at
-  plan-build time; the Iter 2 shape adds
-  the verdict-gate contribution cycle
-  and a 4-lens cumulative re-review
+  Box as planned: ~12,500K
+  [ASSUMPTION - scaled from measured
+  record-side iteration actuals
+  (Iter 1: 12,523,281; Iter 2: 13,363,814)]
+  Actual: 27,143,633 (measured)
+  Variance: ~2.17x the box
+  Root cause: CONTENT CLASS - the box was
+  sized from record-only iterations; Iter 3
+  carried the full code-delivery chain
+  (3 mechanisms + dual-coverage tests +
+  3 PR reviews + merges + the 23-case
+  execution pass + baseline-close PR 6)
+  + the 4-lens cumulative re-review +
+  fourth-clause propagation - a class no
+  prior iteration had measured
+  The ~3,245K rework headroom was NOT
+  consumed by PR loops (all 3 PRs approved
+  first pass) - overrun was delivery volume
 }
 object "Agent Elapsed Time" as AET {
-  Actual: 4:41:27 (measured)
-  Work time - never summed
-  with queue time
-  Iter 1 actual: 6:00:59
+  Actual: 3:35:12 (measured)
+  Work time - never summed with queue
+  Iter 1: 6:00:59; Iter 2: 4:41:27
+  MORE work in LESS time: 22 invocations
+  (vs 18) at higher parallelism - the
+  code chain ran through 5 roles
 }
 object "Stakeholder Queue" as HGQ {
-  Actual: 10:01:08 (measured)
-  21 user interactions; excludes the
-  end-of-iteration approval gate
-  Iter 1 actual: 0:35:14 / 28 interactions
-  Growth traces to PROCESS defects:
-  emission-format incident (unparseable,
-  re-emitted) + contribution-cycle
-  re-emission - NOT stakeholder
-  availability. R012: far below the
-  14-day suspension ceiling
+  Actual: 0:00:00 (measured)
+  20 user interactions, ALL answered
+  in-round - zero queue
+  Iter 1: 0:35:14; Iter 2: 10:01:08
+  The Iter 2 queue growth (process
+  defects) did NOT recur - emission
+  discipline held
+  R012: far below the 14-day ceiling
 }
 object "Volume and Quality" as VOL {
-  Agent invocations: 18
-  User interactions: 21
+  Agent invocations: 22
+  User interactions: 20
   Artifacts: 13
   Avg quality: 9.9 / 10
 }
 object "Token Record Reconciliation" as REC {
-  Measured iteration actuals now TWO:
-  Iter 1: 12,523,281; Iter 2: 13,363,814
-  Every later box is sized from these
-  iteration-shaped actuals - never from
-  an assumption chain. The phase-level
-  record governs phase accounting only
+  Measured iteration actuals now THREE:
+  Iter 1: 12,523,281 (record-side)
+  Iter 2: 13,363,814 (record-side)
+  Iter 3: 27,143,633 (code-delivering)
+  Elaboration phase-to-date: 53,030,728
+  (sum of the three measured actuals;
+  phase NOT closed - no phase row yet)
+  Later boxes are sized by CONTENT CLASS
 }
 TS -[hidden]-> AET
 AET -[hidden]-> HGQ
@@ -162,215 +167,270 @@ VOL -[hidden]-> REC
 
 | Metric | Planned | Actual (measured) | Notes |
 |---|---|---|---|
-| Token spend | 1,200K box [ASSUMPTION chain — disproven] | 13,363,814 | ~11.1× the box as planned; ~1.07× the corrected ~12,500K box — variance root-caused below |
-| Agent elapsed time | Measured at close | 4:41:27 | Work time; never summed with queue |
-| Stakeholder queue | Estimate NONE (rule) | 10:01:08 | 21 interactions; excludes the end-of-iteration approval gate; growth traced to process defects, not stakeholder availability |
-| Agent invocations | — | 18 | 9 roles active |
-| User interactions | — | 21 | 3 Iter 2 answers + verdict-gate contribution + review consultations |
-| Artifacts | — | 13 | Inventory grew by the Architectural Proof-of-Concept artifact |
+| Token spend | ~12,500K box; ~9,255K work-item sum | 27,143,633 | ~2.17× the box — variance root-caused below (content class, not rework) |
+| Agent elapsed time | Measured at close | 3:35:12 | Work time; never summed with queue |
+| Stakeholder queue | Estimate NONE (rule) | 0:00:00 | 20 interactions, ALL answered in-round; excludes the end-of-iteration approval gate |
+| Agent invocations | — | 22 | 9 roles active |
+| User interactions | — | 20 | R6-path confirmation + framing directive + verdict-gate contribution + review consultations |
+| Artifacts | — | 13 | Inventory unchanged |
 | Avg quality | — | 9.9 / 10 | Reviewer-assessed |
 
-**Variance root cause (token spend ~11.1× the box as planned):** the Iter 1 Iteration Assessment recorded, as its FIRST binding adjustment, "Re-size the Iter 2 budget box from the measured 12,523,281 actual — the 1,200K assumption is disproven." The Iter 2 plan recorded that adjustment in its own change log but did NOT apply it — it re-derived the same 1,200K figure one step further from fact (Iteration Plan F6, Major, recorded by the Management Reviewer lens). The lesson: **a binding adjustment that is recorded but not applied is a finding waiting to fire.** The corrected box (~12,500K, scaled from the measured iteration actual) was applied this close pass; the measured Iter 2 actual (13,363,814) confirms its scale at ~1.07× — the residual variance is the verdict-gate contribution cycle and the 4-lens cumulative re-review, both genuine scope additions this iteration.
+**Variance root cause (token spend ~2.17× the box):** the box was correctly sized from the only measured actuals that existed at plan-build — two record-side iterations (12,523,281; 13,363,814). Iteration 3 was the first CODE-DELIVERING iteration: the full delivery chain (3 mechanisms with dual-coverage tests, 3 PR reviews, merges, the 23-case execution pass, the baseline-close PR #6) plus the 4-lens cumulative re-review and the fourth-clause propagation across seven artifacts. No prior iteration had measured that content class. The ~3,245K rework headroom was NOT consumed by PR loops — all three PRs were approved on first pass — the overrun was delivery volume. **The lesson: size the box by CONTENT CLASS, not by iteration count.** The measured record now carries both classes (record-side ~12.5–13.4M; code-delivering ~27.1M), and every later box names its class.
 
-**Token record reconciliation:** measured iteration actuals now number TWO (Iter 1: 12,523,281; Iter 2: 13,363,814). Every later budget box is sized from these iteration-shaped actuals; the phase-level record (Inception: 1,347,939) governs phase accounting only. No per-iteration velocity is quoted from a phase-level record.
+**Token record reconciliation:** measured iteration actuals now number THREE. Elaboration phase-to-date is 53,030,728 tokens (the sum of the three measured iteration actuals) — recorded for phase accounting only; the phase is NOT closed, so no phase row is claimed. The Inception phase-level record (1,347,939) governs Inception accounting only. No per-iteration velocity is quoted from a phase-level record.
 
 **Metrics with purpose (each answers a decision):**
 
 | Goal (decision enabled) | Metric | Primitive measure |
 |---|---|---|
-| Track convergence progress cycle over cycle (decide whether the convergence cycle is closing its findings) | Exit criteria met | 6 of 13 this cycle (Iter 1: 3 of 8) — record side closing, code side unchanged |
-| Size the next budget box from fact, not assumption | Token spend actual | 13,363,814 (system-measured) |
-| Bound the human-gate queue risk (R012) with a measured basis and locate queue growth | Stakeholder queue time | 10:01:08 across 21 interactions (system-measured); growth attributed to process defects (emission-format incident, contribution-cycle re-emission) |
-| Locate defect concentration for the next pass's critical path | Open findings by severity × artifact | Verified ledger: 2 Critical, 3 Major, 5 Minor + 2 narrative-tracked |
-| Establish the process-effectiveness baseline (decide when reviews stop being the sole defect-detection instrument) | Defect removal efficiency | NOT YET MEASURABLE — 0 test executions (TC-001…TC-023 BLOCKED); becomes measurable when the mechanisms land |
-| Confirm defects concentrate in execution, not design (protects the sound baseline from rework) | Avg artifact quality | 9.9 / 10 (reviewer-assessed) |
+| Track convergence progress cycle over cycle (decide whether the phase is closing toward the R6 gate) | Exit criteria met | 10 of 14 this cycle (Iter 2: 6 of 13; Iter 1: 3 of 8) — criteria 1–3 MET on observed evidence for the first time |
+| Size the next budget box from fact, by content class | Token spend actual | 27,143,633 (system-measured) — the code-delivering class's first data point |
+| Bound the human-gate queue risk (R012) and verify the Iter 2 process-defect growth did not recur | Stakeholder queue time | 0:00:00 across 20 interactions (system-measured) — all answered in-round; the growth did not recur |
+| Locate defect concentration for the record-propagation pass's critical path | Open findings by severity × artifact | Verified ledger: 0 Critical, 1 Major (PoC F2), 5 Minor + 3 narrative-tracked — all record-propagation class |
+| Establish the process-effectiveness baseline (decide whether review-first is working) | Defect removal efficiency | FIRST MEASUREMENT: all code defects caught at the PR gate (3 Minors across 3 PRs), zero test failures across 15 executed cases — review-first confirmed |
+| Confirm defects concentrate in records, not design (protects the validated baseline from rework) | Avg artifact quality | 9.9 / 10 (reviewer-assessed) |
 
-### Work Item Reconciliation (statuses reconciled to SCM evidence — exit criterion 12)
+### Work Item Reconciliation (statuses reconciled to observed SCM state — exit criterion 12)
 
 ```plantuml
 @startuml
 !theme plain
-title Employee Portal — Elaboration Iter 2: Work Item Reconciliation\nStatuses reconciled to SCM evidence (exit criterion 12)
+title Employee Portal — Elaboration Iter 3: Work Item Reconciliation\nStatuses reconciled to observed SCM state (exit criterion 12) - 2026-09-02
 
-object "Complete this iteration" as C {
-  WI-1 Plan + Risk List corrections
-  (committed; Risk List SHA 0e2e427)
-  WI-2 CONTRIBUTING.md (sha 6662813 -
-  status corrected this pass, F7)
-  WI-9 SAD re-correction, record side
-  (SAD F1/F3 ledger-closed 2026-09-02 -
-  status corrected this pass, F7)
-  WI-11 Iteration Assessment (this pass)
+object "Complete - evidence-cited (10)" as C {
+  WI-1 Plan + Risk List reappraisal
+  (committed at plan-build)
+  WI-3 R001 mechanism - PR 3 merged to
+  iteration/E1, APPROVED (review 5088169328)
+  WI-4 R003 mechanism - PR 4 merged,
+  APPROVED (review 5088169517)
+  WI-5 R004 mechanism - PR 5 merged,
+  APPROVED (review 5088169685)
+  WI-6 PR reviews - 3 terminal dispositions
+  under CR-1..CR-7 (zero Critical, zero
+  Major; 3 Minors recorded F-CR-E3-1/2/3)
+  WI-7 Merge - PRs 3/4/5 to iteration/E1;
+  PR 6 baseline-close to main (APPROVED)
+  WI-8 TC-001..TC-023 execution - formal
+  pass COMPLETE 15/0/8 (trace CI 33617748483)
+  WI-10 SAD fourth-clause A-31 - verified
+  WI-11 Iteration Assessment - this pass
+  WI-12 Parallel track A-25/26/27, A-17/19/20
+  - all verified RESOLVED this cycle
 }
-object "In progress - honest, evidence-cited" as IP {
-  WI-3 R001 mechanism - no CI evidence
-  WI-4 R003 mechanism - no CI evidence
-  WI-5 R004 mechanism - no CI evidence
-  (stakeholder: Implementer blocked by a
-  technical problem beyond its control;
-  code push is the stated priority)
-  WI-12 STK-004 request - no recorded
-  issuance; response NOT an exit condition
+object "Obligation carried (1)" as IP {
+  WI-2 STK-004 written deliverables request
+  (R010) - NOT issued; concrete blocker
+  recorded this close pass (F8 remediation):
+  no direct STK-004 channel in this runtime;
+  the questionnaire reaches STK-001 only, and
+  the stakeholder's Iter 3 directive confirms
+  production AD/Keycloak integration is
+  Construction scope. Obligation carried to
+  the Construction Iter 1 plan with R010's
+  own trigger (STK-004 confirmation by
+  Construction Iter 1 start). The RESPONSE
+  remains NOT an exit condition
 }
-object "Pending - blocked on the code chain" as P {
-  WI-6 PR reviews (zero ready-for-review
-  branches)
-  WI-7 Merge (zero PRs in any state)
-  WI-8 TC-001..TC-023 execution (23/23
-  BLOCKED, SCM Issue #1)
-  WI-10 PoC artifact empirical results
-  (artifact exists; results PENDING)
+object "Pending - record propagation (1)" as P {
+  WI-9 PoC artifact evolution (A-32) - the
+  ONE Major: the results ledger still reads
+  PENDING for observed-complete validation.
+  Owned by the Software Architect in the
+  record-propagation pass; blocks the R6
+  evidence package (its core artifact)
 }
 C -[hidden]-> IP
 IP -[hidden]-> P
 
 note bottom of P
-  One defect, three gates: the absent
-  code evidence is SAD F2 = Iteration
-  Plan F3 (Management) = F-CR-E1-1.
-  Remediated by ONE chain (A-16); each
-  emitting lens closes its own finding
-  on OBSERVED results.
+  Status honesty, both directions (F7
+  lesson): 8 work items that showed
+  In progress/Pending at plan-build are
+  observed COMPLETE with evidence - updated
+  this pass. WI-2 records its blocker
+  honestly; WI-9 names its blocking
+  evidence. No status without evidence.
 end note
 @enduml
 ```
 
-**Status honesty, both directions (F7 lesson):** WI 2 and WI 9 UNDERSTATED verified delivery ("In progress" against a committed sha and ledger-closed findings) — corrected this pass to "Complete" with evidence cited. WI 3–5 remain honestly "In progress" with their blocking evidence named. A status that cannot show evidence reverts to In progress, never to Complete — and a status that HAS evidence must not understate it either.
+**Status honesty, both directions (F7 lesson):** eight work items that showed "In progress"/"Pending" at plan-build are observed COMPLETE with evidence cited — updated this pass. WI-2 records its concrete blocker honestly (F8 remediation); WI-9 names its blocking evidence (the PoC results ledger, A-32). A status that cannot show evidence reverts to In progress, never to Complete — and a status that HAS evidence must not understate it either.
 
 ## Use Cases and Scenarios Implemented
 
-**No use case was implemented as a running feature this iteration** — Elaboration produces the architecture baseline and validation evidence, not Construction features. The iteration's use-case scope was UC-001 (Clock In/Out), the four AD-reading use cases UC-004/005/006/007 (the FOUR-clause behavioural bar's consumers), and UC-010 (Unpublish News — audit/soft-delete test cases):
+**No use case was implemented as a running feature this iteration** — Elaboration produces the architecture baseline and validation evidence, not Construction features. But this iteration is the first in which the use-case scope was VALIDATED against running code:
 
 | UC | Validation Target | Mechanism | Result This Iteration |
 |---|---|---|---|
-| UC-001 | R003 (stub OIDC issuer) + R004 (offline drop) | COMP-006/CLS-010; COMP-009/CLS-008 | **Not executed** — zero code evidence; test cases designed (0 findings), execution BLOCKED |
-| UC-004 | R001 (disposable LDAP directory) — FOUR-clause behavioural bar | COMP-007/CLS-009 | **Not executed** — zero code evidence; TC-011 + TC-021/022/023 designed with deliberately-seeded gaps and substitution-attempt fixtures; execution BLOCKED |
-| UC-005/006/007 | R001 behavioural bar (stakeholder-confirmed extension) | COMP-007/CLS-009 (shared LDAP read path) | **Not executed** — same evidence gap; TC-021/022/023 designed this iteration (Integration level), BLOCKED |
-| UC-010 | Audit trail + soft delete (R006 design) | CLS-005, DAT-002 | **Design complete** (Design Model, 0 findings); test cases designed, execution BLOCKED |
+| UC-001 | R003 (stub OIDC issuer) + R004 (offline drop) | COMP-006/CLS-010; COMP-009/CLS-008 | **VALIDATED — OBSERVED**: token-validation matrix PASS; 5-minute drop simulation PASS (zero duplicates/losses, sync ≤ 60 s, confirmations < 1 s); TC-001…TC-003, TC-004…TC-010 executed |
+| UC-004 | R001 (disposable LDAP directory) — FOUR-clause behavioural bar | COMP-007/CLS-009 | **VALIDATED — OBSERVED**: FOUR clauses PASS via TC-011 (clause (d) verified against substitution-attempt fixtures); every employee rendered, no hidden entries, no errors, no substitution |
+| UC-005 | R001 behavioural bar (event row, blank display fields) | COMP-007/CLS-009 (shared LDAP read path) | **VALIDATED — OBSERVED**: TC-021 PASS — event row rendered with blank display fields, clocking data always complete |
+| UC-006 | R001 behavioural bar (CSV row, blank cells, no abort) | COMP-007/CLS-009 | **VALIDATED — OBSERVED**: TC-022 PASS — every event row exported, blank cells for missing display fields, no abort |
+| UC-007 | R001 behavioural bar (employee locatable/selectable) | COMP-007/CLS-009 | **VALIDATED — OBSERVED**: TC-023 PASS — employee locatable and selectable with blank fields |
+| UC-010 | Audit trail + soft delete (R006 design) | CLS-005, DAT-002 | Design complete (0 findings); TC-013…TC-016 BLOCKED — recorded scope decision (news/audit mechanisms are Construction scope) |
 
-All 10 UCs (UC-001…UC-010) remain refined at the analysis level (Use-Case Model: 10/10 FULL, 0 findings at both reviews). Implementation of running features is Construction work per the baselined schedule (Iter 1 clocking cluster, Iter 2 news cluster, Iter 3 directory + export).
+All 10 UCs (UC-001…UC-010) remain refined at the analysis level (Use-Case Model: 10/10 FULL, 0 findings at all three reviews). Implementation of running features is Construction work per the baselined schedule (Iter 1 clocking cluster, Iter 2 news cluster, Iter 3 directory + export).
 
 ## Results Relative to Evaluation Criteria
 
-### Layer 1 — Declared Acceptance Criteria (all 5 accounted; none closed this iteration)
+### Layer 1 — Declared Acceptance Criteria (all 5 accounted; three with OBSERVED partial evidence)
 
 | AC | Status This Iteration | Evidence / Deferral |
 |---|---|---|
-| AC-001 | Not addressed (deferred) | Construction Iter 1 — UC-001 running feature |
+| AC-001 | **Partial evidence — OBSERVED** | UC-001 mechanisms validated empirically (OIDC matrix PASS; offline drop PASS); running feature is Construction Iter 1 |
 | AC-002 | Not addressed (deferred) | Construction Iter 2 — UC-008 running feature |
-| AC-003 | Not met this iteration (partial evidence owed) | R001 validation was to produce partial evidence; it did not execute — rolls to the next pass; formal closure at Construction Iter 3 |
+| AC-003 | **Partial evidence — OBSERVED** | R001 FOUR-clause bar validated against the disposable directory (every employee rendered, no substitution); production-AD performance + data quality at Construction Iter 3 (R010 + R011) |
 | AC-004 | Not addressed (deferred) | Transition Iter 1 — adoption measurement requires a deployed system (BG-003) |
-| AC-005 | Not met this iteration (partial evidence owed) | R004 5-minute drop simulation did not execute — rolls to the next pass; formal AC test at Construction Iter 1 |
+| AC-005 | **Partial evidence — OBSERVED** | R004 5-minute drop simulation PASS (zero duplicates/losses, sync ≤ 60 s); formal AC test at Construction Iter 1 |
 
-### Layer 2 — Iteration Plan Exit Criteria (6 of 13 met; Iter 1: 3 of 8)
+### Layer 2 — Iteration Plan Exit Criteria (10 of 14 met; Iter 2: 6 of 13; Iter 1: 3 of 8)
 
 | # | Exit Criterion | Result | Evidence |
 |---|---|---|---|
-| 1 | R001 empirically validated (disposable LDAP directory, FOUR-clause behavioural bar) | **NOT MET** | Zero mechanism code in SCM (SAD F2 / Iteration Plan F3 / F-CR-E1-1 — one defect, three gates); TES: 0 of 3 validations evidenced |
-| 2 | R003 empirically validated (stub OIDC issuer) | **NOT MET** | Same evidence gap as criterion 1 |
-| 3 | R004 empirically validated (direct) | **NOT MET** | Same evidence gap as criterion 1 |
-| 4 | SAD corrected: §Quality empirical disposition (A-7) + §Logical View reconciliation (A-9) | **MET** | SAD F1/F3 RESOLVED and ledger-closed 2026-09-02 (Reviewer lens) |
-| 5 | Architectural Proof-of-Concept artifact with empirical results (A-8) | **NOT MET** | Artifact EXISTS with honest PENDING ledger; empirical results absent (SAD F2 persists, 2nd occurrence) |
-| 6 | CONTRIBUTING.md committed before the first mechanism PR (A-5) | **MET** | Committed, sha 6662813… (verified via the Development Case tool-verification 2026-09-02) |
-| 7 | Development Case PoC-trigger record corrected (carried from Iter 1) | **MET** | DC trigger FIRED verified by both review lenses; carried verdict |
-| 8 | Construction schedule baselined from measured actuals (carried from Iter 1) | **MET** | LCA-4 PASS (Management lens, both reviews) |
-| 9 | STK-004 written deliverables request issued (R010) | **NOT EVIDENCED** | No recorded issuance this cycle; rolls to the next pass — and the response is NOT a condition of Elaboration exit (stakeholder decision) |
-| 10 | All 5 ACs accounted | **MET** | Layer 1 table complete — AC-001 through AC-005 |
-| 11 | ALL open findings closed — every lens, every severity | **NOT MET** | Verified ledger 2026-09-02: 2 Critical, 3 Major, 5 Minor open + 2 narrative-tracked; PM-owned findings corrected this close pass; the remainder is owned and scheduled |
-| 12 | Work-item statuses reconciled to SCM evidence (A-11) | **MET** | Reconciliation executed this close pass (F7 corrections; WI 3–5 honestly In progress) |
-| 13 | LCA evidence package assembled and re-presented with a fresh sanction request | **NOT MET** | Package not assemblable without code evidence; R6 entry gate unchanged |
+| 1 | R001 empirically validated — FOUR-clause behavioural bar, four consumers | **MET — OBSERVED** | PR #3 merged (APPROVED); TC-011 + TC-021/022/023 clause-by-clause PASS; trace CI 33617748483; Issue #1 CLOSED |
+| 2 | R003 empirically validated (stub issuer) | **MET — OBSERVED** | PR #4 merged (APPROVED); token-validation matrix PASS |
+| 3 | R004 empirically validated (direct) | **MET — OBSERVED** | PR #5 merged (APPROVED); drop simulation PASS |
+| 4 | SAD corrected (A-7, A-9) | **MET** | SAD F1/F3 ledger-closed 2026-09-02 |
+| 5 | PoC artifact with empirical results (A-8) | **NOT MET** | Artifact exists with honest PENDING ledger; the OBSERVED results have not landed — PoC F2 (Major, A-32), the record-propagation pass's P1 |
+| 6 | CONTRIBUTING.md committed (A-5) | **MET** | sha 6662813…; F-CR-E1-2 resolved |
+| 7 | DC PoC-trigger record corrected (carried) | **MET** | DC F1/F2 resolved Iter 3; trigger FIRED verified |
+| 8 | Construction schedule baselined (carried) | **MET** | LCA-4 MET at all three reviews |
+| 9 | STK-004 written request issued (R010) | **NOT MET — obligation relocated (F8 remediation)** | Concrete blocker recorded (no direct STK-004 channel in this runtime; the questionnaire reaches STK-001 only; the stakeholder's Iter 3 directive confirms production integration is Construction scope); obligation carried to Construction Iter 1 with R010's trigger. Response NOT an exit condition (stakeholder decision) |
+| 10 | All 5 ACs accounted | **MET** | Layer 1 table complete |
+| 11 | ALL open findings closed — every lens, every severity | **NOT MET — record-propagation remainder** | Verified ledger: 0 Critical (first time), 1 Major, 5 Minor + 3 narrative; all record-propagation class |
+| 12 | Work-item statuses reconciled to SCM evidence | **MET** | Reconciliation executed this close pass |
+| 13 | LCA evidence package assembled + fresh sanction request | **NOT MET — R6 pending** | The package's SUBSTANCE exists (merged mechanisms + executed TC pass + four-clause evidence); A-32 and the ledger-empty condition gate the R6 re-presentation |
+| 14 | Fourth-clause propagation complete (A-25…A-31) | **MET — verified** | All seven carrying artifacts verified RESOLVED this cycle; residual ARCH-6 extension (A-36, DC F3) |
 
-**Score: 6 of 13.** The unmet criteria (1–3, 5, 13) are the empirical-validation core the stakeholder made binding; criteria 1–3 are one defect observed by three review gates, remediated by one action chain (A-16). The met criteria (4, 6–8, 10, 12) are the record side — closed this cycle, verified in the ledger.
+**Score: 10 of 14.** The four unmet criteria (5, 9, 11, 13) are the record-propagation remainder — every one a record correction or a gate; none requires code, design, or new validation. Criteria 1–3 are MET ON OBSERVED EVIDENCE for the first time in the phase: the substantive LCA blocker is retired.
 
 ## Test Results
 
-No test execution occurred — no mechanism code exists to test. The Test Evaluation Summary (read in full) records the quality evidence for this iteration:
+The formal test execution pass is COMPLETE — the first of the Elaboration phase. All results are observed and CI-traced; none is fabricated.
 
 | Metric | Value | Source |
 |---|---|---|
-| Evaluation Mission verdict | **NOT YET ACHIEVED** — blocked on code delivery (INC-1 / SCM Issue #1) | Test Evaluation Summary § Conclusions |
-| Risk-retirement validations evidenced | 0 of 3 (R001, R003, R004) | Test Evaluation Summary § Quality Metrics |
-| Test cases designed / executed | 23 designed (TC-001…TC-023, 0 findings — extended this iteration with TC-021/022/023, the UC-005/006/007 AF-3 behavioural-bar cases) / **all 23 BLOCKED** on SCM Issue #1 | Test Case + Test Evaluation Summary |
-| CI build status (main) | **Green** — run 33598979875 (completed 2026-09-02 06:29:05Z) | `scm_get_build_status`, verified this close pass |
-| CI on `iteration/E1` | No runs — zero pushes have landed | Test Evaluation Summary (verified this iteration) |
-| Open defects (SCM tracker) | 2 — Issue #1 (blocker, cr:approved, assigned: implementer), Issue #2 (minor — remediation verified present: CONTRIBUTING.md sha 6662813…; closure owned by the Code Reviewer lens) | Test Evaluation Summary + Review Record |
-| Fabricated results | None — the honest NOT YET ACHIEVED verdict is itself the quality signal | Test Evaluation Summary § Conclusions |
+| Formal execution pass | **COMPLETE — 15 PASS / 0 FAIL / 8 BLOCKED** (23 cases; execution trace CI run 33617748483) | Test Case Cycle 1 record (the execution authority) |
+| R001 evidence | FOUR clauses × FOUR consumers PASS — TC-011 + TC-021/022/023, clause (d) verified against the substitution-attempt fixtures (NOT "General", NOT "Central", NOT "N/A", no cross-entry inheritance) | Test Case R001 clause-by-clause table |
+| R003 evidence | Token-validation matrix PASS — RS256 via issuer JWKS with kid matching, exp/iss/aud/sub enforced, roles extracted verbatim, failing states rejected (401) | Test Case record |
+| R004 evidence | 5-minute drop simulation PASS — zero duplicates (double replay AND mixed online+queued), zero losses, sync ≤ 60 s, confirmations < 1 s, recorded-order preservation | Test Case record |
+| The 8 BLOCKED cases | **A recorded SCOPE decision — deferred to Construction, not missing** (stakeholder framing directive, verbatim): TC-003, TC-010 (UI mechanisms); TC-017, TC-018 (endpoint/request surfaces); TC-013…TC-016 (news/audit) — all Construction-scope mechanisms, never Elaboration exit-criterion blockers | Stakeholder Iter 3 directive + Test Case per-case record |
+| Regression baseline | Established via the merge-sequence green runs 33617283642 → 33617446626 → 33617748483 | Test Case record |
+| CI build status (main) | **Green** — run 33620993027 (post-merge, completed 2026-09-02 10:45:20Z) | Review Record Iter 3 technical-lens verification |
+| CI on `iteration/E1` | **Green** — run 33617748483 (mechanism code + dual-coverage suites) | Test Evaluation Summary (verified) |
+| Open defects (SCM tracker) | **0** — Issue #1 CLOSED cr:complete (on merged-PR + executed-TC evidence); Issue #2 CLOSED cr:complete | Review Record Iter 3 verification |
+| Defect removal efficiency | **FIRST MEASUREMENT — review-first confirmed**: all code defects caught at the PR gate (3 Minors across 3 PRs, F-CR-E3-1/2/3), zero test failures across 15 executed cases | Review Record Iter 3 metrics |
+| Fabricated results | None — every verdict cites its execution trace; the honest corrections (TC-003/010/017/018 Scripted → BLOCKED rather than paper-PASS) are themselves the quality signal | Test Case record |
 
-The mission is defined, agreed, and executable, and every test-side precondition closed this cycle (behavioural bar defined and FOUR-clause-extended; SAD inconsistency resolved; fixtures specified with deliberately-seeded gaps; 23 cases designed and regression-ready; CI gate green and correctly configured). What it cannot yet claim is the three empirical validations — recording "achieved" would have been exactly the paper-only validation of a HIGH risk the stakeholder refused.
+The Test Evaluation Summary's mission verdict (NOT YET ACHIEVED, written before the execution pass) is STALE against this record — recorded as TES F2 (Minor, A-35), owned by the Test Manager in the record-propagation pass. The Test Case authority's per-case record governs.
 
 ## External Changes
 
-**No scope changes.** The declared scope (10 FRs, 5 NFRs, 5 ACs, 14 CONs) is unchanged; zero scope-creep findings across all review lenses, both iterations; R009 held by CCB enforcement.
+**No scope changes.** The declared scope (10 FRs, 5 NFRs, 5 ACs, 14 CONs) is unchanged; zero scope-creep findings across all review lenses, three iterations; R009 held by CCB enforcement.
 
 **Stakeholder decisions recorded this iteration (all incorporated; markers retired in place where they stood):**
-1. **R001 behavioural bar** — the >90% per-office figure is invented and dropped; the bar is behavioural (three clauses), with gaps seeded deliberately so each clause can actually fail; the production-AD percentage is a Construction activity (R010 + R011), outside the LCA evidence package.
-2. **Four-UC confirmation** — the behavioural bar applies to ALL FOUR AD-reading use cases (UC-004/005/006/007), not only the directory search ("Yes").
-3. **Featured-banner rendering contract** — "newest first": featured banners STACK, ordered newest first, every featured item renders its own banner (faithful record per the Design Model P-02; the Risk List R007 mis-transcription corrected this close pass, F2/A-24).
-4. **FOURTH behavioural-bar clause (verdict-gate contribution, binding)** — verbatim: "a missing attribute is displayed as missing. It is never replaced by a default, a placeholder, a guessed value, or another employee's value." Rationale, verbatim: "Blank is an answer. 'General', or the first office in the list, is a fabrication — and on the CSV that reaches payroll a fabricated department is worse than an empty cell. An empty cell gets questioned. A plausible wrong one does not." Propagation tracked as A-25…A-31; the Risk List (A-30) and the Iteration Plan exit criterion 1 carry it already.
-5. **Implementer context and priority** — verbatim: "Due to a technical problem, beyond its control, the implementer has not been able to work on both iterations. In this third iteration I hope that the Implementer can push the code so that everything moves forward." The two-iteration code absence is stakeholder-attributed to a technical problem beyond the Implementer's control; the code push is the stated priority for the next pass (A-16 remains P0).
-6. **Contribution-cycle closure** — the stakeholder confirmed nothing further to add: "I did share previously to Reviewer Management something to fix. All was clear on that questionnaire." The standing all-findings directive is the complete work order for the next pass; the next stakeholder touchpoint is the R6 fresh sanction request.
+1. **R6-path confirmation — "Yes"** — the path (record corrections, then the R6 re-presentation with the evidence package and a fresh sanction request) is CONFIRMED with no correction, no reprioritization, and no additional requirement.
+2. **BLOCKED-cases framing directive (binding on the evidence package)** — verbatim: "the 8 BLOCKED test cases are a recorded SCOPE decision (production AD and Keycloak integration belongs to Construction), not an open gap. State it that way in the evidence package so the LCA reads them as deferred, not as missing." Folded into A-32, A-34, A-35 and the R6 package shape.
+3. **Verdict-gate contribution — "nothing else new"** — the contribution cycle is CLOSED; the standing all-findings directive and the confirmed R6 path remain the complete work order for the record-propagation pass.
 
-**Stakeholder sanction: REFUSED (standing)** — the fresh request fires at the R6 re-presentation, gated on the evidence package. Requesting it mid-cycle would contradict the stakeholder's own bar.
+**Stakeholder sanction: REFUSED (standing)** — the fresh request fires at the R6 re-presentation, gated on the evidence package and the empty findings ledger. Requesting it mid-cycle would contradict the stakeholder's own all-findings bar.
 
 ## Rework Required
-**Twelve tracked findings (verified ledger: 2 Critical, 3 Major, 5 Minor; plus 2 narrative-tracked Code Reviewer findings).** All are phase-exit conditions per the stakeholder's directive. PM-owned findings were corrected in this close pass; the remainder is owned and scheduled.
+
+**Nine tracked findings (verified ledger: 0 Critical, 1 Major, 5 Minor; plus 3 narrative-tracked Code Reviewer Minors).** All are phase-exit conditions per the stakeholder's directive. **Every remaining item is a record correction — none requires code, design, or new validation.** PM-owned findings were remediated this close pass; the remainder is owned and scheduled in the record-propagation pass.
 
 | # | Finding | Severity | Owner (Action) | Status |
 |---|---|---|---|---|
-| 1 | SAD F2 — zero mechanism code; empirical validation unexecuted (2nd occurrence) | Critical | Software Architect (A-8/A-16) + Implementer (A-2…A-4) + Code Reviewer (A-6) + Integrator + Test Designer | OPEN — closes only on OBSERVED results |
-| 2 | Iteration Plan F3 (Management) — exit criteria 1–3 code evidence absent (2nd occurrence) | Critical | Project Manager (A-11/A-16) + the code chain | OPEN — record side fixed and verified; closes on OBSERVED results |
-| 3 | F-CR-E1-1 — no Implementer handoff (narrative-tracked; converges with #1, #2) | Critical | Integrator (A-1, done) + Implementer (A-2…A-4) + Code Reviewer (A-6) | OPEN — same defect, same chain (A-16) |
-| 4 | Development Case F1 — misrecorded featured-banner decision (3 locations) | Major | Process Engineer (A-17) | OPEN — record correction |
-| 5 | Iteration Plan F6 — budget box not re-sized from the measured actual | Major | Project Manager (A-22) | **CORRECTED this close pass** — box re-sized ~12,500K; work items, headroom, Resources, Construction sizing updated in the same pass |
-| 6 | Risk List F2 — R007 featured-banner mis-transcription | Major | Project Manager (A-24) | **CORRECTED this close pass** — faithful contract recorded, coordinated with A-17 |
-| 7 | Development Case F2 — stale TC enumeration (5 locations) | Minor | Process Engineer (A-20) | OPEN — record correction |
-| 8 | Iteration Plan F3 (Reviewer, Iter 2) — stale TC enumeration (3 locations) | Minor | Project Manager (A-18) | **CORRECTED this close pass** — TC-001…TC-023 everywhere |
-| 9 | Iteration Plan F7 — WI 2/9 statuses stale vs verified delivery | Minor | Project Manager (A-23) | **CORRECTED this close pass** — statuses cite evidence |
-| 10 | Test Evaluation Summary F1 — stale TC enumeration (8 locations) + stale scope row | Minor | Test Manager (A-19) | OPEN — record correction |
-| 11 | Architectural Proof-of-Concept F1 — stale TC enumeration (2 locations) | Minor | Software Architect (A-21) | OPEN — lands with the A-8/A-16 PoC evolution |
-| 12 | F-CR-E1-2 — CONTRIBUTING.md (narrative-tracked) | Minor | Implementer / Architect / ConfigurationManager (A-5) | Remediation VERIFIED PRESENT (sha 6662813…); closure owned by the Code Reviewer lens |
+| 1 | PoC F2 — stale results ledger vs observed validation (the R6 evidence package's core) | Major | Software Architect (A-32) | OPEN — the record-propagation pass's P1 |
+| 2 | SAD F4 — stale LCA-criterion-3 evidence | Minor | Software Architect (A-33) | OPEN — rides the A-32 evolution |
+| 3 | Test Case F1 — Document Control summary 17/6 contradicts per-case record 15/8 | Minor | Test Designer / Test Manager (A-34) | OPEN |
+| 4 | TES F2 — mission verdict stale vs the completed execution pass | Minor | Test Manager (A-35) | OPEN |
+| 5 | DC F3 — ARCH-6 fourth-clause gap open past its stated deadline | Minor | Software Architect (A-36) + Process Engineer (flag closure) | OPEN — guidelines baseline; the code already complies |
+| 6 | Iteration Plan F8 — STK-004 written request unevidenced a third pass | Minor | Project Manager (close-pass reconciliation) | **REMEDIATED this close pass** — concrete blocker recorded; obligation carried to Construction Iter 1 with R010's trigger; closure owned by the Management Reviewer lens |
+| 7 | F-CR-E3-1 — interim IClockingsRepository vs INT-016 final contract | Minor (narrative) | Implementer (Construction Iter 1, R008) + Designer (INT-016 confirmation) | OPEN — Construction scope; [DEFERRED] marker carried in the PR record |
+| 8 | F-CR-E3-2 — IAuthProvider operations absent from INT-011 contract table | Minor (narrative) | Designer (next Design Model evolution) | OPEN — Construction scope |
+| 9 | F-CR-E3-3 — OidcMiddleware state comment overstates CSRF protection | Minor (narrative) | Implementer (next code touch) | OPEN — Construction scope |
 
-**Fourth-clause propagation (stakeholder-decision work, tracked as A-25…A-31):** A-30 (Risk List) — **DONE this close pass**; the Iteration Plan exit criterion 1 and UC table carry the four-clause bar — **DONE this close pass**; A-25 (Use-Case Model), A-26 (Supplementary Specification) — System Analyst, next pass; A-27 (Design Model) — Designer, MUST land with the mechanism build so the code implements four clauses; A-28 (Test Case) — Test Designer, MUST land BEFORE TC execution so the fourth clause can actually fail; A-29 (PoC artifact), A-31 (SAD) — Software Architect, with the A-8/A-16 evolution.
+**Risk-retirement recording (PM close-pass reappraisal, Work Item 11 — stakeholder-confirmed):** R001/R003/R004 → **RETIRED (Elaboration scope)** on observed evidence; R013 → **RESOLVED**; R010's PM obligation relocated with its concrete blocker recorded. Recorded in the Risk List this close pass.
+
+```plantuml
+@startuml
+!theme plain
+title Employee Portal — Elaboration Iter 3 Close-Pass: Risk Retirement Recording\nPM reappraisal (Work Item 11) - retirement on OBSERVED evidence only
+
+[*] --> R001_M
+state "R001 Elab Iter 1-2:\nHIGH MITIGATING\nTREND: STALLED\n(zero code evidence,\ntwo consecutive iterations)" as R001_M
+state "R001 Iter 3 close:\nRETIRED (Elaboration scope)\nFOUR clauses x FOUR consumers PASS\n(TC-011 + TC-021/022/023, clause d\nvs substitution-attempt fixtures,\ntrace CI 33617748483)\nProduction-AD residual -> R011\n(Construction, stakeholder decision)" as R001_R
+R001_M --> R001_R : code chain A-16 DELIVERED\n(PR 3 merged, TC pass COMPLETE,\nIssue 1 closed) - retirement\nRECORDED this close pass
+
+[*] --> R003_M
+state "R003 Elab Iter 1-2:\nSIGNIFICANT MITIGATING\nTREND: STALLED" as R003_M
+state "R003 Iter 3 close:\nRETIRED (Elaboration scope)\nToken-validation matrix PASS\n(JWKS validation, role claims,\nredirect flow, 401 rejection)\nClaim-shape residual -> R011" as R003_R
+R003_M --> R003_R : PR 4 merged, TC matrix PASS
+
+[*] --> R004_M
+state "R004 Elab Iter 1-2:\nSIGNIFICANT MITIGATING\nTREND: STALLED" as R004_M
+state "R004 Iter 3 close:\nRETIRED (Elaboration scope)\n5-min drop simulation PASS\n(zero duplicates, zero losses,\nsync <= 60 s, < 1 s confirmations)\nFormal AC-005 feature test ->\nConstruction Iter 1" as R004_R
+R004_M --> R004_R : PR 5 merged,\nAC-005 simulation PASS
+
+[*] --> R013_O
+state "R013 Iter 3 plan-build:\nSIGNIFICANT - code-delivery\ncontinuity, A-16 P0" as R013_O
+state "R013 Iter 3 close:\nRESOLVED - the code landed\n(3 PRs merged, TC pass COMPLETE,\nIssue 1 closed cr:complete)" as R013_R
+R013_O --> R013_R : stakeholder-stated priority\nFULFILLED and verified
+
+note bottom of R013_R
+  Management heuristic 3 satisfied: the
+  HIGH-magnitude risk line is DECREASING
+  and TERMINATES - OPEN -> MITIGATING
+  (unexecuted) -> VALIDATION OBSERVED ->
+  RETIRED (recorded). R010's PM obligation
+  is carried to Construction Iter 1 with
+  its own trigger; R012 measured 0:00:00
+  this iteration (20 interactions, all
+  in-round).
+end note
+@enduml
+```
 
 ### Variance Analysis
 
 ```plantuml
 @startuml
 !theme plain
-title Employee Portal — Elaboration Iter 2 Close-Out: Variance Analysis
+title Employee Portal — Elaboration Iter 3 Close-Out: Variance Analysis
 
 start
-:Planned: 12 work items, ~840K tokens inside a\n1,200K box [ASSUMPTION chain - the binding\nre-size adjustment from the Iter 1 assessment\nwas recorded but NOT applied at plan-build\ntime (Iteration Plan F6, Major)];
-:Executed: 9 agent roles, 18 invocations,\n13 artifacts, 21 user interactions;
+:Planned: 12 work items, ~9,255K inside a ~12,500K box\n[ASSUMPTION - scaled from measured record-side iteration actuals];
+:Executed: 9 agent roles, 22 invocations, 13 artifacts,\n20 user interactions - the FULL code-delivery chain landed;
 
 partition "Measured actuals (two clocks, never summed)" {
-  :Agent work — 13,363,814 tokens, 4:41:27 elapsed;
-  :Stakeholder queue — 10:01:08\n(excludes the end-of-iteration approval gate);
+  :Agent work - 27,143,633 tokens, 3:35:12 elapsed;
+  :Stakeholder queue - 0:00:00 (20 interactions,\nall answered in-round; excludes the end-of-iteration\napproval gate);
 }
 
-partition "Exit criteria verification (Layer 2, 13 criteria)" {
-  if (Exit criteria 1-3 empirical validation?) then (NOT MET)
-    :Zero mechanism code, zero PRs, Issue #1 open,\nTC-001..TC-023 BLOCKED — one defect, three gates;
+partition "Exit criteria verification (Layer 2, 14 criteria)" {
+  if (Exit criteria 1-3 empirical validation?) then (MET - OBSERVED)
+    :R001 FOUR clauses x FOUR consumers PASS;\nR003 matrix PASS; R004 simulation PASS;\ntrace CI 33617748483; Issue 1 closed;
   endif
-  if (Exit criterion 5 PoC empirical results?) then (NOT MET)
-    :Artifact EXISTS with honest PENDING ledger,\nempirical results absent (SAD F2 persists);
+  if (Exit criterion 5 PoC results ledger?) then (NOT MET)
+    :PoC F2 (Major) - the ledger still reads PENDING\nfor observed-complete work; A-32 in the\nrecord-propagation pass (the R6 core);
   endif
-  if (Exit criteria 4 6 7 8 10 12 record side?) then (MET)
-    :SAD F1/F3 ledger-closed, CONTRIBUTING.md sha 6662813,\nDC trigger FIRED verified, LCA-4 PASS, ACs accounted,\nWI statuses reconciled this pass (F7);
+  if (Exit criteria 4 6 7 8 10 12 14?) then (MET)
+    :SAD corrections ledger-closed; CONTRIBUTING.md;\nDC trigger; Construction baseline; ACs accounted;\nWI reconciliation this pass; fourth-clause\npropagation verified;
   endif
   if (Exit criteria 9 11 13?) then (NOT MET)
-    :No recorded STK-004 issuance, ledger carries\n2 Critical / 3 Major / 5 Minor open, evidence\npackage not assemblable without code evidence;
+    :STK-004 request not issued (F8 remediation:\nblocker recorded, obligation carried to\nConstruction Iter 1); ledger 0 Critical /\n1 Major / 5 Minor + 3 narrative open;\nR6 re-presentation pending;
   endif
 }
 
-:Score: 6 of 13 exit criteria met (Iter 1: 3 of 8);
-:RC verdict (already issued, recorded here — not\ndeclared by this assessment): LCA iteration\nREQUIRED (scope incomplete) — NO-GO CONFIRMED;
-:Stakeholder sanction REFUSED (standing),\nall-findings directive binding;
+:Score: 10 of 14 exit criteria met (Iter 2: 6 of 13;\nIter 1: 3 of 8);
+:RC verdict (already issued, recorded here - NOT\ndeclared by this assessment): LCA iteration\nREQUIRED (scope incomplete) - NO-GO CONFIRMED,\nrecord-propagation remainder; zero Critical open\nfor the first time in the phase;
+:Stakeholder sanction REFUSED (standing);\nR6 path CONFIRMED (Yes + BLOCKED-cases\nframing directive);
 
-partition "Next pass (convergence continues)" {
-  :P0 code chain A-16 (stakeholder-stated priority)\n+ fourth-clause propagation A-25..A-31;
-  :Record corrections by other roles:\nA-17, A-19, A-20, A-21;
-  :R6 re-presentation: empty ledger +\nFOUR-clause x four-consumer evidence +\nfresh sanction request;
+partition "Record-propagation pass (next)" {
+  :A-32 PoC results ledger (the one Major, P1)\nthen A-33..A-36 (parallel Minor corrections);
+  :R6 re-presentation: empty ledger + evidence\npackage (15 executed PASS + 8 deferred-by-\nscope-decision, zero FAIL) + fresh sanction\nrequest to STK-001;
 }
 stop
 @enduml
@@ -378,37 +438,39 @@ stop
 
 ### Lessons Learned
 
-1. **A binding adjustment that is recorded but not applied is a finding waiting to fire (the dominant variance).** The Iter 1 assessment's first binding adjustment (re-size the box from the measured 12,523,281 actual) was quoted in the Iter 2 plan's own change log while the plan body re-derived the disproven 1,200K figure — recorded as Iteration Plan F6 (Major) and corrected only at this close. Adjustments land in the artifact BODY at plan-build time, or they have not landed.
-2. **Mis-transcribing a stakeholder answer is a defect class, and it fires in pairs.** "Newest first" was glossed as the UNSELECTED option in two governance artifacts (Risk List F2, Development Case F1). "Newest first" is an ordering statement; ordering presupposes plurality. When recording a stakeholder decision: record the verbatim answer AND the faithful reading; never gloss — and when one artifact is caught mis-transcribing, check every artifact that carries the same decision.
-3. **A confirmation questionnaire that cannot receive an addition silently drops stakeholder decisions.** The stakeholder held the fourth behavioural-bar clause for an entire cycle because the Iter 2 confirmation was yes/no with no free-text field. Contract-confirmation questionnaires must carry an optional free-text field (process observation recorded by the Review Coordinator; propagated to the Process Engineer).
-4. **Queue growth traces to process defects, not stakeholder availability.** The queue grew 0:35:14 → 10:01:08 while the stakeholder answered every question in-round; the growth is the emission-format incident (an unparseable emission, re-emitted) and the contribution-cycle re-emission. Emission-format discipline — the marker on exactly one line, immediately followed by the valid JSON array, never embedded in memory blocks or prose — is load-bearing.
-5. **One defect, three gates persists until the code lands.** The absent code evidence is still SAD F2 = Iteration Plan F3 = F-CR-E1-1, and it is now a 2nd-occurrence Critical on two gates. The stakeholder has attributed the Implementer's absence to a technical problem beyond its control and stated the code push as the priority — the convergence cycle's success now depends on exactly that one chain (A-16).
-6. **The emission-format rule binds this role's own outputs — third occurrence of the incident class, first by the Project Manager (recorded at this close pass).** This close pass's completion output embedded the question-emission marker string inside a memory-entry text block that was itself DESCRIBING the rule (lesson 4) — the runtime parser read that occurrence as a question emission, found no valid JSON array following it, and flagged the output INVALID; no question was intended and none was owed (the contribution cycle is CLOSED per the Review Record; the next stakeholder touchpoint is the R6 fresh sanction request). Same incident class as the Review Record's Iter 1 escalation emission and Iter 2 consolidation-revision incidents. Standing correction, applied to this role's outputs from this pass: **the marker string is NEVER quoted — in memory entries, prose, or artifact content; a role that must reference the marker writes "the user-input question marker" and describes the rule instead of reproducing it.** The doubt examination re-executed at this correction confirms ZERO open consequential doubt: every open finding's remediation is fully determined by recorded stakeholder decisions (Review Record coordinator determination, sustained at the verdict gate), and the stakeholder's own closure — nothing further owed this cycle — stands. No question is re-emitted; the determination is recorded here rather than dropped silently.
+1. **Size the budget box by CONTENT CLASS, not by iteration count (the dominant variance).** The ~12,500K box was correctly sized from the only measured actuals that existed — two record-side iterations. Iteration 3 was the first code-delivering iteration, and its actual (27,143,633, ~2.17× the box) establishes the second content class. The overrun was delivery volume, not rework — the ~3,245K rework headroom was untouched because all three PRs were approved first pass. Every later box names its class: record-side ~12.5–13.4M; code-delivering ~27.1M.
+2. **Review-first works, and it is now measured.** The first defect-removal-efficiency data point: all code defects were caught at the PR gate (3 Minors across 3 PRs), and zero of the 15 executed test cases failed. The convergence cycle's insistence on the code-review gate before merge — against schedule pressure to skip it — is vindicated by the data.
+3. **A stakeholder's framing directive is part of the evidence, not commentary on it.** The BLOCKED-cases directive (deferred-by-scope-decision, not missing) changes what the R6 package must SAY, not what it must contain. Folding it into A-32/A-34/A-35 at record time — not at presentation time — is what keeps the package honest.
+4. **An obligation asserted three passes without execution is a finding (F8), and its honest remediation is recording the blocker, not restating the commitment.** The STK-004 written request could not be issued through any channel this runtime provides; the honest close-pass record says exactly that and relocates the obligation to Construction Iter 1 with its own trigger. A commitment-tracking failure is fixed by evidence or by a recorded blocker — never by a fourth restatement.
+5. **Retirement is recorded at the close pass, not claimed at the review.** The reviews observed the validation (R001/R003/R004 VALIDATION OBSERVED); the Risk List still said MITIGATING/STALLED until this close pass recorded RETIRED. The reappraisal is the PM's own work item (11), and skipping it would have left the register contradicting the observed state — the same record-propagation defect class the reviewers are catching everywhere else.
+6. **The queue discipline held under load.** Twenty stakeholder interactions, zero queue — the Iter 2 process-defect growth (unparseable emissions, re-emissions) did not recur. The emission-format standing rule (the question marker on exactly one line, immediately followed by the valid JSON array, never embedded in prose or memory blocks) is load-bearing and must be maintained by every role.
 
-### Next Iteration Adjustments (binding inputs to the next pass)
+### Next Iteration Adjustments (binding inputs to the record-propagation pass)
 
 | Adjustment | Rationale |
 |---|---|
-| **P0: execute the code chain A-16** — mechanisms in risk order R001 → R003 → R004, evolutionary in src/, dual-coverage tests, ready-for-review labels, terminal PR dispositions (base `iteration/E1`), Integrator merges, TC-001…TC-023 executed, empirical results into the PoC artifact, Issue #1 closed on merged-PR evidence | The stakeholder-stated priority; closes the three-gate Critical defect; the only path to the R6 entry gate |
-| **A-28 fourth-clause test steps land BEFORE TC execution** (assert blank, not substituted; seed substitution-attempt fixtures) | A clause that cannot fail proves nothing — the stakeholder's own framing |
-| **A-27 design contracts land WITH the mechanism build** | The code must implement four clauses, not three |
-| Record corrections by other roles: A-17 (DC featured-banner), A-19 (TES TC enumeration), A-20 (DC TC enumeration), A-21 (PoC TC enumeration, with the A-8 evolution), A-25/A-26 (UC Model + Supp Spec fourth clause), A-29/A-31 (PoC + SAD fourth clause) | All are phase-exit conditions per the all-findings directive; all are quick, independent record corrections |
-| Budget box for the next pass: sized from the measured iteration-shaped actuals (Iter 1: 12,523,281; Iter 2: 13,363,814) — the corrected ~12,500K basis carries forward; no assumption chain | The F6 lesson: adjustments are applied in the plan body at build time |
-| No scope reduction | The convergence scope is fully determined by the open findings and the stakeholder directive; the box governs, and the box is now calibrated to measured fact |
+| **P1: A-32 — PoC results ledger rewritten with the OBSERVED results**, with the 8 BLOCKED cases stated per the stakeholder's framing directive (recorded scope decision, deferred to Construction, not missing) | The one Major; the R6 evidence package's core artifact — the gate cannot assemble the package from a ledger that says PENDING for observed-complete work |
+| **A-33…A-36 in the same pass** (SAD criterion 3; Test Case summary reconciliation; TES verdict update; ARCH-6 fourth-clause extension + DC flag closure) | All Minor record corrections, all independent artifacts, all phase-exit conditions per the all-findings directive |
+| **Findings-ledger closure by each emitting lens via the findings system** — including Iteration Plan F8 (remediation recorded this close pass; closure owned by the Management Reviewer lens) | Exit criterion 11: the ledger must be EMPTY at R6, verified via the findings system, never via narrative claims |
+| **R6 re-presentation with the evidence package and a fresh sanction request to STK-001** — presented as 15 executed PASS + 8 deferred-by-scope-decision, zero FAIL | The stakeholder-confirmed path; LCA-5 is the gate's own pending decision |
+| **Pass budget box: ~2,750K** [ASSUMPTION — record-correction content class; basis: the record-side iterations' measured per-artifact correction cost, scaled to six targeted section evolutions plus the R6 gate] | The content-class lesson applied: this pass is record-side work only — no code, no design, no new validation |
+| **R010 written-request obligation lands in the Construction Iter 1 plan** (issued at plan-build through the stakeholder-facing channel, STK-001 relaying to STK-004 per the Vision's engagement model; trigger: STK-004 confirmation by Construction Iter 1 start) | The F8 remediation's relocation — the obligation is carried, not dropped; the response remains NOT an exit condition |
+| No scope reduction | The record-propagation scope is fully determined by the open findings and the stakeholder-confirmed path; the box governs |
+
 ## Traceability
 
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
-| Iteration Assessment (this, Elaboration Iter 2) | Iteration Plan (Elaboration Iter 2 — objectives, exit criteria 1–13, corrected budget box); Review Record (verified findings ledger 2026-09-02, RC verdict NO-GO CONFIRMED, stakeholder sanction record, verdict-gate contribution); Test Evaluation Summary (mission verdict NOT YET ACHIEVED, quality metrics); Work Order measured facts (13,363,814 tokens; 4:41:27 agent; 10:01:08 queue; 18 invocations; 21 interactions; 13 artifacts; 9.9 quality) | Reviews | Next convergence pass (A-16 code chain + A-17…A-31 record corrections); R6 LCA re-presentation; Construction Iter 1 plan (built at LCA sanction) |
-| OBJ-1 assessment (Architecture Baseline) | SAD (F1/F3 RESOLVED, ledger-closed; F2 persists); Architectural Proof-of-Concept artifact (exists, PENDING ledger); Review Record LCA-2 | Reviews | A-8/A-16/A-21/A-29/A-31 (Software Architect) |
-| OBJ-2 assessment (High-Risk Elements) | Risk List R001/R003/R004 (MITIGATING, IMPROVING, unexecuted); Test Evaluation Summary (0 of 3 evidenced; 23/23 BLOCKED); Review Record LCA-3, SAD F2, Iteration Plan F3, F-CR-E1-1; stakeholder Implementer context (verbatim) | Reviews | A-16 delivery chain (Implementer, Code Reviewer, Integrator, Test Designer, Architect) |
-| OBJ-3 assessment (Refine Requirements) | Use-Case Model (10/10 FULL, 0 findings; AF-3 flows confirmed); Supplementary Specification (0 findings; behavioural bar, four consumers); stakeholder Iter 2 answers + verdict-gate fourth clause (verbatim) | Reviews | A-25, A-26 (System Analyst); Construction iteration plans |
-| OBJ-4 assessment (Detailed Plan) | Iteration Plan (Construction baseline, LCA-4 PASS; F6/F7/F3-Reviewer corrected this close pass); Review Record (PRA Part 1; F4/F5 resolved) | Reviews | A-22, A-23, A-18 (applied this close pass); next-pass plan |
-| Budget variance root cause | Work Order measured actuals (13,363,814; 4:41:27; 10:01:08); Iter 1 assessment binding adjustment #1; Review Record Iteration Plan F6 (Major, A-22) | DependsOn | Corrected ~12,500K box (applied this close pass); every later budget forecast |
-| Token record reconciliation | Measured iteration actuals (Iter 1: 12,523,281; Iter 2: 13,363,814); Inception phase-level record (1,347,939 — governs phase accounting) | Replaces | All later iteration-box sizing |
-| Work item reconciliation (4 Complete / 2 In progress / 6 Pending) | Iteration Plan work items 1–12; SCM state (zero PRs, zero ready-for-review branches, iteration/E1 no CI runs, main GREEN run 33598979875); CONTRIBUTING.md sha 6662813; SAD F1/F3 ledger closures | Reviews | A-16 code chain; exit criterion 12 verification |
-| Exit criteria score (6 of 13) | Iteration Plan Layer 2 criteria 1–13; Test Evaluation Summary; Review Record verified ledger | Reviews | R6 LCA re-presentation entry gate (empty ledger + FOUR-clause × four-consumer evidence package + fresh sanction request) |
-| Test results record | Test Evaluation Summary (NOT YET ACHIEVED; 23/23 BLOCKED; CI green run 33598979875 — verified via scm_get_build_status this close pass; Issues #1/#2) | DependsOn | TC-001…TC-023 execution (next pass); defect removal efficiency baseline |
-| Stakeholder decision record (Iter 2) | Stakeholder answers: behavioural bar (three clauses, >90% dropped); four-UC confirmation ("Yes"); featured banner ("newest first"); FOURTH clause (verbatim, verdict gate); Implementer context (verbatim); contribution-cycle closure (verbatim) | Authorizes | FOUR-clause behavioural bar (A-25…A-31 propagation); A-16 as P0; R6 evidence gate scope; Risk List R001 (A-30, applied); Iteration Plan exit criterion 1 |
-| PM-owned finding corrections (this close pass) | Review Record Iteration Plan F6 (A-22), F7 (A-23), F3-Reviewer (A-18); Risk List F2 (A-24); A-30 | Reviews | Iteration Plan (box, statuses, TC enumerations, fourth clause); Risk List (R007 faithful contract; R001 four clauses; R012 measured actual) |
-| Lessons learned (adjustment application, mis-transcription class, questionnaire format, queue attribution, one-defect-three-gates) | This iteration's measured variance; Review Record findings and process incidents; stakeholder interactions (21, 10:01:08 queue) | Refines | Every later Iteration Plan and Iteration Assessment; questionnaire format (Process Engineer); emission-format discipline (all roles) |
+| Iteration Assessment (this, Elaboration Iter 3) | Iteration Plan (Elaboration Iter 3 — objectives, exit criteria 1–14, corrected budget box); Review Record (verified findings ledger 2026-09-02 — 0 Critical / 1 Major / 5 Minor + 3 narrative; RC verdict NO-GO CONFIRMED, record-propagation remainder; stakeholder R6-path confirmation + framing directive + verdict-gate contribution); Test Case Cycle 1 formal-pass record (15/0/8, trace CI 33617748483 — the execution authority); Work Order measured facts (27,143,633 tokens; 3:35:12 agent; 0:00:00 queue; 22 invocations; 20 interactions; 13 artifacts; 9.9 quality) | Reviews | Record-propagation pass (A-32…A-36 + ledger closure); R6 LCA re-presentation; Construction Iter 1 plan (built at LCA sanction) |
+| OBJ-1 assessment (Architecture Baseline — MET) | SAD F2 closure on OBSERVED evidence (PRs #3/#4/#5 merged APPROVED ×3; PR #6 baseline-close to main APPROVED; main CI GREEN 33620993027; LdapGateway b8df8b7); Review Record LCA-2 MET (Management lens) | Reviews | A-33 (SAD criterion 3 — Software Architect); the R6 evidence package |
+| OBJ-2 assessment (High-Risk Elements — MET) | Test Case Cycle 1 formal pass (R001 FOUR clauses × FOUR consumers via TC-011 + TC-021/022/023; R003 matrix; R004 simulation; trace CI 33617748483); Issue #1 CLOSED cr:complete; stakeholder framing directive (the 8 BLOCKED = recorded scope decision); Risk List close-pass reappraisal (R001/R003/R004 RETIRED; R013 RESOLVED) | Reviews | A-32 (PoC results ledger); R011 (production residuals, Construction); Construction Iter 1 (AC-005 formal test) |
+| OBJ-3 assessment (Refine Requirements — MET) | Fourth-clause propagation A-25…A-31 verified COMPLETE (Review Record Iter 3 technical-lens record); Use-Case Model / Supp Spec / Design Model / Test Case / PoC protocol / Risk List / SAD | Reviews | A-36 (ARCH-6 extension — Software Architect + Process Engineer) |
+| OBJ-4 assessment (Detailed Plan — MET) | Iteration Plan F6/F7/F3-Reviewer RESOLVED (ledger-closed by the Management Reviewer lens); LCA-4 MET; LCA-6 MET; F8 remediation (this close pass) | Reviews | Construction Iter 1 plan (R010 obligation carried); the record-propagation pass plan |
+| Budget variance root cause (content class) | Work Order measured actuals (27,143,633); the ~12,500K box's basis (record-side actuals 12,523,281 / 13,363,814); PR-loop evidence (3 APPROVED first pass — headroom untouched) | DependsOn | Every later budget box (sized by content class); Construction sizing assumption |
+| Token record reconciliation | Measured iteration actuals (Iter 1: 12,523,281; Iter 2: 13,363,814; Iter 3: 27,143,633); Elaboration phase-to-date 53,030,728 (phase NOT closed — no phase row claimed); Inception phase-level record (1,347,939) | Replaces | All later iteration-box sizing |
+| Work item reconciliation (10 Complete / 1 carried / 1 Pending) | Iteration Plan work items 1–12; observed SCM state (PRs #3/#4/#5/#6 merged, APPROVED ×4; main GREEN 33620993027; iteration/E1 GREEN 33617748483; Issues #1/#2 CLOSED cr:complete); F8 remediation (WI-2 blocker recorded) | Reviews | Exit criterion 12 verification; the record-propagation pass work items |
+| Exit criteria score (10 of 14) | Iteration Plan Layer 2 criteria 1–14; Test Case execution authority; Review Record verified ledger | Reviews | R6 LCA re-presentation entry gate (empty ledger + evidence package + fresh sanction request) |
+| Test results record | Test Case Cycle 1 formal-pass record (15/0/8, trace CI 33617748483; R001 clause-by-clause table; R003/R004 results; regression baseline); TES F2 (stale mission verdict — A-35); DRE first measurement (review-first confirmed) | DependsOn | A-32/A-34/A-35 (record propagation); Construction regression baseline; escaped-defect tracking (Construction Iter 1 onward) |
+| Stakeholder decision record (Iter 3) | Stakeholder answers: R6-path confirmation ("Yes"); BLOCKED-cases framing directive (verbatim); verdict-gate contribution ("nothing else new" — contribution cycle CLOSED) | Authorizes | The record-propagation pass work order; the R6 evidence package's framing (A-32, A-34, A-35); the fresh sanction request at R6 |
+| PM-owned remediations (this close pass) | Review Record Iteration Plan F8 (STK-004 request — blocker recorded, obligation carried); PM close-pass reappraisal (Work Item 11 — risk retirement recorded, WI statuses reconciled) | Reviews | Risk List (R001/R003/R004 RETIRED; R013 RESOLVED; R010 obligation relocated); Iteration Plan (F8 remediation; roll-forward to the record-propagation pass); Construction Iter 1 plan (R010 trigger) |
+| Lessons learned (content-class sizing; review-first measured; framing directives are evidence; blocker-not-restatement; retirement recorded at close; queue discipline) | This iteration's measured variance; the first DRE data point; the stakeholder's framing directive; the F8 three-pass pattern; the Risk List reappraisal discipline; R012 measured 0:00:00 | Refines | Every later Iteration Plan and Iteration Assessment; the R6 evidence package; Construction sizing |
