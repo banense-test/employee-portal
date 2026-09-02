@@ -45,50 +45,48 @@ This Development Case specifies project-specific **deltas** over the IARI DC bas
 2. `.editorconfig` + `Directory.Build.props` — **still absent** (re-verified via SCM this iteration — both not found on main). Lint / analyzer rules owned by Implementer. Non-blocking for the final record-correction pass and for Construction entry (CR-1 cites CONTRIBUTING.md rules); flagged for the owner with explicit deferral rationale — carried to Construction Iter 1.
 3. STK-004 deliverables (R010) — LDAP service account, Keycloak client registration, Windows Server provisioning. Per the stakeholder's decision (Elab Iter 1), these block only **integration with the specific production instances** — a separate, smaller risk tracked on its own and taken to Construction; they do NOT block the PoC's empirical validation (OBSERVED against the disposable directory and stub issuer). **Iteration Plan F8 RESOLVED at Iter 4**: the concrete blocker is recorded (no direct STK-004 channel exists in this runtime; the stakeholder questionnaire reaches STK-001 only), and the obligation is CARRIED to the Construction Iter 1 plan with R010's own trigger (request issued at Construction Iter 1 plan-build through the stakeholder-facing channel, STK-001 relaying to STK-004 per the Vision's engagement model).
 ## Disciplines and Intensity
-
 Intensity per discipline/phase is **per the canonical IARI DC matrix** — confirmed, not reassigned. No deviation is proposed; none is self-granted. Validation against the actual risk profile: R001 (HIGH) → Analysis & Design Critical in Elaboration is consistent with the canonical matrix — no stakeholder deviation request warranted.
 
-**Inactive discipline (delta):** Business Modeling — INACTIVE. The stakeholder declared 10 concrete functional requirements (FR-001–FR-010) for a software replacement of manual tools (Excel, email, PDF directory). No business-process reengineering, no business object model, no workflow transformation. Per DC §4 criteria, this project is **not business-process-led** (re-recorded this iteration, 2026-09-02; verdict unchanged; independently sustained by the Business Reviewer lens at the Iter 1, Iter 2 and Iter 3 LCA reviews — BR-OK-INACTIVE, three consecutive verifications).
+**Inactive discipline (delta):** Business Modeling — INACTIVE. The stakeholder declared 10 concrete functional requirements (FR-001–FR-010) for a software replacement of manual tools (Excel, email, PDF directory). No business-process reengineering, no business object model, no workflow transformation. Per DC §4 criteria, this project is **not business-process-led** (re-recorded this iteration, 2026-09-02; verdict unchanged; independently sustained by the Business Reviewer lens at the Iter 1–Iter 4 LCA reviews — BR-OK-INACTIVE, four consecutive verifications).
 
 ```plantuml
 @startuml
 !theme plain
-title Employee Portal — Elaboration Iter 4 (Record-Propagation Pass) Discipline Workflow\nIntensity per canonical IARI matrix — confirmed, unchanged
+title Employee Portal — Elaboration Iter 5 (Final Record-Correction Pass) Discipline Workflow\nIntensity per canonical IARI matrix — confirmed, unchanged
 
 start
 :Environment (Medium);
-note right: Process Engineer: re-record DC §4 classification\n(not business-process-led — unchanged), version\npolicy (.NET 10), optional triggers (PoC FIRED,\n1 of 6); CLOSE the ARCH-6 gap flag on verification\n(CONTRIBUTING.md sha 90e4f2e carries the FOUR-clause\nARCH-6 — A-36 landed); evolve this DC with the\nIter 3 process assessment;
+note right: Process Engineer: re-record DC §4 classification\n(not business-process-led — unchanged), version\npolicy (.NET 10), optional triggers (PoC FIRED,\n1 of 6 — record-propagation obligation DISCHARGED:\nA-32 landed and ledger-closed); resolve DC F4\n(A-39 — three stale status claims corrected to\nthe observed state); evolve this DC with the\nIter 4 process assessment;
 :Project Management (Medium);
-note right: PM: close-pass reappraisal (Work Item 11) —\nR001/R003/R004 retirement recorded on observed\nevidence; R013 resolved; WI statuses reconciled\nto SCM state (exit criterion 12); F8 remediation\n(STK-004 request evidenced or blocker recorded);
+note right: PM: pass-close reconciliation (Work Item 9 /\nexit criterion 12) — WI statuses reconciled to\nobserved SCM state; Iteration Assessment authored\nin the Assess touchpoint AFTER the reviewers rule;
 :Requirements (High);
-note right: SA + RS: no new requirements this pass —\nthe record-propagation pass consumes the\nstakeholder-confirmed FOUR-clause bar and the\nfeatured-banner contract as recorded;
+note right: SA + RS: no new requirements this pass —\nthe stakeholder-confirmed FOUR-clause bar and the\nfeatured-banner contract are consumed as recorded;
 :Analysis & Design (Critical);
-note right: Architect: A-32 PoC artifact Results and\nFindings rewritten with the OBSERVED results\n(15/0/8; the 8 BLOCKED stated as a recorded SCOPE\ndecision — deferred to Construction, not missing);\nA-33 SAD LCA criterion 3 evidence updated;
+note right: Architect: A-38 PoC § Traceability sha\ncitation corrected (c86ebf7 -> verified file\nsha 90e4f2e) — closes PoC F3 (Minor).\nA-32 observed-results ledger LANDED and\nledger-closed (Iter 4) — the R6 evidence\npackage core is ASSEMBLED;
 :Implementation (Medium);
-note right: No code work this pass — the three\nmechanisms are MERGED (PRs #3/#4/#5 to\niteration/E1, PR #6 to main, all APPROVED);\nConstruction-scope remediations (F-CR-E3-1/2/3)\ncarry to Construction Iter 1;
+note right: No code work this pass — every PR that\nentered the phase left the gate with a terminal\nverdict (PRs #3/#4/#5, #6, #7 all APPROVED,\nmerged); F-CR-E3-1/2 carry to Construction\nIter 1 / next Design Model pass;
 :Test (Medium);
-note right: Test Designer / Test Manager: A-34 Test Case\nDocument Control summary reconciled to the per-case\nrecord (15/0/8); A-35 TES mission verdict + INC-1 +\nmetrics updated from the observed record;
+note right: Test Manager: A-37 TES remainder-enumerations\nupdated from the observed same-pass landings\n(A-32/A-34/A-36/PM close-pass all DONE;\nINC-1 bottleneck RESOLVED) — closes TES F3,\nthe one Major;
 :Configuration & Change Mgmt (Medium);
-note right: CM: the architecture baseline landed on\nPR #6 (APPROVED, merged to main); Issues #1/#2\nclosed cr:complete; baseline register updated;
+note right: CM: Issue #9 CLOSED cr:complete on the\nverified A-32 evidence; Issues #1/#2 closed;\nbaseline register current;
 :Project Management (Medium);
-note right: PM: Iteration Assessment; R6 re-presentation\nwith the evidence package and a fresh sanction\nrequest — the ledger must be EMPTY (all lenses,\nall severities) before R6;
+note right: PM: R6 re-presentation with the evidence\npackage and a fresh sanction request —\nthe ledger must be EMPTY (all lenses,\nall severities) before R6;
 stop
 @enduml
 ```
 
-**Active-discipline tailoring notes (Elaboration Iter 4 — record-propagation pass):**
+**Active-discipline tailoring notes (Elaboration Iter 5 — final record-correction pass):**
 
 | Discipline | Tailoring Note |
 |---|---|
 | Requirements | No new requirements this pass. The stakeholder-confirmed contracts are consumed as recorded: FOUR-clause behavioural bar across UC-004..UC-007 (blank fields / blank display fields / blank CSV cells no abort / locatable and selectable — a missing attribute displayed as missing, never substituted); featured banners STACK, ordered newest first. Markers all retired in place |
-| Analysis & Design | The PoC artifact's Results and Findings ledger is rewritten with the OBSERVED results (A-32 — the R6 evidence-package core): R001 clause-by-clause FOUR-clause × four-consumer evidence (TC-011 + TC-021/022/023, clause (d) verified against substitution-attempt fixtures), R003 token-validation matrix, R004 drop simulation, verdict distribution 15/0/8 with the 8 BLOCKED stated as a recorded SCOPE decision (deferred to Construction, not missing — stakeholder framing directive), regression baseline, delivery rows → MERGED with PR numbers, Issue #1 closure; SAD LCA criterion 3 evidence updated to the observed state (A-33). Design Model remains **co-owned** (Designer / DatabaseDesigner / UserInterfaceDesigner) — section-scoped upserts only |
-| Implementation | No code work this pass — the three mechanisms are MERGED as evolutionary production code (PRs #3/#4/#5 → iteration/E1 APPROVED ×3; PR #6 → main APPROVED; main CI GREEN). The three Code Reviewer Minors (F-CR-E3-1/2/3 — INT-016 PG adapter per R008, INT-011 contract-table evolution, state-comment correction) are Construction-scope remediations carried to Construction Iter 1 with their record notes |
-| Test | The formal TC-001..TC-023 execution pass is COMPLETE (15 PASS / 0 FAIL / 8 BLOCKED, trace CI run 33617748483). This pass: A-34 Test Case Document Control summary reconciled to the per-case record (15/0/8, naming TC-017/TC-018 in the BLOCKED set, stated as a recorded scope decision); A-35 TES mission verdict + INC-1 + quality metrics updated from the observed per-case record. No new test design or execution |
+| Analysis & Design | The PoC artifact's record-propagation obligation is DISCHARGED: the Results and Findings ledger CARRIES the OBSERVED results (A-32 — landed and ledger-closed at Iter 4; the R6 evidence-package core is ASSEMBLED). Remaining: A-38 — one sha citation in the PoC § Traceability row corrected to the verified file sha (`90e4f2e…`), closing PoC F3 (Minor). SAD preserved (criterion 3 current — A-33 done and ledger-closed). Design Model remains **co-owned** (Designer / DatabaseDesigner / UserInterfaceDesigner) — section-scoped upserts only |
+| Implementation | No code work this pass — every PR that entered the phase left the gate with a terminal verdict (PRs #3/#4/#5 → iteration/E1, PR #6 → main, PR #7 → iteration/E4; all APPROVED, merged). The two remaining Code Reviewer Minors (F-CR-E3-1 — interim IClockingsRepository vs INT-016; F-CR-E3-2 — INT-011 contract-table evolution) are Construction-scope/Designer-owned remediations carried with recorded owners |
+| Test | The formal TC-001..TC-023 execution pass is COMPLETE (15 PASS / 0 FAIL / 8 BLOCKED, trace CI run 33617748483; Iter 4 regression verification on PR #7 — baseline HELD). This pass: A-37 — the TES remainder-enumerations updated from the observed same-pass landings (A-32/A-34/A-36/PM close-pass all DONE; INC-1 bottleneck RESOLVED), closing TES F3 — the one Major. No new test design or execution |
 | Deployment | Single-node topology baselined in SAD; deploy jobs deferred to Construction pending R010 |
-| Configuration & Change Mgmt | Architecture baseline landed on PR #6 (APPROVED, merged to main); Issues #1/#2 closed cr:complete; CI verified green on main post-merge; baseline register updated by the ConfigurationManager |
-| Project Management | Close-pass reappraisal (Work Item 11): R001/R003/R004 retirement recorded on observed evidence; R013 resolved; work-item statuses reconciled to SCM state (exit criterion 12); F8 remediation (STK-004 written deliverables request evidenced, or its concrete blocker recorded and the obligation carried to Construction Iter 1); Iteration Assessment with measured actuals; R6 re-presentation with the evidence package and a fresh sanction request |
-| Environment | This document; trigger re-evaluation each iteration (mandatory — executed); tool environment verification (executed this iteration — CONTRIBUTING.md re-verified with ARCH-6 four-clause, gap flag CLOSED; lint gap re-verified absent) |
-
+| Configuration & Change Mgmt | Issue #9 (the PoC results-ledger CR) CLOSED cr:complete on the verified A-32 evidence; Issues #1/#2 closed; CI verified green on main (run 33639518709); baseline register current |
+| Project Management | Pass-close reconciliation (Work Item 9 / exit criterion 12): work-item statuses reconciled to observed SCM state; Iteration Assessment authored in the Assess touchpoint AFTER the reviewers rule; R6 re-presentation with the evidence package and a fresh sanction request — the ledger must be EMPTY (all lenses, all severities) before R6 |
+| Environment | This document; trigger re-evaluation each iteration (mandatory — executed); tool environment verification (executed this iteration — CONTRIBUTING.md re-verified with ARCH-6 four-clause, sha unchanged; lint gap re-verified absent); DC F4 resolved (A-39) |
 ## Artifacts and Templates
 
 ### CORE Artifacts (16) — All Confirmed
