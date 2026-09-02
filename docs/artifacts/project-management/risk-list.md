@@ -1,17 +1,16 @@
 # Risk List
 
 ## Document Control
-
 | Field | Value |
 |---|---|
 | Phase | Elaboration |
-| Status | Draft — Elaboration Iter 2 reappraisal (convergence cycle) |
+| Status | Draft — Elaboration Iter 2 reappraisal (convergence cycle); close-pass corrections applied 2026-09-02 |
 | Milestone Target | End of Elaboration (LCA) — NOT yet achieved |
 | Iteration | 2 (Cycle 1) |
 | Date | 2026-09-02 |
 | Prior Version | Elaboration Iter 1 reappraisal (2026-09-01); Inception (Approved at LCO — 0 findings); EVOLVED, not recreated |
 | Iter 2 Changes | **R001 acceptance criteria replaced with the behavioural bar** per the stakeholder's Iter 2 answer — the >90% per-office figure is dropped (invented, no declared source; it measured our own seeded data and could not fail); behavioural bar confirmed for ALL FOUR AD-reading UCs (UC-004/005/006/007); production-AD data-quality percentage moved to Construction (R010 + R011), outside the LCA evidence package — closes Risk List F1 (Reviewer), action A-10. **Trend column added** to the Risk Register (direction since last review + evidence pointer) — closes Risk List F1 (Management, part 1), action A-14. **R012 (human-gate queue) added** — bounds the LCA/IOC/PR gate-queue risk with the 14-day suspension ceiling; the Iteration Plan quotes no queue estimate — closes Risk List F1 (Management, part 2), action A-15 |
-
+| Close-Pass Corrections (2026-09-02, iteration close) | **Risk List F2 (Major, action A-24) corrected:** the R007 mitigation mis-transcribed the stakeholder's featured-banner answer as the UNSELECTED option ("show only the NEWEST featured item — no stacked banners"); corrected to the Design Model's faithful contract — featured banners STACK, ordered newest first, every featured item renders its own banner — citing the stakeholder's verbatim answer "newest first" ("newest first" is an ordering statement; ordering presupposes plurality). Coordinated with the Process Engineer's parallel A-17 correction (Development Case F1 — same defect class, same verbatim answer) so both governance artifacts record the identical contract. **Action A-30 applied:** R001 acceptance criteria extended to the FOUR-clause behavioural bar per the stakeholder's verdict-gate contribution, verbatim: "a missing attribute is displayed as missing. It is never replaced by a default, a placeholder, a guessed value, or another employee's value." — the three clauses stop data being LOST; the fourth stops it being INVENTED. Applies to all four AD-reading UCs (UC-004/005/006/007) per the stakeholder's "Add a fourth clause to all four" |
 ## Risk Classification
 
 Risks are classified by **Probability (P) × Impact (I) = Magnitude**. Probability and impact are scored on a 1–5 scale. The magnitude level determines prioritization and drives iteration sequencing.
