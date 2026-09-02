@@ -297,17 +297,19 @@ end note
 ## Use-Case Realizations
 One realization per declared use case — the collaboration of design objects that implements the flow of events. Main flow, alternative flows (AF), and exception flows (EF) are shown in each sequence diagram. Participant IDs reference the design classes in §Design Packages and Classes.
 
-**Elaboration Iter 2 evolution (Designer — convergence cycle):** SEQ-005, SEQ-006, SEQ-007 extended with the **R001 behavioural bar AF-3 flows** (stakeholder decision, Elaboration Iter 2; bar reach stakeholder-confirmed — asked whether the bar applies to all four AD-reading use cases and not only the directory search, the stakeholder answered "Yes"). SEQ-001…SEQ-004, SEQ-008…SEQ-010 preserved exactly as reviewed at the Elaboration Iter 1 LCA review (zero findings).
+**Elaboration Iter 2 evolution (Designer — convergence cycle):** SEQ-005, SEQ-006, SEQ-007 extended with the **R001 behavioural bar AF-3 flows** (stakeholder decision, Elaboration Iter 2; bar reach stakeholder-confirmed — asked whether the bar applies to all four AD-reading use cases and not only the directory search, the stakeholder answered "Yes").
+
+**Elaboration Iter 3 evolution (Designer — Review Record A-27, fourth-clause propagation):** SEQ-004, SEQ-005, SEQ-006, SEQ-007 AF flows extended from three to FOUR clauses — clause (d), verbatim (stakeholder contribution at the Iter 2 verdict gate, binding): **"a missing attribute is displayed as missing. It is never replaced by a default, a placeholder, a guessed value, or another employee's value."** The rendering chain is closed end-to-end: null at the gateway (CLS-009) → blank on screen (UC-004/005/007) → truly empty cell in the CSV (UC-006 — the file reaches payroll). SEQ-001…SEQ-003, SEQ-008…SEQ-010 preserved exactly as reviewed (zero findings on this artifact at both LCA reviews).
 
 | SEQ | Use Case | Participating design classes | Flows realized |
 |---|---|---|---|
 | SEQ-001 | UC-001 Clock In and Clock Out | CLS-017, CLS-001, CLS-007, CLS-008, CLS-011, CLS-012 | Main, AF-1 (offline queue + sync), AF-2 (session), AF-3 (2 s ignore) |
 | SEQ-002 | UC-002 View Own Clocking History | CLS-017, CLS-001, CLS-007, CLS-011, CLS-012 | Main, AF-1 (empty), AF-2 (queued note), EF-1 (PG down) |
 | SEQ-003 | UC-003 Browse News | CLS-018, CLS-002, CLS-013 | Main, AF-1 (empty category), AF-2 (no news), EF-1 (PG down) |
-| SEQ-004 | UC-004 Search Employee Directory | CLS-019, CLS-003, CLS-009 | Main, AF-1 (no results), AF-2 (missing attrs — R001 bar), AF-3 (LDAP down) |
-| SEQ-005 | UC-005 Review Employee Clockings | CLS-017, CLS-001, CLS-003, CLS-009, CLS-011 | Main, AF-1 (no match), AF-2 (AD down), **AF-3 (missing AD attributes — every event row rendered, R001 bar)**, EF-1 (role denial) |
-| SEQ-006 | UC-006 Export Monthly Clocking Report | CLS-017, CLS-006, CLS-007, CLS-003, CLS-009, CLS-011 | Main, AF-1 (no data), AF-2 (AD down — abort), **AF-3 (missing AD attributes — blank cells, every row written, no abort — R001 bar)** |
-| SEQ-007 | UC-007 Assign Worker Category | CLS-020, CLS-004, CLS-003, CLS-009, CLS-005, CLS-011 | Main, AF-1 (unchanged), AF-2 (AD down), **AF-3 (missing AD attributes — locatable and selectable — R001 bar)** |
+| SEQ-004 | UC-004 Search Employee Directory | CLS-019, CLS-003, CLS-009 | Main, AF-1 (no results), AF-2 (missing attrs — R001 bar, four clauses), AF-3 (LDAP down) |
+| SEQ-005 | UC-005 Review Employee Clockings | CLS-017, CLS-001, CLS-003, CLS-009, CLS-011 | Main, AF-1 (no match), AF-2 (AD down), **AF-3 (missing AD attributes — every event row rendered, R001 bar, four clauses)**, EF-1 (role denial) |
+| SEQ-006 | UC-006 Export Monthly Clocking Report | CLS-017, CLS-006, CLS-007, CLS-003, CLS-009, CLS-011 | Main, AF-1 (no data), AF-2 (AD down — abort), **AF-3 (missing AD attributes — truly empty cells, every row written, no abort — R001 bar, four clauses)** |
+| SEQ-007 | UC-007 Assign Worker Category | CLS-020, CLS-004, CLS-003, CLS-009, CLS-005, CLS-011 | Main, AF-1 (unchanged), AF-2 (AD down), **AF-3 (missing AD attributes — locatable and selectable — R001 bar, four clauses)** |
 | SEQ-008 | UC-008 Publish News | CLS-018, CLS-002, CLS-005, CLS-011 | Main, AF-1 (validation) |
 | SEQ-009 | UC-009 Edit Published News | CLS-018, CLS-002, CLS-005, CLS-011 | Main, AF-1 (validation), AF-2 (concurrent unpublish), EF-1 (role denial) |
 | SEQ-010 | UC-010 Unpublish News | CLS-018, CLS-002, CLS-005, CLS-011 | Main, AF-1 (cancel), AF-2 (already unpublished) |
@@ -508,11 +510,11 @@ DIR -> LDAP : Search(criteria)
 LDAP -> AD : LDAP v3 search, read-only\n(5 s hard timeout — PRF-003)
 alt AD responds in time
   AD --> LDAP : matching entries
-  LDAP --> DIR : IReadOnlyList<DirectoryEntry>\n(missing attributes = null — R001)
+  LDAP --> DIR : IReadOnlyList<DirectoryEntry>\n(missing attributes = null,\nNEVER substituted — R001 bar)
   alt entries found
     DIR --> CTL : DirectoryResult(entries)
     CTL --> VIEW : model: person cards
-    VIEW --> EMP : cards: name, job title, department,\noffice, email, extension — all six fields\non the card (USA-003); missing fields\nblank, entry NOT hidden (AF-2, R001)
+    VIEW --> EMP : cards: name, job title, department,\noffice, email, extension — all six fields\non the card (USA-003); missing fields\nblank, entry NOT hidden, blank NEVER\nsubstituted (AF-2 — R001 bar, clauses a/b/c/d)
   else no matches (AF-1)
     LDAP --> DIR : empty list
     DIR --> CTL : DirectoryResult(0 entries)
@@ -530,6 +532,12 @@ note over LDAP
   live, read-only, on demand. No portal
   table caches directory data. Total
   task <= 10 s including typing (AC-003).
+  R001 bar, FOUR clauses (fourth added
+  at the Iter 2 verdict gate, propagated
+  Iter 3 — A-27): a missing attribute is
+  displayed as missing — never replaced
+  by a default, a placeholder, a guessed
+  value, or another employee's value.
 end note
 @enduml
 ```
@@ -568,9 +576,9 @@ DIR -> LDAP : GetDisplayData(uids)
 alt AD reachable
   LDAP --> DIR : uid -> EmployeeDisplayData map\n(name, department, office) — COMPLETE over\nthe requested uid set (design decision D-9):\na uid AD cannot resolve maps to all-null\nfields; missing attributes null within\nresolved entries (R001 bar)
   DIR --> CTL : IReadOnlyDictionary<string, EmployeeDisplayData>
-  alt some employees have missing AD attributes (AF-3 — R001 behavioural bar, stakeholder-confirmed Elab Iter 2)
+  alt some employees have missing AD attributes (AF-3 — R001 behavioural bar, FOUR clauses — fourth added at the Iter 2 verdict gate, propagated Iter 3 — A-27)
     CTL -> CTL : merge events + display data;\nconvert times via TimeService (USA-008)
-    CTL --> VIEW : model: EVERY event row rendered;\nmissing display fields blank (em-dash),\nemployee NOT removed, no error\n(bar clauses a/b/c)
+    CTL --> VIEW : model: EVERY event row rendered;\nmissing display fields blank (em-dash),\nemployee NOT removed, no error,\nblank NEVER substituted\n(bar clauses a/b/c/d)
     VIEW --> HR : review table — every event row present;\nclocking columns (event type, timestamp)\nalways complete — portal data, never AD data
   else all display attributes complete
     CTL -> CTL : merge events + display data;\nconvert times via TimeService (USA-008)
@@ -589,12 +597,19 @@ note over CLK
   (P-05) — same path, empty result.
 end note
 note over LDAP
-  R001 bar (stakeholder decision, Elab Iter 2,
-  confirmed for UC-005): every employee is
+  R001 bar, FOUR clauses (stakeholder
+  decision Elab Iter 2, confirmed for
+  UC-005; fourth clause added at the
+  Iter 2 verdict gate, propagated
+  Iter 3 — A-27): every employee is
   rendered whether or not their attributes
   are complete; a missing attribute never
   removes someone from results; a missing
-  attribute never raises an error. AF-2
+  attribute never raises an error; a
+  missing attribute is displayed as
+  missing — never replaced by a default,
+  a placeholder, a guessed value, or
+  another employee's value. AF-2
   (AD unreachable) is a distinct condition
   with a distinct contract — not waived
   by the bar.
@@ -633,8 +648,8 @@ alt events exist for the month
     LDAP --> DIR : uid -> EmployeeDisplayData map\nCOMPLETE over the requested uid set\n(design decision D-9): a uid AD cannot\nresolve maps to all-null fields;\nmissing attributes null within entries
     DIR --> EXP : display data map
     EXP -> EXP : build rows: ad_user_id, employee_name,\ndepartment, office, event_timestamp, event_type
-    alt some employees have missing AD attributes (AF-3 — R001 behavioural bar, stakeholder-confirmed Elab Iter 2)
-      EXP -> EXP : EVERY event row written;\nmissing display fields (employee_name,\ndepartment, office) as BLANK CELLS;\nno abort, no error\n(ad_user_id resolves identity — CON-006;\nclocking columns always complete — portal data)
+    alt some employees have missing AD attributes (AF-3 — R001 behavioural bar, FOUR clauses — fourth added at the Iter 2 verdict gate, propagated Iter 3 — A-27)
+      EXP -> EXP : EVERY event row written;\nmissing display fields (employee_name,\ndepartment, office) as TRULY EMPTY cells —\nno placeholder character, no abort,\nno error, NEVER substituted\n(bar clause d — the CSV reaches payroll;\nad_user_id resolves identity — CON-006;\nclocking columns always complete — portal data)
     else all display attributes complete
       EXP -> EXP : rows with complete display fields
     end
@@ -667,6 +682,13 @@ note over EXP
   because NO identity data can be resolved;
   AF-3 exports because ad_user_id resolves
   identity and only display fields are blank.
+  Clause (d) (A-27, Iter 3): blank cells are
+  TRULY EMPTY, never a substituted value —
+  "on the CSV that reaches payroll a
+  fabricated department is worse than an
+  empty cell. An empty cell gets questioned.
+  A plausible wrong one does not."
+  (stakeholder rationale, verbatim).
 end note
 @enduml
 ```
@@ -702,10 +724,10 @@ VIEW -> CTL : GET /hr/categories/search (DirectorySearchCriteria)
 CTL -> DIR : Search(criteria)
 DIR -> LDAP : Search(criteria)
 alt AD reachable
-  LDAP --> DIR : IReadOnlyList<DirectoryEntry>\n(missing attributes null — entry NOT dropped,\nno error raised; R001 bar)
-  alt located employee has missing AD attributes (AF-3 — R001 behavioural bar, stakeholder-confirmed Elab Iter 2)
+  LDAP --> DIR : IReadOnlyList<DirectoryEntry>\n(missing attributes null — entry NOT dropped,\nno error raised, null NEVER substituted;\nR001 bar)
+  alt located employee has missing AD attributes (AF-3 — R001 behavioural bar, FOUR clauses — fourth added at the Iter 2 verdict gate, propagated Iter 3 — A-27)
     DIR --> CTL : entries (some with null fields)
-    CTL --> VIEW : employee list — missing fields blank,\nentry NOT hidden, no error\n(bar clauses a/b/c)
+    CTL --> VIEW : employee list — missing fields blank,\nentry NOT hidden, no error,\nblank NEVER substituted\n(bar clauses a/b/c/d)
     VIEW --> HR : employee rendered with blank fields —\nSTILL LOCATABLE AND SELECTABLE;\nselection stores the AD user id,\nwhich is always present (CON-006)
   else complete display data
     DIR --> CTL : entries (complete display fields)
