@@ -468,8 +468,8 @@ note bottom of C3
   sound - do NOT rework it; the gap is
   the unexecuted empirical validation and
   the superseded SAD record. Convergence cycle
-  (Elab Iter 2) re-presents LCA with the
-  evidence package.
+  (Elab Iter 2) re-presents LCA with
+  the evidence package.
 end note
 @enduml
 ```
@@ -779,6 +779,168 @@ C2 -[hidden]-> C3
 | F-CR-E3-2 | Design Model INT-011 (contract table); CON-004 (redirect flow); SEQ-001 (middleware behavior) | Reviews | INT-011 contract-table evolution (Designer, next Design Model pass) |
 | F-CR-E3-3 | OIDC state parameter semantics; Construction session mechanism (AF-2) | Reviews | Comment correction (Implementer, next code touch); Construction session work |
 | F-CR-E1-1 / F-CR-E1-2 closures | Iter 1 findings (this lens); stakeholder Iter 2 verdict-gate priority (Implementer code push) | Resolves | A-2/A-3/A-4/A-5/A-6 (delivered); the code-review gate (closed) |
+
+### Elaboration Iteration 4, Cycle 1 — Code-Review Lens Record (Code Reviewer, 2026-09-02)
+
+**Scope and criteria (this lens, this cycle):** the record-propagation pass's code handoff — **PR #7** (feature/E4-R003-state-comment → iteration/E4), the Implementer's remediation of **F-CR-E3-3** (this lens's Iter 3 Minor finding: the OidcMiddleware state-parameter comment overstating CSRF protection). Reviewed as **evolutionary production code** under checklist CR-1…CR-7, unchanged from Iter 1/Iter 3. Upstream baselines reused from the Iter 3 load (CONTRIBUTING.md sha `6662813…` — ARCH-1…ARCH-10; Design Model CLS-001…027, INT-006…019, SEQ-001…010, AF-2 session-mechanism Construction scope; SAD Logical View COMP-001…011). The acceptance lens is the F-CR-E3-3 remediation itself: correct the comment to state that round-trip state validation lands with the Construction session mechanism, marked `[DEFERRED — lands with the session mechanism, Construction]`, no code change owed.
+
+**Gate Execution — What Was Run This Cycle (Code-Review Lens, Iter 4):**
+
+```plantuml
+@startuml
+title Code-Review Gate Execution - Elaboration Iter 4, Cycle 1 (2026-09-02)
+
+start
+:scm_list_branches_with_label("ready-for-review")
+returns **0 branches**;
+:scm_list_pull_requests(open) returns **1 PR**:
+PR #7 - feature/E4-R003-state-comment
+-> iteration/E4 (F-CR-E3-3 remediation);
+:scm_get_repo_tree("main") loaded ONCE
+(85 entries - mechanism code present:
+Infrastructure/, Services/, tests/);
+:PR queue = [PR #7] - base already
+iteration/E4 (correct per BRANCHING
+STRATEGY 5.2; no stale PR to re-target);
+:scm_get_pull_request_diff(#7):
+1 file, +13/-2, comment-only
+(src/EmployeePortal/Infrastructure/
+KeycloakAuthProvider.cs);
+:scm_get_build_status(head branch):
+GREEN - run 33632200967;
+:scm_get_pull_request_review_state(#7):
+NONE (no prior verdict to preserve);
+:Apply CR-1..CR-7 - ALL PASS
+(guidelines, dual coverage, SAD/Design
+conformance, traceability, CI, build-tree);
+if (Critical or Major findings?) then (no - zero)
+  :scm_approve_pull_request(#7)
+review 5090059324;
+  :F-CR-E3-3 RESOLVED - all three
+overstated-CSRF comment locations
+corrected with the honest DEFERRED
+marker (session mechanism, Construction);
+  :Append the Iter 4 code-review-lens
+record to the Review Record (cumulative);
+  stop
+else (yes)
+  :scm_request_changes_on_pull_request
+with findings + remediation;
+  stop
+endif
+@enduml
+```
+
+**Compliance Matrix — CR-1…CR-7 × PR #7 (Iter 4):**
+
+```plantuml
+@startuml
+title Elaboration Iter 4 - Code-Review Compliance Matrix\nCR-1..CR-7 x PR #7 (Code Reviewer, 2026-09-02)
+
+object "PR #7 - R003 state-comment correction\n(F-CR-E3-3 remediation)\nsrc/EmployeePortal/Infrastructure/KeycloakAuthProvider.cs" as P7 {
+  CR-1 Guidelines (ARCH-1..10) : PASS
+  comment-only change; the DEFERRED
+  marker applied exactly as the
+  finding remediation prescribed;
+  comments cite the finding key
+  CR-2 Dual coverage : PASS
+  no new behavior - throw condition
+  unchanged; guard-path coverage
+  intact (CI green confirms no test
+  asserted the old message string)
+  CR-3 SAD/Design conformance : PASS
+  no signature/class/interface change;
+  deferred disposition matches AF-2
+  (session = Construction) + SEQ-001
+  CR-4 Traceability trailer : PASS
+  F-CR-E3-3 + R003 in PR title/branch
+  CR-5 CI green : PASS (33632200967)
+  CR-6 Build-tree coverage : PASS
+  1 file under src/ in the build tree
+  CR-7 Terminal disposition : APPROVED
+  (review 5090059324)
+}
+object "Finding-closure verification\nF-CR-E3-3 (Minor, Iter 3)" as FC {
+  Prescribed remediation : correct the
+  comment to state round-trip state
+  validation lands with the Construction
+  session mechanism, marked DEFERRED;
+  no code change owed
+  Delivered : ALL THREE misleading
+  locations corrected (interface XML
+  doc, guard clause, middleware
+  challenge site); false CSRF claim
+  removed from the exception message;
+  honest statement recorded
+  Verdict : RESOLVED - complete
+}
+P7 -[hidden]-> FC
+@enduml
+```
+
+**SCM Evidence Snapshot (Iter 4 — what actually happened):** `scm_list_branches_with_label("ready-for-review")` → 0 branches (the handoff arrived as an already-open PR, not a labelled branch — the PR base is correct, so no re-targeting was owed); `scm_list_pull_requests(open)` → 1 PR (#7, feature/E4-R003-state-comment → iteration/E4); `scm_get_repo_tree("main")` → 85 entries, mechanism code present (Infrastructure/ with ClockingsRepository, ILdapGateway, KeycloakAuthProvider, LdapGateway, LdapTypes, OfflineQueue, OidcTypes; Services/ with ClockingService, DirectoryService, ReportExport, TimeConvention et al.; tests/ with the full suite incl. Fixtures/DisposableLdapDirectory + StubOidcIssuer); `scm_get_pull_request_diff(#7)` → 1 file, +13/−2, comment-only (KeycloakAuthProvider.cs); `scm_get_build_status(feature/E4-R003-state-comment)` → GREEN (run 33632200967, completed 2026-09-02 12:51:38Z); `scm_get_pull_request_review_state(#7)` → NONE before verdict; **APPROVED (review 5090059324)**.
+
+**Findings — Elaboration Iteration 4 (Code-Review Lens):** **NONE — zero new findings.** PR #7 passes CR-1…CR-7 clean. One prior finding of this lens is RESOLVED this cycle:
+
+| Finding Key | Severity | Location | Description | Remediation |
+|---|---|---|---|---|
+| **F-CR-E3-3** | Minor | PR #4 (Iter 3) — `src/EmployeePortal/Infrastructure/KeycloakAuthProvider.cs` (`OidcMiddleware` / `IAuthProvider`) | **RESOLVED (Iter 4, PR #7).** The state-parameter comment no longer overstates CSRF protection. All three misleading locations are corrected: (1) the `IAuthProvider.BuildAuthorizeRedirectUrl` XML doc now states the state parameter is carried through to the issuer and that round-trip state validation on the callback path is `[DEFERRED — lands with the session mechanism, Construction]`; (2) the guard clause comment honestly states the parameter is required so every challenge carries one but is NOT round-trip validated (no expected-state storage exists yet), and the false "(CSRF protection)" claim is removed from the exception message; (3) the middleware challenge site records the same deferred disposition and correctly notes the R003 acceptance criteria (token consumption/validation) are unaffected. The code now says exactly what it does. | Closed — no further action owed. The Construction session mechanism (AF-2) owns the round-trip validation when it lands. |
+
+**Defect Distribution — Iteration 4 (severity × scope, Code-Review Lens):**
+
+```plantuml
+@startuml
+title Elaboration Iter 4 - Code-Review Defect Distribution\nClosures + open findings (Code Reviewer lens, 2026-09-02)
+
+object "Closures this cycle (this lens)" as C1 {
+  F-CR-E3-3 Minor : RESOLVED
+  PR #7 APPROVED (review 5090059324)
+  - all three overstated-CSRF comment
+  locations corrected
+  - false "(CSRF protection)" claim
+  removed from the exception message
+  - honest DEFERRED marker recorded
+  (session mechanism, Construction)
+}
+object "New findings this cycle (this lens)" as C2 {
+  Critical 0, Major 0, Minor 0
+  PR #7 passes CR-1..CR-7 clean;
+  no new defect recorded
+}
+object "Open after this cycle (this lens)" as C3 {
+  F-CR-E3-1 Minor : OPEN - Construction
+  scope (interim IClockingsRepository vs
+  INT-016 final contract; PG adapter
+  lands Construction Iter 1 per R008;
+  DEFERRED marker carried in the record)
+  F-CR-E3-2 Minor : OPEN - Designer-owned
+  (INT-011 contract-table evolution,
+  next Design Model pass)
+  Both narrative-tracked,
+  non-Elaboration-blocking
+}
+C1 -[hidden]-> C2
+C2 -[hidden]-> C3
+@enduml
+```
+
+**PR Disposition Record — Elaboration Iteration 4 (terminal verdicts per in-scope PR):**
+
+| PR | Branch → Base | Content | CI | Verdict | Review ID | Findings |
+|---|---|---|---|---|---|---|
+| #7 | feature/E4-R003-state-comment → iteration/E4 | F-CR-E3-3 remediation — state-comment correction (OidcMiddleware CSRF comment), 1 file +13/−2, comment-only | GREEN 33632200967 | **APPROVED** | 5090059324 | 0 new; 1 resolved (F-CR-E3-3) |
+
+**Integration handoff note (for the Integrator):** PR #7 is APPROVED with base `iteration/E4` — the merge precondition (review state APPROVED) is satisfied. Single-file, comment-only diff; no merge-order interaction with any other open PR (none exist).
+
+**Conformance evidence summary (what the approval is grounded in):** the diff changes no signature, no class, no interface, and no behavior — the throw condition on a whitespace state parameter is byte-for-byte the same guard; only the overstated "(CSRF protection)" string is removed from the exception message, and CI green empirically confirms no test asserted that message text (the white-box guard-path coverage remains exercised and passing). The `[DEFERRED — lands with the session mechanism, Construction]` marker is applied exactly as the finding's remediation prescribed, at all three locations where a reader could have believed CSRF protection was complete. The deferred disposition stated in the comments matches the Design Model's AF-2 (session mechanism = Construction scope) and SEQ-001 (middleware behavior); the R003 acceptance criteria (the portal consumes and validates an OIDC token correctly) are correctly noted as unaffected — state validation is a session-flow concern, not a token-validation concern.
+
+**Traceability (this lens's Iter 4 rows):**
+
+| Element | Traces From | Link Type | Traces To |
+|---|---|---|---|
+| PR #7 (F-CR-E3-3 remediation) | F-CR-E3-3 (this lens, Iter 3); R003; CON-004 (redirect flow); Design Model INT-011, SEQ-001, AF-2 (session mechanism = Construction); CONTRIBUTING.md ARCH-1…ARCH-10 (sha 6662813) | Implements | The honest-deferred-disposition rule (CONTRIBUTING.md / Design Model AF-2); Construction session mechanism (round-trip state validation when it lands); Integrator merge (base iteration/E4) |
+| F-CR-E3-3 closure | PR #7 diff (all three locations corrected; false CSRF claim removed); CI GREEN run 33632200967; review 5090059324 | Resolves | This lens's findings ledger (3 open Minors → 2); the stakeholder all-findings directive (one more finding closed); R6 entry gate (ledger emptiness) |
+| F-CR-E3-1 / F-CR-E3-2 (remain open) | Design Model INT-016 (final contract) + R008; Design Model INT-011 (contract table) | Reviews | Construction Iteration 1 PG adapter (Implementer, R008); INT-011 contract-table evolution (Designer, next Design Model pass) — both Construction-scope/Designer-owned, non-Elaboration-blocking |
 ## Findings
 ### Elaboration Iteration 1 — New Findings (Code-Review Lens)
 
