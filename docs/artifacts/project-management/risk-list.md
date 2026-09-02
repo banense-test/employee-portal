@@ -146,7 +146,7 @@ end note
 | R013 | Code-delivery continuity: the convergence critical path (A-16) runs through the Implementer, and no mechanism code had landed for TWO consecutive iterations. The stakeholder attributes the absence to a technical problem beyond the Implementer's control and states the code push as the priority for Iter 3. | RESOURCE | 2 | 3 | SIGNIFICANT | Accept | Project Manager | **RESOLVED — Iter 3 close pass** | **RESOLVED ON OBSERVED EVIDENCE — VERIFIED at Iter 4** — the stakeholder-stated priority FULFILLED and verified: 3 mechanisms merged (PRs #3/#4/#5, APPROVED ×3), baseline-close PR #6 merged to main (APPROVED), formal TC pass COMPLETE (15/0/8, trace CI 33617748483), Issue #1 CLOSED cr:complete; the contingency (phase cannot close without code) was never triggered |
 | **R014** | **Record-propagation self-propagation (NEW — Iter 5 plan-build):** the record-propagation defect class is SELF-PROPAGATING — each pass's landings stale the prior pass's "remaining work" enumerations, and the review that verifies the landings mints new findings against the stale siblings. It minted findings in TWO consecutive passes (Iter 3: 5; Iter 4: 3 — all citing same-pass landings), and under the stakeholder's binding all-findings directive every minted finding blocks the R6 gate: the class can delay the phase close by one pass per occurrence if not terminated. | SCHEDULE | 3 | 2 | **SIGNIFICANT** | Accept | Project Manager | **OPEN — MITIGATING (the same-pass discipline is the mitigation, carried as Iter 5 pass exit criterion 4)** | **NEW — registered at the Iter 5 plan-build** (the R013 precedent applies: a blocker recurring two consecutive passes without a register entry is a risk-management failure). Mitigation: the same-pass discipline (DC, adopted Iter 4) applied to the pass's OWN landings — when A-37…A-39 land, EVERY record enumerating what remains is updated IN THAT PASS. Contingency: the R6 entry-gate verification (findings system, all 13 artifacts) catches a stale enumeration BEFORE re-presentation and re-opens the PASS, not the phase. Trigger: any new record-propagation finding minted at the Iter 5 review |
 ## Risk Mitigation and Contingency
-### R001 — AD LDAP Attribute Consistency (HIGH) — RETIRED (Elaboration scope), recorded this close pass
+### R001 — AD LDAP Attribute Consistency (HIGH) — RETIRED (Elaboration scope), recorded at the Iter 3 close pass
 
 | Attribute | Value |
 |---|---|
@@ -169,7 +169,7 @@ end note
 | Trigger | Adoption tracking shows <60% usage after first month post-launch. |
 | Affected alternatives | BG-003 (80% adoption), AC-004 (80% clocking with no training) |
 
-### R003 — OIDC/Keycloak Integration Complexity (SIGNIFICANT) — RETIRED (Elaboration scope), recorded this close pass
+### R003 — OIDC/Keycloak Integration Complexity (SIGNIFICANT) — RETIRED (Elaboration scope), recorded at the Iter 3 close pass
 
 | Attribute | Value |
 |---|---|
@@ -180,7 +180,7 @@ end note
 | Trigger | Stub-issuer validation reveals unresolved token-validation or claim-mapping defects — **not observed.** |
 | Affected alternatives | FR-004 (clock in/out requires auth), all HR functions (role-based access) |
 
-### R004 — Offline Fault Tolerance (SIGNIFICANT) — RETIRED (Elaboration scope), recorded this close pass
+### R004 — Offline Fault Tolerance (SIGNIFICANT) — RETIRED (Elaboration scope), recorded at the Iter 3 close pass
 
 | Attribute | Value |
 |---|---|
@@ -241,12 +241,12 @@ end note
 | Trigger | Stakeholder requests a feature outside the Declared Scope during an iteration review. |
 | Affected alternatives | All declared scope items |
 
-### R010 — Infrastructure Team Deliverables (SIGNIFICANT — re-scoped; PM obligation relocated this close pass)
+### R010 — Infrastructure Team Deliverables (SIGNIFICANT — re-scoped; PM obligation relocated at the Iter 3 close pass)
 
 | Attribute | Value |
 |---|---|
 | Strategy | Transfer |
-| Mitigation (Elab Iter 3 close — F8 remediation) | **What STK-004 genuinely blocks is integration with the specific production instances** — the LDAP service account, the Keycloak client registration, and Windows Server provisioning. That is a separate risk and a smaller one: it does NOT inherit R001's HIGH, it does NOT block Elaboration exit, and it goes to Construction. **PM obligation (close-pass record — Iteration Plan F8 remediation):** the written deliverables request is NOT issued after three passes — the concrete blocker is recorded: **no direct STK-004 channel exists in this runtime (the stakeholder questionnaire reaches STK-001 only), and the stakeholder's Iter 3 directive confirms production AD/Keycloak integration is Construction scope.** The obligation is CARRIED to the Construction Iter 1 plan with R010's own trigger: the request is issued at Construction Iter 1 plan-build through the stakeholder-facing channel (STK-001 relays to STK-004 per the Vision's engagement model), and the trigger arms — STK-004 confirmation by Construction Iter 1 start. The RESPONSE remains NOT a condition of Elaboration exit (stakeholder decision, Elab Iter 1). |
+| Mitigation (Elab Iter 3 close — F8 remediation) | **What STK-004 genuinely blocks is integration with the specific production instances** — the LDAP service account, the Keycloak client registration, and Windows Server provisioning. That is a separate risk and a smaller one: it does NOT inherit R001's HIGH, it does NOT block Elaboration exit, and it goes to Construction. **PM obligation (close-pass record — Iteration Plan F8 remediation, RESOLVED and ledger-closed by the Management lens at Iter 4):** the written deliverables request is NOT issued after three passes — the concrete blocker is recorded: **no direct STK-004 channel exists in this runtime (the stakeholder questionnaire reaches STK-001 only), and the stakeholder's Iter 3 directive confirms production AD/Keycloak integration is Construction scope.** The obligation is CARRIED to the Construction Iter 1 plan with R010's own trigger: the request is issued at Construction Iter 1 plan-build through the stakeholder-facing channel (STK-001 relays to STK-004 per the Vision's engagement model), and the trigger arms — STK-004 confirmation by Construction Iter 1 start. The RESPONSE remains NOT a condition of Elaboration exit (stakeholder decision, Elab Iter 1). |
 | Contingency | If Infra cannot provide access by early Construction, development continues against the disposable directory and stub issuer (validated in Elaboration — R001/R003 now RETIRED on that evidence), with production-instance integration deferred within Construction — the Elaboration baseline is not invalidated. |
 | Trigger | STK-004 has not confirmed the LDAP service account or Keycloak client registration by the start of Construction Iter 1 — **armed for Construction Iter 1.** |
 | Affected alternatives | FR-010 (directory), FR-004 (auth), CON-004, CON-005, CON-008 |
@@ -266,12 +266,12 @@ end note
 | Attribute | Value |
 |---|---|
 | Strategy | Accept |
-| Mitigation | A human gate is a RISK, not an estimate: the Iteration Plan quotes NO queue figure for the LCA/IOC/PR gates (action A-13 — the queue forecasts were removed from the milestone table); the queue is bounded HERE. Mitigation is in-round stakeholder answering, as measured at LCO (queue 0s — recorded actual), at the Iter 1 LCA consultation (0:35:14 — answered in-round: sanction refused, directive given), at the Iter 2 verdict gate (10:01:08 across 21 interactions — recorded actual; growth traced to PROCESS defects, not stakeholder availability), and at Iter 3 (0:00:00 across 20 interactions — ALL answered in-round; the process-defect growth did not recur). Each gate's measured queue is reported as an actual in the Iteration Assessment — never forecast in the plan. |
+| Mitigation | A human gate is a RISK, not an estimate: the Iteration Plan quotes NO queue figure for the LCA/IOC/PR gates (action A-13 — the queue forecasts were removed from the milestone table); the queue is bounded HERE. Mitigation is in-round stakeholder answering, as measured at LCO (queue 0s — recorded actual), at the Iter 1 LCA consultation (0:35:14 — answered in-round: sanction refused, directive given), at the Iter 2 verdict gate (10:01:08 across 21 interactions — recorded actual; growth traced to PROCESS defects, not stakeholder availability), at Iter 3 (0:00:00 across 20 interactions — ALL answered in-round; the process-defect growth did not recur), and at Iter 4 (0:00:00 across 22 interactions — the heaviest interaction load of the phase, ALL answered in-round; the emission-format standing rule held under load; second consecutive zero-queue iteration). Each gate's measured queue is reported as an actual in the Iteration Assessment — never forecast in the plan. |
 | Contingency | The process SUSPENDS at 14 days of queue per the planning rule — nothing is auto-filled, no decision is fabricated; the suspension is reported to the Review Coordinator and the stakeholder, and the phase waits. |
 | Trigger | A gate question or sanction request remains unanswered past 7 days (half the suspension ceiling) — escalation notice issued to the Project Manager and Review Coordinator. |
 | Affected alternatives | LCA, IOC, PR milestone gates; every stakeholder-question round; phase-transition sanction |
 
-### R013 — Code-Delivery Continuity (SIGNIFICANT — new Iter 3; RESOLVED this close pass)
+### R013 — Code-Delivery Continuity (SIGNIFICANT — new Iter 3; RESOLVED at the Iter 3 close pass)
 
 | Attribute | Value |
 |---|---|
@@ -280,6 +280,16 @@ end note
 | Contingency | **Not triggered — the code landed.** The contingency record (the phase cannot close without code; no evidence fabricated; the process suspends per the planning rule) is preserved in SCM history for any future recurrence. |
 | Trigger | Zero `ready-for-review` branches at the mid-cycle checkpoint — **not observed; the risk is RESOLVED.** |
 | Affected alternatives | R001, R003, R004 (empirical retirement — DELIVERED); Iteration Plan exit criteria 1–3, 5, 13; the R6 LCA entry gate |
+
+### R014 — Record-Propagation Self-Propagation (SIGNIFICANT — NEW, Iter 5 plan-build)
+
+| Attribute | Value |
+|---|---|
+| Strategy | Accept |
+| Mitigation (Iter 5 plan-build — ACTIVE, carried as Iter 5 pass exit criterion 4) | **The same-pass discipline (DC, adopted Iter 4) applied to the pass's OWN landings:** when A-37…A-39 land in the final record-correction pass, EVERY record that enumerates what remains — including any record written earlier in that same pass — is updated IN THAT PASS, before the review reads it. The class's mechanism is known and verified: a landing occurs (e.g. A-32 at Iter 4), sibling records written earlier in the same pass still enumerate the landing as PENDING/OPEN, and the review that verifies the landing mints a new finding against the stale sibling (Iter 3: 5 minted; Iter 4: 3 minted — all citing same-pass landings). The mitigation is a discipline, not a deliverable: it is carried as Iter 5 pass exit criterion 4 (Iteration Plan Work Item 4, ~800K) and applies to every landing owner in the pass. |
+| Contingency | The R6 entry-gate verification (findings system, all 13 artifacts — never narrative claims) catches a stale enumeration BEFORE the re-presentation: the gate re-opens the PASS (one more record-correction cycle), not the phase — the phase-level sanction remains withheld either way per the all-findings directive, and no code, design, or validation is invalidated. The class's cost is bounded at one pass per occurrence. |
+| Trigger | Any new record-propagation finding minted at the Iter 5 review — i.e. the same-pass discipline failed on some landing. If the trigger fires, the finding is remediated in the next pass and the discipline is re-applied to THAT pass's own landings; if it does not fire, the class terminates at R6. |
+| Affected alternatives | The R6 LCA entry gate (ledger-empty condition); the stakeholder's binding all-findings directive (every minted finding is a phase-exit condition); Iteration Plan pass exit criteria 4 and 6; the phase-close schedule |
 ## Traceability
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
