@@ -54,11 +54,15 @@ public static class Base64Url
     public static byte[] Decode(string value)
     {
         var base64 = value.Replace('-', '+').Replace('_', '/');
-        return Convert.FromBase64String(base64.Length % 4 switch
+        switch (base64.Length % 4)
         {
-            2 => base64 + "==",
-            3 => base64 + "=",
-            _ => base64,
-        });
+            case 2:
+                base64 += "==";
+                break;
+            case 3:
+                base64 += "=";
+                break;
+        }
+        return Convert.FromBase64String(base64);
     }
 }
