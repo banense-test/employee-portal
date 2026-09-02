@@ -123,11 +123,11 @@ Every threshold is quantified upstream (Supplementary Specification, Risk List, 
 
 **Note on the R001 threshold (preserved — extends the Iter 2/Iter 3 note):** the Iter 1 record carried ">90% of sampled users per office with all six attributes populated," sourced to the Risk List. The stakeholder decided (Elab Iter 2) the figure is invented and is **dropped**: measured against a disposable directory the team seeds itself, a percentage measures our own test data — it cannot fail, so it proves nothing. The bar is **behavioural, not statistical**: the four clauses above, with gaps seeded **deliberately** in the disposable directory so each clause can actually fail. **At the Iter 2 verdict gate the stakeholder added the FOURTH clause, verbatim: "a missing attribute is displayed as missing. It is never replaced by a default, a placeholder, a guessed value, or another employee's value"** — with the rationale, verbatim: "Blank is an answer. 'General', or the first office in the list, is a fabrication — and on the CSV that reaches payroll a fabricated department is worse than an empty cell. An empty cell gets questioned. A plausible wrong one does not." The first three clauses stop data from being LOST; the fourth stops it from being INVENTED. The statistical measurement of the real AD's data quality is a Construction activity (R011 residual, STK-004-dependent) and is **excluded from the LCA evidence package**. **The four-clause bar is OBSERVED to hold across all four consumers** (Test Case Cycle 1 clause-by-clause evidence table).
 ## Test Summary
-### Master Test Workflow (Elaboration Iteration 4 — record-propagation pass)
+### Master Test Workflow (Elaboration Iteration 5 — final record-correction pass)
 
 ```plantuml
 @startuml
-title Employee Portal - Elaboration Iter 4 (Record-Propagation Pass) - Master Test Workflow\nEvaluation Mission - empirical architectural validation (R001, R003, R004)\nFormal execution pass COMPLETE (15 PASS / 0 FAIL / 8 BLOCKED, CI run 33617748483)
+title Employee Portal - Elaboration Iter 5 (Final Record-Correction Pass) - Master Test Workflow\nEvaluation Mission - empirical architectural validation (R001, R003, R004)\nFormal execution pass COMPLETE (15 PASS / 0 FAIL / 8 BLOCKED, CI run 33617748483)\nEvidence package ASSEMBLED - record corrections A-32..A-36 ALL LANDED and ledger-closed
 
 start
 :Entry criteria met - SAD baselined and CORRECTED\n(empirical PoC disposition, SAD F1 resolved)\nDesign Model complete (CLS-001..027, INT-006..019);
@@ -141,7 +141,9 @@ if (All three risk validations PASS their\nacceptance criteria?) then (yes - OBS
   :R004 validation OBSERVED - drop simulation PASS\n(TC-004/005/006, TC-020) - zero duplicates, zero\nlosses, sync <= 60 s, confirmation < 1 s both paths;
   :Regression baseline ESTABLISHED - 15 executed PASS\nresults, merge-sequence re-runs GREEN\n(33617283642 -> 33617446626 -> 33617748483);
   :8 BLOCKED cases = recorded SCOPE decision\n(stakeholder framing directive, Iter 3) - deferred\nto Construction, not missing; zero FAIL ->\nzero new defects; Issue #1 CLOSED cr:complete;
-  :Remaining - record propagation ONLY\nA-32 PoC results ledger (Architect, the one Major)\nA-35 this mission-verdict update (done)\nA-34 TC summary reconciliation (Test\nDesigner-owned - OPEN; this role's upsert\nwas REJECTED by the DC 6 ownership guard)\nA-33 SAD criterion 3 (observed done, Architect)\nA-36 ARCH-6 (Architect + Process Engineer)\nPM close-pass reappraisal;
+  :Record corrections A-32..A-36 ALL LANDED and\nledger-closed (2026-09-02) - A-32 PoC observed-\nresults ledger (Issue #9 CLOSED cr:complete);\nA-34 Test Case summary reconciled (Test Designer);\nA-36 ARCH-6 four-clause (sha 90e4f2e);\nA-33 SAD criterion 3; PM close-pass - R001/R003/\nR004 RETIRED recorded in the Risk List;
+  :A-37 (THIS REVISION, Test Manager) - TES remainder-\nenumerations updated from the observed same-pass\nlandings; INC-1 bottleneck RESOLVED - the evidence\npackage is ASSEMBLED; nothing test-side remains;
+  :Remaining before R6 - record corrections ONLY\nA-38 PoC sha citation (Architect, Minor)\nA-39 DC status claims (Process Engineer, Minor)\n+ PM pass-close reconciliation (exit criterion 12)\n+ the R6 gate itself (fresh sanction request);
 else (no)
   :Raise defect in SCM issue tracker;\nrepeat validation after fix (regression policy);
 endif
@@ -149,13 +151,13 @@ stop
 @enduml
 ```
 
-### Test Types (Elaboration Iteration 4 — execution status recorded)
+### Test Types (Elaboration Iteration 5 — execution status recorded)
 
 | Test Type | Target | Method | Owner | Execution status (OBSERVED) |
 |---|---|---|---|---|
 | Mechanism validation (functional) | R001 LDAP attribute mapping + graceful degradation (COMP-007/CLS-009) | Query the disposable directory over LDAP v3 with deliberately-seeded gaps + substitution-attempt fixtures; assert the behavioural bar's four clauses across the four AD-reading renderings — TC-011 + TC-021/022/023 | Implementer built; Test Designer designed | **EXECUTED — PASS** (clause-by-clause, four consumers; CI run 33617748483) |
 | Auth validation (security) | R003 OIDC consumption (COMP-006/CLS-010) | Stub issuer emits signed tokens + JWKS with Employee + HR Administrator claims; verify validation via JWKS, role extraction, redirect flow, rejection of expired/invalid tokens — TC-007, TC-019 | Implementer built; Test Designer designed | **EXECUTED — PASS** (10 rejection variants at the request boundary) |
-| Reliability validation | R004 offline queue + idempotent sync (COMP-009/CLS-008, ADR-003) | 5-minute drop simulation; queue, reconnect, replay; zero duplicates/losses; sync ≤ 60 s; confirmation < 1 s both paths — TC-004/005/006, TC-020 — at the interim repository seam (UNIQUE idempotency_key contract); PG engine semantics Construction Iteration 1 (R008) | Implementer built; Test Designer designed | **EXECUTED — PASS** (double replay + mixed online/queued paths) |
+| Reliability validation | R004 offline queue + idempotent sync (COMP-009/CLS-008, ADR-003) | 5-minute drop simulation; queue, reconnect, replay; zero duplicates/losses; sync ≤ 60 s; confirmation < 1 s both paths — TC-004/005/006, TC-020 — at the interim repository seam (UNIQUE idempotency_key contract); PG engine semantics Construction Iter 1 (R008) | Implementer built; Test Designer designed | **EXECUTED — PASS** (double replay + mixed online/queued paths) |
 | Dual-coverage unit testing | Every mechanism PR | Black-box contract + white-box paths (branches, loops, error handlers) — Review Record CR-2 | Implementer | **EXECUTED — green in CI** (run 33617748483; CR-2 verified by the Code Reviewer on all three PRs) |
 | Regression | All previously merged mechanisms | Re-run prior mechanism results after EVERY merged PR; CI gates every push | Test Designer / CI | **BASELINE ESTABLISHED** — 15 executed PASS; merge-sequence green 33617283642 → 33617446626 → 33617748483; PR #7 (comment-only) CI green run 33632200967 per the Review Record |
 | Build-time validation | R008 PostgreSQL + .NET 10 | Basic CRUD + migration test against the real engine — Construction Iteration 1 (the interim in-memory seam carried Elaboration; F-CR-E3-1) | Implementer | **DEFERRED — recorded SCOPE decision** (Construction Iteration 1) |
@@ -220,13 +222,13 @@ end note
 @enduml
 ```
 
-### Schedule and Resources (record-propagation pass — aligned to the Iteration Plan and the R1–R6 review calendar)
+### Schedule and Resources (final record-correction pass — aligned to the Iteration Plan and the R1–R6 review calendar)
 
 **Schedule basis:** sequence-based, tied to workflow-activity completion — never projected calendar dates (deadlines are iteration-relative per the Review Record; human-gate queues are a Risk List matter, not a plan forecast).
 
 ```plantuml
 @startuml
-title Record-Propagation-Pass Test Schedule - Elaboration Iter 4\nTest activities mapped to the review calendar (R1..R6) - sequence-based, no projected dates
+title Final Record-Correction-Pass Test Schedule - Elaboration Iter 5\nTest activities mapped to the review calendar (R1..R6) - sequence-based, no projected dates
 
 start
 partition "Sequence 1 - unblock and deliver (P0) - DONE (observed 2026-09-02)" {
@@ -239,15 +241,18 @@ partition "Sequence 2 - validate (P1) - DONE (observed 2026-09-02)" {
   :Regression - merge-sequence re-runs ALL GREEN\n(33617283642 -> 33617446626 -> 33617748483);
   :Issue #1 CLOSED cr:complete on the evidence;
 }
-partition "Sequence 3 - evidence records (P1) - CURRENT" {
-  :A-35 (THIS REVISION, Test Manager) - TES mission\nverdict, INC-1, quality metrics, risk trends updated\nfrom the observed per-case record;
-  :A-34 (Test Designer, PENDING) - Test Case\nDocument Control summary reconciliation to\nthe per-case record 15/0/8 - this role's\nco-execution attempt was REJECTED by the\nDC 6 ownership guard (Test Case is Test\nDesigner-owned; no commit, no damage);
-  :A-32 (Software Architect, PENDING) - PoC artifact\nResults and Findings rewritten with the OBSERVED\nresults - the R6 evidence-package core, the one Major;
-  :A-33 (Architect, OBSERVED DONE) - SAD LCA criterion 3\nevidence updated to the observed state;
-  :A-36 (Architect + Process Engineer, PENDING) -\nARCH-6 fourth-clause extension;
-  :PM close-pass reappraisal (PENDING) - risk-retirement\nrecording (R001/R003/R004), WI status reconciliation,\nF8 remediation;
+partition "Sequence 3 - evidence records (P1) - LANDED (ledger-closed 2026-09-02)" {
+  :A-35 (Test Manager, Iter 4) - TES mission verdict,\nINC-1, quality metrics, risk trends updated\nfrom the observed per-case record - DONE;
+  :A-34 (Test Designer) - Test Case Document Control\nsummary reconciled to the per-case record 15/0/8\n- DONE (ledger-closed; the Iter 4 ownership-guard\nrejection preserved as history);
+  :A-32 (Software Architect) - PoC artifact Results\nand Findings rewritten with the OBSERVED results\n- DONE (ledger-closed; Issue #9 CLOSED cr:complete\non the verified evidence - the R6 package core);
+  :A-33 (Architect) - SAD LCA criterion 3 evidence\nupdated to the observed state - DONE;
+  :A-36 (Architect + Process Engineer) - ARCH-6\nfourth-clause extension - DONE (sha 90e4f2e);
+  :PM close-pass reappraisal - DONE (Risk List records\nR001/R003/R004 RETIRED on observed evidence;\nR013 RESOLVED; R010 obligation carried to\nConstruction Iter 1 - Iteration Plan F8 RESOLVED);
+  :A-37 (THIS REVISION, Test Manager) - TES remainder-\nenumerations corrected from the same-pass landings\n- closes TES F3 (the one Major);
 }
 partition "Sequence 4 - gates (P2..P3)" {
+  :A-38 (Architect) + A-39 (Process Engineer) -\ntwo Minor record corrections in flight;
+  :PM pass-close reconciliation (Work Item 9 /\nexit criterion 12 - WI statuses to observed SCM state;\nthe Iteration Assessment authored after the\nreviewers rule);
   :R4 Iteration Evaluation Criteria Review\n(exit criteria incl. the all-findings criterion 11);
   :R5 Iteration Acceptance Review;
   :R6 LCA re-presentation - evidence package + empty\nfindings ledger + fresh sanction request (STK-001);
@@ -264,7 +269,7 @@ stop
 | R004 mechanism + validation | Implementer (~70K tokens) | WI-9 / Issue #1 / A-4 | **DONE — delivered, merged, CI green; validation OBSERVED PASS** |
 | PR gate per mechanism | Code Reviewer | Review Record A-6 / R1 | **DONE — 3 APPROVED (reviews 5088169328/5088169517/5088169685); PR #7 (Iter 4) APPROVED review 5090059324** |
 | TC-001…TC-023 execution + regression re-run | Test Designer + CI | WI-10 / R2 | **DONE — 15 PASS · 0 FAIL · 8 BLOCKED (recorded scope decision); regression baseline established** |
-| Empirical results → PoC artifact; mission verdict update | Software Architect (A-8/A-16/A-32) / Test Manager (A-35) | R3 | **A-35 DONE (this revision); A-32 PENDING (Architect — the one Major)** |
+| Empirical results → PoC artifact; mission verdict update | Software Architect (A-8/A-16/A-32) / Test Manager (A-35, A-37) | R3 | **A-35 DONE (Iter 4); A-32 DONE (ledger-closed 2026-09-02 — Issue #9 CLOSED cr:complete on the verified evidence); A-37 DONE (this revision — closes TES F3)** |
 
 **Cost-of-testing constraint honored:** the Test discipline's Elaboration effort was concentrated on the three risk-retiring mechanisms (Test Designer WI-10) rather than spread thin — within the 30–50%-of-project-cost reality when Construction's larger test share is included. Token actuals are recorded by the Project Manager in the Iteration Assessment; the iteration budget box was re-sized from measured actuals (Iteration Plan F6 resolved Iter 3).
 
@@ -278,28 +283,28 @@ Every merged mechanism PR triggers a re-run of all previously validated mechanis
 
 | Metric | Definition | Current Value (real data, verified 2026-09-02) |
 |---|---|---|
-| CI build status | Latest run on main | **Green** — run 33629662894 (started 2026-09-02 12:23:39Z, completed 12:25:01Z — verified this iteration) |
+| CI build status | Latest run on main | **Green** — run 33639518709 (started 2026-09-02 14:02:55Z, completed 14:04:14Z — verified this iteration, post-PR-7) |
 | CI on `iteration/E1` | Latest run on the integration branch | **Green** — run 33617748483 — **the formal TC execution trace** (mechanism code + dual-coverage suites merged and building) |
-| Open defects | SCM issue tracker, all states | **0** — Issue #1 **CLOSED** (cr:complete — closed on the merged-PR + executed-TC evidence); Issue #2 **CLOSED** (cr:complete) |
-| Risk-retirement evidence | Merged PRs per mechanism with passing validation | **3 of 3 mechanisms merged AND formally executed** — R001 four-clause × four-consumer PASS (TC-011 + TC-021/022/023); R003 matrix PASS (TC-007, TC-019); R004 simulation PASS (TC-004/005/006, TC-020) — execution trace CI run 33617748483 |
+| Open defects | SCM issue tracker, all states | **0** — Issue #1 **CLOSED** (cr:complete — closed on the merged-PR + executed-TC evidence); Issue #2 **CLOSED** (cr:complete); Issue #9 **CLOSED** (cr:complete — the PoC results-ledger CR, closed on the verified A-32 observed-results ledger evidence) |
+| Risk-retirement evidence | Merged PRs per mechanism with passing validation | **3 of 3 mechanisms merged AND formally executed** — R001 four-clause × four-consumer PASS (TC-011 + TC-021/022/023); R003 matrix PASS (TC-007, TC-019); R004 simulation PASS (TC-004/005/006, TC-020) — execution trace CI run 33617748483; **retirement RECORDED in the Risk List close-pass reappraisal (R001/R003/R004 RETIRED, Elaboration scope)** |
 | Tests executed / pass rate | Actual validation runs | **15 of 23 executed — 15/15 PASS, 0 FAIL, 8 BLOCKED** (TC-003, TC-010 — UI mechanisms; TC-017, TC-018 — endpoint/request surfaces; TC-013…TC-016 — news/audit — all Construction scope; **a recorded SCOPE decision — deferred to Construction, not missing**, per the stakeholder's Iter 3 framing directive) |
 | Defect density | Defects per merged mechanism PR | 3 Minors recorded by the Code Reviewer across the 3 mechanism PRs (F-CR-E3-1/2/3 per the Review Record); **F-CR-E3-3 RESOLVED Iter 4** (PR #7 APPROVED); zero Critical, zero Major; **zero test-execution defects** (zero FAIL verdicts in the formal pass) |
 | Escaped defects | Defects found in Construction/Transition that Elaboration validation missed | Tracked from Construction Iter 1 onward — the key quality indicator; every defect found later in a mechanism validated here is a direct measure of this phase's validation quality |
 
-### Risk-Driven Test Prioritization (evolved — statuses and trends updated from the observed execution record)
+### Risk-Driven Test Prioritization (evolved — statuses and trends updated from the observed execution record and the landed close-pass reappraisal)
 
-| Risk | Magnitude | Affected UCs / ACs | Test Activity | Priority | Status (Elab Iter 4) | Trend (since last review) |
+| Risk | Magnitude | Affected UCs / ACs | Test Activity | Priority | Status (Elab Iter 5) | Trend (since last review) |
 |---|---|---|---|---|---|---|
-| R001 — AD LDAP attribute consistency | HIGH | UC-004, UC-005, UC-006, UC-007, AC-003 | Empirical validation against disposable LDAP directory with deliberately-seeded gaps + substitution-attempt fixtures; four-clause behavioural bar | 1 | **VALIDATION OBSERVED — four clauses × four consumers PASS** (TC-011 + TC-021/022/023, clause (d) against the substitution-attempt fixtures); retirement recording = PM close-pass reappraisal | **RETIREMENT EVIDENCED — the HIGH risk's line is DECREASING: OPEN → MITIGATING (unexecuted) → VALIDATION OBSERVED** |
-| R003 — OIDC/Keycloak integration | SIGNIFICANT | All UCs (auth) | Empirical validation against stub OIDC issuer (no real realm, CON-004) | 2 | **VALIDATION OBSERVED — token-validation matrix PASS** (TC-007, TC-019; 10 rejection variants); endpoint-level denial attacks (TC-017/TC-018) deferred — recorded scope decision; retirement recording = PM close-pass | **RETIREMENT EVIDENCED** |
-| R004 — Offline fault tolerance | SIGNIFICANT | UC-001, AC-005, NFR-004 | Direct 5-minute drop simulation; queue + sync + idempotency (interim repository seam; PG engine Construction Iter 1, R008) | 3 | **VALIDATION OBSERVED — drop simulation PASS** (TC-004/005/006, TC-020); retirement recording = PM close-pass; formal AC-005 re-verification at Construction Iter 1 with the PG engine | **RETIREMENT EVIDENCED** |
-| R010 — Infra team deliverables | SIGNIFICANT (re-scoped) | Production-instance integration | Deferred to Construction Iter 3 — does NOT block Elaboration exit | 4 | OPEN — PM owns STK-004 engagement (Iteration Plan F8: the written request is unevidenced a third pass — PM close-pass remediation) | NARROWED — blocks production instances only |
+| R001 — AD LDAP attribute consistency | HIGH | UC-004, UC-005, UC-006, UC-007, AC-003 | Empirical validation against disposable LDAP directory with deliberately-seeded gaps + substitution-attempt fixtures; four-clause behavioural bar | 1 | **RETIRED (Elaboration scope) — four clauses × four consumers OBSERVED PASS** (TC-011 + TC-021/022/023, clause (d) against the substitution-attempt fixtures); retirement RECORDED in the Risk List close-pass reappraisal; production-AD residual → R011 (Construction) | **RETIRED — the HIGH risk's line TERMINATES: OPEN → MITIGATING (unexecuted) → VALIDATION OBSERVED → RETIRED (recorded)** |
+| R003 — OIDC/Keycloak integration | SIGNIFICANT | All UCs (auth) | Empirical validation against stub OIDC issuer (no real realm, CON-004) | 2 | **RETIRED (Elaboration scope) — token-validation matrix OBSERVED PASS** (TC-007, TC-019; 10 rejection variants); endpoint-level denial attacks (TC-017/TC-018) deferred — recorded scope decision; claim-shape residual → R011 (Construction) | **RETIRED** |
+| R004 — Offline fault tolerance | SIGNIFICANT | UC-001, AC-005, NFR-004 | Direct 5-minute drop simulation; queue + sync + idempotency (interim repository seam; PG engine Construction Iter 1, R008) | 3 | **RETIRED (Elaboration scope) — drop simulation OBSERVED PASS** (TC-004/005/006, TC-020); formal AC-005 re-verification at Construction Iter 1 with the PG engine | **RETIRED** |
+| R010 — Infra team deliverables | SIGNIFICANT (re-scoped) | Production-instance integration | Deferred to Construction Iter 3 — does NOT block Elaboration exit | 4 | OPEN — PM owns STK-004 engagement; **Iteration Plan F8 RESOLVED (Iter 4): the concrete blocker is recorded (no direct STK-004 channel in this runtime; the questionnaire reaches STK-001 only) and the obligation is CARRIED to Construction Iter 1 with R010's own trigger** | NARROWED — blocks production instances only; obligation relocated with trigger armed |
 | R011 — Validation-environment fidelity | MODERATE | R001/R003 residuals | Record deltas between fixtures and production instances; fixtures kept as reusable Construction test fixtures | 5 | OPEN — surfaces at Construction integration; the fixtures are EXECUTED assets, retained | FLAT |
 | R002 — Clocking adoption | SIGNIFICANT | UC-001, AC-004, BG-003 | Usability test in Transition (pilot); not a technical test | 6 | OPEN — Transition | FLAT |
 | R005 — LDAP query performance | MODERATE | UC-004, NFR-001, AC-003 | Measured during R001 validation; 5 s hard timeout (PRF-003); cache tactic in reserve | 7 | **Hard-timeout mechanism OBSERVED** (TC-012 PASS — the timeout fires and translates to "Directory temporarily unavailable"; no local fallback, CON-006); full-scale percentile measurement = Construction | FLAT (mechanism observed) |
 | R006 — Audit trail completeness | MODERATE | UC-007…UC-010, NFR-005 | UC-010 test cases designed (TC-013…TC-016); Construction integration test on all four flows (PG engine REVOKE — R008) | 8 | Design complete (CLS-005, DAT-002); **execution deferred — recorded scope decision** (news/audit mechanism is Construction scope) | FLAT |
 | R007 — UI design fidelity | MODERATE | All user-facing UCs | Visual regression against CON-011 in Construction | 9 | OPEN — Construction | FLAT |
-| R008 — PostgreSQL + .NET 10 compat | MODERATE | All UCs (persistence) | Build-time CRUD + migration validation (Implementer) — Construction Iteration 1 (interim in-memory seam carried Elaboration, F-CR-E3-1) | 10 | OPEN — Construction Iteration 1 build-time | FLAT |
+| R008 — PostgreSQL + .NET 10 compat | MODERATE | All UCs (persistence) | Build-time CRUD + migration validation (Implementer) — Construction Iteration 1 (interim in-memory seam carried Elaboration, F-CR-E3-1) | 10 | OPEN — Construction Iter 1 build-time | FLAT |
 | R009 — Scope creep | MODERATE | All declared scope | Process control (CCB gate); not a test activity | 11 | OPEN — CCB enforced | FLAT |
 
 ### Use-Case to Acceptance Criteria Coverage Map (preserved from Inception — unchanged, all 5 ACs mapped)
@@ -317,7 +322,7 @@ Every merged mechanism PR triggers a re-run of all previously validated mechanis
 | UC-009 | FR-008 | — | Functional + audit verification |
 | UC-010 | FR-009 | — | Functional + audit verification |
 
-**Coverage assessment (unchanged):** all 5 ACs mapped to at least one UC. AC-001/AC-004/AC-005 → UC-001 (highest-risk convergence: OIDC + offline + persistence); AC-003 → UC-004 (only HIGH risk, R001); AC-002 → UC-008. **Iter 4 note: AC-005's technical substance (5-minute drop, sync, idempotency) is OBSERVED PASS at the mechanism level (TC-004/005/006, TC-020); AC-001/AC-002/AC-003/AC-004 end-to-end verification is Construction/Transition scope per the Evaluation Mission boundary.**
+**Coverage assessment (unchanged):** all 5 ACs mapped to at least one UC. AC-001/AC-004/AC-005 → UC-001 (highest-risk convergence: OIDC + offline + persistence); AC-003 → UC-004 (only HIGH risk, R001); AC-002 → UC-008. **AC-005's technical substance (5-minute drop, sync, idempotency) is OBSERVED PASS at the mechanism level (TC-004/005/006, TC-020); AC-001/AC-002/AC-003/AC-004 end-to-end verification is Construction/Transition scope per the Evaluation Mission boundary.**
 ## Defects and Incidents
 
 ### Defect Lifecycle (preserved — governs all defect management)
