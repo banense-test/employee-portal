@@ -1039,7 +1039,7 @@ All four findings emitted via `record_artifact_finding` (2026-09-01). The Critic
 | Finding Key | Severity | Artifact | Description (summary) | Remediation (summary) |
 |---|---|---|---|---|
 | **Iteration Plan F3** | **Critical** | Iteration Plan — Layer 2 exit criteria 1–3; Work Items 7–9 | **LCA exit criteria 1–3 (empirical validation of R001/R003/R004) have no code evidence, and Work Items 7–9 show "In progress" with zero SCM evidence** (no Services/, no Infrastructure/, no Npgsql/LDAP/JWT packages; iteration/E1 skeleton only; SCM Issue #1 blocker). The stakeholder's binding decision makes empirical risk retirement the phase's central objective — it is unmet, and the LCA gate cannot close this cycle. The stakeholder, consulted at this review, REFUSED sanction to advance past LCA. | Execute the convergence cycle (Elaboration Iteration 2, already planned as BUILDING) per actions A-1…A-6: Implementer delivers the three mechanisms as evolutionary code in src/ with dual-coverage tests on feature/E1-{risk} branches labeled ready-for-review; Code Reviewer issues terminal dispositions per PR (base iteration/E1); Test Designer executes TC-001…TC-020; empirical results feed the Architectural Proof-of-Concept artifact (A-8). Reconcile Work Item 7–9 statuses to SCM evidence at iteration close. LCA is then re-presented with the evidence package and a fresh sanction request. |
-| **Iteration Plan F4** | **Major** | Iteration Plan — Layer 2 exit criteria table; Elab Iter 2 preview | **The plan's exit criteria do not make closure of ALL open review findings a phase-exit condition.** The Layer 2 table (criteria 1–8) verifies PoC validation, artifact corrections, schedule baselining, and AC accounting, but carries no criterion that every open finding from every review lens is resolved before phase transition. The stakeholder, refusing sanction at this review, directed verbatim: "Please fix all the findings even if they are minors prior to move to next phase." As written, the plan permits a phase close with Minor findings open (e.g., SAD F3, Risk List F1, F-CR-E1-2) — contrary to the stakeholder's binding directive. | Add an explicit exit criterion to the Layer 2 table and the Elaboration Iter 2 preview's primary objective: zero open findings across ALL review lenses and ALL severities (Critical, Major, Minor) before phase transition is sanctioned. Verify via the findings ledger (read_artifact_findings per artifact) at each iteration close; the milestone verdict must confirm the ledger is empty, not merely that Criticals are closed. |
+| **Iteration Plan F4** | **Major** | Iteration Plan — Layer 2 exit criteria table; Elab Iter 2 preview | **The plan's exit criteria do not make closure of ALL open review findings a phase-exit condition.** The Layer 2 table (criteria 1–8) verifies PoC validation, artifact corrections, schedule baselining, and AC accounting, but carries no criterion that every open finding from every review lens is resolved before phase transition. The stakeholder, refusing sanction at this review, directed verbatim: "Please fix all the findings even if they are minors prior to move to next phase." As written, the plan permits a phase close with Minor findings open (e.g., SAD F3, Risk List F1, F-CR-E1-2) — contrary to the stakeholder's binding directive. | Add an explicit exit criterion to the Layer 2 table and the Elab Iter 2 preview's primary objective: zero open findings across ALL review lenses and ALL severities (Critical, Major, Minor) before phase transition is sanctioned. Verify via the findings ledger (read_artifact_findings per artifact) at each iteration close; the milestone verdict must confirm the ledger is empty, not merely that Criticals are closed. |
 | **Iteration Plan F5** | **Minor** | Iteration Plan — Plan and Milestones table (human gate queue forecasts) | **The plan forecasts human gate queue times** ([ASSUMPTION — up to 2 days LCA; up to 3 days IOC; up to 2 days PR; up to 5 days STK-004 response]). The planning rule for human gates: a human gate is a RISK, not an estimate — ceiling 14 days (then the process suspends, nothing is auto-filled), actual measured and reported apart, estimate NONE; bound it in the Risk List, never forecast it in the plan. The Inception gate measured 0s; no comparable actual exists for LCA/IOC/PR, so no queue figure should appear in the plan. | Remove the queue-time forecasts from the milestone table (retain the measured Inception 0s as a recorded actual); bound the human-gate queue risk in the Risk List instead (companion finding on the Risk List) with the 14-day suspension ceiling; report measured actuals only, at each Iteration Assessment. |
 | **Risk List F1** | **Minor** | Risk List — Risk Register (trend direction); human-gate queue risk | **Two risk-monitoring gaps.** (1) No per-risk trend direction: the Risk Register carries status (OPEN/MITIGATING/RETIRED) but no trend field (better/worse/stable since last review), so a static risk list cannot be challenged at review — R001 has been HIGH since Inception with zero retirement evidence, and the register does not surface that flatness. (2) The human-gate queue risk is unbounded: the LCA/IOC/PR review gates are human gates (a risk, not an estimate — ceiling 14 days, then the process suspends), but no Risk List entry bounds them; the queue figures instead appear as forecasts inside the Iteration Plan milestone table (companion finding on the Iteration Plan). | (1) Add a trend column to the Risk Register (direction since last review + evidence pointer), updated at each iteration reappraisal — a risk whose magnitude is unchanged across two reviews must show why. (2) Add a Risk List entry bounding the human-gate queue risk (strategy Accept; mitigation: in-round stakeholder answering as measured at LCO and at this review's consultation; contingency: process suspends at 14 days per the planning rule — nothing is auto-filled). |
 
@@ -1913,6 +1913,217 @@ C2 -[hidden]-> C3
 ```
 
 **Ledger state after this cycle (this lens):** 2 open narrative Minors (F-CR-E3-1, F-CR-E3-2) — both Construction-scope/Designer-owned, both carried with concrete remediation and owners, neither an Elaboration exit blocker (the stakeholder's all-findings directive binds PHASE TRANSITION; both findings' remediations are assigned to Construction work by their own recorded dispositions, consistent with the stakeholder's Iter 3 framing directive that Construction-scope mechanisms are deferred, not missing). This lens's Elaboration-blocking findings: **zero** — the code-review gate is CLOSED for this cycle: every PR that entered the gate (PR #7) left with a terminal disposition, and no ready-for-review branch or open PR remains unreviewed.
+
+### Elaboration Iteration 4, Cycle 1 — Technical-Lens LCA Re-Review Record (Reviewer, 2026-09-02 — record-propagation pass)
+
+**Scope and criteria (this lens, this cycle):** ALL 13 artifacts in the inventory, reviewed against the **LCA exit-criteria lens** on the record-propagation track — the pass the stakeholder confirmed ("Yes"): record corrections first, then the R6 re-presentation. Priority order: Architectural Proof-of-Concept first (the CR-targeted artifact and the R6 evidence package's core), then the Test Case (the execution authority), then the TES (the mission-verdict record), then the SAD, then the Development Case, then the Risk List and Iteration Plan (the PM close-pass artifacts), then the preserved requirements/design artifacts. Upstream consumption complete before findings: all 13 artifacts read in full this cycle; the Work Order's declared scope, the stakeholder's recorded decisions (four-clause behavioural bar; featured-banner stack; all-findings directive; BLOCKED-cases framing directive), and the CR targeting the Architectural Proof-of-Concept cross-checked; **SCM state verified empirically** (`scm_list_pull_requests` state=open → zero open PRs; `scm_get_build_status(main)` → GREEN run 33639518709, completed 2026-09-02 14:04:14Z; `scm_list_issues` all → Issue #9 OPEN [cr:approved, assigned:software-architect — the PoC results-ledger CR, in flight and now satisfied], Issues #1/#2 CLOSED cr:complete; `scm_get_file_content` main CONTRIBUTING.md → sha 90e4f2e with the FOUR-clause ARCH-6 verified first-hand). Checklists applied per artifact type: PoC → trigger + validation-protocol + results-ledger + evidence-citation checklist; Test Case → execution-record internal-consistency checklist; TES → mission-verdict + remainder-enumeration checklist; SAD → milestone-assessment currency checklist; Development Case → IARI baseline conformance + gap-flag + status-claim currency; Risk List → close-pass reappraisal checklist; Iteration Plan → pass-plan integrity checklist. Iteration Assessment excluded per review-point rules (the PM authors it AFTER this review — its absence is never a finding).
+
+**Prior-findings reconciliation (this lens — executed in the dedicated closure state, tool calls FIRST):** [PLAN] artifacts × prior findings of this lens with resolution==null: Architectural Proof-of-Concept: [1] (F2, Major), Software Architecture Document: [3] (F4, Minor), Test Case: [0] (F1, Minor), Test Evaluation Summary: [1] (F2, Minor), Development Case: [2] (F3, Minor). TOTAL: 5. All five disposed via `resolve_artifact_finding` (all returned ok, 2026-09-02): **Architectural Proof-of-Concept F2 (Major) RESOLVED** — the A-32 observed-results ledger verified first-hand (R001 four-clause × four-consumer clause-by-clause table; R003 matrix; R004 simulation; 15/0/8 with the 8 BLOCKED framed as a recorded SCOPE decision; MERGED delivery rows with PR numbers; Document Control updated; explicit claims/does-not-claim section); **SAD F4 (Minor) RESOLVED** — A-33 criterion 3 reads "YES — empirical validation EXECUTED and OBSERVED this phase" with current evidence; **Test Case F1 (Minor) RESOLVED** — A-34 summary reconciled to 15/0/8 with all eight BLOCKED cases named; **TES F2 (Minor) RESOLVED** — A-35 mission verdict "VALIDATION SUBSTANCE ACHIEVED — OBSERVED" with metrics/INC-1/trends updated; **DC F3 (Minor) RESOLVED** — A-36 both sides verified (CONTRIBUTING.md sha 90e4f2e carries the four-clause ARCH-6 verbatim; the DC gap flag closed on verification). [EXIT] S_RECONCILE complete: closed=5 (Resolved), deferred=0, rejected=0, left-open=0. Total disposed: 5 of 5. **The five named record-propagation corrections (A-32…A-36) are ALL verified landed — the R6 evidence package is ASSEMBLED.**
+
+**New findings (this lens, this cycle — all emitted via `record_artifact_finding` before this upsert; all record-propagation class):**
+
+| Finding Key | Severity | Artifact | Description (summary) | Remediation (summary) |
+|---|---|---|---|---|
+| **TES F3** | **Major** | Test Evaluation Summary — Milestone Target; master workflow "Remaining" box; schedule Sequence 3; resources table; INC-1; Conclusions; recommendations 1–2; traceability rows | **Stale remainder-enumerations vs the same-pass sibling landings — the mission-verdict record now contradicts the observed state of four artifacts.** The TES claims throughout that the record-propagation remainder is still open: A-32 "PENDING (Architect — the one Major)", A-34 "Test Designer-owned — OPEN", A-36 "PENDING", PM close-pass "PENDING", INC-1 "the PoC artifact's ledger still says PENDING, which is what stands between the team and an assemblable LCA evidence package". All now FALSE against the observed same-pass state, verified first-hand this review: A-32 LANDED (PoC F2 resolved on that verification), A-34 LANDED (Test Case F1 resolved), A-36 LANDED (DC F3 resolved), PM close-pass LANDED (the Risk List records R001/R003/R004 RETIRED on observed evidence, R013 RESOLVED, R010 obligation relocated with its concrete blocker). The TES was honest when written — it accurately records its own A-34 ownership-guard rejection — but the pass's later landings made its remainder-enumerations stale, and the DC's binding record-propagation discipline (adopted this same revision) requires the update in this pass. The TES is the LCA test-evidence record the R6 gate reads alongside the PoC; a mission verdict whose "what remains" statement is false in every particular makes the R6 evidence package internally contradictory — the same cross-artifact-contradiction class as Development Case F1 / Risk List F2 (Major). | Test Manager executes one targeted TES update from the observed same-pass landings BEFORE R6: Milestone Target → the record-propagation corrections are landed and verified (the remaining gate work is the R6 re-presentation itself); master-workflow "Remaining" box, schedule Sequence 3, resources table → A-32 DONE (ledger-closed 2026-09-02), A-34 DONE by the Test Designer (the ownership-guard rejection preserved as history), A-36 DONE (sha 90e4f2e), PM close-pass DONE; INC-1 → the bottleneck is RESOLVED — nothing test-side stands between the team and the assemblable evidence package; Conclusions "What the mission cannot yet claim" → restated to the current remainder (this finding's own remediation, the Management lens's F8 closure, the PM pass-close reconciliation, the R6 gate); recommendations 1–2 retired or restated; traceability rows updated. The mission verdict itself ("VALIDATION SUBSTANCE ACHIEVED — OBSERVED") is correct and unchanged. |
+| **PoC F3** | **Minor** | Architectural Proof-of-Concept — § Traceability, behavioural-bar row | **Incorrect evidence sha citation.** The row cites "CONTRIBUTING.md ARCH-6 (fourth clause, action A-36 — sha c86ebf7)" — but the verified current file sha is 90e4f2e1b91bdb64082dcc9f75a4b32c3cc10f80 (read first-hand via scm_get_file_content this review; independently recorded by the Development Case's tool verification). The cited c86ebf7 matches neither the current verified file sha (90e4f2e) nor the prior one (6662813). The row sits in a traceability table whose sibling citations are file shas verified at read time — its purpose is verifiability, and the R6 gate verifies evidence by sha. The substantive claim (ARCH-6 carries the fourth clause) is TRUE and verified first-hand; the defect is the citation itself, in the R6 evidence package's core artifact. | Software Architect corrects the sha citation to the verified current file sha (90e4f2e1b91bdb64082dcc9f75a4b32c3cc10f80) — or, if c86ebf7 is the commit sha that introduced the fourth clause, cite it explicitly as a commit sha alongside the verified file sha. One-line correction; rides any PoC touch before R6. |
+| **DC F4** | **Minor** | Development Case — § Elaboration Exit Criteria criterion 3 "Remaining" line; § Optional Artifact Triggers PoC disposition paragraph + trigger-diagram note; § Organization Assessment | **Stale A-32 / PM-close-pass status claims lag the same-pass observed landings — the same record-propagation class the DC itself adopted a binding discipline against in this very revision.** Three locations: criterion 3 "Remaining: the PoC results ledger must carry the observed results (A-32) and the Risk List must record the retirement (PM close-pass)" — both LANDED and verified; the PoC disposition paragraph + trigger-diagram note "The artifact's remaining obligation is record propagation (A-32)" — landed and verified; the Organization Assessment "retirement recording lands at the PM close-pass" — landed. The DC is the governance document every role reads for process state; its exit-criteria table is the DC-specific LCA gate record (criteria 7–9), and criterion 3's "Remaining" line now misstates what remains before R6. | Process Engineer updates the three locations to the observed state in the next DC touch before R6, per the DC's own binding record-propagation discipline: criterion 3 "Remaining" line → the PoC results ledger carries the OBSERVED results (A-32 — landed, ledger-closed 2026-09-02) and the Risk List records the retirement (PM close-pass — landed: R001/R003/R004 RETIRED on observed evidence); the PoC disposition paragraph + trigger-diagram note → the record-propagation obligation is DISCHARGED; the Organization Assessment → retirement recording RECORDED at the PM close-pass. |
+
+**Compliance Matrix — Technical LCA Lens, Iteration 4 (13 artifacts × checklist dimensions):**
+
+```plantuml
+@startuml
+title Elaboration Iter 4 - Technical LCA Review Compliance Matrix\n13 artifacts x checklist dimensions (Reviewer lens, record-propagation pass, 2026-09-02)
+
+object "Architectural Proof-of-Concept" as POC {
+  Prior F2 (Major) - A-32 observed results : PASS - RESOLVED this review
+  R001 4 clauses x 4 consumers evidence : PASS
+  R003 matrix + R004 simulation : PASS
+  15/0/8, BLOCKED = recorded SCOPE decision : PASS
+  Delivery rows MERGED w/ PR numbers : PASS
+  No result beyond Test Case authority : PASS
+  Evidence sha citations verifiable : FAIL - F3 NEW (Minor)
+  (CONTRIBUTING.md cited c86ebf7 vs verified 90e4f2e)
+}
+object "Software Architecture Document" as SAD {
+  Prior F4 (Minor) - A-33 criterion 3 : PASS - RESOLVED this review
+  Criterion 3 cites current repo state : PASS
+  Criteria 1/2/4/6 rows accurate : PASS
+  Empirical disposition + 4-clause bar : PASS (unchanged, verified)
+  New findings : NONE - clean
+}
+object "Test Case" as TC {
+  Prior F1 (Minor) - A-34 summary : PASS - RESOLVED this review
+  Summary = per-case = corrections (15+8=23) : PASS
+  BLOCKED set named, SCOPE-decision framing : PASS
+  Iter 4 regression verification (PR #7) : PASS - baseline HELD
+  New findings : NONE - clean
+}
+object "Test Evaluation Summary" as TES {
+  Prior F2 (Minor) - A-35 mission verdict : PASS - RESOLVED this review
+  Mission verdict vs execution record : PASS
+  Remainder-enumerations vs same-pass landings : FAIL - F3 NEW (Major)
+  (A-32/A-34/A-36/PM-close-pass claimed PENDING/OPEN - all landed)
+}
+object "Development Case" as DC {
+  Prior F3 (Minor) - A-36 ARCH-6 : PASS - RESOLVED this review
+  (code side sha 90e4f2e + flag side closed)
+  IARI baseline conformance : PASS (unchanged)
+  A-32/PM-close-pass status claims : FAIL - F4 NEW (Minor)
+  (3 locations stale vs same-pass landings)
+}
+object "Risk List" as RISK {
+  Close-pass reappraisal landed : PASS - R001/R003/R004
+  RETIRED on observed evidence; R013 RESOLVED
+  R010 F8 remediation (blocker recorded,
+  obligation carried) : PASS - verified present
+  (ledger closure owned by Management lens)
+  New findings : NONE - clean
+}
+object "Iteration Plan" as PLAN {
+  Pass plan sound (R6 path, box by content class) : PASS
+  Objectives 1-2 (A-32..A-36) vs evidence : PASS - MET, verified
+  WI statuses Pending at plan-build : NOT A FINDING -
+  reconciliation scheduled at pass close (WI-9, criterion 12)
+  New findings : NONE
+}
+object "Use-Case Model" as UCM {
+  Clean at all 3 prior LCA reviews : PRESERVED
+  No finding or CR targets it; unchanged this pass
+}
+object "Supplementary Specification" as SUP {
+  Clean at all 3 prior LCA reviews : PRESERVED
+  No finding or CR targets it; unchanged this pass
+}
+object "Design Model" as DM {
+  Clean at all 3 prior LCA reviews : PRESERVED
+  F-CR-E3-2 (INT-011) remains Designer-owned, next pass
+}
+object "Vision" as VIS {
+  Inception-approved, 0 findings : PRESERVED
+}
+object "Iteration Assessment" as IA {
+  PM authors AFTER this review : EXCLUDED per review-point rule
+}
+POC -[hidden]-> SAD
+SAD -[hidden]-> TC
+TC -[hidden]-> TES
+TES -[hidden]-> DC
+DC -[hidden]-> RISK
+RISK -[hidden]-> PLAN
+PLAN -[hidden]-> UCM
+UCM -[hidden]-> SUP
+SUP -[hidden]-> DM
+DM -[hidden]-> VIS
+VIS -[hidden]-> IA
+@enduml
+```
+
+**Defect Distribution — Iteration 4 (this lens):**
+
+```plantuml
+@startuml
+title Elaboration Iter 4 - Technical-Lens Defect Distribution\nClosures + new findings, severity x artifact (Reviewer lens, 2026-09-02)
+
+object "Closures this cycle (this lens - 5, all Resolved)" as C1 {
+  PoC F2 Major : A-32 observed results ledger
+  verified - the R6 evidence package core
+  SAD F4 Minor : A-33 criterion 3 updated
+  to the observed state
+  Test Case F1 Minor : A-34 summary reconciled
+  to per-case record 15/0/8
+  TES F2 Minor : A-35 mission verdict updated
+  from the observed record
+  DC F3 Minor : A-36 ARCH-6 four-clause
+  verified (sha 90e4f2e) + flag closed
+}
+object "New findings this cycle (this lens - 3)" as C2 {
+  Major 1 : TES F3 - stale remainder-
+  enumerations vs same-pass landings
+  (A-32/A-34/A-36/PM-close-pass all
+  claimed PENDING/OPEN - all landed;
+  INC-1 + conclusions false in every
+  particular)
+  Minor 2 : PoC F3 (CONTRIBUTING.md sha
+  cited c86ebf7 vs verified 90e4f2e);
+  DC F4 (3 stale A-32/PM-close-pass
+  status claims)
+  All 3 : record-propagation class - the
+  defect class propagates one more level
+  as each pass's landings stale the prior
+  pass's remainder-enumerations
+}
+object "Open after this cycle (all lenses)" as C3 {
+  This lens : 1 Major (TES F3) + 2 Minor
+  (PoC F3, DC F4) - all quick record
+  corrections, owners named (A-37..A-39)
+  Management lens : Iteration Plan F8
+  (Minor) - remediation VERIFIED PRESENT
+  (R010 blocker recorded, obligation
+  carried); closure owned by that lens
+  Code Reviewer lens (narrative) :
+  F-CR-E3-1/2 - Construction-scope /
+  Designer-owned, carried
+  Critical : ZERO - held
+}
+C1 -[hidden]-> C2
+C2 -[hidden]-> C3
+
+note bottom of C2
+  The record-propagation class is
+  SELF-PROPAGATING: each pass's landings
+  make the prior pass's "remaining work"
+  enumerations stale. The DC's same-pass
+  discipline (adopted Iter 4) is the cure -
+  these three findings are its last
+  applications before R6.
+end note
+@enduml
+```
+
+**SCM Evidence Snapshot (Iter 4 — what actually happened, verified first-hand):** `scm_list_pull_requests(state=open)` → **zero open PRs** (PR #7, the pass's only code handoff, left the gate APPROVED by the Code Reviewer lens — review 5090059324, CI GREEN run 33632200967, merged to `iteration/E4` @ 13d0a08 per the Test Case Iter 4 regression record; PR #6 baseline-close merged to main under APPROVED at Iter 3); `scm_get_build_status(main)` → GREEN run 33639518709 (completed 2026-09-02 14:04:14Z — post-PR-7); `scm_list_issues(all)` → Issue #9 OPEN (cr:approved, assigned:software-architect — "CR: Architectural Proof-of-Concept results ledger stale vs observed validation — rewrite with the OBSERVED results (PoC F2 / action A-32)" — the CR targeting the PoC artifact named in this Work Order; its remediation is LANDED and verified this review, so the CR's work is satisfied and it closes on this evidence), Issues #1/#2 CLOSED (cr:complete); `scm_get_file_content(main, CONTRIBUTING.md)` → sha 90e4f2e1b91bdb64082dcc9f75a4b32c3cc10f80 — ARCH-6 carries the FOUR-clause behavioural bar verbatim (A-36 verified first-hand).
+
+**PR Disposition Record — Elaboration Iteration 4 (S3, terminal verdicts per in-scope PR):** **In-scope OPEN PR set: ∅ (empty)** — verified via `scm_list_pull_requests` (state=open → none). Every PR that entered the phase left the gate with a terminal verdict: PRs #3/#4/#5 (mechanisms, APPROVED ×3, merged to iteration/E1), PR #6 (baseline-close, APPROVED, merged to main), PR #7 (F-CR-E3-3 remediation, APPROVED, merged to iteration/E4). No phase-discipline violation exists — every PR rode the iteration line (feature → iteration/E{n} → main at iteration close) per BRANCHING_STRATEGY §5.2. **No PR-level sanction is owed this cycle: there is nothing to sanction and nothing to withhold on.** The architecture-baseline sanction landed on PR #6 (APPROVED, merged) and nothing new challenges it; the milestone-level sanction (phase transition) remains withheld per the all-findings directive — recorded in § Disposition.
+
+**Per-artifact verdicts (this lens, Iter 4):**
+
+| Artifact | Verdict | Basis |
+|---|---|---|
+| Architectural Proof-of-Concept | **Approved with changes** | PoC F2 (Major) RESOLVED — the A-32 observed-results ledger verified first-hand; the R6 evidence package's core artifact is ASSEMBLED (clause-by-clause four-clause × four-consumer evidence, honest verdict distribution with the stakeholder's framing directive, MERGED delivery rows, claims/does-not-claim discipline). F3 (Minor) open: one sha citation — quick correction. |
+| Software Architecture Document | **Approved** | SAD F4 RESOLVED — criterion 3 cites current repository state; the 4+1 baseline is stable as record AND evidence; no new findings. |
+| Test Case | **Approved** | Test Case F1 RESOLVED — summary, per-case table, and corrections paragraph agree (15+8=23); the Iter 4 regression verification (PR #7, baseline HELD) is exemplary honest practice; no new findings. |
+| Test Evaluation Summary | **NeedsRework** | TES F2 RESOLVED (mission verdict correct and observed). F3 (Major) open: the remainder-enumerations are false in every particular against the same-pass landings — the mission-verdict record contradicts the observed state of four artifacts; one targeted update owed before R6. |
+| Development Case | **Approved with changes** | DC F3 RESOLVED (A-36 both sides verified). F4 (Minor) open: three stale A-32/PM-close-pass status claims — quick corrections per the DC's own same-pass discipline. IARI baseline conformance PASSES (unchanged). |
+| Risk List | **Approved** | The close-pass reappraisal is sound and observed: R001/R003/R004 RETIRED on CI-traced evidence with residuals correctly carried to R011; R013 RESOLVED; R010 F8 remediation present (concrete blocker recorded, obligation carried to Construction Iter 1 with R010's own trigger). No new findings from this lens. |
+| Iteration Plan | **Approved** | The record-propagation pass plan is sound (R6 path stakeholder-confirmed; box ~2,750K by content class with basis named; objectives map 1:1 to A-32…A-36 — all now verified MET). Work-item statuses read "Pending" at plan-build — NOT a finding: the plan's own discipline schedules the reconciliation at pass close (Work Item 9, exit criterion 12), and the PM authors the Iteration Assessment after this review. |
+| Use-Case Model | **PRESERVED** | Clean at all three prior LCA reviews; no finding or CR targets it; unchanged this pass. |
+| Supplementary Specification | **PRESERVED** | Clean at all three prior LCA reviews; no finding or CR targets it; unchanged this pass. |
+| Design Model | **PRESERVED** | Clean at all three prior LCA reviews; unchanged this pass. F-CR-E3-2 (INT-011 contract-table evolution) remains Designer-owned, next Design Model pass — not this pass's work. |
+| Vision | **PRESERVED** | Inception-approved; no finding or CR targets it. |
+| Iteration Assessment | **EXCLUDED** | PM authors it AFTER this review — absence never a finding. |
+
+**New action items (this lens, Iter 4 — extending the chain; no prior action renumbered):**
+
+| # | Action | Owner | Severity | Blocks |
+|---|---|---|---|---|
+| **A-37** | **Update the TES remainder-enumerations from the observed same-pass landings** (Milestone Target; master-workflow "Remaining" box; schedule Sequence 3; resources table; INC-1 → bottleneck RESOLVED; Conclusions "What the mission cannot yet claim" → the current remainder; recommendations 1–2; traceability rows) — closes TES F3 (Major) | Test Manager | Major | R6 evidence-package internal consistency (the mission-verdict record must not contradict the PoC ledger it sits beside) |
+| **A-38** | **Correct the CONTRIBUTING.md sha citation in the PoC § Traceability row** (c86ebf7 → the verified current file sha 90e4f2e1b91bdb64082dcc9f75a4b32c3cc10f80, or cite c86ebf7 explicitly as the introducing commit sha alongside the verified file sha) — closes PoC F3 (Minor) | Software Architect | Minor | R6 evidence-package citation verifiability |
+| **A-39** | **Update the DC's three stale A-32/PM-close-pass status claims** (exit-criteria criterion 3 "Remaining" line; PoC disposition paragraph + trigger-diagram note; Organization Assessment) to the observed state, per the DC's own binding same-pass record-propagation discipline — closes DC F4 (Minor) | Process Engineer | Minor | DC-specific LCA gate record accuracy (criteria 7–9) |
+
+**Cross-lens verification recorded (not this lens's to close):** Iteration Plan F8 (Minor, Management lens) — remediation VERIFIED PRESENT this review: the Risk List close-pass records the concrete blocker (no direct STK-004 channel in this runtime; the questionnaire reaches STK-001 only) and carries the obligation to Construction Iter 1 with R010's own trigger; the Management Reviewer lens closes F8 on its own verification. F-CR-E3-1/F-CR-E3-2 (Code Reviewer lens, narrative) — unchanged, Construction-scope/Designer-owned, carried with recorded owners.
+
+**Critical-escalation check (this lens):** zero Critical findings open — the zero-Critical state of the phase, held. Every new finding's remediation is fully determined by recorded same-pass landings; no stakeholder-only decision is surfaced; **no stakeholder touchpoint is owed from this lens** — the next stakeholder touchpoint remains the R6 fresh sanction request itself.
+
+**Traceability (this lens's Iter 4 rows):**
+
+| Element | Traces From | Link Type | Traces To |
+|---|---|---|---|
+| Technical-lens Iter 4 re-review (this record) | Work Order (Elab Iter 4 — LCA milestone review, technical lens; CR targeting the Architectural Proof-of-Concept); all 13 artifacts read in full; stakeholder decisions (four-clause bar; all-findings directive; BLOCKED-cases framing directive; R6-path confirmation); SCM state verified first-hand (zero open PRs; main GREEN run 33639518709; Issue #9 open [the PoC CR — remediation landed and verified]; Issues #1/#2 closed; CONTRIBUTING.md sha 90e4f2e) | Reviews | LCA milestone gate (sanction still withheld — all-findings directive); R6 re-presentation; actions A-37…A-39 |
+| PoC F2 closure (Major) | The A-32 observed-results ledger (PoC § Results and Findings — verified first-hand: R001 four-clause × four-consumer clause-by-clause table; R003 matrix; R004 simulation; 15/0/8 with the 8 BLOCKED framed as a recorded SCOPE decision; MERGED delivery rows with PR numbers; execution trace CI run 33617748483; claims/does-not-claim section); SCM Issue #9 (the CR targeting this artifact — remediation satisfied on this evidence) | Resolves | The R6 evidence package (ASSEMBLED — its core artifact carries the observed validation state); exit criteria 1–3 evidence propagation |
+| SAD F4 / Test Case F1 / TES F2 / DC F3 closures (Minor) | A-33 (SAD criterion 3 → observed state), A-34 (Test Case summary → 15/0/8, all eight BLOCKED named), A-35 (TES mission verdict → observed record), A-36 (CONTRIBUTING.md sha 90e4f2e four-clause ARCH-6 + DC flag closed) — all verified first-hand this review | Resolves | The five named record-propagation corrections (A-32…A-36) — ALL LANDED; the R6 entry gate's "corrections committed" condition |
+| TES F3 (Major, NEW) | The TES's remainder-enumerations (Milestone Target, master workflow, Sequence 3, resources, INC-1, Conclusions, recommendations, traceability) vs the observed same-pass landings (A-32/A-34/A-36/PM close-pass all landed and ledger-closed); the DC's binding same-pass record-propagation discipline (adopted this revision); the cross-artifact-contradiction class precedent (Development Case F1 / Risk List F2, Major) | Reviews | A-37 (Test Manager); R6 evidence-package internal consistency |
+| PoC F3 / DC F4 (Minor, NEW) | PoC § Traceability citation (c86ebf7) vs the verified file sha (90e4f2e, read first-hand + DC tool verification); DC's three A-32/PM-close-pass status claims vs the same-pass landings | Reviews | A-38 (Software Architect); A-39 (Process Engineer); R6 evidence-package citation verifiability + DC gate-record accuracy |
+| PR disposition record (Iter 4, ∅) | scm_list_pull_requests (open → none); PR #7 APPROVED (review 5090059324, merged to iteration/E4); PR #6 baseline-close APPROVED (merged to main, Iter 3); BRANCHING_STRATEGY §5.2 (iteration line held) | Reviews | Integrator merge gate (satisfied); the architecture-baseline sanction (landed on PR #6 — unchallenged this cycle) |
+| Iter 4 milestone disposition (sanction still withheld) | Stakeholder all-findings directive (verbatim, standing); verified ledger after this revision (0 Critical / 1 Major / 4 Minor ledger + 2 narrative Minor — all record-propagation class, all owned); remaining work = three quick record corrections (A-37…A-39) + the Management lens's F8 closure + the PM pass-close reconciliation + the R6 gate | Refines | R6 re-presentation (empty ledger + evidence package + fresh sanction request); phase transition (only on GRANTED sanction) |
 ## Resolutions and Actions
 ### Convergence-Cycle Review Calendar (Review Coordinator — Elaboration Iteration 2)
 
