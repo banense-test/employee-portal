@@ -1,14 +1,16 @@
+# Risk List
+
 ## Document Control
 
 | Field | Value |
 |---|---|
 | Phase | Elaboration |
-| Status | Draft — Elaboration Iter 1 reappraisal |
-| Milestone Target | End of Elaboration (LCA) |
-| Iteration | 1 (Cycle 1) |
-| Date | 2026-09-01 |
-| Prior Version | Inception (Approved at LCO — 0 findings); EVOLVED, not recreated |
-| Elaboration Changes | R001/R003/R004 re-scoped to EMPIRICAL validation in Elaboration per stakeholder decision (disposable LDAP directory / stub OIDC issuer / direct); R010 re-scoped — blocks production-instance integration only, does NOT block Elaboration exit, does NOT inherit R001's HIGH; R011 (validation-environment fidelity) added; mitigation actions updated with acceptance criteria |
+| Status | Draft — Elaboration Iter 2 reappraisal (convergence cycle) |
+| Milestone Target | End of Elaboration (LCA) — NOT yet achieved |
+| Iteration | 2 (Cycle 1) |
+| Date | 2026-09-02 |
+| Prior Version | Elaboration Iter 1 reappraisal (2026-09-01); Inception (Approved at LCO — 0 findings); EVOLVED, not recreated |
+| Iter 2 Changes | **R001 acceptance criteria replaced with the behavioural bar** per the stakeholder's Iter 2 answer — the >90% per-office figure is dropped (invented, no declared source; it measured our own seeded data and could not fail); behavioural bar confirmed for ALL FOUR AD-reading UCs (UC-004/005/006/007); production-AD data-quality percentage moved to Construction (R010 + R011), outside the LCA evidence package — closes Risk List F1 (Reviewer), action A-10. **Trend column added** to the Risk Register (direction since last review + evidence pointer) — closes Risk List F1 (Management, part 1), action A-14. **R012 (human-gate queue) added** — bounds the LCA/IOC/PR gate-queue risk with the 14-day suspension ceiling; the Iteration Plan quotes no queue estimate — closes Risk List F1 (Management, part 2), action A-15 |
 
 ## Risk Classification
 
@@ -39,6 +41,7 @@ class Risk {
   + strategy: RiskStrategy
   + owner: String
   + status: RiskStatus
+  + trend: TrendDirection
 }
 
 class RiskCategory {
@@ -84,11 +87,28 @@ enum RiskStatus {
   RETIRED
 }
 
+enum TrendDirection {
+  IMPROVING
+  STABLE
+  WORSENING
+  NARROWED
+  NEW
+}
+
 Risk --> RiskCategory
 Risk --> Magnitude
 Risk --> RiskStrategy
+Risk --> TrendDirection
 Magnitude --> MagnitudeLevel : "P × I → level"
 RiskStrategy --> StrategyType
+
+note right of TrendDirection
+  Trend (Iter 2, per Review Record
+  A-14): direction since last
+  review + evidence pointer.
+  A risk unchanged across two
+  reviews must show why.
+end note
 
 note right of Magnitude
   Probability × Impact → Magnitude
@@ -104,79 +124,117 @@ end note
 
 ## Risk Register
 
-| ID | Description | Category | P | I | Magnitude | Strategy | Owner | Status |
-|---|---|---|---|---|---|---|---|---|
-| R001 | Active Directory integration: LDAP attributes (job title, extension) may not be populated consistently across the 3 offices. If not tested early, the directory shows gaps. | TECHNICAL | 3 | 3 | HIGH | Accept | Software Architect | MITIGATING — empirical validation this phase |
-| R002 | Digital clocking adoption: some employees may keep using Excel out of habit if the change is not communicated well. | BUSINESS | 3 | 2 | SIGNIFICANT | Accept | Project Manager | OPEN — Construction/Transition |
-| R003 | OIDC integration with Keycloak: token validation, role mapping from claims, and redirect flow may have configuration nuances that delay the auth layer. | TECHNICAL | 2 | 3 | SIGNIFICANT | Accept | Software Architect | MITIGATING — empirical validation this phase |
-| R004 | Offline fault tolerance (NFR-004, AC-005): system must tolerate 5-minute network drops and sync data once connectivity is restored. Non-trivial for a web application on a single server. | TECHNICAL | 2 | 3 | SIGNIFICANT | Accept | Software Architect | MITIGATING — empirical validation this phase |
-| R005 | LDAP query performance: on-demand directory search against AD for 200 employees may exceed the 3-second page load requirement (NFR-001) if AD response is slow or queries are unoptimized. | TECHNICAL | 2 | 2 | MODERATE | Accept | Software Architect | OPEN — measured during R001 validation |
-| R006 | Audit trail completeness: NFR-005 requires mandatory traceability of all news publish/edit/unpublish actions and worker category changes. If the audit mechanism is not designed early, retrofitting it is costly. | TECHNICAL | 2 | 2 | MODERATE | Accept | Designer | OPEN — Design Model this phase |
-| R007 | UI design fidelity (CON-011): the mandatory custom design must be implemented faithfully in Razor Pages. Server-rendered model may constrain some design interactions. | TECHNICAL | 2 | 2 | MODERATE | Accept | UI Designer | OPEN — design mapping this phase |
-| R008 | PostgreSQL + .NET 10 compatibility: Npgsql driver maturity for .NET 10 and EF Core compatibility may have edge cases on a cutting-edge framework version. | TECHNICAL | 2 | 2 | MODERATE | Accept | Implementer | OPEN — build-time validation |
-| R009 | Scope creep: stakeholders may request additional features (vacation management, push notifications, mobile app) during iteration reviews. | BUSINESS | 2 | 2 | MODERATE | Avoid | Project Manager | OPEN — CCB enforced |
-| R010 | Infrastructure team deliverables (STK-004): LDAP service account, Keycloak client registration, Windows Server provisioning. **Re-scoped (Elab Iter 1):** blocks production-instance integration only — NOT Elaboration exit. | EXTERNAL | 2 | 3 | SIGNIFICANT | Transfer | Project Manager | OPEN — Construction integration |
-| R011 | Validation-environment fidelity: the disposable LDAP directory and stub OIDC issuer used for Elaboration empirical validation may differ from the production instances (attribute schemas, claim shapes, Keycloak configuration). | TECHNICAL | 2 | 2 | MODERATE | Accept | Software Architect | OPEN — new this iteration |
+| ID | Description | Category | P | I | Magnitude | Strategy | Owner | Status | Trend (since Iter 1 review) |
+|---|---|---|---|---|---|---|---|---|---|
+| R001 | Active Directory integration: LDAP attributes (job title, extension) may not be populated consistently across the 3 offices. If not tested early, the directory shows gaps. | TECHNICAL | 3 | 3 | HIGH | Accept | Software Architect | MITIGATING — empirical validation this phase (convergence cycle, action A-2) | **FLAT through Iter 1** (HIGH since Inception, zero retirement evidence — Review Record risk-trend finding); **IMPROVING now** — behavioural bar defined (stakeholder Iter 2 answer), mechanism build executing |
+| R002 | Digital clocking adoption: some employees may keep using Excel out of habit if the change is not communicated well. | BUSINESS | 3 | 2 | SIGNIFICANT | Accept | Project Manager | OPEN — Construction/Transition | STABLE — no new evidence; adoption unmeasurable until deployment (BG-003) |
+| R003 | OIDC integration with Keycloak: token validation, role mapping from claims, and redirect flow may have configuration nuances that delay the auth layer. | TECHNICAL | 2 | 3 | SIGNIFICANT | Accept | Software Architect | MITIGATING — empirical validation this phase (convergence cycle, action A-3) | **FLAT through Iter 1**; **IMPROVING now** — stub-issuer path confirmed by stakeholder, mechanism build executing |
+| R004 | Offline fault tolerance (NFR-004, AC-005): system must tolerate 5-minute network drops and sync data once connectivity is restored. Non-trivial for a web application on a single server. | TECHNICAL | 2 | 3 | SIGNIFICANT | Accept | Software Architect | MITIGATING — empirical validation this phase (convergence cycle, action A-4) | **FLAT through Iter 1**; **IMPROVING now** — direct path confirmed (stakeholder: nothing blocks R004), mechanism build executing |
+| R005 | LDAP query performance: on-demand directory search against AD for 200 employees may exceed the 3-second page load requirement (NFR-001) if AD response is slow or queries are unoptimized. | TECHNICAL | 2 | 2 | MODERATE | Accept | Software Architect | OPEN — measured during R001 validation | STABLE — measurement pending R001 mechanism execution |
+| R006 | Audit trail completeness: NFR-005 requires mandatory traceability of all news publish/edit/unpublish actions and worker category changes. If the audit mechanism is not designed early, retrofitting it is costly. | TECHNICAL | 2 | 2 | MODERATE | Accept | Designer | OPEN — Design Model this phase | **IMPROVING** — audit mechanism designed in the Design Model (zero findings at the LCA technical review; Review Record per-artifact verdict: Design Model Approved) |
+| R007 | UI design fidelity (CON-011): the mandatory custom design must be implemented faithfully in Razor Pages. Server-rendered model may constrain some design interactions. | TECHNICAL | 2 | 2 | MODERATE | Accept | UI Designer | OPEN — design mapping this phase | **IMPROVING** — CON-011 mapped to Razor Pages (Design Model UI sections, zero findings); featured-banner rendering contract answered by stakeholder (Iter 2: newest first) |
+| R008 | PostgreSQL + .NET 10 compatibility: Npgsql driver maturity for .NET 10 and EF Core compatibility may have edge cases on a cutting-edge framework version. | TECHNICAL | 2 | 2 | MODERATE | Accept | Implementer | OPEN — build-time validation | STABLE — validated when the mechanism code builds against PostgreSQL (convergence cycle) |
+| R009 | Scope creep: stakeholders may request additional features (vacation management, push notifications, mobile app) during iteration reviews. | BUSINESS | 2 | 2 | MODERATE | Avoid | Project Manager | OPEN — CCB enforced | STABLE — zero scope-creep findings across all review lenses (Review Record) |
+| R010 | Infrastructure team deliverables (STK-004): LDAP service account, Keycloak client registration, Windows Server provisioning. **Re-scoped (Elab Iter 1):** blocks production-instance integration only — NOT Elaboration exit. | EXTERNAL | 2 | 3 | SIGNIFICANT | Transfer | Project Manager | OPEN — Construction integration | **NARROWED** — Iter 1 re-scope per stakeholder decision (does not inherit R001's HIGH; not an LCA condition) |
+| R011 | Validation-environment fidelity: the disposable LDAP directory and stub OIDC issuer used for Elaboration empirical validation may differ from the production instances (attribute schemas, claim shapes, Keycloak configuration). | TECHNICAL | 2 | 2 | MODERATE | Accept | Software Architect | OPEN — new Iter 1 | STABLE — now also owns the production-AD data-quality percentage (Construction, with R010); explicitly OUTSIDE the LCA evidence package per the stakeholder's Iter 2 answer |
+| R012 | Human-gate queue: the LCA/IOC/PR milestone sanction gates and stakeholder consultation rounds depend on a human deciding when to sit down. A gate is a RISK, not an estimate — the plan quotes no queue figure (A-13); the queue is bounded HERE. | SCHEDULE | 1 | 2 | MINOR | Accept | Project Manager | OPEN — bounded, monitored each gate | **NEW** — added this iteration (Review Record action A-15) |
 
-### Elaboration Iter 1 Reappraisal — Validation Paths
+### Elaboration Iter 2 Reappraisal — Validation Paths and Trend Evidence
 
 ```plantuml
 @startuml
 !theme plain
-title Employee Portal — Elaboration Iter 1 Risk Reappraisal\nEmpirical validation paths per stakeholder decision
+title Employee Portal — Elaboration Iter 2 Risk Reappraisal (convergence cycle)\nR001 behavioural bar per the stakeholder's Iter 2 answer; trend directions per Review Record A-14
 
 class "R001 AD LDAP Attributes\nHIGH (P=3, I=3) MITIGATING" as R001 {
   Validation: EMPIRICAL, this phase
   Vehicle: disposable LDAP directory
-  (NOT production AD)
-  R010 dependency: REMOVED
-  Acceptance: 6 corporate attributes
-  populated, >90% of sampled users
+  Bar: BEHAVIOURAL (stakeholder, Iter 2)
+  ..
+  1. every employee rendered
+     whether or not attributes complete
+  2. missing attribute never
+     removes from search results
+  3. missing attribute never
+     raises an error
+  ..
+  Dropped: the >90% per-office figure
+  (invented - measures our own
+  seeded data, cannot fail)
+  Percentage: Construction AD
+  data quality (R010 + R011)
+  Confirmed for UC-004, UC-005,
+  UC-006, UC-007 (stakeholder: Yes)
+  Trend: FLAT through Iter 1,
+  IMPROVING now (A-2 executing)
 }
 
 class "R003 OIDC Integration\nSIGNIFICANT (P=2, I=3) MITIGATING" as R003 {
   Validation: EMPIRICAL, this phase
-  Vehicle: stub OIDC issuer
-  (no real realm - CON-004)
-  R010 dependency: REMOVED
-  Acceptance: token validation and
-  role claims extracted
+  Vehicle: stub OIDC issuer (CON-004)
+  Acceptance: token validation,
+  Employee + HR Administrator
+  role claims, redirect flow
+  Trend: FLAT through Iter 1,
+  IMPROVING now (A-3 executing)
 }
 
 class "R004 Offline Fault Tolerance\nSIGNIFICANT (P=2, I=3) MITIGATING" as R004 {
   Validation: EMPIRICAL, this phase
   Vehicle: DIRECT - nothing blocks it
   Acceptance: 5-min drop, sync <= 60 s,
-  zero duplicates, zero losses
+  zero duplicates, zero losses,
+  confirmation under 1 s both paths
+  Trend: FLAT through Iter 1,
+  IMPROVING now (A-4 executing)
 }
 
-class "R010 STK-004 Deliverables\nSIGNIFICANT (P=2, I=3) RESCOPED" as R010 {
+class "R010 STK-004 Deliverables\nSIGNIFICANT (P=2, I=3) TRANSFER" as R010 {
   Blocks: production-instance
   integration ONLY (Construction)
-  Does NOT block Elaboration exit
   Does NOT inherit R001 HIGH
+  Trend: NARROWED (Iter 1 re-scope)
 }
 
-class "R011 Validation-Environment Fidelity\nMODERATE (P=2, I=2) NEW" as R011 {
-  Residual: stubs and disposable
-  directory may differ from
-  production instances
-  Surfaces at: Construction
-  integration (with R010 delivery)
+class "R011 Validation-Environment Fidelity\nMODERATE (P=2, I=2) ACCEPT" as R011 {
+  Residual: fixtures vs production
+  instances (schemas, claim shapes)
+  Home of the production-AD
+  data-quality PERCENTAGE
+  (Construction, with R010) -
+  NOT in the LCA evidence package
+  Trend: STABLE
+}
+
+class "R012 Human-Gate Queue\nMINOR (P=1, I=2) NEW - ACCEPT" as R012 {
+  Gates: LCA, IOC, PR sanction
+  and consultation rounds
+  Mitigation: in-round answering
+  (measured: LCO queue 0 s)
+  Contingency: process suspends
+  at 14 days - nothing auto-filled
+  Plan quotes: estimate NONE (A-13)
+  Trend: NEW this iteration
 }
 
 R001 ..> R011 : residual after validation
 R003 ..> R011 : residual after validation
 R010 ..> R011 : production instances close gap
 R004 -[hidden]-> R010
+R010 -[hidden]-> R012
 
-note bottom of R004
-  Stakeholder decision (Elab Iter 1):
-  "The PoC is produced in Elaboration
-  and validated empirically."
-  "I will not accept an LCA that
-  validates a HIGH architectural
-  risk on paper only."
+note bottom of R001
+  Stakeholder (Elab Iter 2): the >90%
+  figure "is invented - drop it". Seeding
+  the directory ourselves means a
+  percentage measures our own test
+  data - it cannot fail, so it proves
+  nothing. The architectural risk is
+  what the portal DOES when an
+  attribute is absent - the bar is
+  behavioural. Seed the gaps
+  deliberately and prove the three
+  clauses hold.
 end note
 @enduml
 ```
@@ -189,11 +247,11 @@ end note
 |---|---|
 | Declared as | R001 (P=3, I=3, exposure=9) |
 | Strategy | Accept |
-| Mitigation (Elab Iter 1, updated) | **Empirical validation this phase, per stakeholder decision:** stand up a **disposable LDAP directory** (not the production AD — no STK-004 dependency), populate it with representative entries per office, and query it over LDAP v3 through COMP-007. Verify that job title, department, office, email, and extension attributes are populated and mapped. The PoC is produced in Elaboration and validated empirically — an LCA that validates a HIGH risk on paper only will not be accepted. |
-| Acceptance criteria | All six corporate attributes populated for >90% of sampled users per office; missing attributes display blank without hiding the entry (UC-004 AF-2 graceful degradation verified). |
-| Contingency | If attributes are inconsistent in the disposable directory's representative data, implement graceful degradation: display available fields, omit empty ones, log a warning. Coordinate with STK-004 (Infrastructure Team) to populate missing AD attributes in production. If Infra cannot populate them, negotiate with STK-001 (HR Director) to reduce the directory display scope to only reliably-populated fields. |
-| Trigger | PoC reveals any attribute missing for >10% of users in any office. |
-| Affected alternatives | FR-010 (directory search), AC-003 (find colleague in <10 seconds) |
+| Mitigation (Elab Iter 2, updated per stakeholder answer) | **Empirical validation this phase, against the BEHAVIOURAL bar:** stand up a **disposable LDAP directory** (not the production AD — no STK-004 dependency), populate it with representative entries per office **with attribute gaps seeded deliberately**, and query it over LDAP v3 through COMP-007. Prove the three behavioural clauses hold: (1) every employee is rendered whether or not their attributes are complete; (2) a missing attribute never removes someone from search results; (3) a missing attribute never raises an error. The bar is confirmed for ALL FOUR AD-reading use cases — UC-004 (directory search, FR-010), UC-005 (HR clocking review, FR-001), UC-006 (CSV export, FR-002), UC-007 (worker category assignment, FR-003) — per the stakeholder's Iter 2 confirmation ("Yes"). |
+| Acceptance criteria (behavioural — stakeholder answer, Elab Iter 2) | (1) Every employee is rendered whether or not their attributes are complete. (2) A missing attribute never removes someone from search results. (3) A missing attribute never raises an error. Gaps seeded deliberately in the disposable directory; all three clauses proven to hold. **Dropped:** the ">90% of sampled users per office" figure — invented, no declared source; it measured our own seeded test data and could not fail, so it proved nothing. The production-AD data-quality percentage is a Construction activity (R010 + R011), explicitly OUTSIDE the LCA evidence package. |
+| Contingency | If the behavioural bar fails (an entry hidden, a search-result removal, or an error raised by a missing attribute), fix the graceful-degradation path in COMP-007 (missing attribute = null, entry NOT hidden) before the LCA re-presentation. Production-AD attribute population is STK-004's domain (CON-007): coordinate via R010 in Construction; if production attributes remain unpopulated, negotiate with STK-001 (HR Director) to reduce the directory display scope to reliably-populated fields. |
+| Trigger | PoC reveals a missing attribute that hides an entry, removes someone from search results, or raises an error (behavioural failure — replaces the percentage-based trigger). |
+| Affected alternatives | FR-010, FR-001, FR-002, FR-003 (all four AD-reading use cases), AC-003 (find colleague in <10 seconds) |
 
 ### R002 — Clocking Adoption Resistance (SIGNIFICANT)
 
@@ -211,7 +269,7 @@ end note
 | Attribute | Value |
 |---|---|
 | Strategy | Accept |
-| Mitigation (Elab Iter 1, updated) | **Empirical validation this phase, per stakeholder decision:** validate the portal's OIDC consumption against a **stub issuer** — not a real Keycloak realm. Wiring AD into Keycloak is infrastructure work outside this project's boundary (CON-004); what the PoC must prove is that the portal consumes and validates an OIDC token correctly and extracts roles from claims. Do not wait on STK-004 for this and do not build it against a real realm. |
+| Mitigation (Elab Iter 1, unchanged — executing this cycle) | **Empirical validation this phase, per stakeholder decision:** validate the portal's OIDC consumption against a **stub issuer** — not a real Keycloak realm. Wiring AD into Keycloak is infrastructure work outside this project's boundary (CON-004); what the PoC must prove is that the portal consumes and validates an OIDC token correctly and extracts roles from claims. Do not wait on STK-004 for this and do not build it against a real realm. |
 | Acceptance criteria | Token validation succeeds; Employee and HR Administrator roles correctly extracted from claims (SEC-006); redirect flow completes. |
 | Contingency | If OIDC consumption proves more complex than expected, fall back to a simpler authentication approach (e.g., header-based auth via a reverse proxy) as an interim measure, with OIDC completed in a later Construction iteration. |
 | Trigger | Stub-issuer validation reveals unresolved token-validation or claim-mapping defects. |
@@ -222,7 +280,7 @@ end note
 | Attribute | Value |
 |---|---|
 | Strategy | Accept |
-| Mitigation (Elab Iter 1, updated) | **Empirical validation this phase, direct — nothing blocks it:** simulate a 5-minute network drop (AC-005), queue a clocking event in localStorage, reconnect, and verify sync via the idempotent endpoint (ADR-003). The stakeholder confirmed R004 was never blocked by R010. |
+| Mitigation (Elab Iter 1, unchanged — executing this cycle) | **Empirical validation this phase, direct — nothing blocks it:** simulate a 5-minute network drop (AC-005), queue a clocking event in localStorage, reconnect, and verify sync via the idempotent endpoint (ADR-003). The stakeholder confirmed R004 was never blocked by R010. |
 | Acceptance criteria | Queued event syncs on reconnect with zero duplicates (idempotency key) and zero losses; confirmation < 1 s on both paths (PRF-002); sync ≤ 60 s after restore (REL-003). |
 | Contingency | If full offline sync is infeasible within Razor Pages constraints, negotiate with STK-001 to redefine AC-005 as "system recovers gracefully from a 5-minute network drop without data loss" (idempotent retry rather than full offline operation). |
 | Trigger | Validation shows queued events lost or duplicated on reconnect. |
@@ -253,7 +311,7 @@ end note
 | Attribute | Value |
 |---|---|
 | Strategy | Accept |
-| Mitigation | UI Designer maps the mandatory design (CON-011) to Razor Pages components early in Elaboration. Identify any design elements that require client-side JavaScript and plan minimal JS additions within the Razor Pages framework. |
+| Mitigation | UI Designer maps the mandatory design (CON-011) to Razor Pages components early in Elaboration. Identify any design elements that require client-side JavaScript and plan minimal JS additions within the Razor Pages framework. Featured-banner rendering contract settled by the stakeholder (Iter 2): when more than one item is featured, show only the NEWEST featured item — no stacked banners. |
 | Contingency | If specific design elements cannot be rendered faithfully in Razor Pages, negotiate with STK-001 for minor visual adjustments that preserve the design's intent and usability. |
 | Trigger | UI Designer identifies >3 design elements incompatible with server-rendered Razor Pages. |
 | Affected alternatives | CON-011, all user-facing FRs |
@@ -288,29 +346,42 @@ end note
 | Trigger | STK-004 has not confirmed the LDAP service account or Keycloak client registration by the start of Construction Iter 1. |
 | Affected alternatives | FR-010 (directory), FR-004 (auth), CON-004, CON-005, CON-008 |
 
-### R011 — Validation-Environment Fidelity (MODERATE — new)
+### R011 — Validation-Environment Fidelity (MODERATE — new Iter 1)
 
 | Attribute | Value |
 |---|---|
 | Strategy | Accept |
-| Mitigation | Record the deltas between the Elaboration validation environment and the production instances: the disposable LDAP directory's attribute schema vs production AD's actual population; the stub issuer's claim shape vs the real Keycloak realm's. The R001/R003 acceptance criteria are defined against the validation environment; the residual (does production match it?) is retired by Construction integration testing once STK-004 delivers (R010). Keep the disposable directory and stub issuer as reusable test fixtures for Construction. |
+| Mitigation | Record the deltas between the Elaboration validation environment and the production instances: the disposable LDAP directory's attribute schema vs production AD's actual population; the stub issuer's claim shape vs the real Keycloak realm's. The R001/R003 acceptance criteria are defined against the validation environment; the residual (does production match it?) is retired by Construction integration testing once STK-004 delivers (R010). Keep the disposable directory and stub issuer as reusable test fixtures for Construction. **Home of the production-AD data-quality percentage (stakeholder, Iter 2):** measuring how many real-AD attributes are populated is a Construction data-quality activity executed once STK-004 delivers — it is NOT evidence of anything while we are the ones writing the validation data, and it stays OUT of the LCA evidence package. |
 | Contingency | If production instances differ materially at Construction integration, adjust COMP-007 query filters / COMP-006 claim mapping — both are High-volatility encapsulations by design (SAD Volatility Analysis), so the change is contained to one component each. |
 | Trigger | Construction integration test reveals attribute or claim shapes that differ from the Elaboration validation fixtures. |
 | Affected alternatives | R001, R003, R010 |
+
+### R012 — Human-Gate Queue (MINOR — new Iter 2)
+
+| Attribute | Value |
+|---|---|
+| Strategy | Accept |
+| Mitigation | A human gate is a RISK, not an estimate: the Iteration Plan quotes NO queue figure for the LCA/IOC/PR gates (action A-13 — the queue forecasts were removed from the milestone table); the queue is bounded HERE. Mitigation is in-round stakeholder answering, as measured at LCO (queue 0s — recorded actual) and at the Iter 1 LCA consultation (answered in-round: sanction refused, directive given). Each gate's measured queue is reported as an actual in the Iteration Assessment — never forecast in the plan. |
+| Contingency | The process SUSPENDS at 14 days of queue per the planning rule — nothing is auto-filled, no decision is fabricated; the suspension is reported to the Review Coordinator and the stakeholder, and the phase waits. |
+| Trigger | A gate question or sanction request remains unanswered past 7 days (half the suspension ceiling) — escalation notice issued to the Project Manager and Review Coordinator. |
+| Affected alternatives | LCA, IOC, PR milestone gates; every REQUIRES_USER_INPUT round; phase-transition sanction |
 
 ## Traceability
 
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
-| R001 | Declared risk R001 | Refines | Architectural PoC (Elaboration Iter 1 — disposable LDAP directory), FR-010, AC-003 |
+| R001 | Declared risk R001; stakeholder Iter 2 answer (behavioural bar, dropped percentage, four-UC confirmation) | Refines | Architectural PoC (convergence cycle — disposable LDAP directory, action A-2), UC-004, UC-005, UC-006, UC-007, FR-010, FR-001, FR-002, FR-003, AC-003 |
 | R002 | Declared risk R002 | Refines | BG-003, AC-004, FR-004 |
-| R003 | CON-004 (Keycloak OIDC) | Derives | Architectural PoC (Elaboration Iter 1 — stub OIDC issuer), FR-004, all HR functions |
-| R004 | NFR-004, AC-005 | Derives | Architectural PoC (Elaboration Iter 1 — direct), FR-004, NFR-004 |
+| R003 | CON-004 (Keycloak OIDC) | Derives | Architectural PoC (convergence cycle — stub OIDC issuer, action A-3), FR-004, all HR functions |
+| R004 | NFR-004, AC-005 | Derives | Architectural PoC (convergence cycle — direct, action A-4), FR-004, NFR-004 |
 | R005 | NFR-001, FR-010, CON-005 | Derives | AC-003, R001 validation activity |
 | R006 | NFR-005, FR-006, FR-008, FR-009, FR-003 | Derives | Design Model (audit entity) |
-| R007 | CON-011 | Derives | All user-facing FRs |
+| R007 | CON-011; stakeholder Iter 2 answer (featured banner: newest first) | Derives | All user-facing FRs |
 | R008 | CON-001, CON-003 | Derives | Implementation Model (project skeleton) |
 | R009 | Declared scope exclusions | Derives | All declared scope items |
 | R010 | STK-004, CON-004, CON-005, CON-008 | Derives | Construction integration testing, FR-010, FR-004 |
-| R011 | Stakeholder decision (Elab Iter 1 — validation paths) | Derives | R001, R003, R010, Construction integration testing |
+| R011 | Stakeholder decision (Elab Iter 1 — validation paths); stakeholder Iter 2 answer (percentage home) | Derives | R001, R003, R010, Construction integration testing, Construction AD data-quality measurement |
+| R012 | Review Record Iteration Plan F5 / Risk List F1 (Management) — human gate = risk, not estimate; 14-day suspension ceiling | Derives | LCA, IOC, PR milestone gates; Iteration Plan milestone table (no queue forecasts — A-13); Iteration Assessment (measured queue actuals) |
+| R001 behavioural bar | Stakeholder Iter 2 answer: "the bar is behavioural, not statistical" — three clauses; confirmed for all four AD-reading UCs ("Yes") | Authorizes | R001 acceptance criteria (this artifact); Test Case TC-011 fixture (gaps seeded deliberately); SAD PoC Plan; Test Evaluation Summary thresholds (propagate on next evolution) |
 | R001/R003/R004 re-scoping | Stakeholder decision (Elab Iter 1): "The PoC is produced in Elaboration and validated empirically" | Authorizes | Elaboration Iteration Plan (PoC work items), SAD PoC Plan (Architect to correct) |
+| Trend column (A-14) | Review Record Risk List F1 (Management, part 1) — risk-retirement trend verification | Refines | Every future milestone review (trend verification); Iteration Assessments |
