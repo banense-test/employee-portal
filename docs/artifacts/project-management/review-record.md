@@ -855,6 +855,7 @@ First formal review event of the Elaboration phase — no prior Elaboration data
 | **Iteration Plan F3** (Reviewer, Iter 2) | **Minor** | Iteration Plan — Work Item 8; Objective 2; critical-chain diagram | **Stale test-case enumeration vs the Test Case authority.** The plan names the 20-case set ("Execute TC-001…TC-020", "all 20 currently BLOCKED", "TC-001…TC-020 executed") while the Test Case artifact (TC-ID authority) was extended this same iteration to 23 cases: TC-021/022/023 are the UC-005/006/007 AF-3 behavioural-bar validation cases, and its Cycle 2 record reports 23/23 BLOCKED. The plan's own exit criterion 1 requires the behavioural bar validated across ALL FOUR AD-reading use cases — evidence only TC-021/022/023 provide — yet the enumerated execution scope omits them. Same defect class as the LCO F1 UC-ID mismatch. | Update the three stale enumerations to the 23-case set (Work Item 8, Objective 2, critical-chain Test Designer step). Cross-check against the Test Case §Test Case Catalog (authority) before upsert — the LCO F1 lesson applies to TC IDs exactly as it did to UC IDs. |
 | **Test Evaluation Summary F1** | **Minor** | Test Evaluation Summary — mission scope; master workflow; schedule Sequence 2; resources table; INC-1; conclusions; recommendation 1; defect-status row | **Stale test-case enumeration vs the Test Case authority (same class as Iteration Plan F3).** The TES enumerates the 20-case set in eight locations and its mission-scope boundary row states "dedicated per-UC test cases for UC-005/006/007 land in Construction functional suites" — stale against the Test Case artifact, which designed TC-021/022/023 THIS iteration at Integration level as part of the R001 PoC's four-consumer validation. The TES's own acceptance-thresholds table correctly requires the bar "observed across all four AD-reading UCs" — the substance is right; the enumerations and the one scope row are stale. | Update the stale enumerations to the 23-case set and correct the mission-scope boundary row: TC-021/022/023 are DESIGNED and executed THIS convergence cycle as part of the R001 PoC; what lands in Construction is the full functional main-flow suites for UC-005/006/007, not the AF-3 bar cases. |
 | **Development Case F2** | **Minor** | Development Case — discipline workflow diagram; Test tailoring note; CORE artifacts table; role matrix (TestDesigner, Tester) | **Stale test-case enumeration vs the Test Case authority (same class).** The DC enumerates the 20-case set in five locations while the Test Case authority carries 23. The DC's own exit criterion 3 requires the behavioural bar confirmed for UC-004..UC-007 — evidence only TC-021/022/023 provide. | Update the five DC locations to the 23-case set (TC-001..TC-023), cross-checked against the Test Case §Test Case Catalog (authority) — the same ID-verification discipline the DC itself mandates for UC IDs. |
+| **Architectural Proof-of-Concept F1** | **Minor** | Architectural Proof-of-Concept — § Results and Findings ledger row; § Approach delivery protocol | **Stale test-case enumeration vs the Test Case authority (same class) — in the LCA evidence package's core artifact.** The PoC artifact enumerates the 20-case set in two locations: the Results ledger row ("TC-001…TC-020 execution | PENDING — All 20 test cases BLOCKED") and the delivery protocol ("The Test Designer executes TC-001…TC-020"). The Test Case authority carries 23 cases; the PoC's own acceptance criteria require the R001 behavioural bar proven across ALL FOUR AD-reading consumers — evidence only TC-021/022/023 provide — so the execution protocol as written under-scopes the validation whose results this artifact must carry to the LCA gate. (The artifact predates the Test Case extension by one day — its Cycle 1 citation was accurate when written — but the protocol governs the execution that is still pending, so it must reflect the current authority before the results land.) | Software Architect updates the two locations when the PoC artifact is evolved for the empirical results (the A-8/A-16 evolution already mandates rewriting exactly this table): Results ledger row → "TC-001…TC-023 execution | PENDING — All 23 test cases BLOCKED (Test Case Cycle 2 record; SCM Issue #1)"; delivery protocol → "The Test Designer executes TC-001…TC-023 against the validation fixtures". The R001 results row must then record clause-by-clause evidence for all four consumers (TC-011 + TC-021/022/023), not the directory search alone. |
 
 **Compliance Matrix — Technical LCA Lens, Iteration 2 (11 artifacts × checklist dimensions):**
 
@@ -925,6 +926,7 @@ object "Architectural Proof-of-Concept" as POC {
   Vehicles match decision : PASS
   Behavioural bar acceptance : PASS
   Honest PENDING ledger : PASS
+  TC enumeration vs authority : FAIL - F1 NEW (Minor)
   Empirical results : PENDING - blocked by SAD F2
 }
 object "Vision (Inception, carried)" as VIS {
@@ -977,17 +979,22 @@ object "Test Evaluation Summary" as D4 {
   (8 locations) + stale Construction-
   scope row for TC-021..023
 }
-object "Clean artifacts (this lens)" as D5 {
+object "Architectural Proof-of-Concept" as D5 {
+  Minor 1 : F1 NEW - stale TC enumeration
+  (2 locations) in the LCA evidence
+  package's core artifact
+}
+object "Clean artifacts (this lens)" as D6 {
   Design Model, Use-Case Model,
   Supplementary Specification, Risk List,
-  Test Case, Architectural PoC (protocol),
-  Vision (preserved)
+  Test Case, Vision (preserved)
   Critical 0, Major 0, Minor 0
 }
 D1 -[hidden]-> D2
 D2 -[hidden]-> D3
 D3 -[hidden]-> D4
 D4 -[hidden]-> D5
+D5 -[hidden]-> D6
 
 note bottom of D1
   One logical defect per ledger entry:
@@ -997,7 +1004,7 @@ note bottom of D1
   Issue #1 all observe the same gap and
   carry no duplicate findings.
   TOTAL OPEN (this lens): 1 Critical,
-  1 Major, 3 Minor across 4 artifacts.
+  1 Major, 4 Minor across 5 artifacts.
 end note
 @enduml
 ```
