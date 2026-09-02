@@ -98,17 +98,19 @@ Measurable criteria per user role. Each criterion is testable; none invents targ
 
 **Stakeholder decision recorded (Elaboration Iter 1 — office local timezone [SCOPE_QUESTION] retired):** The office local timezone is **America/Havana**. The stakeholder specified an IANA identifier, not a fixed offset — Cuba observes DST, so a hardcoded UTC-5 would be wrong for part of the year and would silently shift every payroll day boundary when the clocks change. The zone completes the decided convention (store UTC, display office local, export ISO-8601 with explicit offset, payroll day = local calendar day); all 3 offices share this one timezone (stakeholder-confirmed). The exported offset is the one in force at each event's time per the IANA zone database. No open question remains on the timestamp convention.
 
-### R001 Behavioural Bar — LDAP attribute absence (stakeholder decision, Elaboration Iter 2)
+### R001 Behavioural Bar — LDAP attribute absence (stakeholder decision, Elaboration Iter 2; fourth clause added at the Iter 2 verdict gate, propagated Iter 3)
 
 **Stakeholder decision recorded (Elaboration Iter 2 — R001 validation bar):** The R001 validation bar is **behavioural, not statistical**. The prior ">90% of sampled users per office with all six corporate attributes populated" figure is **dropped** — it is invented (the declared R001 names no percentage; the PoC decision names none), and measured against a disposable directory the team seeds itself it cannot fail, so it proves nothing. The architectural risk is what the portal DOES when an attribute is absent, not how many attributes are missing (a property of the real directory nobody can know until STK-004 delivers). **The bar, in the stakeholder's words:** "every employee is rendered whether or not their attributes are complete; a missing attribute never removes someone from search results; a missing attribute never raises an error. Seed the gaps deliberately and prove those three hold. That retires R001 empirically, this phase, without the production directory." The percentage belongs to a different activity — measuring the real AD's data quality once STK-004 delivers — tracked in Construction (R011 residual), kept out of the LCA evidence package.
 
-**Stakeholder confirmation recorded (Elaboration Iter 2 — bar reach):** Asked whether the behavioural bar applies to **all four AD-reading use cases** (UC-004 directory search, UC-005 HR clocking review, UC-006 CSV export, UC-007 worker category assignment) and not only the directory search, the stakeholder answered **"Yes"**. The bar is therefore a **reliability contract at the LDAP Query Mechanism boundary** — one contract, four consumers: UC-004 (FR-010) is the declared home of the bar (the stakeholder's original wording names search results); UC-005 (FR-001), UC-006 (FR-002), and UC-007 (FR-003) carry the same three clauses as confirmed AF-3 alternative flows. The three clauses are testable as written: seed gaps deliberately in the disposable directory, exercise each consumer, and verify (a) rendering completeness, (b) no removal, (c) no error. Distinct-condition note: AD-unreachable (UC-005 AF-2, UC-006 AF-2, UC-007 AF-2, UC-004 AF-3) is a different failure mode with a different contract — it is NOT waived by the behavioural bar.
+**Stakeholder confirmation recorded (Elaboration Iter 2 — bar reach):** Asked whether the behavioural bar applies to **all four AD-reading use cases** (UC-004 directory search, UC-005 HR clocking review, UC-006 CSV export, UC-007 worker category assignment) and not only the directory search, the stakeholder answered **"Yes"**. The bar is therefore a **reliability contract at the LDAP Query Mechanism boundary** — one contract, four consumers: UC-004 (FR-010) is the declared home of the bar (the stakeholder's original wording names search results); UC-005 (FR-001), UC-006 (FR-002), and UC-007 (FR-003) carry the same clauses as confirmed AF-3 alternative flows.
+
+**Stakeholder contribution recorded (Iter 2 verdict gate — FOURTH clause, binding; propagated Iter 3):** The stakeholder extended the bar from three to four clauses, directing "Add a fourth clause to all four." The fourth clause, verbatim: **"a missing attribute is displayed as missing. It is never replaced by a default, a placeholder, a guessed value, or another employee's value."** With the stakeholder's stated rationale, verbatim: "Blank is an answer. 'General', or the first office in the list, is a fabrication — and on the CSV that reaches payroll a fabricated department is worse than an empty cell. An empty cell gets questioned. A plausible wrong one does not." The first three clauses stop data from being LOST; the fourth stops it from being INVENTED. The four clauses are testable as written: seed gaps deliberately in the disposable directory — including substitution-attempt fixtures (a default category, a first-office fallback) so the fourth clause can actually fail — exercise each consumer, and verify (a) rendering completeness, (b) no removal, (c) no error, (d) no substitution. Distinct-condition note: AD-unreachable (UC-005 AF-2, UC-006 AF-2, UC-007 AF-2, UC-004 AF-3) is a different failure mode with a different contract — it is NOT waived by the behavioural bar.
 
 ```plantuml
 @startuml
 skinparam componentStyle rectangle
 skinparam fontSize 11
-title R001 Behavioural Bar - One Contract, Four AD-Reading Use Cases\nLDAP Query Mechanism consumers (Elaboration Iter 2)
+title R001 Behavioural Bar - One Contract, Four AD-Reading Use Cases\nLDAP Query Mechanism consumers (Elaboration Iter 2; fourth clause added at the Iter 2 verdict gate, propagated Iter 3)
 
 package "Employee Portal" {
   component "UC-004 Directory Search\n(FR-010 - declared home of the bar)" as UC004
@@ -133,13 +135,19 @@ UC007 ..> LDAP
 note bottom of LDAP
   One behavioural contract at the
   mechanism boundary (R001 bar,
-  stakeholder decision, Elab Iter 2):
+  stakeholder decision, Elab Iter 2;
+  fourth clause added at the Iter 2
+  verdict gate):
   (a) every employee is rendered
   whether or not attributes complete
   (b) a missing attribute never
   removes someone from results
   (c) a missing attribute never
   raises an error
+  (d) a missing attribute is displayed
+  as missing - never replaced by a
+  default, a placeholder, a guessed
+  value, or another employee's value
   UC-004: declared home (FR-010).
   UC-005/006/007: stakeholder-
   confirmed (Elab Iter 2, answer Yes)
