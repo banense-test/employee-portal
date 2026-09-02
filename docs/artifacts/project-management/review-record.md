@@ -586,361 +586,63 @@ end note
 
 **Prior-findings reconciliation (this lens):** all four prior ManagementReviewer findings (Iteration Plan F1 Major, F2 Minor — Inception) are RESOLVED with successful `resolve_artifact_finding` closures recorded in Inception Iter 2; zero findings carried open into Elaboration Iteration 1 from this lens. The one open finding on the Risk List (untagged >90% criterion) was emitted by the Reviewer lens — per the cross-lens ownership invariant it is not this lens's to resolve.
 
-### Elaboration Iteration 3, Cycle 1 — Code-Review Lens Record (Code Reviewer, 2026-09-02)
+### Business Modeling Lens — Scope, Findings, and Milestone Disposition (Business Reviewer, Iteration 4 — record-propagation pass, 2026-09-02)
 
-**Scope and criteria (this lens, this cycle):** the three mechanism handoffs the stakeholder prioritized ("In this third iteration I hope that the Implementer can push the code so that everything moves forward") — feature/E1-R001, feature/E1-R003, feature/E1-R004 — reviewed as **evolutionary production code** (BRANCHING_STRATEGY §5.2, §8.4; CONTRIBUTING.md ARCH-10) exactly as Construction feature PRs, never as throwaway. Checklist CR-1…CR-7 applied per PR, unchanged from Iter 1. Upstream baselines loaded once and reused across all three PRs: CONTRIBUTING.md (sha `6662813…` — ARCH-1…ARCH-10 + coding conventions), the Design Model (CLS-001…027, INT-006…019, SEQ-001…010, D-1…D-9 four-clause), and the SAD Logical View (COMP-001…011, boundary reconciliations). The FOUR-clause R001 behavioural bar (stakeholder decisions, Elab Iter 2 + verdict-gate contribution; A-27/A-28) was the acceptance lens for PR #3; the stub-issuer decision ("R003 you mock… A stub issuer is enough") for PR #4; the direct 5-minute drop simulation (AC-005) for PR #5.
+**Scope and criteria (this lens, this cycle):** the DC §4 business-process-led classification and the Elaboration artifact set at the LCA re-presentation point, evaluated against the LCA exit-criteria lens for the Business Modeling discipline: is the discipline correctly INACTIVE, and did the phase produce exactly the BM deliverables the classification requires (zero, for a non-BPL project)? The record-propagation pass's own work (A-32…A-39, the PM close-pass) is owned by the technical, management and code-review lenses; this lens's obligation at this milestone is the classification re-verification and the zero-BM-conditions statement for the R6 re-presentation gate.
 
-**Gate Execution — What Was Run This Cycle (Code-Review Lens, Iter 3):**
+**Scenario assessment (reviewer heuristic 1):** the engagement is software-feature-led automation of existing, well-understood manual workflows (Excel clocking sheets, mass-email news distribution, PDF directory) — not one of the business-modeling scenarios that warrant a business object model. The ProcessEngineer's DC §4 re-record (2026-09-02, Elaboration Iteration 4) returns `isBusinessProcessLed = false` with the Inception verdict unchanged and no Change Request re-opening the classification; this lens independently verified the claim against the Vision (tool replacement, no reengineering signals) and the Use-Case Model Iter 4 revision (zero BUCs, business workers, business entities, or realizations; 10 system UCs trace 1:1 to FR-001…FR-010). The classification is CORRECT — no defect.
+
+**Evidence gathered (this cycle):** DC §4 classification (ProcessEngineer re-record 2026-09-02: isBusinessProcessLed=false, verdict unchanged from Inception and Elab Iters 1–3, no CR re-opened); Vision (Inception, Approved — BPL signal re-verified absent); Use-Case Model (Elaboration Iter 4 revision, read in full — zero BM sections re-verified; the Iter 4 changes are the SB-06/SB-07 storyboards and a Document Control milestone-record update, both system-requirements/UI refinements of declared FRs — no business-process signal); findings ledger re-swept for the four BR-relevant artifacts (Vision, Use-Case Model, Supplementary Specification, Review Record — all four return empty arrays; zero BusinessReviewer findings project-wide).
+
+**Prior-findings reconciliation (this lens — executed before the verdict):** [PLAN] artifacts × prior BR findings with resolution==null: Vision: [], Use-Case Model: [], Supplementary Specification: [], Review Record: []. TOTAL: 0. [EXIT] S_RECONCILE complete: closed=0, deferred=0, rejected=0, left-open=0. Total: 0 of 0. Zero `resolve_artifact_finding` calls owed; zero `record_artifact_finding` calls owed (a clean business-lens verdict on an INACTIVE discipline emits no finding). The Inception findings (F1/F2) belong to the Reviewer and ManagementReviewer lenses and are all RESOLVED — not this lens's to close.
+
+**Gate evaluation (what was checked, with evidence — this cycle):**
 
 ```plantuml
 @startuml
-title Code-Review Gate Execution - Elaboration Iter 3, Cycle 1 (2026-09-02)
+title Business Modeling Lens — DC §4 Gate Evaluation at the LCA Re-Presentation\nBusiness Reviewer, Elaboration Iteration 4 (2026-09-02)
 
 start
-:scm_list_branches_with_label("ready-for-review")
-returns **3 branches**:
-feature/E1-R001, feature/E1-R003, feature/E1-R004;
-:scm_list_pull_requests(open) returns **0 PRs**;
-:CONTRIBUTING.md verified on main
-(sha 6662813) - CR-1 rule baseline loaded;
-:iteration/E1 verified as the PR base
-(BRANCHING_STRATEGY 5.2 - skeleton tree);
-:CI status x3 : GREEN
-(33615260971, 33615945653, 33616121855);
-:Open ONE PR per branch, base iteration/E1:
-PR #3 (R001), PR #4 (R003), PR #5 (R004)
-each body carries Implements: risk-id
-+ UC / constraint / design-baseline trailers;
-:Review-state guard x3 : NONE
-(no prior verdict exists to preserve);
-:Load design baselines ONCE:
-Design Model (CLS-001..027, INT-006..019)
-+ SAD Logical View (COMP-001..011);
-:Apply CR-1..CR-7 per PR
-(diff analysis x3);
-if (Critical or Major findings?) then (no - zero of each)
-  :scm_approve_pull_request x3:
-  PR #3 review 5088169328,
-  PR #4 review 5088169517,
-  PR #5 review 5088169685;
-  :3 Minor findings recorded
-  with severity, location, remediation
-  (F-CR-E3-1, F-CR-E3-2, F-CR-E3-3);
-  :Append this Iter 3 record to the
-  Review Record (cumulative);
-  stop
-else (yes)
-  :scm_request_changes_on_pull_request
-  with findings + remediation;
-  stop
-endif
+partition "S1 — Evidence gathered (this cycle)" {
+  :DC §4 classification (ProcessEngineer, Elab Iter 4 re-record, 2026-09-02)\n**isBusinessProcessLed = false** — Inception verdict unchanged,\nsustained by this lens at the Iter 1, Iter 2 and Iter 3 LCA reviews,\nno Change Request re-opened;
+  :Vision (Inception, Approved) — BPL signal re-verified ABSENT\ntool replacement (Excel sheets, mass emails, PDF directory\nto one web app); no reengineering, no workflow transformation,\nno business object model in scope;
+  :Use-Case Model (Elaboration, Iter 4 revision) — BM section inventory\n**zero** BUCs, business workers, business entities, realizations;\n10 system UCs trace 1:1 to FR-001..FR-010;\nIter 4 changes (SB-06/SB-07 storyboards, Document Control\nmilestone record) = system-requirements and UI refinements\nof declared FRs — no business-process signal;
+  :Findings ledger (BR-relevant artifacts, re-swept this cycle)\nVision, Use-Case Model, Supplementary Specification, Review\nRecord — all four return empty arrays; zero BusinessReviewer\nfindings project-wide;
+}
+partition "Independent verification (quality gate)" {
+  :BPL signal check — **absent**\n(Vision + declared scope + stakeholder answers);
+  :BM coverage check — **zero sections**\n(Use-Case Model Iter 4 revision, read in full);
+  :Scenario assessment (reviewer heuristic 1)\nsoftware-feature-led automation of existing,\nwell-understood manual workflows;
+}
+:State-machine path — no BPL signal AND zero BM sections\n**S_INACTIVE — BR-OK-INACTIVE per DC §4**\n(sustained — fourth consecutive LCA-cycle verification);
+:Verdict recorded — 0 findings, 0 recommendations,\n0 BM conditions on the R6 re-presentation gate;
+stop
 @enduml
 ```
 
-**Compliance Matrix — CR-1…CR-7 × 3 PRs (Iter 3):**
+**Findings: NONE — zero findings, zero recommendations, zero BM conditions on the R6 re-presentation gate.** The Business Modeling discipline remains INACTIVE per DC §4 (`isBusinessProcessLed = false`, ProcessEngineer re-record 2026-09-02, independently re-verified by this lens this cycle against the Vision and the Use-Case Model Iter 4 revision). No BM artifact exists to receive a finding, and none is required for a non-BPL project. No `record_artifact_finding` was emitted from this lens this iteration; no prior BusinessReviewer finding exists to close. The business lens therefore adds **zero entries** to the findings ledger the Review Coordinator must empty before the R6 re-presentation — the open gates (Test Evaluation Summary#F3 Major; Architectural Proof-of-Concept#F3, Development Case#F4, Iteration Plan#F8 Minors; F-CR-E3-1/2 narrative Minors) belong to the technical, management and code-review lenses and are unaffected by this verdict.
 
-```plantuml
-@startuml
-title Elaboration Iter 3 - Code-Review Compliance Matrix\nCR-1..CR-7 x 3 mechanism PRs (Code Reviewer, 2026-09-02)
+**Milestone disposition (business lens, Iter 4):**
 
-object "PR #3 - R001 LDAP Gateway\n(COMP-007/CLS-009 + consumers)" as P3 {
-  CR-1 Guidelines (ARCH-1..10) : PASS
-  CR-2 Dual coverage : PASS
-  (bar suite x4 consumers + white-box)
-  CR-3 SAD/Design conformance : PASS
-  1 Minor - F-CR-E3-1 interim adapter
-  CR-4 Traceability trailer : PASS
-  CR-5 CI green : PASS (33615260971)
-  CR-6 Build-tree coverage : PASS
-  CR-7 Terminal disposition : APPROVED
-}
-object "PR #4 - R003 OIDC stub issuer\n(COMP-006/CLS-010)" as P4 {
-  CR-1 Guidelines : PASS
-  CR-2 Dual coverage : PASS
-  (acceptance suite + failure seams)
-  CR-3 SAD/Design conformance : PASS
-  2 Minor - F-CR-E3-2 INT-011 table,
-  F-CR-E3-3 state comment
-  CR-4 Traceability trailer : PASS
-  CR-5 CI green : PASS (33615945653)
-  CR-6 Build-tree coverage : PASS
-  CR-7 Terminal disposition : APPROVED
-}
-object "PR #5 - R004 offline queue\n(COMP-009/CLS-008 + CLS-001)" as P5 {
-  CR-1 Guidelines : PASS
-  CR-2 Dual coverage : PASS
-  (AC-005 suite + service/queue suites)
-  CR-3 SAD/Design conformance : PASS
-  1 Minor - F-CR-E3-1 (shared)
-  CR-4 Traceability trailer : PASS
-  CR-5 CI green : PASS (33616121855)
-  CR-6 Build-tree coverage : PASS
-  CR-7 Terminal disposition : APPROVED
-}
-P3 -[hidden]-> P4
-P4 -[hidden]-> P5
+**Verdict: [BR-OK-INACTIVE] — Discipline NOT APPLICABLE per DC §4 — SUSTAINED (fourth consecutive LCA-cycle verification).**
 
-note bottom of P5
-  Zero Critical, zero Major across all
-  three PRs -> APPROVED per the
-  disposition rule. The 3 Minors are
-  non-blocking, recorded with owners
-  and remediation, and are phase-exit
-  conditions per the stakeholder
-  all-findings directive.
-end note
-@enduml
-```
+DC §4 trigger re-evaluation at the LCA re-presentation point: the project still does not exhibit business-process-led characteristics. The ProcessEngineer's re-record (2026-09-02, Elaboration Iteration 4) returns `isBusinessProcessLed = false` with the Inception verdict unchanged and no Change Request re-opening the classification; this lens independently re-verified the claim against the Vision (tool replacement — Excel sheets, mass emails, PDF directory → one web app; no reengineering, workflow transformation, or business object modeling in scope) and the Use-Case Model Iter 4 revision (zero BUCs, business workers, business entities, or realizations; all 10 system UCs trace 1:1 to FR-001…FR-010). The stakeholder's recorded answers were cross-checked — the R6-path confirmation, the BLOCKED-cases framing directive, and the record-propagation directives are process and evidence-packaging decisions, not business-process signals. The Iter 4 Use-Case Model changes (SB-06/SB-07 storyboards; Document Control milestone-record update) are system-requirements and UI refinements of declared FRs carrying stakeholder-decided contracts — no business-process signal. No BM sections were produced during Elaboration Iteration 4, and none were required.
 
-**SCM Evidence Snapshot (Iter 3 — what actually happened):** `scm_list_branches_with_label("ready-for-review")` → 3 branches (feature/E1-R001/R003/R004); `scm_list_pull_requests(open)` → 0 PRs (the Code Reviewer opened all three); `scm_get_file_content` main CONTRIBUTING.md → present, sha `6662813142160f6a660327f5d4a1700c036d099c`; `scm_get_repo_tree` iteration/E1 → exists, skeleton (51 entries — the correct PR base); `scm_get_build_status` ×3 → GREEN (runs 33615260971 / 33615945653 / 33616121855, all completed 2026-09-02); PRs #3/#4/#5 created base `iteration/E1` with traceability trailers; review states NONE ×3 before verdict; APPROVED ×3 (reviews 5088169328 / 5088169517 / 5088169685). Diff sizes: PR #3 17 files +1,231; PR #4 6 files +815; PR #5 10 files +838 — all under `src/` or `tests/`.
+**Conclusion:** the Business Modeling discipline remains correctly INACTIVE — sustained from Inception and the Elaboration Iteration 1, 2 and 3 LCA reviews. Zero findings, zero recommendations, zero BM action items, zero BM conditions on the R6 re-presentation gate. The business lens adds **zero entries** to the findings ledger the Review Coordinator must empty before the R6 re-presentation; the open gates belong to the technical, management and code-review lenses and are unaffected by this verdict. The LCA milestone is NOT declared achieved by this record — the phase-level sanction remains withheld per the stakeholder's binding all-findings directive, owned by the other lenses.
 
-**Findings — Elaboration Iteration 3 (Code-Review Lens):**
+**Resolutions and actions (business lens, Iter 4):** NONE — zero findings emitted from this lens; zero prior BusinessReviewer findings open; no BM action item exists for the R6 re-presentation cycle.
 
-| Finding Key | Severity | Location | Description | Remediation |
-|---|---|---|---|---|
-| **F-CR-E1-1** | Critical | SCM state vs Iteration Plan WIs 7–9; exit criteria 1–3 | **RESOLVED (Iter 3).** The Iter 1 finding (no Implementer handoff; zero ready-for-review branches; zero PRs; no mechanism code) is remediated: 3 ready-for-review branches handed off, all CI green; 3 PRs opened base `iteration/E1`; 3 APPROVED terminal dispositions issued under CR-1…CR-7. The code-review gate is exercised and closed. (The underlying empirical-validation gap — merge + TC execution + PoC results — is tracked by SAD F2 / Iteration Plan F3, other lenses; this lens's gate finding is resolved.) | Closed — no further action owed by this finding. The Integrator now merges the APPROVED PRs (A-16 remainder). |
-| **F-CR-E1-2** | Minor | Repository root — CONTRIBUTING.md | **RESOLVED (Iter 3).** CONTRIBUTING.md verified on main (sha `6662813…`): ARCH-1…ARCH-10 + coding conventions + branch strategy + PR checklist. CR-1 has its citable rule baseline, and every Iter 3 guideline check cited it (no uncited-taste findings). | Closed — no further action owed. |
-| **F-CR-E3-1** | Minor | PRs #3/#5 — `src/EmployeePortal/Infrastructure/ClockingsRepository.cs` (interim `InMemoryClockingsRepository`) vs Design Model INT-016 | **Interim persistence adapter deviates from INT-016's final contract.** INT-016 specifies staging semantics (`Add`/`AddRange` staging, commit via INT-015 `SaveChanges`) and an `AddRange` batch operation; the interim adapter commits immediately on `AddAsync` and exposes no `AddRange`. The REL-002 UNIQUE-key contract IS correctly enforced (duplicate → `DuplicateIdempotencyKeyException` → `RejectedDuplicate`, never a second row — ARCH-7), and the code documents the replacement (CLS-011/CLS-012 PgPersistence, EF Core + Npgsql 10.0.3, ADR-002) in Construction Iteration 1 per R008 — but the deviation carries no `[DEFERRED — requires Design Model update]` marker in the PR record. | Carry the `[DEFERRED]` marker in the record note (done — this row); Implementer lands the PG adapter per INT-016 in Construction Iteration 1 (R008 build-time validation); Designer confirms INT-016 unchanged (the interim adapter is a test-seam realization, not a design change). |
-| **F-CR-E3-2** | Minor | PR #4 — `src/EmployeePortal/Infrastructure/KeycloakAuthProvider.cs` (`IAuthProvider`) vs Design Model INT-011 | **Interface carries two operations absent from the INT-011 contract table.** `BuildAuthorizeRedirectUrl(redirectUri, state)` and `HandleOidcCallbackAsync(authorizationCode)` realize the designed CON-004 redirect flow (register a client, redirect for login, validate the token — the flow SEQ-001 depicts at the middleware) and are required by the R003 acceptance criteria (the portal completes the redirect flow), but the INT-011 table lists only `ConfigureOidc` and `GetAuthenticatedUser`. The behavior is inside design; the contract table lags the code. | Designer extends the INT-011 contract table in the next Design Model evolution with the two operations (preconditions/postconditions: authorize-URL construction with state parameter; code→token→JWKS-validation→identity+roles) — contract-table hygiene, no behavior change owed. |
-| **F-CR-E3-3** | Minor | PR #4 — `src/EmployeePortal/Infrastructure/KeycloakAuthProvider.cs` (`OidcMiddleware`) | **The `state` parameter comment overstates the protection implemented.** `BuildAuthorizeRedirectUrl` requires the state parameter "for CSRF protection" and the middleware generates one per challenge — but the callback path does not round-trip validate it (no expected-state storage exists; the session mechanism is Construction scope, AF-2). As written, a reader could believe CSRF protection is complete. The R003 acceptance criteria (the portal consumes and validates an OIDC token correctly) are unaffected — state validation is a session-flow concern, not a token-validation concern. | Implementer corrects the comment to state that round-trip state validation lands with the session mechanism in Construction, marked `[DEFERRED — lands with the session mechanism, Construction]`; no code change owed this phase. |
+**Re-trigger condition (unchanged, recorded for the ReviewCoordinator):** a Change Request introducing business-process reengineering, workflow transformation, or a business object model re-opens the DC §4 classification (owner: ProcessEngineer). Until such a CR exists, no BM deliverable is owed at the R6 re-presentation, in Construction, or in Transition, and this lens's next review obligation arises only if the classification changes.
 
-**Defect Distribution — Iteration 3 (severity × scope, Code-Review Lens):**
-
-```plantuml
-@startuml
-title Elaboration Iter 3 - Code-Review Defect Distribution\nseverity x scope (Code Reviewer lens, 2026-09-02)
-
-object "Closures this cycle (this lens)" as C1 {
-  F-CR-E1-1 Critical : RESOLVED
-  no handoff -> 3 ready branches,
-  3 PRs opened (base iteration/E1),
-  3 APPROVED terminal dispositions;
-  the code-review gate is exercised
-  and closed
-  F-CR-E1-2 Minor : RESOLVED
-  CONTRIBUTING.md verified on main,
-  sha 6662813 - CR-1 has its citable
-  rule baseline (ARCH-1..10)
-}
-object "New findings this cycle (this lens)" as C2 {
-  Critical 0, Major 0, Minor 3
-  F-CR-E3-1 : interim in-memory
-  IClockingsRepository deviates from
-  INT-016 final contract (staging via
-  INT-015, AddRange) - documented in
-  code, DEFERRED marker owed
-  (PR #3, PR #5)
-  F-CR-E3-2 : IAuthProvider carries 2
-  operations absent from the INT-011
-  contract table (PR #4)
-  F-CR-E3-3 : OidcMiddleware state
-  comment overstates CSRF protection -
-  round-trip validation lands with the
-  Construction session mechanism (PR #4)
-}
-object "Open after this cycle (this lens)" as C3 {
-  3 Minor (F-CR-E3-1/2/3) - all owned,
-  all with concrete remediation:
-  INT-011/INT-016 contract-table
-  evolution (Designer), Construction
-  PG adapter per R008 (Implementer),
-  comment correction (Implementer)
-  Convergence note: the underlying
-  empirical-validation gap (SAD F2,
-  Iteration Plan F3 - other lenses)
-  awaits Integrator merge + TC
-  execution + PoC results
-}
-C1 -[hidden]-> C2
-C2 -[hidden]-> C3
-@enduml
-```
-
-**PR Disposition Record — Elaboration Iteration 3 (terminal verdicts per in-scope PR):**
-
-| PR | Branch → Base | Mechanism | CI | Verdict | Review ID | Findings |
-|---|---|---|---|---|---|---|
-| #3 | feature/E1-R001 → iteration/E1 | R001 LDAP Gateway + four-clause bar across four consumers (COMP-007/CLS-009, CLS-003, CLS-006, CLS-007) | GREEN 33615260971 | **APPROVED** | 5088169328 | 1 Minor (F-CR-E3-1) |
-| #4 | feature/E1-R003 → iteration/E1 | R003 OIDC token validation vs stub issuer (COMP-006/CLS-010) | GREEN 33615945653 | **APPROVED** | 5088169517 | 2 Minor (F-CR-E3-2, F-CR-E3-3) |
-| #5 | feature/E1-R004 → iteration/E1 | R004 offline queue + idempotent sync (COMP-009/CLS-008, CLS-001) | GREEN 33616121855 | **APPROVED** | 5088169685 | 1 Minor (F-CR-E3-1, shared) |
-
-**Integration handoff note (for the Integrator):** PRs #3 and #5 both add identical foundational files (`ClockingsRepository.cs`, `ClockingTypes.cs`, `TimeConvention.cs`, the tests `.csproj` changes) — identical content, so sequential merges should auto-resolve; merge PR #3 first, then PR #5, then PR #4 (no overlap). All three PRs are APPROVED and meet the Integrator's merge precondition (review state APPROVED); the Integrator merges ONLY PRs based on `iteration/E1` — all three are.
-
-**Conformance evidence summary (what the approvals are grounded in — not diff readability):** PR #3 implements the FOUR-clause R001 behavioural bar clause-by-clause with deliberately-seeded substitution-attempt fixtures (a "General" default temptation, a first-office "Central" fallback, an "N/A" placeholder temptation, an empty-string attribute, a fully-gapped entry, an unresolvable uid) so every clause can actually fail — the exact fixture shape A-28 mandates; D-9 map completeness holds at the gateway AND defensively at the service; ARCH-8 read-only seam is compiler-enforced and test-asserted; ARCH-4 timestamp convention is single-owned and DST-pinned at both boundaries. PR #4 validates RS256 signatures via the issuer's JWKS with kid matching, enforces exp/iss/aud/sub, extracts roles verbatim (never invented — test-asserted), rejects every failing state at the request boundary (401, next not invoked), and the stub issuer mints every failing state per the stakeholder's mock decision. PR #5 implements the idempotent receiver per D-6 (UNIQUE key as the suppression point — ARCH-7), DAT-001 press-time capture never rewritten, the browser localStorage half in `wwwroot/js/offline-queue.js` per the design's placement, and the AC-005 drop simulation asserts zero duplicates (double replay AND mixed online+queued), zero losses, ≤ 60 s sync, < 1 s confirmations, and recorded-order preservation.
-
-**Traceability (this lens's Iter 3 rows):**
-
-| Element | Traces From | Link Type | Traces To |
-|---|---|---|---|
-| PR #3 (R001) | FR-010/CON-005/CON-006/CON-007; R001; SAD COMP-007; Design Model CLS-009/CLS-003/CLS-006/CLS-007, INT-008/INT-010/INT-013/INT-014; FOUR-clause bar (stakeholder decisions Elab Iter 2 + verdict gate; A-27/A-28) | Implements | UC-004/UC-005/UC-006/UC-007; TC-011 + TC-021/022/023 (execution owned by the Test Designer); exit criterion 1 |
-| PR #4 (R003) | CON-004; R003; SAD COMP-006; Design Model CLS-010, INT-011; stakeholder stub-issuer decision | Implements | Cross-cutting auth `<<include>>` from UC-001…UC-010; TC-004…TC-010 auth cases; exit criterion 2 |
-| PR #5 (R004) | NFR-004/AC-005; R004; SAD COMP-009; Design Model CLS-008/CLS-001, INT-006/INT-016; ADR-003; REL-002/REL-003 | Implements | UC-001/UC-002; TC-001…TC-003 offline/sync cases; exit criterion 3 |
-| F-CR-E3-1 | Design Model INT-016 (final contract); R008 (Construction build-time validation); ADR-002 | Reviews | Construction Iteration 1 PG adapter (Implementer); INT-016 confirmation (Designer) |
-| F-CR-E3-2 | Design Model INT-011 (contract table); CON-004 (redirect flow); SEQ-001 (middleware behavior) | Reviews | INT-011 contract-table evolution (Designer, next Design Model pass) |
-| F-CR-E3-3 | OIDC state parameter semantics; Construction session mechanism (AF-2) | Reviews | Comment correction (Implementer, next code touch); Construction session work |
-| F-CR-E1-1 / F-CR-E1-2 closures | Iter 1 findings (this lens); stakeholder Iter 2 verdict-gate priority (Implementer code push) | Resolves | A-2/A-3/A-4/A-5/A-6 (delivered); the code-review gate (closed) |
-
-### Elaboration Iteration 4, Cycle 1 — Code-Review Lens Record (Code Reviewer, 2026-09-02)
-
-**Scope and criteria (this lens, this cycle):** the record-propagation pass's code handoff — **PR #7** (feature/E4-R003-state-comment → iteration/E4), the Implementer's remediation of **F-CR-E3-3** (this lens's Iter 3 Minor finding: the OidcMiddleware state-parameter comment overstating CSRF protection). Reviewed as **evolutionary production code** under checklist CR-1…CR-7, unchanged from Iter 1/Iter 3. Upstream baselines reused from the Iter 3 load (CONTRIBUTING.md sha `6662813…` — ARCH-1…ARCH-10; Design Model CLS-001…027, INT-006…019, SEQ-001…010, AF-2 session-mechanism Construction scope; SAD Logical View COMP-001…011). The acceptance lens is the F-CR-E3-3 remediation itself: correct the comment to state that round-trip state validation lands with the Construction session mechanism, marked `[DEFERRED — lands with the session mechanism, Construction]`, no code change owed.
-
-**Gate Execution — What Was Run This Cycle (Code-Review Lens, Iter 4):**
-
-```plantuml
-@startuml
-title Code-Review Gate Execution - Elaboration Iter 4, Cycle 1 (2026-09-02)
-
-start
-:scm_list_branches_with_label("ready-for-review")
-returns **0 branches**;
-:scm_list_pull_requests(open) returns **1 PR**:
-PR #7 - feature/E4-R003-state-comment
--> iteration/E4 (F-CR-E3-3 remediation);
-:scm_get_repo_tree("main") loaded ONCE
-(85 entries - mechanism code present:
-Infrastructure/, Services/, tests/);
-:PR queue = [PR #7] - base already
-iteration/E4 (correct per BRANCHING
-STRATEGY 5.2; no stale PR to re-target);
-:scm_get_pull_request_diff(#7):
-1 file, +13/-2, comment-only
-(src/EmployeePortal/Infrastructure/
-KeycloakAuthProvider.cs);
-:scm_get_build_status(head branch):
-GREEN - run 33632200967;
-:scm_get_pull_request_review_state(#7):
-NONE (no prior verdict to preserve);
-:Apply CR-1..CR-7 - ALL PASS
-(guidelines, dual coverage, SAD/Design
-conformance, traceability, CI, build-tree);
-if (Critical or Major findings?) then (no - zero)
-  :scm_approve_pull_request(#7)
-review 5090059324;
-  :F-CR-E3-3 RESOLVED - all three
-overstated-CSRF comment locations
-corrected with the honest DEFERRED
-marker (session mechanism, Construction);
-  :Append the Iter 4 code-review-lens
-record to the Review Record (cumulative);
-  stop
-else (yes)
-  :scm_request_changes_on_pull_request
-with findings + remediation;
-  stop
-endif
-@enduml
-```
-
-**Compliance Matrix — CR-1…CR-7 × PR #7 (Iter 4):**
-
-```plantuml
-@startuml
-title Elaboration Iter 4 - Code-Review Compliance Matrix\nCR-1..CR-7 x PR #7 (Code Reviewer, 2026-09-02)
-
-object "PR #7 - R003 state-comment correction\n(F-CR-E3-3 remediation)\nsrc/EmployeePortal/Infrastructure/KeycloakAuthProvider.cs" as P7 {
-  CR-1 Guidelines (ARCH-1..10) : PASS
-  comment-only change; the DEFERRED
-  marker applied exactly as the
-  finding remediation prescribed;
-  comments cite the finding key
-  CR-2 Dual coverage : PASS
-  no new behavior - throw condition
-  unchanged; guard-path coverage
-  intact (CI green confirms no test
-  asserted the old message string)
-  CR-3 SAD/Design conformance : PASS
-  no signature/class/interface change;
-  deferred disposition matches AF-2
-  (session = Construction) + SEQ-001
-  CR-4 Traceability trailer : PASS
-  F-CR-E3-3 + R003 in PR title/branch
-  CR-5 CI green : PASS (33632200967)
-  CR-6 Build-tree coverage : PASS
-  1 file under src/ in the build tree
-  CR-7 Terminal disposition : APPROVED
-  (review 5090059324)
-}
-object "Finding-closure verification\nF-CR-E3-3 (Minor, Iter 3)" as FC {
-  Prescribed remediation : correct the
-  comment to state round-trip state
-  validation lands with the Construction
-  session mechanism, marked DEFERRED;
-  no code change owed
-  Delivered : ALL THREE misleading
-  locations corrected (interface XML
-  doc, guard clause, middleware
-  challenge site); false CSRF claim
-  removed from the exception message;
-  honest statement recorded
-  Verdict : RESOLVED - complete
-}
-P7 -[hidden]-> FC
-@enduml
-```
-
-**SCM Evidence Snapshot (Iter 4 — what actually happened):** `scm_list_branches_with_label("ready-for-review")` → 0 branches (the handoff arrived as an already-open PR, not a labelled branch — the PR base is correct, so no re-targeting was owed); `scm_list_pull_requests(open)` → 1 PR (#7, feature/E4-R003-state-comment → iteration/E4); `scm_get_repo_tree("main")` → 85 entries, mechanism code present (Infrastructure/ with ClockingsRepository, ILdapGateway, KeycloakAuthProvider, LdapGateway, LdapTypes, OfflineQueue, OidcTypes; Services/ with ClockingService, DirectoryService, ReportExport, TimeConvention et al.; tests/ with the full suite incl. Fixtures/DisposableLdapDirectory + StubOidcIssuer); `scm_get_pull_request_diff(#7)` → 1 file, +13/−2, comment-only (KeycloakAuthProvider.cs); `scm_get_build_status(feature/E4-R003-state-comment)` → GREEN (run 33632200967, completed 2026-09-02 12:51:38Z); `scm_get_pull_request_review_state(#7)` → NONE before verdict; **APPROVED (review 5090059324)**.
-
-**Findings — Elaboration Iteration 4 (Code-Review Lens):** **NONE — zero new findings.** PR #7 passes CR-1…CR-7 clean. One prior finding of this lens is RESOLVED this cycle:
-
-| Finding Key | Severity | Location | Description | Remediation |
-|---|---|---|---|---|
-| **F-CR-E3-3** | Minor | PR #4 (Iter 3) — `src/EmployeePortal/Infrastructure/KeycloakAuthProvider.cs` (`OidcMiddleware` / `IAuthProvider`) | **RESOLVED (Iter 4, PR #7).** The state-parameter comment no longer overstates CSRF protection. All three misleading locations are corrected: (1) the `IAuthProvider.BuildAuthorizeRedirectUrl` XML doc now states the state parameter is carried through to the issuer and that round-trip state validation on the callback path is `[DEFERRED — lands with the session mechanism, Construction]`; (2) the guard clause comment honestly states the parameter is required so every challenge carries one but is NOT round-trip validated (no expected-state storage exists yet), and the false "(CSRF protection)" claim is removed from the exception message; (3) the middleware challenge site records the same deferred disposition and correctly notes the R003 acceptance criteria (token consumption/validation) are unaffected. The code now says exactly what it does. | Closed — no further action owed. The Construction session mechanism (AF-2) owns the round-trip validation when it lands. |
-
-**Defect Distribution — Iteration 4 (severity × scope, Code-Review Lens):**
-
-```plantuml
-@startuml
-title Elaboration Iter 4 - Code-Review Defect Distribution\nClosures + open findings (Code Reviewer lens, 2026-09-02)
-
-object "Closures this cycle (this lens)" as C1 {
-  F-CR-E3-3 Minor : RESOLVED
-  PR #7 APPROVED (review 5090059324)
-  - all three overstated-CSRF comment
-  locations corrected
-  - false "(CSRF protection)" claim
-  removed from the exception message
-  - honest DEFERRED marker recorded
-  (session mechanism, Construction)
-}
-object "New findings this cycle (this lens)" as C2 {
-  Critical 0, Major 0, Minor 0
-  PR #7 passes CR-1..CR-7 clean;
-  no new defect recorded
-}
-object "Open after this cycle (this lens)" as C3 {
-  F-CR-E3-1 Minor : OPEN - Construction
-  scope (interim IClockingsRepository vs
-  INT-016 final contract; PG adapter
-  lands Construction Iter 1 per R008;
-  DEFERRED marker carried in the record)
-  F-CR-E3-2 Minor : OPEN - Designer-owned
-  (INT-011 contract-table evolution,
-  next Design Model pass)
-  Both narrative-tracked,
-  non-Elaboration-blocking
-}
-C1 -[hidden]-> C2
-C2 -[hidden]-> C3
-@enduml
-```
-
-**PR Disposition Record — Elaboration Iteration 4 (terminal verdicts per in-scope PR):**
-
-| PR | Branch → Base | Content | CI | Verdict | Review ID | Findings |
-|---|---|---|---|---|---|---|
-| #7 | feature/E4-R003-state-comment → iteration/E4 | F-CR-E3-3 remediation — state-comment correction (OidcMiddleware CSRF comment), 1 file +13/−2, comment-only | GREEN 33632200967 | **APPROVED** | 5090059324 | 0 new; 1 resolved (F-CR-E3-3) |
-
-**Integration handoff note (for the Integrator):** PR #7 is APPROVED with base `iteration/E4` — the merge precondition (review state APPROVED) is satisfied. Single-file, comment-only diff; no merge-order interaction with any other open PR (none exist).
-
-**Conformance evidence summary (what the approval is grounded in):** the diff changes no signature, no class, no interface, and no behavior — the throw condition on a whitespace state parameter is byte-for-byte the same guard; only the overstated "(CSRF protection)" string is removed from the exception message, and CI green empirically confirms no test asserted that message text (the white-box guard-path coverage remains exercised and passing). The `[DEFERRED — lands with the session mechanism, Construction]` marker is applied exactly as the finding's remediation prescribed, at all three locations where a reader could have believed CSRF protection was complete. The deferred disposition stated in the comments matches the Design Model's AF-2 (session mechanism = Construction scope) and SEQ-001 (middleware behavior); the R003 acceptance criteria (the portal consumes and validates an OIDC token correctly) are correctly noted as unaffected — state validation is a session-flow concern, not a token-validation concern.
+**Revision note (anchoring decision, recorded per the honest-recording discipline):** the business-lens Iter 4 record follows the combined-record pattern (Iter 3 precedent: findings + milestone disposition + this lens's traceability rows in one subsection) and is anchored in § Review Scope and Criteria — the canonical section whose semantics match the bulk of an INACTIVE-discipline review (what was checked, against what criteria, with what evidence). Anchoring in § Findings would have required reproducing that section's full preserved content — now the largest section of this cumulative artifact, grown by three same-iteration lens records — in a single section-scoped upsert; the truncation-induced content-loss risk is exactly the failure mode the Iter 3 section-replacement lesson exists to prevent. The record remains discoverable by title for the coordinator's consolidation; the verdict is stated in full here and registered in Document Control. This lens's Iter 4 traceability rows are carried inline below (the artifact-level § Traceability registry is preserved untouched for the same reason).
 
 **Traceability (this lens's Iter 4 rows):**
 
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
-| PR #7 (F-CR-E3-3 remediation) | F-CR-E3-3 (this lens, Iter 3); R003; CON-004 (redirect flow); Design Model INT-011, SEQ-001, AF-2 (session mechanism = Construction); CONTRIBUTING.md ARCH-1…ARCH-10 (sha 6662813) | Implements | The honest-deferred-disposition rule (CONTRIBUTING.md / Design Model AF-2); Construction session mechanism (round-trip state validation when it lands); Integrator merge (base iteration/E4) |
-| F-CR-E3-3 closure | PR #7 diff (all three locations corrected; false CSRF claim removed); CI GREEN run 33632200967; review 5090059324 | Resolves | This lens's findings ledger (3 open Minors → 2); the stakeholder all-findings directive (one more finding closed); R6 entry gate (ledger emptiness) |
-| F-CR-E3-1 / F-CR-E3-2 (remain open) | Design Model INT-016 (final contract) + R008; Design Model INT-011 (contract table) | Reviews | Construction Iteration 1 PG adapter (Implementer, R008); INT-011 contract-table evolution (Designer, next Design Model pass) — both Construction-scope/Designer-owned, non-Elaboration-blocking |
+| Business-lens Iter 4 re-review (this record) | Work Order (Elab Iter 4 — LCA milestone review, business modeling lens); DC §4 classification (ProcessEngineer re-record 2026-09-02: isBusinessProcessLed=false, Inception verdict unchanged, no CR re-opened); Vision (Inception, Approved — BPL signal re-verified absent); Use-Case Model (Elaboration Iter 4 revision — zero BM sections re-verified, read in full); findings ledger (Vision, Use-Case Model, Supplementary Specification, Review Record — all four empty; zero BusinessReviewer findings project-wide) | Reviews | R6 re-presentation gate (zero BM conditions); Review Record cumulative (business-lens Iter 4 record); ReviewCoordinator LCA verdict aggregation |
+| BR-OK-INACTIVE verdict (Iter 4, sustained — fourth consecutive LCA-cycle verification) | DC §4 activation rule (Business Modeling ACTIVE only when business-process-led = true); IARI DC baseline discipline-intensity matrix (BM High in Elaboration applies only to BPL-true projects); Iter 1 + Iter 2 + Iter 3 BR-OK-INACTIVE verdicts (sustained, not re-created); ProcessEngineer re-record 2026-09-02 (Elab Iter 4) | Refines | R6 re-presentation (BM remains INACTIVE unless a CR re-triggers the classification); Construction and Transition (no BM deliverable owed); ProcessEngineer (re-trigger owner) |
+| BM prior-findings reconciliation (Iter 4) | read_artifact_findings executed for Vision, Use-Case Model, Supplementary Specification, Review Record (2026-09-02) — all four return empty arrays; zero resolve_artifact_finding calls owed; zero record_artifact_finding calls owed | Refines | Findings ledger (single source of truth — zero BusinessReviewer entries across the entire project); cross-lens ownership invariant (Inception findings belong to the Reviewer and ManagementReviewer lenses, all RESOLVED) |
 ## Findings
 ### Elaboration Iteration 1 — New Findings (Code-Review Lens)
 
