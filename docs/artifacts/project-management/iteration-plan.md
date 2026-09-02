@@ -1,17 +1,16 @@
 # Iteration Plan
 
 ## Document Control
-
 | Field | Value |
 |---|---|
 | Phase | Elaboration |
-| Status | Draft — Elaboration Iter 2 plan (convergence cycle) |
+| Status | Draft — Elaboration Iter 2 plan (convergence cycle); close-pass corrections applied 2026-09-02 |
 | Milestone Target | End of Elaboration (LCA) — NOT yet achieved; LCA re-presented at this iteration's close with the evidence package |
 | Iteration | 2 (Cycle 1) |
 | Date | 2026-09-02 |
 | Prior Version | Elaboration Iter 1 plan (2026-09-01); Inception plan (Approved at LCO); EVOLVED, not recreated |
 | Iter 2 Changes | **Convergence cycle plan** (Review Record actions A-1…A-15; stakeholder directive: fix ALL findings, all lenses, all severities, before phase transition). **F4 resolved (A-12):** all-findings closure added as explicit exit criterion 11. **F5 resolved (A-13):** human-gate queue forecasts REMOVED from the milestone table — estimate NONE, bounded in Risk List R012; measured actuals only. **F3 remediation armed (A-11):** exit criteria 1–3 now require SCM code evidence as the verification method; work-item statuses reconciled to SCM evidence (iteration/E1 has no CI runs as of 2026-09-02 — statuses say so). **R001 behavioural bar** (stakeholder Iter 2 answer) replaces the dropped >90% figure in exit criterion 1. Two active plans: Elab Iter 2 (CURRENT, tracking) + Construction Iter 1 (coarse only — fine plan built at LCA sanction, not before) |
-
+| Close-Pass Corrections (2026-09-02, iteration close) | **Iteration Plan F6 (Major, action A-22) corrected:** budget box re-sized from the measured iteration actual — the disproven 1,200K [ASSUMPTION chain] is replaced by **~12,500K [ASSUMPTION — scaled from the measured Elab Iter 1 iteration actual 12,523,281; basis: same 9-role shape, 13-artifact accumulated surface, convergence-cycle review load]**; work-item sum re-scaled ~840K → ~8,750K; rework headroom ~360K → ~3,750K; Resources token budgets re-scaled in the same pass; Construction sizing now inherits the measured iteration-shaped actuals (Iter 1: 12,523,281; Iter 2: 13,363,814), not the phase-level Inception record. **Iteration Plan F7 (Minor, action A-23) corrected:** WI 2 → Complete (CONTRIBUTING.md committed, sha 6662813…); WI 9 → Complete (record side — SAD F1/F3 ledger-closed 2026-09-02); WI 11 → Complete (authored this close pass). **Iteration Plan F3 (Reviewer, Minor, action A-18) corrected:** all TC enumerations updated to the 23-case Test Case authority (TC-001…TC-023 — TC-021/022/023 are the UC-005/006/007 AF-3 behavioural-bar cases; cross-checked against the Test Case §Test Case Catalog before upsert). **Fourth behavioural-bar clause propagated** (stakeholder verdict-gate contribution; A-25…A-31 family): exit criterion 1 and the UC table now carry the FOUR-clause bar — a missing attribute is displayed as missing, never replaced by a default, a placeholder, a guessed value, or another employee's value |
 ## Iteration Objectives
 
 1. **Close ALL open findings from the Iter 1 review — every lens, every severity** (stakeholder directive, binding on phase transition: "Please fix all the findings even if they are minors prior to move to next phase"; escalation resolution: "Fix all the issues and close all findings"). Ledger: 3 Critical (SAD F1, SAD F2, Iteration Plan F3), 1 Major (Iteration Plan F4), 4 Minor (SAD F3, Risk List F1 ×2, Iteration Plan F5) + 2 narrative-tracked (F-CR-E1-1, F-CR-E1-2).
