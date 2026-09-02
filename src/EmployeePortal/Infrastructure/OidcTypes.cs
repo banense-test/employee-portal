@@ -30,7 +30,7 @@ public sealed class OidcTokenValidationException(string message, Exception? inne
 /// </summary>
 public interface IJwksProvider
 {
-    Task&lt;string&gt; GetJwksJsonAsync(string issuer);
+    Task<string> GetJwksJsonAsync(string issuer);
 }
 
 /// <summary>
@@ -39,7 +39,7 @@ public interface IJwksProvider
 /// </summary>
 public interface ITokenExchangeClient
 {
-    Task&lt;string&gt; ExchangeCodeAsync(string authorizationCode);
+    Task<string> ExchangeCodeAsync(string authorizationCode);
 }
 
 /// <summary>Base64url encoding/decoding (RFC 7515) — the JWT/JWKS wire format.</summary>
@@ -56,9 +56,9 @@ public static class Base64Url
         var base64 = value.Replace('-', '+').Replace('_', '/');
         return Convert.FromBase64String(base64.Length % 4 switch
         {
-            2 =&gt; base64 + "==",
-            3 =&gt; base64 + "=",
-            _ =&gt; base64,
+            2 => base64 + "==",
+            3 => base64 + "=",
+            _ => base64,
         });
     }
 }

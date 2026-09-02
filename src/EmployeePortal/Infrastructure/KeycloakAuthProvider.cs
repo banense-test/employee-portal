@@ -38,7 +38,7 @@ public sealed class KeycloakAuthProvider(ITokenExchangeClient tokenExchange, IJw
         clientOptions.Validate(); // INT-011 precondition: Keycloak client settings present in configuration
         builder.Services.AddSingleton(clientOptions);
         builder.Services.AddSingleton<IAuthProvider>(this);
-        // SEC-003 boundary enforcement: the composition root calls app.UseMiddleware&lt;OidcMiddleware&gt;()
+        // SEC-003 boundary enforcement: the composition root calls app.UseMiddleware<OidcMiddleware>()
         // (ASP.NET Core registers middleware on the pipeline, not the service collection — ARCH-3).
     }
 
@@ -51,12 +51,12 @@ public sealed class KeycloakAuthProvider(ITokenExchangeClient tokenExchange, IJw
 
         var authorize = options.Authority.TrimEnd('/') + AuthorizeEndpointPath;
         return $"{authorize}?client_id={Uri.EscapeDataString(options.ClientId)}"
-             + $"&amp;redirect_uri={Uri.EscapeDataString(redirectUri)}"
-             + "&amp;response_type=code"
-             + $"&amp;state={Uri.EscapeDataString(state)}";
+             + $"&redirect_uri={Uri.EscapeDataString(redirectUri)}"
+             + "&response_type=code"
+             + $"&state={Uri.EscapeDataString(state)}";
     }
 
-    public async Task&lt;AuthenticatedUser&gt; HandleOidcCallbackAsync(string authorizationCode)
+    public async Task<AuthenticatedUser> HandleOidcCallbackAsync(string authorizationCode)
     {
         if (string.IsNullOrWhiteSpace(authorizationCode))
             throw new OidcTokenValidationException("The OIDC callback carries no authorization code.");
@@ -65,7 +65,7 @@ public sealed class KeycloakAuthProvider(ITokenExchangeClient tokenExchange, IJw
         return await ValidateTokenAsync(token);
     }
 
-    public async Task&lt;AuthenticatedUser?&gt; GetAuthenticatedUserAsync(HttpContext context)
+    public async Task<AuthenticatedUser?> GetAuthenticatedUserAsync(HttpContext context)
     {
         var token = ExtractBearerToken(context);
         if (token is null) return null; // unauthenticated — the middleware challenges; not an error
@@ -74,9 +74,9 @@ public sealed class KeycloakAuthProvider(ITokenExchangeClient tokenExchange, IJw
 
     /// <summary>
     /// Validates a signed token via the issuer's JWKS and extracts the identity + roles.
-/// Every rejection is an OidcTokenValidationException — the request boundary turns it into a 401.
+    /// Every rejection is an OidcTokenValidationException — the request boundary turns it into a 401.
     /// </summary>
-    internal async Task&lt;AuthenticatedUser&gt; ValidateTokenAsync(string token)
+    internal async Task<AuthenticatedUser> ValidateTokenAsync(string token)
     {
         var parts = token.Split('.');
         if (parts.Length != 3)
@@ -93,8 +93,8 @@ public sealed class KeycloakAuthProvider(ITokenExchangeClient tokenExchange, IJw
         }
 
         if (!header.TryGetProperty("alg", out var alg) || alg.GetString() != "RS256")
-            throw new OidcTokenValidationException($"Unsupported algorithm '{(alg.ValueKind == JsonValueKind.String ? alg.GetString() : "&lt;missing&gt;")}' — only RS256 is accepted.");
-        if (!header.TryGetProperty("kid", out var kidElement) || kidElement.GetString() is not { Length: &gt; 0 } kid)
+            throw new OidcTokenValidationException($"Unsupported algorithm '{(alg.ValueKind == JsonValueKind.String ? alg.GetString() : "<missing>")}' — only RS256 is accepted.");
+        if (!header.TryGetProperty("kid", out var kidElement) || kidElement.GetString() is not { Length: > 0 } kid)
             throw new OidcTokenValidationException("The token carries no key id (kid).");
 
         string jwksJson;
@@ -121,7 +121,7 @@ public sealed class KeycloakAuthProvider(ITokenExchangeClient tokenExchange, IJw
 
         if (!payload.TryGetProperty("exp", out var exp) || !exp.TryGetInt64(out var expiresAtEpoch))
             throw new OidcTokenValidationException("The token carries no expiry.");
-        if (expiresAtEpoch &lt;= DateTimeOffset.UtcNow.ToUnixTimeSeconds())
+        if (expiresAtEpoch <= DateTimeOffset.UtcNow.ToUnixTimeSeconds())
             throw new OidcTokenValidationException("The token is expired.");
 
         if (!payload.TryGetProperty("iss", out var iss) || iss.GetString() != options.Authority)
@@ -130,7 +130,7 @@ public sealed class KeycloakAuthProvider(ITokenExchangeClient tokenExchange, IJw
         if (!payload.TryGetProperty("aud", out var aud))
             throw new OidcTokenValidationException("The token carries no audience.");
         var audiences = aud.ValueKind == JsonValueKind.Array
-            ? aud.EnumerateArray().Select(a =&gt; a.GetString()).ToList()
+            ? aud.EnumerateArray().Select(a => a.GetString()).ToList()
             : [aud.GetString()];
         if (!audiences.Contains(options.ClientId))
             throw new OidcTokenValidationException("The token audience does not include this client.");
@@ -177,12 +177,12 @@ public sealed class KeycloakAuthProvider(ITokenExchangeClient tokenExchange, IJw
     }
 
     /// <summary>Extracts the roles from the realm_access.roles claim VERBATIM (SEC-006) — never invented, never renamed.</summary>
-    private static IReadOnlySet&lt;string&gt; MapRoles(JsonElement payload)
+    private static IReadOnlySet<string> MapRoles(JsonElement payload)
     {
-        var roles = new HashSet&lt;string&gt;(StringComparer.Ordinal);
+        var roles = new HashSet<string>(StringComparer.Ordinal);
         if (payload.TryGetProperty("realm_access", out var realmAccess)
-            &amp;&amp; realmAccess.TryGetProperty("roles", out var roleList)
-            &amp;&amp; roleList.ValueKind == JsonValueKind.Array)
+            && realmAccess.TryGetProperty("roles", out var roleList)
+            && roleList.ValueKind == JsonValueKind.Array)
         {
             foreach (var role in roleList.EnumerateArray())
             {
@@ -205,7 +205,7 @@ public sealed class KeycloakAuthProvider(ITokenExchangeClient tokenExchange, IJw
 
 /// <summary>
 /// The request-boundary OIDC enforcement (SEC-003: all pages require authentication).
-/// Registered by the composition root via app.UseMiddleware&lt;OidcMiddleware&gt;() after
+/// Registered by the composition root via app.UseMiddleware<OidcMiddleware>() after
 /// ConfigureOidc has validated the client options and registered the services.
 /// </summary>
 public sealed class OidcMiddleware(RequestDelegate next, IAuthProvider authProvider, KeycloakClientOptions options)

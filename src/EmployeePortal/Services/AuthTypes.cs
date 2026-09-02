@@ -4,7 +4,7 @@ namespace EmployeePortal.Services;
 /// The authenticated identity at the request boundary — Uid + roles from claims (SEC-002).
 /// Produced by CLS-010 (Infrastructure); consumed by every controller (Presentation).
 /// </summary>
-public sealed record AuthenticatedUser(string Uid, IReadOnlySet&lt;string&gt; Roles);
+public sealed record AuthenticatedUser(string Uid, IReadOnlySet<string> Roles);
 
 /// <summary>
 /// SEC-006 role names as they appear in the Keycloak realm_access.roles claim. The realm
