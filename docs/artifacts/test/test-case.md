@@ -840,7 +840,6 @@ stop
 | **#1** | R001/R003/R004 mechanism code absent from SCM — empirical validation of all Elaboration test cases BLOCKED | `change-request, cr:logged, nature:defect, severity:blocker, priority:critical` | Review Record F-CR-E1-1, actions A-2…A-4; Iteration Plan WIs 7–9, exit criteria 1–3; R001 (HIGH), R003, R004; TC-001…TC-023 |
 | **#2** | CONTRIBUTING.md absent — programming-guidelines baseline missing for CR-1 review of the first mechanism PR | `change-request, cr:logged, nature:defect, severity:minor, priority:medium` | Review Record F-CR-E1-2, action A-5; code-review checklist CR-1 |
 ## Test Data
-
 All data is synthetic and self-contained — no production AD data, no real employee identities. Fixtures are reusable Construction assets (R011 mitigation, Test Evaluation Summary recommendation 4).
 
 ### Test Identities (stub OIDC issuer)
@@ -858,13 +857,24 @@ All data is synthetic and self-contained — no production AD data, no real empl
 
 ### Disposable LDAP Directory (R001 fixture — TC-009…TC-012, TC-021…TC-023)
 
-60 synthetic entries, 3 offices (O1/O2/O3), 20 each. Six corporate attributes per entry (FR-010): displayName, title, department, office, mail, telephoneNumber (extension). **Re-seeded this iteration (Elab Iter 2) per the stakeholder's behavioural-bar decision and UC-004 S4** — the gaps are the point: they are seeded deliberately so the three clauses can be proven to hold against them. The prior population-rate column is dropped with the statistical criterion (a self-seeded rate measures our own test data — it cannot fail, so it proves nothing).
+64 synthetic entries, 3 offices (O1/O2/O3), 20 each. Six corporate attributes per entry (FR-010): displayName, title, department, office, mail, telephoneNumber (extension). **Re-seeded Iter 2 per the stakeholder's behavioural-bar decision and UC-004 S4 — the gaps are the point: they are seeded deliberately so the clauses can be proven to hold against them. Re-seeded AGAIN Iter 3 (A-28) with substitution-attempt fixtures — the fourth clause (no invented values) must be able to FAIL, so the fixture seeds the exact temptations a lazy implementation would take: a default department, a first-office fallback, a placeholder title, and a fully-gapped entry.** The prior population-rate column is dropped with the statistical criterion (a self-seeded rate measures our own test data — it cannot fail, so it proves nothing).
 
 | Office | Entries | Deliberate gap | Purpose |
 |---|---|---|---|
 | O1 | 20 | `ldap-o1-019` missing telephoneNumber (extension) | TC-011 clause walk; TC-021 review row; TC-022 CSV row |
 | O2 | 20 | `ldap-o2-007` missing title (job title) | TC-011 clause walk; TC-021 review row; TC-022 CSV row |
 | O3 | 20 | `ldap-o3-011` missing department | TC-011 clause walk; TC-021 review row; TC-022 CSV row; **TC-023 assignment target** |
+
+**Substitution-attempt fixtures (A-28, Iter 3 — clause (d) verification data):**
+
+| Entry | Missing attribute | Substitution temptation seeded against | Verified by |
+|---|---|---|---|
+| `ldap-o1-017` | department | a "General" default department (the most plausible default a mapping layer could invent) | TC-011 ASSERT-1d; TC-021 ASSERT-2d; TC-022 ASSERT-3d; TC-023 ASSERT-4d |
+| `ldap-o2-021` | office | a "Central" first-office fallback (the first office in the list — the fallback a lazy implementation takes) | TC-011 ASSERT-1d; TC-021 ASSERT-2d; TC-022 ASSERT-3d |
+| `ldap-o3-014` | title | an "N/A" placeholder (the placeholder a rendering layer could substitute) | TC-011 ASSERT-1d; TC-021 ASSERT-2d; TC-022 ASSERT-3d |
+| `ldap-o1-018` | ALL display attributes (fully-gapped) | cross-entry inheritance — a fully-gapped entry must inherit NO attribute from any other entry | TC-011 ASSERT-1d; TC-021 ASSERT-2d; TC-022 ASSERT-3d |
+
+**Why these four temptations:** the stakeholder's rationale, verbatim — "Blank is an answer. 'General', or the first office in the list, is a fabrication — and on the CSV that reaches payroll a fabricated department is worse than an empty cell. An empty cell gets questioned. A plausible wrong one does not." Each fixture is the exact value a plausible-but-wrong implementation would produce; the ASSERT-xd steps fail if any of them appears. The fully-gapped entry attacks the cross-entry inheritance failure mode (a mapping bug that fills a blank from the previous row's data — the "another employee's value" arm of clause (d)).
 
 Additional fixture edges: `ldap-o2-013` carries an **empty-string** telephoneNumber (distinct from absent) — exercises the null-vs-empty mapping edge in CLS-009 MapEntry (TC-011). **uid e099 has NO AD entry at all** (D-9 extreme) — clocking events exist for e099 in PostgreSQL; the review and export must still render/write its rows with all-null display data (TC-021, TC-022). Named search target: "Gómez, Elena" (`ldap-o1-003`, fully populated, department=O1) — the TC-009 happy-path hit. **This is NOT production AD** — production-instance fidelity is risk R011, retired in Construction integration (R010).
 
@@ -884,7 +894,7 @@ Additional fixture edges: `ldap-o2-013` carries an **empty-string** telephoneNum
 | S-1 | E-003 | one IN event today (timestamp_utc = today 12:00Z) | TC-002 clock-out precondition |
 | S-2 | E-002 | 4 events this month (2 in, 2 out) | TC-018 own-data boundary target |
 | S-3 | E-001 | 2 events this month | TC-017 leakage canary (must NEVER appear in E-003 responses) |
-| **S-4 (new, Elab Iter 2)** | `ldap-o1-019`, `ldap-o2-007`, `ldap-o3-011`, `e099` | one IN + one OUT event each, current month (8 events total) | TC-021 review rows / TC-022 CSV rows for the gapped employees and the D-9 unresolvable uid — the behavioural-bar data under test |
+| **S-4 (Elab Iter 2; extended Iter 3)** | `ldap-o1-019`, `ldap-o2-007`, `ldap-o3-011`, `ldap-o1-017`, `ldap-o2-021`, `ldap-o3-014`, `ldap-o1-018`, `e099` | one IN + one OUT event each, current month (16 events total) | TC-021 review rows / TC-022 CSV rows for the gapped employees, the substitution-attempt employees, and the D-9 unresolvable uid — the FOUR-clause behavioural-bar data under test |
 
 ### Time Fixture (TC-008 — FakeClock instants)
 
@@ -900,8 +910,7 @@ Controlled press instants T1/T2 (TC-004/005: 2 events) and 10 alternating presse
 
 ### Worker Category Fixture
 
-`worker-categories.json` (ADR-004) test copy: ["Administrative", "Technical", "Operational"] — a representative FIXED list; no CRUD path exists anywhere in the portal (CON-013), so the fixture only needs to load and be read. TC-023 assigns "Operational" to `ldap-o3-011`.
-
+`worker-categories.json` (ADR-004) test copy: ["Administrative", "Technical", "Operational"] — a representative FIXED list; no CRUD path exists anywhere in the portal (CON-013), so the fixture only needs to load and be read. TC-023 assigns "Operational" to `ldap-o3-011` and `ldap-o1-017`. **Clause (d) note (A-28):** the category select starts EMPTY for every employee — no default category is pre-selected for a gapped employee; only HR's explicit selection persists (the "default category" substitution temptation is seeded against, not with).
 ## Traceability
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
