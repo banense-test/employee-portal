@@ -893,6 +893,252 @@ end note
 ```
 
 **Prior-findings reconciliation (this lens, Iter 2):** [PLAN] artifacts × prior BR findings with resolution==null: Vision: [], Use-Case Model: [], Supplementary Specification: [], Review Record: []. TOTAL: 0. [EXIT] closed=0, deferred=0, rejected=0, left-open=0. Total: 0 of 0. The findings ledger holds zero findings emitted by the BusinessReviewer role across the entire project — nothing to close; no `resolve_artifact_finding` calls owed.
+
+### Elaboration Iteration 2 — Management-Lens Re-Review (Management Reviewer — PRA, 2026-09-02 — convergence cycle, calendar events R3/R4)
+
+**Scope and criteria (this lens, this cycle):** the two-part PRA review re-executed on the convergence track. Part 1 — **Project Planning Review** (feasibility and acceptability of the Iteration 2 Iteration Plan, evaluated against the MEASURED actuals in the Work Order and the Iteration Assessment's binding adjustments). Part 2 — **LCA exit criteria** (the six RUP lifecycle-architecture criteria, pass/fail per criterion with evidence). Artifacts inspected in full before any conclusion: Software Architecture Document (architecture baseline — SAD F1/F3 corrections verified present), Iteration Plan (Iter 2 convergence plan), Risk List (Iter 2 reappraisal — behavioural bar, trend column, R012), Iteration Assessment (Elab Iter 1 close-out — the measured actuals and binding adjustments this review evaluates the plan against; the Elab Iter 2 assessment is authored by the PM in the Assess touchpoint AFTER this review, so its absence is expected and is never a finding), Review Record (cumulative — all lenses, both iterations), and the Work Order's Measured Actuals (Inception phase-level record: 28 min agent time, 1,347,939 tokens, 11 runs, 10 artifacts). SCM state is taken from the technical lens's same-day empirical verification (2026-09-02: zero PRs in any state, no mechanism code on main, Issue #1 open, main GREEN run 33598979875) — recorded here per the cross-lens verification note; this lens does not re-probe SCM independently.
+
+**Prior-findings reconciliation (this lens — executed in the dedicated closure state, tool calls FIRST):** [PLAN] artifacts × prior MR findings with resolution==null: Iteration Plan: [4 (F3, Critical), 5 (F4, Major), 6 (F5, Minor)], Risk List: [1 (F1, Minor)]. TOTAL: 4. Dispositions: **Iteration Plan F4 (Major) RESOLVED** — exit criterion 11 mandates an EMPTY findings ledger across all lenses and severities, verified via the findings system at iteration close; Iteration Objectives §1 carries the stakeholder directive verbatim. **Iteration Plan F5 (Minor) RESOLVED** — queue forecasts removed; milestone table carries only the measured Inception 0s actual + "Estimate NONE" bounded in R012. **Risk List F1 (Minor) RESOLVED** — trend column on all 12 register rows with evidence pointers; R012 bounds the gate queue with the 14-day suspension ceiling. **Iteration Plan F3 (Critical) PERSISTS** — record side fixed (exit criteria 1–3 demand code evidence; statuses SCM-evidence-based; criterion 12 added), code-evidence side unmet (zero PRs, Issue #1 open, TC-001…TC-023 BLOCKED) — left open and re-emitted under its findingKey (2nd occurrence). [PROGRESS] anchors emitted per finding before each resolve. [EXIT] closed=3 (Resolved), deferred=0, rejected=0, left-open=1. Total disposed: 4 of 4. This satisfies the R3 calendar exit condition for this lens (Iteration Plan F4, F5 and Risk List F1 closed in the ledger); F3 closes at R4/R6 on OBSERVED evidence.
+
+**Part 1 — Project Planning Review (feasibility and acceptability, Iter 2 plan):**
+
+| Dimension | Assessment | Evidence |
+|---|---|---|
+| Units discipline | **PASS** | No person-weeks/story points; two clocks never summed (Two Clocks section, milestone table, sizing note); gantt bars disclaimed as structural sequencing units, unanchored |
+| UC-ID authority (LCO F1 lesson) | **PASS** | All 10 FR→UC rows verified against Use-Case Model authority; re-verified clean at the Iter 1 technical review (LCA-4 PASS) |
+| Human gate queue handling (F5 remediation) | **PASS — verified and ledger-closed** | Milestone table: measured Inception 0s actual + "Estimate NONE" for Elaboration/Construction/Transition; R012 bounds the queue (14-day suspension ceiling); no queue figure anywhere in the plan |
+| All-findings closure (F4 remediation) | **PASS — verified and ledger-closed** | Exit criterion 11: findings ledger EMPTY across all lenses and severities, verified via the findings system, not narrative claims |
+| Status honesty (F3 record side) | **PASS with two stale exceptions** | Work Items 3–5 honestly cite "no CI evidence as of 2026-09-02"; BUT WI 2 (CONTRIBUTING.md — committed, sha `6662813…`) and WI 9 (SAD corrections — F1/F3 ledger-closed 2026-09-02) understate verified delivery → Iteration Plan F7 (Minor) |
+| Budget box traces to measured actuals | **FAIL — Major** | The Iter 2 box retains 1,200K [ASSUMPTION — scaled from the Inception phase-level record] against the Iteration Assessment's FIRST binding adjustment: "Re-size the Iter 2 budget box from the measured 12,523,281 actual — the 1,200K assumption is disproven." The plan re-derives the disproven figure one step further from fact; work items sum ~840K against a box the measured shape says is ~10× too small → Iteration Plan F6 (Major) |
+| Architecture stability | **Record side fixed; code side unmet** | SAD §Quality carries the empirical disposition with explicit supersession note; §Logical View reconciled with the Design Model (SAD F1/F3 RESOLVED, ledger-closed 2026-09-02); PoC artifact exists with honest PENDING ledger — but zero mechanism code, zero PRs, Issue #1 open (SAD F2 persists, Reviewer lens) |
+| Risk retirement trend | **IMPROVING — first genuine movement, NOT retired** | R001/R003/R004: behavioural bar defined (stakeholder Iter 2), mechanism build executing, trend column present — but zero code evidence; IMPROVING is not RETIRED (see trend diagram below) |
+| Stakeholder acceptability | **Standing record — REFUSED; fresh request at R6** | The sanction question is verbatim in the stakeholder's answered list ("No" + all-findings directive); the convergence path was confirmed via the discharged escalation ("Fix all the issues and close all findings"); the fresh sanction request fires at R6 gated on the evidence package — requesting it mid-cycle would contradict the stakeholder's own bar. No new consultation owed this cycle; no un-asked consequential question exists |
+
+**Part 2 — LCA Milestone Compliance Table (criterion / status / evidence / verdict, Iter 2):**
+
+```plantuml
+@startuml
+title LCA Milestone Compliance Table - Management Lens\nElaboration Iter 2 convergence cycle (Management Reviewer - PRA, 2026-09-02)
+
+object "LCA-1: Product vision stable" as C1 {
+  Status: PASS (carried from Iter 1)
+  Evidence: 10 UCs FULL, 0 findings;
+  stakeholder Iter 2 answers
+  incorporated with markers
+  retired in place (R001 behavioural
+  bar; four-UC confirmation;
+  featured banner newest first)
+  Verdict: MET
+}
+object "LCA-2: Architecture stable" as C2 {
+  Status: PARTIAL - record side fixed,
+  code side unmet
+  Evidence: SAD F1 + F3 RESOLVED
+  (technical lens, ledger-closed
+  2026-09-02); PoC artifact exists
+  with honest PENDING ledger; BUT
+  SAD F2 persists (2nd occurrence):
+  zero mechanism code, zero PRs in
+  any state, Issue #1 open
+  Verdict: NOT MET
+}
+object "LCA-3: Major risks addressed empirically" as C3 {
+  Status: IN PROGRESS - NOT MET
+  Evidence: R001/R003/R004 paths
+  designed + re-scoped correctly;
+  behavioural bar defined; mechanism
+  build executing; BUT zero code
+  evidence as of this review;
+  TC-001..TC-023 all BLOCKED;
+  trend IMPROVING, not RETIRED
+  Verdict: NOT MET
+}
+object "LCA-4: Construction plan sufficiently detailed" as C4 {
+  Status: PASS with sizing rework owed
+  Evidence: all 10 UCs assigned across
+  3 Construction iterations; UC IDs
+  verified vs Use-Case Model
+  authority; BUT the sizing basis is
+  stale (1,200K per iteration vs
+  the measured 12,523,281 iteration
+  actual) - budget-box finding
+  Verdict: MET (scope); sizing rework
+}
+object "LCA-5: Stakeholders agree vision achievable" as C5 {
+  Status: REFUSED - standing
+  Evidence: Iter 1 sanction REFUSED;
+  all-findings directive binding;
+  escalation confirmed the
+  convergence path; fresh sanction
+  request scheduled at R6 with the
+  evidence package
+  Verdict: NOT MET (re-presentation
+  pending)
+}
+object "LCA-6: Actual vs planned expenditure acceptable" as C6 {
+  Status: measurement PASS,
+  plan response FAIL
+  Evidence: actuals recorded and
+  root-caused (12,523,281 tokens;
+  6:00:59 agent; 0:35:14 queue -
+  never summed); BUT the Iter 2 plan
+  retained the disproven 1,200K box
+  against the assessment's binding
+  re-size adjustment
+  Verdict: NOT MET (plan correction
+  owed)
+}
+
+C1 -[hidden]-> C2
+C2 -[hidden]-> C3
+C3 -[hidden]-> C4
+C4 -[hidden]-> C5
+C5 -[hidden]-> C6
+
+note bottom of C3
+  LCA verdict (management lens,
+  Iter 2): NO-GO. Criteria 2, 3,
+  5 NOT MET; criterion 6 carries a
+  plan-response defect. The
+  convergence cycle continues;
+  the fresh sanction request
+  fires at R6 with the evidence
+  package. No milestone, iteration
+  or phase is marked complete.
+end note
+@enduml
+```
+
+**Risk Retirement Trend (Inception → Elaboration Iter 2 — the management heuristic: high-magnitude risks must show DECREASING trend lines; IMPROVING is not RETIRED):**
+
+```plantuml
+@startuml
+title Risk Retirement Trend - Inception to Elaboration Iter 2 (Management Lens)\nHigh-magnitude risks must show DECREASING trend lines - IMPROVING is not RETIRED
+
+[*] --> R001_I
+state "R001 Inception:\nHIGH (P=3, I=3) OPEN" as R001_I
+state "R001 Elab Iter 1:\nHIGH MITIGATING\nTREND: FLAT" as R001_E1
+state "R001 Elab Iter 2:\nHIGH MITIGATING\nTREND: IMPROVING\nbehavioural bar defined\n(stakeholder Iter 2);\nmechanism build executing;\nNOT RETIRED - zero code evidence" as R001_E2
+R001_I --> R001_E1 : re-scoped - disposable\nLDAP directory
+R001_E1 --> R001_E2 : behavioural bar replaces\nthe dropped >90% figure;\ngaps seeded deliberately
+state "R001 target at R6:\nRETIRED on OBSERVED results\n(TC-011 + TC-021/022/023)" as R001_T
+R001_E2 --> R001_T : convergence cycle completes\nthe A-2/A-16 delivery chain
+
+[*] --> R003_I
+state "R003 Inception:\nSIGNIFICANT OPEN" as R003_I
+state "R003 Elab Iter 1:\nSIGNIFICANT MITIGATING\nTREND: FLAT" as R003_E1
+state "R003 Elab Iter 2:\nSIGNIFICANT MITIGATING\nTREND: IMPROVING\nstub-issuer path confirmed;\nmechanism build executing;\nNOT RETIRED" as R003_E2
+R003_I --> R003_E1 : re-scoped - stub OIDC issuer
+R003_E1 --> R003_E2
+state "R003 target at R6:\nRETIRED on OBSERVED results" as R003_T
+R003_E2 --> R003_T
+
+[*] --> R004_I
+state "R004 Inception:\nSIGNIFICANT OPEN" as R004_I
+state "R004 Elab Iter 1:\nSIGNIFICANT MITIGATING\nTREND: FLAT" as R004_E1
+state "R004 Elab Iter 2:\nSIGNIFICANT MITIGATING\nTREND: IMPROVING\ndirect path confirmed;\nmechanism build executing;\nNOT RETIRED" as R004_E2
+R004_I --> R004_E1 : re-scoped - direct
+R004_E1 --> R004_E2
+state "R004 target at R6:\nRETIRED on OBSERVED results" as R004_T
+R004_E2 --> R004_T
+
+[*] --> R010_E1
+state "R010 Elab Iter 1:\nSIGNIFICANT re-scoped:\nblocks production-instance\nintegration ONLY\nTREND: NARROWED" as R010_E1
+R010_E1 --> [*] : Construction integration\n(R010 + R011); not an\nLCA condition
+
+[*] --> R012_E2
+state "R012 Elab Iter 2: NEW\nMINOR (P=1, I=2) ACCEPT\nhuman-gate queue bounded;\n14-day suspension ceiling" as R012_E2
+R012_E2 --> [*] : monitored at every gate
+
+note bottom of R001_E2
+  Management heuristic 3: Iter 2 is
+  the first cycle with a genuine
+  IMPROVING trend (bar defined,
+  build executing) - but IMPROVING
+  is not RETIRED. Retirement is
+  claimed only on OBSERVED empirical
+  results at R6. The Risk List trend
+  column (A-14, ledger-closed this
+  revision) now surfaces the trend
+  at every review.
+end note
+@enduml
+```
+
+**Project Health Scorecard (four dimensions — a project green on some dimensions and red on another is NOT a green project):**
+
+```plantuml
+@startuml
+title Project Health Scorecard - Four Dimensions\nManagement Lens, Elaboration Iter 2 (2026-09-02)
+
+object "SCOPE - GREEN" as SC {
+  All 10 FRs traced to UCs
+  (authority-verified);
+  zero scope-creep findings
+  across all lenses, both
+  iterations; 3 stakeholder
+  Iter 2 answers incorporated,
+  markers retired in place;
+  declared scope held as ceiling
+}
+object "SCHEDULE - AMBER" as SCH {
+  Convergence cycle executing
+  on the confirmed path
+  (R1-R6 calendar); record
+  corrections done and
+  ledger-closed; BUT code
+  delivery pending (zero PRs,
+  Issue #1 open) - exit
+  criteria 1-3 unmet; R6
+  re-presentation pending
+}
+object "COST - AMBER" as CO {
+  Measurement discipline
+  intact: actuals recorded,
+  two clocks never summed;
+  BUT the Iter 2 plan kept
+  the disproven 1,200K box
+  vs the measured 12,523,281
+  iteration actual - budget-box
+  finding (Major) recorded
+  this review
+}
+object "QUALITY - RED" as QU {
+  Open findings (verified
+  ledger, after this
+  revision): 2 Critical
+  (SAD F2 - Reviewer lens;
+  Iteration Plan F3 - this
+  lens, 2nd occurrence),
+  3 Major (Development Case
+  F1 - Reviewer lens; budget
+  box - this lens; Risk List
+  R007 - this lens), 5 Minor
+  across lenses; TC-001..TC-023
+  BLOCKED; empirical
+  validation unexecuted
+}
+
+SC -[hidden]-> SCH
+SCH -[hidden]-> CO
+CO -[hidden]-> QU
+
+note bottom of QU
+  Anti-pattern 3 check: a project
+  green on some dimensions and
+  red on another is NOT a green
+  project. Overall health:
+  AT-RISK. The red quality
+  dimension carries the owned
+  mitigation: the A-2..A-6 + A-8
+  + A-16 delivery chain plus the
+  record corrections A-17..A-24 -
+  every one a phase-exit condition
+  per the stakeholder's all-findings
+  directive.
+end note
+@enduml
+```
 ## Findings
 ### Elaboration Iteration 1 — New Findings (Code-Review Lens)
 
