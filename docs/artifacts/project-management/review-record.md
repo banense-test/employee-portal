@@ -1979,6 +1979,49 @@ Actions A-16…A-21 remediate the findings recorded by that lens this cycle. The
 | **A-24** | **Correct the Risk List R007 mitigation to the Design Model's recorded contract** — featured banners STACK, ordered newest first, every featured item renders its own banner — citing the stakeholder's verbatim answer "newest first"; remove the "show only the NEWEST featured item — no stacked banners" gloss; coordinate with the Process Engineer's parallel A-17 correction (Development Case F1, same defect class, same verbatim answer) so the two governance artifacts record the identical contract — closes Risk List F2 (Major) | Project Manager (Risk List owner) | Major | Decision-record integrity; R007 mitigation reasoning; downstream consumers of the risk register |
 
 **Iter 2 action-chain status (this lens's view, for the Coordinator):** A-12, A-13, A-14, A-15 — DONE and ledger-closed by this lens (resolve_artifact_finding, 2026-09-02). A-11 — IN PROGRESS (record side done; code delivery pending — the Critical F3 re-emission tracks it). A-22, A-23, A-24 — NEW this cycle, owned by the Project Manager; all three are quick record corrections that must land before the R4 evaluation-criteria review verifies the all-findings criterion (exit criterion 11). The R3 calendar exit condition for this lens is SATISFIED (Iteration Plan F4, F5 and Risk List F1 closed in the ledger); F3 remains the lens's open gate, converging with SAD F2 and F-CR-E1-1 on the one underlying defect.
+
+### Elaboration Iteration 2 — Coordinator Consolidated Prioritization (Review Coordinator, 2026-09-02)
+
+The consolidated action chain now runs A-1…A-24. The lens records above own the individual actions; this subsection is the coordinator's consolidated execution order for the remainder of the convergence cycle — sequenced by dependency, with the stakeholder's all-findings directive making every open finding a phase-exit condition regardless of severity.
+
+```plantuml
+@startuml
+title Coordinator Consolidated Execution Order - Remainder of Elaboration Iter 2\nDependency-sequenced; every open finding is a phase-exit condition (stakeholder directive)
+
+start
+partition "P0 - Code path (CRITICAL PATH - gates everything)" {
+  :A-2, A-3, A-4 Implementer builds the three\nmechanisms (R001 first - the only HIGH risk)\nas evolutionary code in src/ with\ndual-coverage tests, ready-for-review labels;
+  :A-6 Code Reviewer opens one PR per branch\n(base iteration/E1), applies CR-1..CR-7,\nterminal disposition each;
+  :Integrator merges APPROVED PRs\ninto iteration/E1;
+}
+partition "P1 - Evidence package (closes the 3 Criticals)" {
+  :Test Designer executes TC-001..TC-023\nagainst the validation fixtures;
+  :A-8 + A-16 + A-21 Software Architect evolves the\nPoC artifact: empirical results + the corrected\n23-case enumerations + clause-by-clause\nfour-consumer R001 evidence;
+  :Issue #1 closes on merged mechanism-PR evidence;
+}
+partition "P2 - Record corrections (parallel track - quick, independent)" {
+  :A-17 + A-24 Featured-banner decision record\ncorrected in BOTH governance artifacts\n(Development Case + Risk List) - one\nverbatim answer, one identical contract;
+  :A-18 + A-19 + A-20 Stale TC enumerations\ncorrected across Iteration Plan, TES, DC\n- one authority (Test Case catalog), one pass;
+  :A-22 + A-23 Budget box re-sized from the\nmeasured 12,523,281 actual + WI 2/9\nstatuses reconciled - one plan evolution;
+}
+partition "P3 - Verification gates (coordinator-enforced)" {
+  :R4 Iteration Evaluation Criteria Review\nexit criteria 1-12 verified, incl. criterion 11\n(findings ledger EMPTY - all lenses, all severities);
+  :R5 Iteration Acceptance Review\nformal acceptance of convergence deliverables;
+  :R6 LCA re-presentation\nENTRY GATE: empty ledger + evidence package\n(TC-001..TC-023 executed, per the Test Case\nauthority) + corrections committed + fresh\nsanction request to STK-001;
+  if (Sanction GRANTED?) then (yes)
+    :Phase transition sanctioned - Construction entry;
+    stop
+  else (no)
+    :Record refusal and directive;\niterate again against the same entry gate;
+    stop
+  endif
+}
+@enduml
+```
+
+**Consolidated calendar-to-finding mapping (Iter 2 update):** R1 closes F-CR-E1-1 (tracker #11) and issues the terminal dispositions the code-review gate requires; R3's SAD/plan/risk re-review exits are SATISFIED for the record side (6 ledger closures, 2026-09-02) — the PoC-artifact review exit (SAD F2 closed) remains pending on the empirical results; R4 verifies exit criteria 1–12 including the all-findings criterion against the verified ledger; R5 formally accepts the convergence deliverables; R6 is the milestone gate. **The R6 entry gate's evidence scope is corrected by the Test Case authority: TC-001…TC-023 executed (23 cases — the Iter 1 calendar's "TC-001..TC-020" line predates the Test Case extension; the four-consumer R001 behavioural-bar evidence requires TC-021/022/023).** Participant assignment unchanged: the LCA re-presentation requires the stakeholder (STK-001 — sanctioning authority) with all three lenses reporting; no lens is INACTIVE (all three EXECUTED this cycle per the Work Order).
+
+**Conflict resolution and work-merging decisions (coordinator, Iter 2):** (1) **One defect, three gates:** SAD F2 (Reviewer), Iteration Plan F3 (Management Reviewer), and F-CR-E1-1 (Code Reviewer, narrative) observe the absent code evidence / unexecuted empirical validation from three gates — the WORK is merged into A-16 (one delivery chain); the findings are NOT merged (each emitting lens closes its own via resolve_artifact_finding when the empirical results are OBSERVED). (2) **One decision, two mis-transcriptions:** Development Case F1 (Reviewer) and Risk List F2 (Management Reviewer) are the same defect class — the featured-banner answer glossed as the unselected option — in two governance artifacts; A-17 and A-24 are coordinated so both record the identical faithful contract (stack ALL, newest first), citing the same verbatim answer. (3) **One authority, four stale consumers:** the stale TC-enumeration class spans Iteration Plan F3 (Reviewer), Test Evaluation Summary F1, Development Case F2, and Architectural Proof-of-Concept F1 — A-18…A-21 are coordinated against the single Test Case §Test Case Catalog authority (23 cases), the same ID-verification discipline the LCO F1 lesson mandates. (4) **One plan evolution:** A-22 (budget box) and A-23 (WI 2/9 statuses) ride the same Iteration Plan pass to avoid two evolutions of one artifact. No severity conflicts exist across lenses; no finding is unowned; no deadline is missed.
 ## Disposition
 ### Elaboration Iteration 1, Cycle 1 — Code-Review Gate Disposition
 
