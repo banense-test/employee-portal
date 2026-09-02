@@ -20,7 +20,13 @@
 #               sync <= 60 s REL-003, AC-005 drop simulation)
 #               merge SHA 3fe41190f0e7d25ca0fd3a3e605e3039364fcabf
 #               Code Reviewer: APPROVED (review 5088169685); pre-merge CI green (run 33616359385)
-#   Pending:    PR #4 (R003 OIDC stub issuer)
+#               post-merge verification: CI GREEN (run 33617446626)
+#   2026-09-02  PR #4 MERGED — R003 OIDC token validation vs stub issuer
+#               (COMP-006/CLS-010; redirect flow, JWKS validation, role
+#               extraction SEC-006, boundary rejection)
+#               merge SHA 8fa49ea871ed292191828b5cf9a13813043ca7ad
+#               Code Reviewer: APPROVED (review 5088169517); pre-merge CI green (run 33616354216)
+#   Integration COMPLETE: R001 + R003 + R004 mechanisms on iteration/E1
 #
 # PlantUML dependency sketch:
 # @startuml
