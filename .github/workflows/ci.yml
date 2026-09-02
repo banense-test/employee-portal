@@ -9,6 +9,13 @@
 #   Layer 3: Features — Clocking | News | Directory | Worker Category
 #   Layer 4: UI — Razor Pages
 #
+# Integration record (Integrator — Elaboration Iteration 3, incremental merges):
+#   2026-09-02  PR #3 MERGED — R001 LDAP Gateway graceful degradation
+#               (COMP-007/CLS-009; four-clause behavioural bar, UC-004/005/006/007)
+#               merge SHA d413e23dcbb0ffefb842e74aadc9a54ce8fbaf4a
+#               Code Reviewer: APPROVED (review 5088169328); pre-merge CI green (run 33616349487)
+#   Pending:    PR #5 (R004 offline queue + idempotent sync), PR #4 (R003 OIDC stub issuer)
+#
 # PlantUML dependency sketch:
 # @startuml
 # package "Layer 1: Infrastructure" {
