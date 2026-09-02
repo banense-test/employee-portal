@@ -110,7 +110,7 @@ public class BehaviouralBarTests
         Assert.Null(ana.Office);     // NOT "Central" — the first office in the list is a fabrication
 
         var perez = await directory.SearchAsync(new DirectorySearchCriteria(Name: "Perez"));
-        var john = perez.Single();
+        var john = perez.Entries.Single();
         Assert.Null(john.JobTitle);  // NOT "N/A" — a placeholder is a fabrication
         Assert.Null(john.Office);    // NOT "Central"
 

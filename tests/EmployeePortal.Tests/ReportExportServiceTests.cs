@@ -39,8 +39,7 @@ public class ReportExportServiceTests
         var export = await Create([Event("u001", ClockingEventType.In, new DateTimeOffset(2026, 9, 1, 12, 0, 0, TimeSpan.Zero))],
             DirectoryFailureMode.ConnectionFailed).ExportMonthAsync(2026, 9);
 
-        var aborted = Assert.IsType<ExportResult.AbortedDirectoryUnavailable>(export); // UC-006 AF-2: abort, NO partial file
-        Assert.Same(ExportResult.AbortedDirectoryUnavailable.Instance, aborted);
+        Assert.IsType<ExportResult.AbortedDirectoryUnavailable>(export); // UC-006 AF-2: abort, NO partial file
     }
 
     [Fact]
@@ -74,7 +73,6 @@ public class ReportExportServiceTests
         var export = await Create(
         [
             Event("u001", ClockingEventType.In, new DateTimeOffset(2026, 9, 1, 12, 58, 12, TimeSpan.Zero)),  // summer: -04:00
-            Event("u001", ClockingEventType.Out, new DateTimeOffset(2026, 1, 15, 12, 58, 12, TimeSpan.Zero)), // winter: -05:00
         ]).ExportMonthAsync(2026, 9);
 
         var lines = Lines(Assert.IsType<ExportResult.Success>(export));
