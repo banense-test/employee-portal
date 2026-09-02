@@ -197,7 +197,6 @@ stop
 
 Re-evaluation schedule: every iteration, mandatory. A trigger may newly fire via a Change Request or scope expansion; a fired trigger is re-verified against its condition (an auditable claim, checked at review).
 ## Roles and Ownership
-
 The 25-role IARI baseline roster is confirmed unchanged. No roles are merged, added, or removed. Primary artifact ownership is baseline-fixed and not restated or reassigned here.
 
 **Role with no artifact output this project:** BusinessProcessAnalyst (BPA) — Business Modeling discipline INACTIVE; the BPA role exists in the roster but produces no artifacts. The Vision artifact is co-owned by System Analyst per baseline ownership rules.
@@ -205,68 +204,59 @@ The 25-role IARI baseline roster is confirmed unchanged. No roles are merged, ad
 ```plantuml
 @startuml
 !theme plain
-title Employee Portal — Role-Artifact Responsibility Matrix (Elaboration Iter 4 record-propagation deltas)
+title Employee Portal — Role-Artifact Responsibility Matrix (Elaboration Iter 5 final record-correction deltas)
 
 skinparam classAttributeIconSize 0
 
+package "Test (Medium)" {
+  class TestManager <<TM>> {
+    + Test Evaluation Summary (A-37:\nremainder-enumerations updated from\nthe observed same-pass landings —\ncloses TES F3, the one Major)
+  }
+}
+
 package "Analysis & Design (Critical)" {
   class SoftwareArchitect <<ARCH>> {
-    + Architectural Proof-of-Concept\n(Results and Findings rewritten with\nOBSERVED results: A-32 — the R6\nevidence-package core)
-    + Software Architecture Document\n(LCA criterion 3 evidence: A-33)
-  }
-}
-
-package "Test (Medium)" {
-  class TestDesigner <<TD>> {
-    + Test Case (Document Control summary\nreconciled to per-case record 15/0/8: A-34)
-  }
-  class TestManager <<TM>> {
-    + Test Evaluation Summary (mission verdict,\nINC-1, metrics from observed record: A-35)
-  }
-}
-
-package "Project Management (Medium)" {
-  class ProjectManager <<PM>> {
-    + Iteration Plan (F8: STK-004 request evidenced\nor blocker recorded — close-pass)
-    + Risk List (R001/R003/R004 retirement recorded;\nR013 resolved)
-    + Iteration Assessment (close-pass actuals)
+    + Architectural Proof-of-Concept\n(A-32 observed-results ledger LANDED,\nledger-closed — the R6 evidence-package\ncore ASSEMBLED; A-38: sha citation\ncorrected — closes PoC F3, Minor)
   }
 }
 
 package "Environment (Medium)" {
   class ProcessEngineer <<PE>> {
-    + Development Case (this document —\nARCH-6 gap flag CLOSED on verification;\nIter 3 process assessment folded in)
+    + Development Case (this document —\nDC F4 RESOLVED: three stale A-32 /\nPM-close-pass status claims corrected\nto the observed state, per the DC's own\nsame-pass record-propagation discipline)
+  }
+}
+
+package "Project Management (Medium)" {
+  class ProjectManager <<PM>> {
+    + Iteration Plan (WI statuses reconciled\nto observed SCM state — exit criterion 12)\n+ Iteration Assessment (pass-close actuals,\nauthored after the reviewers rule)
   }
 }
 
 package "Review (R6 gate)" {
   class ReviewCoordinator <<RC>> {
-    + Review Record (R6 entry gate: empty ledger +\nevidence package + fresh sanction request)
+    + Review Record (R6 entry gate: empty\nledger + evidence package + fresh\nsanction request)
   }
 }
 
-SoftwareArchitect --> ReviewCoordinator : A-32 evidence package core\nlands BEFORE the R6 entry gate
-TestDesigner --> SoftwareArchitect : per-case record feeds\nthe PoC results ledger
-TestManager --> SoftwareArchitect : observed metrics feed\nthe evidence package
-ProjectManager --> ReviewCoordinator : close-pass reappraisal\n+ Iteration Assessment
-ProcessEngineer --> SoftwareArchitect : ARCH-6 flag closure verified\n(sha 90e4f2e — four-clause ARCH-6)
+TestManager --> ReviewCoordinator : A-37 lands BEFORE R6 —\nthe mission-verdict record must not\ncontradict the PoC ledger
+SoftwareArchitect --> ReviewCoordinator : A-38 lands BEFORE R6 —\nevidence-package citation verifiability
+ProcessEngineer --> ReviewCoordinator : A-39 lands BEFORE R6 —\nDC gate-record accuracy (criteria 7-9)
+ProjectManager --> ReviewCoordinator : pass-close reconciliation\n+ Iteration Assessment
 
-note bottom of SoftwareArchitect
-  The record-propagation pass: the
-  validation SUBSTANCE is observed
-  (15 PASS / 0 FAIL / 8 BLOCKED,
-  CI-traced); the records must
-  carry it. The 8 BLOCKED cases are
-  stated as a recorded SCOPE
-  decision — deferred to
-  Construction, not missing
-  (stakeholder directive, Iter 3).
+note bottom of TestManager
+  The final record-correction pass:
+  the validation SUBSTANCE is observed
+  and now RECORDED (A-32..A-36 all
+  landed and ledger-closed); the three
+  remaining ledger findings (A-37..A-39)
+  are the record-propagation class's
+  last applications — no code, no
+  design, no new validation.
 end note
 @enduml
 ```
 
 **Co-ownership discipline (binding):** the Design Model is co-authored by Designer (analysis/design sections), DatabaseDesigner (data sections), and UserInterfaceDesigner (UI sections). Each owns ONLY their sections; every evolution uses section-scoped upserts. A full-document overwrite of a co-owned artifact destroys collaborator sections and is the worst failure in collaborative work.
-
 ## Guidelines and Procedures
 
 ### Elaboration Iteration 4 Entry Criteria (record-propagation pass — verified met at iteration start)
