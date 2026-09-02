@@ -925,6 +925,8 @@ One design model, three packages inside the single deployable (ADR-001). Depende
 
 **Elaboration Iter 3 evolution (Designer — Review Record A-27):** the CLS-009 LdapGateway graceful-degradation contract in the Infrastructure package is extended from three to FOUR clauses — null is the FINAL mapped value for a missing attribute, NEVER substituted by a default, a placeholder, a guessed value, or another employee's value (stakeholder contribution at the Iter 2 verdict gate, binding). No class is added; no signature changes — the fourth clause is a postcondition on the existing mapping behavior. All other content preserved exactly as reviewed.
 
+**Elaboration Iter 4 evolution (Designer — Review Record Iter 3, Consolidated Finding Tracker rows #7/#8; contract-table hygiene, no behavior change):** the Infrastructure package diagram is synchronized with the merged R003 mechanism (PR #4, `KeycloakAuthProvider` sha 7bd4cfd): INT-011/CLS-010 now show the full four-operation surface — `ConfigureOidc`, `BuildAuthorizeRedirectUrl(redirectUri, state)`, `HandleOidcCallbackAsync(authorizationCode)`, `GetAuthenticatedUserAsync(context)` (F-CR-E3-2) — plus the internal `ValidateTokenAsync` seam and the CON-004 redirect-flow note (round-trip state validation is Construction scope — the session mechanism; the Elaboration contract generates the state and does not claim its validation). The INT-016 note records the F-CR-E3-1 confirmation: the interim InMemoryClockingsRepository is a test-seam realization of the unchanged INT-016 contract; CLS-012 PgPersistence lands in Construction Iteration 1 (R008). No class is added; no signature changes — the diagram now matches the code the Implementer merged. All other content preserved exactly as reviewed.
+
 ```plantuml
 @startuml
 title Design Model Organization — packages, layers, and interface boundaries (ADR-001)
@@ -1171,12 +1173,17 @@ package "Infrastructure (COMP-006…009)" {
 
   interface "INT-011 IAuthProvider" as IAUTH {
     +ConfigureOidc(builder: WebApplicationBuilder, options: KeycloakClientOptions): void
-    +GetAuthenticatedUser(context: HttpContext): AuthenticatedUser
+    +BuildAuthorizeRedirectUrl(redirectUri: string, state: string): string
+    +HandleOidcCallbackAsync(authorizationCode: string): Task<AuthenticatedUser>
+    +GetAuthenticatedUserAsync(context: HttpContext): Task<AuthenticatedUser?>
   }
   class "CLS-010 KeycloakAuthProvider (COMP-006)" as AUTH {
     +ConfigureOidc(builder: WebApplicationBuilder, options: KeycloakClientOptions): void
-    +GetAuthenticatedUser(context: HttpContext): AuthenticatedUser
-    -MapRoles(claims: IEnumerable<Claim>): IReadOnlySet<string>
+    +BuildAuthorizeRedirectUrl(redirectUri: string, state: string): string
+    +HandleOidcCallbackAsync(authorizationCode: string): Task<AuthenticatedUser>
+    +GetAuthenticatedUserAsync(context: HttpContext): Task<AuthenticatedUser?>
+    ~ValidateTokenAsync(token: string): Task<AuthenticatedUser>
+    -MapRoles(payload: JsonElement): IReadOnlySet<string>
   }
 
   interface "INT-015 IPersistence" as IPERSIST {
@@ -1265,6 +1272,25 @@ note bottom of LDAP
   changes touch this class only.
 end note
 
+note right of AUTH
+  CON-004: OIDC client only — register
+  a client, redirect for login, validate
+  the token, read roles from claims;
+  nothing more. Redirect flow (SEQ-001,
+  at the middleware): unauthenticated
+  request -> BuildAuthorizeRedirectUrl
+  (state generated per challenge — the
+  CSRF parameter); issuer callback ->
+  HandleOidcCallbackAsync: code -> token
+  -> JWKS validation (RS256 + kid match,
+  exp/iss/aud/sub) -> identity + roles
+  verbatim (SEC-006). Round-trip state
+  validation is Construction scope
+  (session mechanism) — the Elaboration
+  contract generates the state and does
+  not claim its validation.
+end note
+
 note bottom of QUEUE
   Client half of COMP-009 (ADR-003):
   localStorage queue ordered by
@@ -1272,6 +1298,21 @@ note bottom of QUEUE
   >= 10; replays via the idempotent
   sync endpoint on reconnect;
   clears on 200 OK (REL-003).
+end note
+
+note right of ICLKREP
+  INT-016 final contract (F-CR-E3-1
+  confirmation, Iter 4): Add/AddRange
+  STAGE; commit via INT-015 SaveChanges;
+  UNIQUE idempotency_key enforced at
+  the database (REL-002). The interim
+  InMemoryClockingsRepository merged for
+  the Elaboration validation (PRs #3/#5)
+  is a TEST-SEAM realization of this
+  contract — same UNIQUE-key behavior,
+  immediate commit, no AddRange — NOT a
+  design change; CLS-012 PgPersistence
+  lands in Construction Iteration 1 (R008).
 end note
 
 note right of IAUDREP
