@@ -27,7 +27,7 @@ public class KeycloakAuthProviderTests
         return (new KeycloakAuthProvider(issuer, issuer, Options()), issuer);
     }
 
-    private static HttpContext ContextWithBearer(string token)
+    private static DefaultHttpContext ContextWithBearer(string token)
     {
         var context = new DefaultHttpContext();
         context.Request.Headers.Authorization = "Bearer " + token;
@@ -288,11 +288,12 @@ public class KeycloakAuthProviderTests
         var token = issuer.IssueToken("u001", [RoleNames.Employee], DateTimeOffset.UtcNow.AddHours(-1)); // expired
         var invoked = false;
         var middleware = new OidcMiddleware(_ => { invoked = true; return Task.CompletedTask; }, provider, Options());
+        var context = ContextWithBearer(token);
 
-        await middleware.InvokeAsync(ContextWithBearer(token));
+        await middleware.InvokeAsync(context);
 
         Assert.False(invoked); // rejected at the boundary
-        Assert.Equal(StatusCodes.Status401Unauthorized, ((DefaultHttpContext)ContextWithBearer(token)).Response.StatusCode);
+        Assert.Equal(StatusCodes.Status401Unauthorized, context.Response.StatusCode);
     }
 
     [Fact]
