@@ -2,9 +2,9 @@
 
 **Project:** Employee Portal (Cuba Corp)
 **Phase:** Inception → Transition
-**Current Phase:** Elaboration (Iteration 1)
+**Current Phase:** Elaboration (Iteration 2 — convergence cycle)
 **Maintainer:** Configuration Manager
-**Last Updated:** 2026-09-01 (Elaboration Iter 1, Cycle 1 — baseline identification scheme added: §7.1 Baseline Register, §7.2 content map, §5.2 E1 lifecycle)
+**Last Updated:** 2026-09-02 (Elaboration Iter 2, Cycle 1 — position record refreshed to verified SCM state; E1-workspace close reconciled to tag `baseline-elaboration-E2-v1`; never-written E1-v1 register anticipation withdrawn)
 
 ---
 
@@ -156,18 +156,18 @@ baseline, not throwaway sample code.
   the Architect reviews; the merge produces the Elaboration baseline.
 - **There is no `samples/poc/` directory and no ephemeral `poc/*` branch.**
 
-#### Baseline Identification Lifecycle — Elaboration E1 (current position)
+#### Baseline Identification Lifecycle — Elaboration E1 workspace (current position, recorded 2026-09-02)
 
 ```plantuml
 @startuml
-title Baseline Identification Lifecycle — Elaboration E1 (position recorded 2026-09-01)
+title Baseline Identification Lifecycle — Elaboration E1 workspace closing in Iteration 2 (position recorded 2026-09-02)
 
 [*] --> WS
 state "WorkspaceSetup\nIntegrator creates iteration/E1" as WS {
   WS : only the Integrator writes iteration/* (invariant 8.1)
   WS : iteration/E1 is the base of every mechanism PR
 }
-WS --> MW : workspace exists
+WS --> MW : workspace exists\n(DONE — created at Iter 1 close, skeleton only)
 state "MechanismWork\nfeature/E1-{risk-id} -> iteration/E1" as MW {
   MW : Implementer builds R001 / R003 / R004
   MW : mechanisms evolutionarily in src/ (no poc/ branch)
@@ -184,7 +184,7 @@ LAM --> GATE
 state GATE <<choice>>
 GATE --> TAG : [review state == APPROVED\nAND main CI == green]
 GATE --> BLK : [gate failure]
-state "Tagged\nbaseline-elaboration-E1-v1" as TAG {
+state "Tagged\nbaseline-elaboration-E2-v1" as TAG {
   TAG : scm_create_tag — audit message carries
   TAG : PR number + head SHA + review ID + CI URL
   TAG : register row flips PENDING -> ESTABLISHED
@@ -198,18 +198,34 @@ BLK --> GATE : re-check both gates
 TAG --> [*] : architecture baseline established
 
 note right of WS
-  CURRENT POSITION (2026-09-01, Elab Iter 1, Cycle 1):
-  NOT YET ENTERED — iteration/E1 is ABSENT,
+  CURRENT POSITION (2026-09-02, Elab Iter 2 —
+  convergence cycle, Cycle 1): workspace EXISTS
+  (iteration/E1 created at the Iter 1 close per
+  action A-1; skeleton only — no Services/, no
+  Infrastructure/). MechanismWork NOT YET ENTERED:
   0 ready-for-review branches, 0 PRs (any state),
-  no mechanism code in the build tree.
-  Open blockers: SCM issue #1 (mechanism code
-  absent) and Review Record F-CR-E1-1 (Critical).
-  main CI is GREEN (run 33492338439) but the tree
-  holds only the pre-Elaboration skeleton —
-  nothing architecture-bearing to freeze yet.
+  no mechanism code in the build tree. Open
+  blocker: SCM issue #1 (mechanism code absent,
+  cr:approved, assigned to Implementer — actions
+  A-2..A-4 pending handoff). main CI is GREEN
+  (run 33550619216, 2026-09-01 19:38:39Z) but the
+  tree holds only the skeleton — nothing
+  architecture-bearing to freeze yet.
 end note
 
 note right of TAG
+  TAG NAMING (recorded 2026-09-02): the
+  iteration/E1 workspace closes at the END of
+  Elaboration Iteration 2 (the convergence cycle
+  that absorbed the slipped Iter 1 mechanism
+  work). Per §7's iteration-number rule, the tag
+  encodes the CLOSING iteration:
+  baseline-elaboration-E2-v1. The workspace branch
+  keeps its historical name iteration/E1 — branch
+  names are minted at creation, never renamed.
+  The never-written E1-v1 anticipation is
+  withdrawn: no tag was created under that name
+  (Iter 1 closed NO-GO, dual gate unevaluable).
   Re-tag (v2, v3...) only after an explicit
   rollback or post-baseline critical fix.
 end note
@@ -332,9 +348,20 @@ dual-gate verification. A row is never edited after its tag is written — a re-
 (`v{x+1}`) appends a NEW row and flips the prior row's status to `SUPERSEDED`, with
 the rollback justification recorded in the superseding row.
 
+**Naming reconciliation (recorded 2026-09-02):** the `iteration/E1` workspace closes
+at the end of **Elaboration Iteration 2** (the convergence cycle that absorbed the
+Iteration 1 mechanism work after the NO-GO LCA verdict). Per the iteration-number
+rule above, the tag encodes the **closing** iteration: `baseline-elaboration-E2-v1`.
+The workspace branch keeps its historical name `iteration/E1` — branch names are
+minted at creation and never renamed. The Iteration 1 anticipation of
+`baseline-elaboration-E1-v1` is **withdrawn**: no tag was ever created under that
+name (Iteration 1 closed NO-GO with zero PRs; the dual gate was unevaluable), so no
+register row ever recorded an ESTABLISHED tag — replacing the anticipation row
+violates no register discipline.
+
 | Tag | Status | Iteration-close PR | Head SHA | Architect review ID | `main` CI run URL (tag time) | Notable findings |
 |---|---|---|---|---|---|---|
-| `baseline-elaboration-E1-v1` | **PENDING** — dual gate not yet evaluable | — (no `iteration/E1 → main` PR exists) | — | — | — (`main` CI green at 2026-09-01, run 33492338439 — pre-merge state, NOT tag-time evidence) | Open blockers: SCM issue #1 (R001/R003/R004 mechanism code absent from SCM); Review Record F-CR-E1-1 (Critical — no Implementer handoff); `iteration/E1` absent (Integrator action A-1) |
+| `baseline-elaboration-E2-v1` | **PENDING** — dual gate not yet evaluable | — (no `iteration/E1 → main` PR exists; verified 2026-09-02) | — | — | — (`main` CI green at 2026-09-01, run 33550619216 — pre-merge state, NOT tag-time evidence) | Open blocker: SCM issue #1 (R001/R003/R004 mechanism code absent from SCM; `cr:approved`, assigned to Implementer — actions A-2…A-4 pending handoff); 0 `ready-for-review` branches, 0 PRs (any state) |
 
 **Status vocabulary:** `PENDING` (iteration in progress; gates not yet evaluable) →
 `ESTABLISHED` (tag written on an APPROVED + CI-green commit) → `SUPERSEDED` (replaced
@@ -377,9 +404,12 @@ CONS ..> REG : one row per tag
 TRANS ..> REG : one row per tag
 
 note bottom of ELAB
-  E1 v1 status: PENDING — dual gate not
-  evaluable (no LAM-close PR exists).
-  See Baseline Register (§7.1).
+  E2 v1 status: PENDING — dual gate not
+  evaluable (no LAM-close PR exists;
+  verified 2026-09-02). The E1 workspace's
+  close lands at the end of Elaboration
+  Iteration 2 — see Baseline Register (§7.1)
+  for the naming reconciliation.
 end note
 
 note right of REG
@@ -479,7 +509,7 @@ branches and PRs they authorize:
 | Escalation procedures | RUP Ch.13 (CCB) | DependsOn | scm_create_issue |
 | R001 (LDAP risk) | Declared risk | DependsOn | feature/E1-R001-* branch family |
 | STK-004 (Infra Team) | Declared stakeholder | DependsOn | Deployment dependencies (server, LDAP, Keycloak client) |
-| Baseline Register (§7.1) | RUP Ch.13; Elaboration Iter 1 work order (baseline identification scheme) | Refines | `baseline-elaboration-E1-v1` (PENDING); every future baseline tag |
+| Baseline Register (§7.1) | RUP Ch.13; Elaboration Iter 1 work order (baseline identification scheme) | Refines | `baseline-elaboration-E2-v1` (PENDING — E1 workspace closes at end of Elab Iter 2); every future baseline tag |
 | Baseline Identification Content Map (§7.2) | RUP Ch.13; SAD (4+1 baseline, COMP-001…011, ADR-001…004) | Refines | SAD, mechanism code (`src/`), regression suite, release candidates |
-| E1 lifecycle diagram (§5.2) | BRANCHING_STRATEGY §5.2, §6; Review Record F-CR-E1-1 (current position) | Refines | `iteration/E1 → main` flow; `baseline-elaboration-E1-v1` |
-| CONTRIBUTING.md (branch-strategy section) | Review Record F-CR-E1-2 / A-5 (CM share) | Implements | CR-1 citable rule baseline (branch/PR/merge matters) |
+| E1 lifecycle diagram (§5.2) | BRANCHING_STRATEGY §5.2, §6; Review Record F-CR-E1-1 (current position); verified SCM state 2026-09-02 | Refines | `iteration/E1 → main` flow; `baseline-elaboration-E2-v1` (tag at the E1 workspace's close, end of Elab Iter 2) |
+| CONTRIBUTING.md (branch-strategy section) | Review Record F-CR-E1-2 / A-5 (CM share — committed, verified 2026-09-02) | Implements | CR-1 citable rule baseline (branch/PR/merge matters) |
