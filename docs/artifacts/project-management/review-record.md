@@ -2683,8 +2683,7 @@ if (Unresolved Critical findings?) then (yes - 2 open)
   :Escalation-state check (coordinator)\nboth Criticals are 2nd occurrences of the\nIter 1 escalation - stakeholder resolution\nRECORDED verbatim (Fix all the issues and\nclose all findings); remediation fully\ndetermined by recorded stakeholder decisions;\nthe team CAN resolve internally;
   :Critical escalation invariant SATISFIED by\nthe discharged Iter 1 escalation - re-asking\nwould re-open an answered question;
   :VERDICT - STAKEHOLDER CONTRIBUTION\nopen Majors (3) + planned scope incomplete\n(exit criteria 1-3, zero code evidence) +\nsanction REFUSED (standing) each independently\nrequire the phase to iterate;
-  :record_milestone_auto_iterate\n(requiresIteration = true)
-  after the stakeholder contribution gate;
+  :record_milestone_auto_iterate\n(requiresIteration = true)\nafter the stakeholder contribution gate;
   stop
 else (no)
   :VERDICT - SCOPE COMPLETE\n(disqualified this cycle - 2 Criticals open,\nplanned scope incomplete, sanction REFUSED);
@@ -3162,6 +3161,78 @@ partition "P4 - Coordinator-enforced R6 entry gate" {
 **Stakeholder consultation record (this lens, Iter 4):** none owed — PR #7 traces to a recorded finding whose remediation was fully determined at Iter 3; no new stakeholder-only decision is surfaced by this review. The next stakeholder touchpoint remains the R6 fresh sanction request (owned by the Review Coordinator + Management Reviewer).
 
 **No milestone, iteration, or phase is marked complete by this record.** The Elaboration phase continues toward the R6 re-presentation. The Integrator may merge PR #7 (APPROVED, base iteration/E4); the remaining record-propagation work (A-32…A-36 + PM close-pass) is owned by the Software Architect, Test Designer, Test Manager, Process Engineer, and Project Manager per the Iter 3 consolidated execution order.
+
+### Elaboration Iteration 4, Cycle 1 — Technical-Lens Milestone Disposition (Reviewer, 2026-09-02 — record-propagation pass)
+
+**Sanction STILL WITHHELD at LCA — but the record-propagation pass delivered its five named corrections in full, and the R6 evidence package is ASSEMBLED.** The technical-lens disposition for the end-of-Elaboration milestone remains withheld this cycle, and the reason is narrower than at any prior review: the stakeholder's binding all-findings directive ("Please fix all the findings even if they are minors prior to move to next phase") — the findings ledger is not empty. The five named record-propagation corrections (A-32…A-36) are ALL verified landed and ledger-closed by this lens this cycle: the PoC artifact carries the OBSERVED results (the R6 evidence package's core — R001 four-clause × four-consumer clause-by-clause evidence, R003 matrix, R004 simulation, 15/0/8 with the 8 BLOCKED framed as a recorded SCOPE decision per the stakeholder's directive, MERGED delivery rows, claims/does-not-claim discipline); the SAD criterion-3 record cites current repository state; the Test Case record is internally consistent (15+8=23); the Risk List close-pass records R001/R003/R004 RETIRED on observed evidence and R013 RESOLVED; ARCH-6 carries the four-clause contract (sha 90e4f2e, verified first-hand). The CR targeting the Architectural Proof-of-Concept (SCM Issue #9 — the Work Order's named CR) is satisfied on this evidence.
+
+**What remains open is three quick record corrections born of the pass's own success** — the record-propagation defect class is self-propagating: each pass's landings stale the prior pass's "remaining work" enumerations. TES F3 (Major — the mission-verdict record claims A-32/A-34/A-36/PM-close-pass are PENDING/OPEN in every location while all four are observed landed); PoC F3 (Minor — one sha citation); DC F4 (Minor — three stale status claims). Plus, cross-lens: Iteration Plan F8 (Minor, Management lens — remediation VERIFIED PRESENT this review; closure owned by that lens) and the two narrative Code Reviewer Minors (F-CR-E3-1/2 — Construction-scope/Designer-owned, carried). **Every remaining item is a record correction; none requires code, design, or new validation.**
+
+**Withholding is a verdict, not a skip.** The R6 re-presentation is three record corrections plus the Management lens's F8 closure plus the PM pass-close reconciliation away from an empty ledger — the stakeholder-confirmed path ("Yes") with the evidence package now assembled. The milestone is NOT declared achieved; no iteration, phase, or milestone is marked complete by this record.
+
+**Milestone disposition (technical lens, Iter 4) — evidence chain:**
+
+```plantuml
+@startuml
+title LCA Technical-Lens Disposition - Evidence Chain (Elaboration Iter 4, 2026-09-02)
+
+start
+:Stakeholder binding directives (standing) -
+all-findings closure before phase transition;
+R6 path CONFIRMED ("Yes") with the
+BLOCKED-cases framing directive;
+:Record-propagation pass executed -
+A-32..A-36 ALL LANDED and verified
+first-hand this review:
+PoC observed-results ledger (the R6
+package core ASSEMBLED); SAD criterion 3
+current; Test Case record consistent
+(15+8=23); Risk List retirement recorded
+(R001/R003/R004 RETIRED, R013 RESOLVED);
+ARCH-6 four-clause (sha 90e4f2e);
+:5 prior findings of this lens RESOLVED
+via resolve_artifact_finding (PoC F2 Major,
+SAD F4, Test Case F1, TES F2, DC F3);
+:SCM state verified - zero open PRs
+(every PR left the gate with a terminal
+verdict; PR #7 APPROVED this pass);
+main GREEN run 33639518709; Issues #1/#2
+closed; Issue #9 (the PoC CR) satisfied
+on the verified A-32 evidence;
+if (Findings ledger EMPTY across all lenses and severities?) then (no)
+  :3 new record-propagation findings from
+  this lens (1 Major - TES remainder-
+  enumerations; 2 Minor - PoC sha
+  citation, DC status claims), actions
+  A-37..A-39 assigned with owners;
+  :Sanction STILL WITHHELD at LCA -
+  the stakeholder all-findings directive
+  binds phase transition; withholding is
+  a verdict, not a skip;
+  :Remaining work is record corrections
+  ONLY (A-37..A-39 + the Management
+  lens's F8 closure + the PM pass-close
+  reconciliation) - then the R6
+  re-presentation with the evidence
+  package and a fresh sanction request
+  to STK-001;
+  stop
+else (yes)
+  :Not reached this cycle;
+  stop
+endif
+@enduml
+```
+
+**Per-artifact verdicts (this lens, Iter 4):** Architectural Proof-of-Concept — **Approved with changes** (F2 Major RESOLVED — the evidence package's core is assembled; F3 Minor open: one sha citation). Software Architecture Document — **Approved** (F4 RESOLVED; no new findings). Test Case — **Approved** (F1 RESOLVED; the Iter 4 regression verification is exemplary; no new findings). Test Evaluation Summary — **NeedsRework** (F2 RESOLVED — the mission verdict itself is correct and observed; F3 Major open: the remainder-enumerations are false in every particular against the same-pass landings). Development Case — **Approved with changes** (F3 RESOLVED; F4 Minor open: three stale status claims). Risk List — **Approved** (close-pass reappraisal sound and observed; R010 F8 remediation present). Iteration Plan — **Approved** (pass plan sound; objectives 1–2 verified MET; WI statuses Pending at plan-build is NOT a finding — reconciliation scheduled at pass close per the plan's own discipline). Use-Case Model, Supplementary Specification, Design Model, Vision — **PRESERVED** (clean at all prior reviews; no finding or CR targets them; unchanged this pass). Iteration Assessment — **EXCLUDED** (PM authors it after this review).
+
+**PR disposition (S3, Iter 4):** in-scope open PR set **∅** — verified via `scm_list_pull_requests` (state=open → none). Every PR that entered the phase left the gate with a terminal verdict: PRs #3/#4/#5 (mechanisms, APPROVED ×3, merged to iteration/E1), PR #6 (baseline-close, APPROVED, merged to main), PR #7 (F-CR-E3-3 remediation, APPROVED, merged to iteration/E4). No phase-discipline violation exists — every PR rode the iteration line per BRANCHING_STRATEGY §5.2. **No PR-level sanction is owed this cycle: there is nothing to sanction and nothing to withhold on.** The architecture-baseline sanction landed on PR #6 (APPROVED, merged) and nothing new challenges it; the milestone-level sanction (phase transition) remains withheld per the all-findings directive.
+
+**Scope adherence (technical lens, Iter 4):** no scope-creep findings. The record-propagation pass touched only records; the one code change (PR #7) is a comment-only correction tracing to a recorded finding. Every element in every artifact traces to the declared scope; the stakeholder's decisions are incorporated with markers retired in place.
+
+**Critical-escalation check (this lens):** zero Critical findings open — the zero-Critical state of the phase, held. Every new finding's remediation is fully determined by recorded same-pass landings; no stakeholder-only decision is surfaced; **no stakeholder touchpoint is owed from this lens** — the next stakeholder touchpoint remains the R6 fresh sanction request itself.
+
+**No milestone, iteration, or phase is marked complete by this record.** The Elaboration phase continues toward the R6 re-presentation. The remaining work is owned: A-37 (Test Manager — TES remainder-enumerations), A-38 (Software Architect — PoC sha citation), A-39 (Process Engineer — DC status claims), the Management Reviewer lens's F8 closure on the verified close-pass remediation, and the PM's pass-close reconciliation (Work Item 9 / Iteration Assessment, authored after the reviewers rule). When the ledger is empty, the R6 re-presentation proceeds with the evidence package and a fresh sanction request to STK-001.
 ## Traceability
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
