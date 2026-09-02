@@ -751,7 +751,92 @@ stop
 
 **Cases deferred to Construction (recorded, not designed here):** UC-002/003/005/006/007/008/009 main-flow functional suites (the AF-3 R001-bar flows of UC-005/006/007 are designed NOW — TC-021…TC-023 — because they are part of the R001 PoC's empirical validation; their main flows remain Construction); PRF-001 full-scale page-load percentile measurement; USA-001/006/007/009 visual-fidelity and accessibility passes; AC-002/AC-004 usability tests. These trace to the Evaluation Mission's out-of-scope boundary and the Iteration Plan's Construction assignments — designing them now would exceed the Development Case's Elaboration test intensity (Medium).
 
-### Findings — Elaboration Iteration 3, Cycle 1 (Execution-State Transition Record)
+### Findings — Elaboration Iteration 3, Cycle 1 (Formal Execution Pass Record — Tester, 2026-09-02)
+
+**Execution context (all values from actual tool calls, 2026-09-02 — nothing fabricated):**
+
+| Item | Value | Source |
+|---|---|---|
+| Smoke test (build stability gate — formal pass) | **PASS** — CI GREEN on `main` (run 33598979875, completed 2026-09-02 06:29:05Z) AND on `iteration/E1` (run 33617748483, completed 2026-09-02 10:07:56Z — the merged mechanisms + dual-coverage suites building and passing under `dotnet test`) | `scm_get_build_status` ×2 |
+| Implementation under test | `iteration/E1` — 10 test suites + 2 fixtures inspected first-hand: `BehaviouralBarTests.cs` (sha 3660454), `LdapGatewayTests.cs` (caec358), `KeycloakAuthProviderTests.cs` (3a63509), `OfflineResilienceTests.cs` (0a7b1a2), `OfflineQueueTests.cs` (cb4b843), `TimeServiceTests.cs` (825e087), `ClockingServiceTests.cs` (58476ca), `DirectoryServiceTests.cs` (06c5bd4), `ReportExportServiceTests.cs` (4bbb732), `Fixtures/DisposableLdapDirectory.cs` (5b84206), `Fixtures/StubOidcIssuer.cs`; mechanism source verified (`LdapGateway.cs` @ b8df8b7 — `MapEntry` constructs the six-field DirectoryEntry positionally through the single `Get` helper whose blank→null semantics are execution-asserted) | `scm_get_file_content` ×12 |
+| Execution trace | **CI run 33617748483** (`dotnet test` on the merged tree — GREEN): every materialized assertion held at execution time. Regression evidence: sequential post-merge GREEN runs 33617283642 (after PR #3) → 33617446626 (after PR #5) → 33617748483 (after PR #4), recorded in `ci.yml` @ sha 5a2ba38 — every merged PR re-ran ALL prior suites (mandatory regression policy held) | `scm_get_build_status`, `scm_get_file_content(.github/workflows/ci.yml)` |
+| Verdict | **15 PASS · 0 FAIL · 8 BLOCKED** — per-case verdicts below. Zero FAIL → zero new defects formalized; Issue #1's executed-TC evidence condition is SATISFIED by this pass (closure owned by the CCM/Integrator chain) | This pass |
+
+**Per-case verdicts — formal execution pass (Cycle 1, 2026-09-02):**
+
+| TC | Verdict | Evidence (suite @ sha → CI run 33617748483) | Notes |
+|---|---|---|---|
+| TC-001 | **PASS** | `OfflineResilienceTests` @ 0a7b1a2 (online path < 1 s) + `ClockingServiceTests` @ 58476ca (RecordEvent_PersistsExactlyOneEvent) | PRF-002 online path asserted; row persistence via the repository seam |
+| TC-002 | **PASS** | `ClockingServiceTests` @ 58476ca (GetCurrentStatus_LastEventIn/Out) | Status rule verified: IN → ClockedIn, OUT → NotClockedIn — the button's state-awareness foundation |
+| TC-003 | **BLOCKED** | — | The 2 s ignore window is a HomeView UI debounce — no materialized UI mechanism this phase (Construction). Honest correction from the Cycle 3 Scripted transition |
+| TC-004 | **PASS** | `OfflineResilienceTests` @ 0a7b1a2 (QueueDuringDrop_ConfirmationRendersFromQueuedData_UnderOneSecond) | PRF-002 offline path < 1 s; press-time capture (DAT-001) |
+| TC-005 | **PASS** | `OfflineResilienceTests` @ 0a7b1a2 (Reconnect_ReplaysAllQueuedEvents_ZeroDuplicates_ZeroLosses; AllQueuedEventsPersisted_WithinSixtySecondsOfRestore) | REL-003 ≤ 60 s; zero losses; queue cleared on 200 OK |
+| TC-006 | **PASS** | `OfflineResilienceTests` @ 0a7b1a2 (ReplayTheSameBatchTwice_ExactDuplicatesRejected_NeverDuplicated) + `ClockingServiceTests` (ExactDuplicate → RejectedDuplicate, never a second row) | REL-002 idempotency at the repository seam (F-CR-E3-1; PG engine = Construction Iter 1, R008) |
+| TC-007 | **PASS** | `KeycloakAuthProviderTests` @ 3a63509 (Middleware_UnauthenticatedRequest_RedirectsToIssuer — 302 to the issuer BEFORE any content; ExpiredToken_RejectedAtRequestBoundary) | SEC-001/SEC-003; redirect-before-render verified |
+| TC-008 | **PASS** | `TimeServiceTests` @ 825e087 (summer −04:00 vs winter −05:00; MonthBoundsLocal = local calendar days) | DST-aware America/Havana — a hardcoded UTC-5 fails here |
+| TC-009 | **PASS** | `LdapGatewayTests` @ caec358 (Search_ByName_ReturnsAllMatches_IncludingEntriesWithMissingAttributes) + `LdapGateway.cs` @ b8df8b7 `MapEntry` (six-field positional construction — cross-mapping structurally impossible) | Six-field criterion: five fields execution-asserted; email verified by first-hand inspection of the positional mapping (no separate email assertion exists — recorded honestly) |
+| TC-010 | **BLOCKED** | — | The P-05 empty state is a UI rendering — no materialized UI mechanism this phase (Construction). Honest correction |
+| TC-011 | **PASS** | `BehaviouralBarTests` @ 3660454 (ClauseA/B/C/D) + `LdapGatewayTests` @ caec358 (empty-string → null; hard timeout) | FOUR clauses × UC-004; clause (d): NOT "General", NOT "Central", NOT "N/A", no cross-entry inheritance |
+| TC-012 | **PASS** | `LdapGatewayTests` @ caec358 (Search_QueryTimeout_ThrowsDirectoryUnavailable — the hard timeout fires and is translated; Search_DirectoryFailure_ThrowsDirectoryUnavailable) | PRF-003 timeout mechanism exercised (shortened delay — identical cancel→translate path); no local fallback (CON-006) |
+| TC-013 | **BLOCKED** | — | News/audit mechanism is Construction scope (unchanged) |
+| TC-014 | **BLOCKED** | — | News/audit mechanism is Construction scope |
+| TC-015 | **BLOCKED** | — | News/audit mechanism is Construction scope |
+| TC-016 | **BLOCKED** | — | News/audit mechanism is Construction scope (PG engine REVOKE semantics = Construction Iter 1, R008) |
+| TC-017 | **BLOCKED** | — | The `/hr/*` endpoint authorization surface is Construction controllers; the R003 boundary foundation it leans on IS validated (TC-019: middleware rejects at the request boundary, next not invoked; roles extracted verbatim). Honest correction from the Cycle 3 Scripted transition |
+| TC-018 | **BLOCKED** | — | The `/history` request surface is Construction; the service-seam own-data-only semantics (GetHistory takes the uid parameter — claims-binding is the controller's job) are validated via `ClockingServiceTests`. Honest correction |
+| TC-019 | **PASS** | `KeycloakAuthProviderTests` @ 3a63509 — full matrix: RedirectFlow_Completes; ValidToken_ValidatedViaIssuerJwks_RolesExtracted; Expired/Tampered/WrongIssuer/WrongAudience/AlgNone/UnknownKid/Malformed all Rejected; MissingBearer → null (challenge, not error); Roles_ExtractedVerbatim_NeverInvented; TokenWithoutRoles → empty set | R003 empirical validation — 10 rejection variants at the request boundary |
+| TC-020 | **PASS** | `OfflineQueueTests` @ cb4b843 (Capacity_IsAtLeastTen; Enqueue_BeyondCapacity_Throws_EventNotQueued) + `OfflineResilienceTests` (full-capacity sync ≤ 60 s) | REL-002 capacity ≥ 10 boundary; overflow event NOT queued |
+| TC-021 | **PASS** | `BehaviouralBarTests` @ 3660454 (ClauseA — every event row incl. unresolvable u999; ClauseC — no error; ClauseD — display fields blank, never substituted) + `LdapGatewayTests` (GetDisplayData_MapIsCompleteOverRequestedUids — D-9) | UC-005 consumer; clocking columns always complete (portal data) |
+| TC-022 | **PASS** | `ReportExportServiceTests` @ 4bbb732 (MissingDisplayFields_WriteTrulyEmptyCells — `u003,Ana Gomez,,,…` NOT "General"/"Central"; `u999,,,,…` ad_user_id always present; DirectoryUnavailable_AbortsWithoutPartialFile — AF-2 contrast; MonthBoundsAreLocalCalendarDays; RFC 4180 quoting) + `BehaviouralBarTests` (CSV rows) | UC-006 consumer; ISO-8601 with DST-aware offset; empty cells, never placeholders — the file reaches payroll |
+| TC-023 | **PASS** | `BehaviouralBarTests` @ 3660454 (ClauseD — UC-007 lookup: gapped employee locatable AND selectable via GetDisplayData; blank fields, no substitution) + `DirectoryServiceTests` @ 06c5bd4 (GatewayOmitsUid_ServiceFillsAllNullEntry) | UC-007 consumer; the uid is the selection payload and is always present (CON-006). Category-select empty-start + AUD-004 audit assertions: Construction (the category mechanism is not an Elaboration mechanism) |
+
+**R001 clause-by-clause evidence (FOUR clauses × four consumers — the R6 evidence-gate shape):**
+
+| Clause | UC-004 (TC-011) | UC-005 (TC-021) | UC-006 (TC-022) | UC-007 (TC-023) |
+|---|---|---|---|---|
+| (a) every employee rendered | PASS — 4/4 Gomez entries incl. gapped | PASS — every event row incl. u999 (D-9 all-null, row stays) | PASS — CSV row count == event count, no row dropped | PASS — gapped employee locatable by name |
+| (b) never removed for a missing attribute | PASS — Ana/Luis present with gaps | PASS — no employee removed from the review | PASS — no row dropped; ad_user_id always present | PASS — not hidden from the lookup |
+| (c) never raises an error | PASS — Record.ExceptionAsync null ×4 consumers | PASS — no error on gapped + unresolvable | PASS — no abort on gapped rows | PASS — no error on lookup |
+| (d) displayed as missing — never substituted | PASS — dept NOT "General", office NOT "Central", title NOT "N/A"; no cross-entry inheritance (Luis ≠ Maria) | PASS — display fields null, never substituted | PASS — truly empty cells (`u003,Ana Gomez,,,`) | PASS — blank fields; selectable via always-present uid |
+
+**Honest corrections recorded by this pass (the Cycle 3 state-transition record over-claimed four cases):** TC-003 (2 s HomeView debounce), TC-010 (P-05 empty state), TC-017 (`/hr/*` endpoint surface), TC-018 (`/history` request surface) transition Scripted → **BLOCKED on Construction scheduling** — their primary attacked scenarios require UI/controller mechanisms that are Construction scope. The R003 boundary foundation TC-017/TC-018 lean on IS validated (TC-019), and the service-seam own-data-only semantics are validated (`ClockingServiceTests` GetHistory) — but the endpoint-level attacks themselves have no materialized surface this phase. Recording them as PASS would be paper-only validation; BLOCKED is the honest verdict. None of the four is an Elaboration exit-criterion blocker (exit criteria 1–3 cover R001/R003/R004 only).
+
+**Verdict distribution (23 cases):**
+
+```plantuml
+@startuml
+title Elaboration Iter 3 Formal Execution Pass - Verdict Distribution (23 cases, 2026-09-02)
+
+object "PASS - 15 cases" as P {
+  R001 (HIGH) four-clause bar,\nfour consumers: TC-011, TC-021,\nTC-022, TC-023 - clause (d)\nverified against substitution-\nattempt fixtures (blank is the answer)
+  R003: TC-007, TC-019 - redirect flow,\nJWKS validation, verbatim role\nextraction, 10 rejection variants\nat the request boundary
+  R004: TC-004, TC-005, TC-006, TC-020 -\nzero duplicates (double replay +\nmixed online/queued paths), zero\nlosses, <= 60 s sync, < 1 s both\npaths, capacity >= 10
+  Mechanism cases: TC-001, TC-002,\nTC-008, TC-009, TC-012
+  Evidence: CI run 33617748483\n+ suite file sha per case
+}
+object "FAIL - 0 cases" as F {
+  Zero FAIL verdicts ->\nzero new defects to\nformalize as CRs.\nIssue #1's executed-TC\nevidence condition\nSATISFIED by this pass\n(closure owned by the\nCCM/Integrator chain)
+}
+object "BLOCKED - 8 cases" as B {
+  TC-003 - 2 s HomeView debounce\n(UI mechanism, Construction)
+  TC-010 - P-05 empty state\n(UI mechanism, Construction)
+  TC-017 - /hr/* endpoint\nauthorization surface\n(Construction; the R003 boundary\nfoundation is validated via TC-019)
+  TC-018 - /history request surface\n(Construction; the service-seam\nown-data-only semantics are\nvalidated via ClockingServiceTests)
+  TC-013..TC-016 - news/audit\nmechanism (Construction scope)
+  Honest corrections from the\nCycle 3 Scripted transition:\nTC-003, TC-010, TC-017, TC-018
+}
+P -[hidden]-> F
+F -[hidden]-> B
+@enduml
+```
+
+**Regression status (baseline ESTABLISHED):** 15 executed PASS results form the regression baseline. The merge sequence itself exercised the mandatory policy: PR #3 merged → CI GREEN 33617283642; PR #5 merged → CI GREEN 33617446626 (R004 suites re-running R001's); PR #4 merged → CI GREEN 33617748483 (R003 suites re-running both) — every merged PR re-ran ALL prior suites, all GREEN (`ci.yml` @ 5a2ba38). From this point, ANY subsequent merged PR re-runs all 15.
+
+**Cycle 1 formal-pass verdict for the Evaluation Mission:** exit criteria 1–3 evidence PRODUCED — R001 (HIGH) four-clause × four-consumer PASS, R003 token-validation matrix PASS, R004 drop simulation PASS, all against the merged evolutionary code with CI-green execution traces. The mission verdict itself (Test Evaluation Summary) and the PoC results ledger (Architect) consume this record; Issue #1's executed-TC evidence condition is satisfied — closure is owned by the CCM/Integrator chain. The 8 BLOCKED cases are Construction-scope mechanisms, never Elaboration exit-criterion blockers.
+
+**Test-code materialization status:** the harness is materialized and the run is repeatable in CI — `EmployeePortal.Tests.csproj` (xunit 2.9.2) + 10 suites + 2 fixtures implement this artifact's automation architecture; CI run 33617748483 is the execution trace; the merge-sequence re-runs (33617283642 → 33617446626 → 33617748483) demonstrate repeatability after every merged PR.
+
+### Findings — Elaboration Iteration 3, Cycle 1 (Execution-State Transition Record — Test Designer, earlier this iteration; preserved; per-case states superseded by the formal-pass verdict table above)
 
 **Execution context (all values from actual tool calls, 2026-09-02 — nothing fabricated):**
 
