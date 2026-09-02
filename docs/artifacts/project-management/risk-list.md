@@ -367,21 +367,21 @@ end note
 | Trigger | A gate question or sanction request remains unanswered past 7 days (half the suspension ceiling) — escalation notice issued to the Project Manager and Review Coordinator. |
 | Affected alternatives | LCA, IOC, PR milestone gates; every REQUIRES_USER_INPUT round; phase-transition sanction |
 ## Traceability
-
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
-| R001 | Declared risk R001; stakeholder Iter 2 answer (behavioural bar, dropped percentage, four-UC confirmation) | Refines | Architectural PoC (convergence cycle — disposable LDAP directory, action A-2), UC-004, UC-005, UC-006, UC-007, FR-010, FR-001, FR-002, FR-003, AC-003 |
+| R001 | Declared risk R001; stakeholder Iter 2 answer (behavioural bar, dropped percentage, four-UC confirmation); stakeholder verdict-gate contribution (fourth clause, verbatim) | Refines | Architectural PoC (convergence cycle — disposable LDAP directory, action A-2), UC-004, UC-005, UC-006, UC-007, FR-010, FR-001, FR-002, FR-003, AC-003 |
 | R002 | Declared risk R002 | Refines | BG-003, AC-004, FR-004 |
 | R003 | CON-004 (Keycloak OIDC) | Derives | Architectural PoC (convergence cycle — stub OIDC issuer, action A-3), FR-004, all HR functions |
 | R004 | NFR-004, AC-005 | Derives | Architectural PoC (convergence cycle — direct, action A-4), FR-004, NFR-004 |
 | R005 | NFR-001, FR-010, CON-005 | Derives | AC-003, R001 validation activity |
 | R006 | NFR-005, FR-006, FR-008, FR-009, FR-003 | Derives | Design Model (audit entity) |
-| R007 | CON-011; stakeholder Iter 2 answer (featured banner: newest first) | Derives | All user-facing FRs |
+| R007 | CON-011; stakeholder Iter 2 answer (featured banner: newest first — faithful contract: banners STACK, newest first, per Design Model P-02) | Derives | All user-facing FRs; UC-003 step 4, UC-008 step 3 |
 | R008 | CON-001, CON-003 | Derives | Implementation Model (project skeleton) |
 | R009 | Declared scope exclusions | Derives | All declared scope items |
 | R010 | STK-004, CON-004, CON-005, CON-008 | Derives | Construction integration testing, FR-010, FR-004 |
 | R011 | Stakeholder decision (Elab Iter 1 — validation paths); stakeholder Iter 2 answer (percentage home) | Derives | R001, R003, R010, Construction integration testing, Construction AD data-quality measurement |
-| R012 | Review Record Iteration Plan F5 / Risk List F1 (Management) — human gate = risk, not estimate; 14-day suspension ceiling | Derives | LCA, IOC, PR milestone gates; Iteration Plan milestone table (no queue forecasts — A-13); Iteration Assessment (measured queue actuals) |
-| R001 behavioural bar | Stakeholder Iter 2 answer: "the bar is behavioural, not statistical" — three clauses; confirmed for all four AD-reading UCs ("Yes") | Authorizes | R001 acceptance criteria (this artifact); Test Case TC-011 fixture (gaps seeded deliberately); SAD PoC Plan; Test Evaluation Summary thresholds (propagate on next evolution) |
+| R012 | Review Record Iteration Plan F5 / Risk List F1 (Management) — human gate = risk, not estimate; 14-day suspension ceiling; Iter 2 measured queue actual (10:01:08 / 21 interactions) | Derives | LCA, IOC, PR milestone gates; Iteration Plan milestone table (no queue forecasts — A-13); Iteration Assessment (measured queue actuals) |
+| R001 behavioural bar (FOUR clauses) | Stakeholder Iter 2 answer: "the bar is behavioural, not statistical" — three clauses, confirmed for all four AD-reading UCs ("Yes"); stakeholder verdict-gate contribution, verbatim: "a missing attribute is displayed as missing. It is never replaced by a default, a placeholder, a guessed value, or another employee's value" (action A-30, applied this close pass) | Authorizes | R001 acceptance criteria (this artifact); Test Case TC-011 + TC-021/022/023 fixtures (gaps + substitution attempts seeded deliberately, A-28); SAD PoC Plan (A-31); Test Evaluation Summary thresholds; Iteration Plan exit criterion 1 |
 | R001/R003/R004 re-scoping | Stakeholder decision (Elab Iter 1): "The PoC is produced in Elaboration and validated empirically" | Authorizes | Elaboration Iteration Plan (PoC work items), SAD PoC Plan (Architect to correct) |
 | Trend column (A-14) | Review Record Risk List F1 (Management, part 1) — risk-retirement trend verification | Refines | Every future milestone review (trend verification); Iteration Assessments |
+| R007 correction (F2, A-24) | Review Record Risk List F2 (Major, Management Reviewer lens, Iter 2); stakeholder verbatim answer "newest first"; Design Model P-02 (authoritative UI record) | Reviews | Development Case F1 parallel correction (A-17, Process Engineer); UC-003 step 4 / UC-008 step 3 authorization chain |
