@@ -313,7 +313,6 @@ The mission is defined, agreed, and executable, and every test-side precondition
 **Stakeholder sanction: REFUSED (standing)** — the fresh request fires at the R6 re-presentation, gated on the evidence package. Requesting it mid-cycle would contradict the stakeholder's own bar.
 
 ## Rework Required
-
 **Twelve tracked findings (verified ledger: 2 Critical, 3 Major, 5 Minor; plus 2 narrative-tracked Code Reviewer findings).** All are phase-exit conditions per the stakeholder's directive. PM-owned findings were corrected in this close pass; the remainder is owned and scheduled.
 
 | # | Finding | Severity | Owner (Action) | Status |
@@ -384,6 +383,7 @@ stop
 3. **A confirmation questionnaire that cannot receive an addition silently drops stakeholder decisions.** The stakeholder held the fourth behavioural-bar clause for an entire cycle because the Iter 2 confirmation was yes/no with no free-text field. Contract-confirmation questionnaires must carry an optional free-text field (process observation recorded by the Review Coordinator; propagated to the Process Engineer).
 4. **Queue growth traces to process defects, not stakeholder availability.** The queue grew 0:35:14 → 10:01:08 while the stakeholder answered every question in-round; the growth is the emission-format incident (an unparseable emission, re-emitted) and the contribution-cycle re-emission. Emission-format discipline — the marker on exactly one line, immediately followed by the valid JSON array, never embedded in memory blocks or prose — is load-bearing.
 5. **One defect, three gates persists until the code lands.** The absent code evidence is still SAD F2 = Iteration Plan F3 = F-CR-E1-1, and it is now a 2nd-occurrence Critical on two gates. The stakeholder has attributed the Implementer's absence to a technical problem beyond its control and stated the code push as the priority — the convergence cycle's success now depends on exactly that one chain (A-16).
+6. **The emission-format rule binds this role's own outputs — third occurrence of the incident class, first by the Project Manager (recorded at this close pass).** This close pass's completion output embedded the question-emission marker string inside a memory-entry text block that was itself DESCRIBING the rule (lesson 4) — the runtime parser read that occurrence as a question emission, found no valid JSON array following it, and flagged the output INVALID; no question was intended and none was owed (the contribution cycle is CLOSED per the Review Record; the next stakeholder touchpoint is the R6 fresh sanction request). Same incident class as the Review Record's Iter 1 escalation emission and Iter 2 consolidation-revision incidents. Standing correction, applied to this role's outputs from this pass: **the marker string is NEVER quoted — in memory entries, prose, or artifact content; a role that must reference the marker writes "the user-input question marker" and describes the rule instead of reproducing it.** The doubt examination re-executed at this correction confirms ZERO open consequential doubt: every open finding's remediation is fully determined by recorded stakeholder decisions (Review Record coordinator determination, sustained at the verdict gate), and the stakeholder's own closure — nothing further owed this cycle — stands. No question is re-emitted; the determination is recorded here rather than dropped silently.
 
 ### Next Iteration Adjustments (binding inputs to the next pass)
 
@@ -395,7 +395,6 @@ stop
 | Record corrections by other roles: A-17 (DC featured-banner), A-19 (TES TC enumeration), A-20 (DC TC enumeration), A-21 (PoC TC enumeration, with the A-8 evolution), A-25/A-26 (UC Model + Supp Spec fourth clause), A-29/A-31 (PoC + SAD fourth clause) | All are phase-exit conditions per the all-findings directive; all are quick, independent record corrections |
 | Budget box for the next pass: sized from the measured iteration-shaped actuals (Iter 1: 12,523,281; Iter 2: 13,363,814) — the corrected ~12,500K basis carries forward; no assumption chain | The F6 lesson: adjustments are applied in the plan body at build time |
 | No scope reduction | The convergence scope is fully determined by the open findings and the stakeholder directive; the box governs, and the box is now calibrated to measured fact |
-
 ## Traceability
 
 | Element | Traces From | Link Type | Traces To |
