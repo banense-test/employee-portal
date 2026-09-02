@@ -128,132 +128,88 @@ end note
 ```
 
 ## Risk Register
-| ID | Description | Category | P | I | Magnitude | Strategy | Owner | Status | Trend (since Iter 2 review) |
+| ID | Description | Category | P | I | Magnitude | Strategy | Owner | Status | Trend (since Iter 3 plan-build review) |
 |---|---|---|---|---|---|---|---|---|---|
-| R001 | Active Directory integration: LDAP attributes (job title, extension) may not be populated consistently across the 3 offices. If not tested early, the directory shows gaps. | TECHNICAL | 3 | 3 | HIGH | Accept | Software Architect | MITIGATING — empirical validation this phase (convergence cycle, action A-2) | **STALLED** — record side complete since Iter 2 (FOUR-clause bar defined, fixtures specified, TC-011 + TC-021/022/023 designed); execution side: ZERO code evidence for a SECOND consecutive iteration (iteration/E1 has no CI runs as of plan-build 2026-09-02). IMPROVING was the Iter 2 verdict; with the record side unchanged and the evidence side still absent, the honest direction is STALLED. Retirement only on OBSERVED results |
+| R001 | Active Directory integration: LDAP attributes (job title, extension) may not be populated consistently across the 3 offices. If not tested early, the directory shows gaps. | TECHNICAL | 3 | 3 | HIGH | Accept | Software Architect | **RETIRED (Elaboration scope) — recorded this close pass (Work Item 11)** | **RETIRED ON OBSERVED EVIDENCE** — FOUR clauses × FOUR consumers PASS (TC-011 + TC-021/022/023; clause (d) verified against substitution-attempt fixtures — NOT "General", NOT "Central", NOT "N/A", no cross-entry inheritance; trace CI 33617748483); PR #3 merged to iteration/E1 (APPROVED, review 5088169328); LdapGateway sha b8df8b7; Issue #1 CLOSED cr:complete. Production-AD data-quality residual → R011 (Construction, stakeholder decision — outside the LCA evidence package) |
 | R002 | Digital clocking adoption: some employees may keep using Excel out of habit if the change is not communicated well. | BUSINESS | 3 | 2 | SIGNIFICANT | Accept | Project Manager | OPEN — Construction/Transition | STABLE — no new evidence; adoption unmeasurable until deployment (BG-003) |
-| R003 | OIDC integration with Keycloak: token validation, role mapping from claims, and redirect flow may have configuration nuances that delay the auth layer. | TECHNICAL | 2 | 3 | SIGNIFICANT | Accept | Software Architect | MITIGATING — empirical validation this phase (convergence cycle, action A-3) | **STALLED** — same execution gap as R001 (R013): stub-issuer path confirmed since Iter 1, zero code evidence two consecutive iterations |
-| R004 | Offline fault tolerance (NFR-004, AC-005): system must tolerate 5-minute network drops and sync data once connectivity is restored. Non-trivial for a web application on a single server. | TECHNICAL | 2 | 3 | SIGNIFICANT | Accept | Software Architect | MITIGATING — empirical validation this phase (convergence cycle, action A-4) | **STALLED** — same execution gap as R001 (R013): direct path confirmed since Iter 1, zero code evidence two consecutive iterations |
-| R005 | LDAP query performance: on-demand directory search against AD for 200 employees may exceed the 3-second page load requirement (NFR-001) if AD response is slow or queries are unoptimized. | TECHNICAL | 2 | 2 | MODERATE | Accept | Software Architect | OPEN — measured during R001 validation | STABLE — measurement pending R001 mechanism execution (blocked with R001) |
-| R006 | Audit trail completeness: NFR-005 requires mandatory traceability of all news publish/edit/unpublish actions and worker category changes. If the audit mechanism is not designed early, retrofitting it is costly. | TECHNICAL | 2 | 2 | MODERATE | Accept | Designer | OPEN — Design Model this phase | **IMPROVING** — audit mechanism designed in the Design Model (zero findings at both LCA technical reviews; Review Record per-artifact verdict: Design Model Approved) |
-| R007 | UI design fidelity (CON-011): the mandatory custom design must be implemented faithfully in Razor Pages. Server-rendered model may constrain some design interactions. | TECHNICAL | 2 | 2 | MODERATE | Accept | UI Designer | OPEN — design mapping this phase | **IMPROVING** — CON-011 mapped to Razor Pages (Design Model UI sections, zero findings); featured-banner rendering contract settled by stakeholder (Iter 2: banners STACK, newest first — faithful record; Risk List F2 corrected at the Iter 2 close pass) |
-| R008 | PostgreSQL + .NET 10 compatibility: Npgsql driver maturity for .NET 10 and EF Core compatibility may have edge cases on a cutting-edge framework version. | TECHNICAL | 2 | 2 | MODERATE | Accept | Implementer | OPEN — build-time validation | STABLE — validated when the mechanism code builds against PostgreSQL (blocked with the code chain, R013) |
-| R009 | Scope creep: stakeholders may request additional features (vacation management, push notifications, mobile app) during iteration reviews. | BUSINESS | 2 | 2 | MODERATE | Avoid | Project Manager | OPEN — CCB enforced | STABLE — zero scope-creep findings across all review lenses, both iterations (Review Record) |
-| R010 | Infrastructure team deliverables (STK-004): LDAP service account, Keycloak client registration, Windows Server provisioning. **Re-scoped (Elab Iter 1):** blocks production-instance integration only — NOT Elaboration exit. | EXTERNAL | 2 | 3 | SIGNIFICANT | Transfer | Project Manager | OPEN — Construction integration | **NARROWED** (Iter 1 re-scope, unchanged); **PM mitigation obligation OPEN** — the written deliverables request is unevidenced two passes (Iteration Plan exit criterion 9); PM-owned obligation Iter 3; the RESPONSE remains NOT an Elaboration exit condition (stakeholder decision) |
-| R011 | Validation-environment fidelity: the disposable LDAP directory and stub OIDC issuer used for Elaboration empirical validation may differ from the production instances (attribute schemas, claim shapes, Keycloak configuration). | TECHNICAL | 2 | 2 | MODERATE | Accept | Software Architect | OPEN — new Iter 1 | STABLE — owns the production-AD data-quality percentage (Construction, with R010); explicitly OUTSIDE the LCA evidence package per the stakeholder's Iter 2 answer |
-| R012 | Human-gate queue: the LCA/IOC/PR milestone sanction gates and stakeholder consultation rounds depend on a human deciding when to sit down. A gate is a RISK, not an estimate — the plan quotes no queue figure (A-13); the queue is bounded HERE. | SCHEDULE | 1 | 2 | MINOR | Accept | Project Manager | OPEN — bounded, monitored each gate | STABLE — measured actuals: LCO 0s; Iter 1 0:35:14; Iter 2 10:01:08 across 21 interactions (growth traced to process defects, not stakeholder availability; far below the 14-day suspension ceiling) |
-| R013 | Code-delivery continuity: the convergence critical path (A-16) runs through the Implementer, and no mechanism code has landed for TWO consecutive iterations — zero ready-for-review branches, zero PRs in any state, `iteration/E1` with no CI runs, SCM Issue #1 open. The stakeholder attributes the absence to a technical problem beyond the Implementer's control and states the code push as the priority for Iter 3. | RESOURCE | 2 | 3 | SIGNIFICANT | Accept | Project Manager | MITIGATING — A-16 is P0 this iteration | **NEW** — registered at the Iter 3 reappraisal: a blocker that recurs twice without a register entry is a risk-management failure. Blocks R001/R003/R004 empirical retirement, exit criteria 1–3, and the R6 entry gate |
+| R003 | OIDC integration with Keycloak: token validation, role mapping from claims, and redirect flow may have configuration nuances that delay the auth layer. | TECHNICAL | 2 | 3 | SIGNIFICANT | Accept | Software Architect | **RETIRED (Elaboration scope) — recorded this close pass** | **RETIRED ON OBSERVED EVIDENCE** — token-validation matrix PASS (RS256 via issuer JWKS with kid matching, exp/iss/aud/sub enforced, roles extracted verbatim, failing states rejected at the request boundary — 401); PR #4 merged (APPROVED, review 5088169517). Production claim shapes → R011 (Construction) |
+| R004 | Offline fault tolerance (NFR-004, AC-005): system must tolerate 5-minute network drops and sync data once connectivity is restored. Non-trivial for a web application on a single server. | TECHNICAL | 2 | 3 | SIGNIFICANT | Accept | Software Architect | **RETIRED (Elaboration scope) — recorded this close pass** | **RETIRED ON OBSERVED EVIDENCE** — 5-minute drop simulation PASS (zero duplicates — double replay AND mixed online+queued; zero losses; sync ≤ 60 s; confirmations < 1 s; recorded-order preservation); PR #5 merged (APPROVED, review 5088169685). Formal AC-005 feature test at Construction Iter 1; PG engine semantics R008 |
+| R005 | LDAP query performance: on-demand directory search against AD for 200 employees may exceed the 3-second page load requirement (NFR-001) if AD response is slow or queries are unoptimized. | TECHNICAL | 2 | 2 | MODERATE | Accept | Software Architect | OPEN — production-AD measurement at Construction Iter 3 | **IMPROVED** — the R001 mechanism validated with the 5 s hard timeout (PRF-003) in the merged gateway; production-AD query performance measured at Construction Iter 3 (R010/R011) |
+| R006 | Audit trail completeness: NFR-005 requires mandatory traceability of all news publish/edit/unpublish actions and worker category changes. If the audit mechanism is not designed early, retrofitting it is costly. | TECHNICAL | 2 | 2 | MODERATE | Accept | Designer | OPEN — Design Model this phase | **IMPROVING** — audit mechanism designed in the Design Model (zero findings at both LCA technical reviews); news/audit cases TC-013…TC-016 BLOCKED — recorded scope decision (Construction, deferred not missing) |
+| R007 | UI design fidelity (CON-011): the mandatory custom design must be implemented faithfully in Razor Pages. Server-rendered model may constrain some design interactions. | TECHNICAL | 2 | 2 | MODERATE | Accept | UI Designer | OPEN — design mapping this phase | **IMPROVING** — CON-011 mapped to Razor Pages (Design Model UI sections, zero findings); featured-banner contract settled (banners STACK, newest first — faithful record, F2 corrected at the Iter 2 close pass); TC-003/TC-010 BLOCKED — recorded scope decision (Construction UI mechanisms) |
+| R008 | PostgreSQL + .NET 10 compatibility: Npgsql driver maturity for .NET 10 and EF Core compatibility may have edge cases on a cutting-edge framework version. | TECHNICAL | 2 | 2 | MODERATE | Accept | Implementer | OPEN — build-time validation Construction Iter 1 | STABLE — the interim in-memory seam carried Elaboration (F-CR-E3-1, UNIQUE idempotency_key contract enforced and validated); PG adapter (CLS-011/012) + engine semantics land Construction Iter 1 |
+| R009 | Scope creep: stakeholders may request additional features (vacation management, push notifications, mobile app) during iteration reviews. | BUSINESS | 2 | 2 | MODERATE | Avoid | Project Manager | OPEN — CCB enforced | STABLE — zero scope-creep findings across all review lenses, three iterations (Review Record) |
+| R010 | Infrastructure team deliverables (STK-004): LDAP service account, Keycloak client registration, Windows Server provisioning. **Re-scoped (Elab Iter 1):** blocks production-instance integration only — NOT Elaboration exit. | EXTERNAL | 2 | 3 | SIGNIFICANT | Transfer | Project Manager | OPEN — Construction integration; **PM obligation CARRIED to Construction Iter 1 (close-pass record — F8 remediation)** | **NARROWED; obligation relocated** — the written request is NOT issued; the concrete blocker is recorded this close pass (no direct STK-004 channel in this runtime — the questionnaire reaches STK-001 only; the stakeholder's Iter 3 directive confirms production AD/Keycloak integration is Construction scope); the obligation is carried to the Construction Iter 1 plan with R010's own trigger (STK-004 confirmation by Construction Iter 1 start). The RESPONSE remains NOT an Elaboration exit condition (stakeholder decision) |
+| R011 | Validation-environment fidelity: the disposable LDAP directory and stub OIDC issuer used for Elaboration empirical validation may differ from the production instances (attribute schemas, claim shapes, Keycloak configuration). | TECHNICAL | 2 | 2 | MODERATE | Accept | Software Architect | OPEN — Construction | STABLE — now owns BOTH production residuals from the retired risks: the real-AD data-quality percentage (from R001) AND the production claim shapes (from R003); fixtures retained as reusable Construction test fixtures; explicitly OUTSIDE the LCA evidence package per the stakeholder's Iter 2 answer |
+| R012 | Human-gate queue: the LCA/IOC/PR milestone sanction gates and stakeholder consultation rounds depend on a human deciding when to sit down. A gate is a RISK, not an estimate — the plan quotes no queue figure (A-13); the queue is bounded HERE. | SCHEDULE | 1 | 2 | MINOR | Accept | Project Manager | OPEN — bounded, monitored each gate | **IMPROVED** — measured Iter 3 queue 0:00:00 across 20 interactions, ALL answered in-round (the Iter 2 process-defect growth did not recur; emission discipline held); cumulative actuals: LCO 0s; Iter 1 0:35:14; Iter 2 10:01:08; Iter 3 0:00:00; far below the 14-day suspension ceiling |
+| R013 | Code-delivery continuity: the convergence critical path (A-16) runs through the Implementer, and no mechanism code had landed for TWO consecutive iterations. The stakeholder attributes the absence to a technical problem beyond the Implementer's control and states the code push as the priority for Iter 3. | RESOURCE | 2 | 3 | SIGNIFICANT | Accept | Project Manager | **RESOLVED — this close pass** | **RESOLVED ON OBSERVED EVIDENCE** — the stakeholder-stated priority FULFILLED and verified: 3 mechanisms merged (PRs #3/#4/#5, APPROVED ×3), baseline-close PR #6 merged to main (APPROVED), formal TC pass COMPLETE (15/0/8, trace CI 33617748483), Issue #1 CLOSED cr:complete; the contingency (phase cannot close without code) was never triggered |
 
-### Elaboration Iter 3 Reappraisal — Validation Paths and Trend Evidence
+### Elaboration Iter 3 Close-Pass Reappraisal — Risk Retirement Recording
 
 ```plantuml
 @startuml
 !theme plain
-title Employee Portal — Elaboration Iter 3 Risk Reappraisal (plan-build)\nR001 FOUR-clause behavioural bar; R013 code-delivery continuity registered; trends per A-14
+title Employee Portal — Elaboration Iter 3 Close-Pass Risk Reappraisal\nRetirement recorded on OBSERVED evidence (PM, Work Item 11)
 
-class "R001 AD LDAP Attributes\nHIGH (P=3, I=3) MITIGATING" as R001 {
-  Validation: EMPIRICAL, this phase
-  Vehicle: disposable LDAP directory
-  Bar: BEHAVIOURAL - FOUR clauses
-  ..
-  1. every employee rendered
-  2. missing attribute never
-     removes from search results
-  3. missing attribute never
-     raises an error
-  4. displayed as missing - never
-     a default, placeholder, guessed
-     value, or another employee's value
-  ..
-  Confirmed for UC-004, UC-005,
-  UC-006, UC-007
-  Trend: STALLED - record side
-  complete since Iter 2; zero code
-  evidence for a SECOND consecutive
-  iteration; retirement only on
-  OBSERVED results
+class "R001 AD LDAP Attributes\nHIGH (P=3, I=3) RETIRED (Elab scope)" as R001 {
+  Retired on: formal TC pass 15/0/8\n(trace CI 33617748483)
+  Evidence: FOUR clauses x FOUR\nconsumers PASS - TC-011 +\nTC-021/022/023, clause (d)\nverified against substitution-\nattempt fixtures (NOT General,\nNOT Central, NOT N/A, no\ncross-entry inheritance)
+  Mechanism: PR 3 merged to\niteration/E1 (APPROVED, review\n5088169328); LdapGateway b8df8b7
+  Residual: production-AD data\nquality -> R011 (Construction,\nstakeholder decision - outside\nthe LCA evidence package)
 }
 
-class "R003 OIDC Integration\nSIGNIFICANT (P=2, I=3) MITIGATING" as R003 {
-  Validation: EMPIRICAL, this phase
-  Vehicle: stub OIDC issuer (CON-004)
-  Acceptance: token validation,
-  role claims, redirect flow
-  Trend: STALLED - same execution
-  gap as R001 (R013)
+class "R003 OIDC Integration\nSIGNIFICANT (P=2, I=3) RETIRED (Elab scope)" as R003 {
+  Retired on: token-validation\nmatrix PASS - RS256 via issuer\nJWKS with kid matching, exp/iss/\naud/sub enforced, roles extracted\nverbatim, failing states rejected\nat the request boundary (401)
+  Mechanism: PR 4 merged (APPROVED,\nreview 5088169517)
+  Residual: production claim\nshapes -> R011 (Construction)
 }
 
-class "R004 Offline Fault Tolerance\nSIGNIFICANT (P=2, I=3) MITIGATING" as R004 {
-  Validation: EMPIRICAL, this phase
-  Vehicle: DIRECT - nothing blocks it
-  Acceptance: 5-min drop, sync <= 60 s,
-  zero duplicates, zero losses
-  Trend: STALLED - same execution
-  gap as R001 (R013)
+class "R004 Offline Fault Tolerance\nSIGNIFICANT (P=2, I=3) RETIRED (Elab scope)" as R004 {
+  Retired on: 5-min drop simulation\nPASS - zero duplicates (double\nreplay AND mixed online+queued),\nzero losses, sync <= 60 s,\nconfirmations < 1 s, recorded-\norder preservation (AC-005)
+  Mechanism: PR 5 merged (APPROVED,\nreview 5088169685)
+  Follow-on: formal AC-005 feature\ntest at Construction Iter 1;\nPG engine semantics R008
 }
 
-class "R013 Code-Delivery Continuity\nSIGNIFICANT (P=2, I=3) ACCEPT - NEW Iter 3" as R013 {
-  The convergence critical path
-  (A-16) runs through the
-  Implementer: no mechanism code
-  for TWO consecutive iterations
-  (stakeholder-attributed to a
-  technical problem beyond its
-  control)
-  Mitigation: A-16 is P0; the code
-  push is the stakeholder-stated
-  priority for Iter 3
-  Contingency: if the code cannot
-  land at Iter 3 close, the phase
-  CANNOT close - no evidence is
-  fabricated; the measured record
-  is escalated; the process
-  suspends per the planning rule
-  Trigger: zero ready-for-review
-  branches at the mid-cycle checkpoint
+class "R013 Code-Delivery Continuity\nSIGNIFICANT (P=2, I=3) RESOLVED" as R013 {
+  Resolved on: the stakeholder-stated\npriority FULFILLED - 3 mechanisms\nmerged (PRs 3/4/5), baseline-close\nPR 6 merged to main (APPROVED),\nformal TC pass COMPLETE, Issue 1\nCLOSED cr:complete
+  The two-iteration absence did not\nrecur; the contingency (phase\ncannot close without code) was\nnever triggered
 }
 
 class "R010 STK-004 Deliverables\nSIGNIFICANT (P=2, I=3) TRANSFER" as R010 {
-  Blocks: production-instance
-  integration ONLY (Construction)
-  PM written request: NOT EVIDENCED
-  two passes - PM obligation Iter 3
-  Trend: NARROWED (Iter 1 re-scope)
+  Blocks: production-instance\nintegration ONLY (Construction)
+  PM obligation (close-pass record,\nF8 remediation): the written\nrequest is NOT issued - concrete\nblocker: no direct STK-004 channel\nin this runtime (the questionnaire\nreaches STK-001 only), and the\nstakeholder's Iter 3 directive\nconfirms production AD/Keycloak\nintegration is Construction scope
+  Obligation CARRIED to the\nConstruction Iter 1 plan with\nR010's own trigger (STK-004\nconfirmation by Construction\nIter 1 start). Response NOT an\nexit condition (stakeholder)
 }
 
 class "R012 Human-Gate Queue\nMINOR (P=1, I=2) ACCEPT" as R012 {
-  Measured: LCO 0 s; Iter 1 0:35:14;
-  Iter 2 10:01:08 (21 interactions -
-  growth traced to process defects)
+  Measured: LCO 0 s; Iter 1 0:35:14;\nIter 2 10:01:08; Iter 3 0:00:00\n(20 interactions, ALL in-round -\nthe Iter 2 process-defect growth\ndid not recur)
   Contingency: suspends at 14 days
-  Trend: monitored each gate
 }
 
-R013 ..> R001 : blocks the validation
-R013 ..> R003 : blocks the validation
-R013 ..> R004 : blocks the validation
-R001 ..> R011 : residual after validation
-R003 ..> R011 : residual after validation
-R010 ..> R011 : production instances close gap
+R013 ..> R001 : unblocked the validation
+R013 ..> R003 : unblocked the validation
+R013 ..> R004 : unblocked the validation
+R001 ..> R011 : residual carried
+R003 ..> R011 : residual carried
+R010 ..> R011 : production instances close the gap
 R004 -[hidden]-> R010
 R010 -[hidden]-> R012
 R012 -[hidden]-> R013
 
 note bottom of R013
-  Registered at the Iter 3 reappraisal:
-  a blocker that recurs twice without
-  a register entry is a risk-management
-  failure. The stakeholder attributes
-  the absence to a technical problem
-  beyond the Implementer's control and
-  expects the push this iteration -
-  recorded so convergence tracking does
-  not misread the absence as
-  non-compliance.
+  Close-pass reappraisal (Work Item 11,
+  stakeholder-confirmed): retirement is
+  recorded ONLY on observed evidence -
+  the formal TC pass is CI-traced, and
+  the 8 BLOCKED cases are a recorded
+  SCOPE decision (deferred to
+  Construction, not missing) per the
+  stakeholder's framing directive.
 end note
 @enduml
 ```
 
+> The Iter 3 plan-build reappraisal diagram (validation paths, R013 registration, STALLED trends) is preserved in SCM history at the plan-build revision — the close-pass record above supersedes the trend states it carried, per the reappraisal discipline (updated every iteration).
 ## Risk Mitigation and Contingency
 ### R001 — AD LDAP Attribute Consistency (HIGH)
 
