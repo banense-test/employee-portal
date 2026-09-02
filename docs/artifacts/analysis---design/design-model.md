@@ -925,7 +925,9 @@ One design model, three packages inside the single deployable (ADR-001). Depende
 
 **Elaboration Iter 3 evolution (Designer — Review Record A-27):** the CLS-009 LdapGateway graceful-degradation contract in the Infrastructure package is extended from three to FOUR clauses — null is the FINAL mapped value for a missing attribute, NEVER substituted by a default, a placeholder, a guessed value, or another employee's value (stakeholder contribution at the Iter 2 verdict gate, binding). No class is added; no signature changes — the fourth clause is a postcondition on the existing mapping behavior. All other content preserved exactly as reviewed.
 
-**Elaboration Iter 4 evolution (Designer — Review Record Iter 3, Consolidated Finding Tracker rows #7/#8; contract-table hygiene, no behavior change):** the Infrastructure package diagram is synchronized with the merged R003 mechanism (PR #4, `KeycloakAuthProvider` sha 7bd4cfd): INT-011/CLS-010 now show the full four-operation surface — `ConfigureOidc`, `BuildAuthorizeRedirectUrl(redirectUri, state)`, `HandleOidcCallbackAsync(authorizationCode)`, `GetAuthenticatedUserAsync(context)` (F-CR-E3-2) — plus the internal `ValidateTokenAsync` seam and the CON-004 redirect-flow note (round-trip state validation is Construction scope — the session mechanism; the Elaboration contract generates the state and does not claim its validation). The INT-016 note records the F-CR-E3-1 confirmation: the interim InMemoryClockingsRepository is a test-seam realization of the unchanged INT-016 contract; CLS-012 PgPersistence lands in Construction Iteration 1 (R008). No class is added; no signature changes — the diagram now matches the code the Implementer merged. All other content preserved exactly as reviewed.
+**Elaboration Iter 4 evolution (Designer — Review Record Iter 3, Consolidated Finding Tracker rows #7/#8; contract-table hygiene, no behavior change):** the Infrastructure package diagram is synchronized with the merged R003 mechanism (PR #4, `KeycloakAuthProvider` — file sha 7bd4cfd at merge; current verified file sha 8758844f, PR #7 comment-only): INT-011/CLS-010 now show the full four-operation surface — `ConfigureOidc`, `BuildAuthorizeRedirectUrl(redirectUri, state)`, `HandleOidcCallbackAsync(authorizationCode)`, `GetAuthenticatedUserAsync(context)` (F-CR-E3-2) — plus the internal `ValidateTokenAsync` seam and the CON-004 redirect-flow note (round-trip state validation is Construction scope — the session mechanism; the Elaboration contract generates the state and does not claim its validation). The INT-016 note records the F-CR-E3-1 confirmation: the interim InMemoryClockingsRepository is a test-seam realization of the unchanged INT-016 contract; CLS-012 PgPersistence lands in Construction Iteration 1 (R008). No class is added; no signature changes — the diagram now matches the code the Implementer merged. All other content preserved exactly as reviewed.
+
+**Elaboration Iter 5 evolution (Designer — verification pass; F-CR-E3-2 closure verification + F-CR-E3-3 semantics alignment):** the Infrastructure diagram's CLS-010 note is corrected to the F-CR-E3-3-corrected code semantics (PR #7, APPROVED — review 5090059324, CI GREEN run 33632200967): the state parameter is generated per challenge and carried to the issuer but provides NO CSRF protection as of Elaboration — round-trip state validation is [DEFERRED — lands with the session mechanism, Construction]. The prior note's "(state generated per challenge — the CSRF parameter)" gloss overstated what the code does — the exact defect class F-CR-E3-3 existed to correct. Verification sha citations updated to the current verified file sha (8758844f899f05b6a539ccc84681ee6eb8adf080 — PR #4 introduced the surface; PR #7's comment-only diff left it unchanged). No class added; no signature changed; all other content preserved exactly as reviewed.
 
 ```plantuml
 @startuml
@@ -1279,16 +1281,21 @@ note right of AUTH
   nothing more. Redirect flow (SEQ-001,
   at the middleware): unauthenticated
   request -> BuildAuthorizeRedirectUrl
-  (state generated per challenge — the
-  CSRF parameter); issuer callback ->
-  HandleOidcCallbackAsync: code -> token
-  -> JWKS validation (RS256 + kid match,
-  exp/iss/aud/sub) -> identity + roles
-  verbatim (SEC-006). Round-trip state
-  validation is Construction scope
-  (session mechanism) — the Elaboration
-  contract generates the state and does
-  not claim its validation.
+  (state generated per challenge and
+  carried to the issuer — NO CSRF
+  protection as of Elaboration; round-
+  trip validation DEFERRED to the
+  session mechanism, Construction —
+  F-CR-E3-3-corrected semantics, PR #7);
+  issuer callback -> HandleOidcCallbackAsync:
+  code -> token -> JWKS validation
+  (RS256 + kid match, exp/iss/aud/sub)
+  -> identity + roles verbatim (SEC-006).
+  Round-trip state validation is
+  Construction scope (session mechanism)
+  — the Elaboration contract generates
+  the state and does not claim its
+  validation.
 end note
 
 note bottom of QUEUE
