@@ -927,6 +927,28 @@ F -[hidden]-> B
 ## Test Data
 All data is synthetic and self-contained — no production AD data, no real employee identities. Fixtures are reusable Construction assets (R011 mitigation, Test Evaluation Summary recommendation 4).
 
+### Fixture Materialization Mapping (Iter 3 formal execution pass — design spec vs executed fixture)
+
+The executed fixture (`Fixtures/DisposableLdapDirectory.cs` @ sha 5b84206) materializes the design spec below at a reduced scale (11 entries vs the 64-entry design spec) — **every gap shape and every substitution temptation is present, so the FOUR-clause bar's falsifiability is intact**. The 64-entry scale is a Construction fixture concern (population volume), not a falsifiability concern: the bar is behavioural, not statistical (stakeholder decision — a percentage against self-seeded data cannot fail, so it proves nothing).
+
+| Design-spec element (below) | Materialized as (executed fixture) | Verified by |
+|---|---|---|
+| 3 offices (O1/O2/O3) | 3 offices (fixture labels "Central"/"North"/"South" — the declared input names no office locations) | All suites |
+| `ldap-o1-019` missing extension | `u002` Luis Gomez — missing job title + extension | TC-011 clause walk |
+| `ldap-o2-007` missing job title | `u002` (shared fixture entry — title + extension gaps) | TC-011 clause walk |
+| `ldap-o3-011` missing department | `u003` Ana Gomez — missing department + office | TC-011 clause walk; TC-021/022/023 |
+| Empty-string attribute (`ldap-o2-013`) | `u009` Sara Vega — empty-string department | TC-011 (null-vs-empty edge) |
+| Unresolvable uid `e099` (D-9) | `u999` — NEVER seeded; clocking events exist in the export/review data | TC-021, TC-022 (D-9 extreme) |
+| `ldap-o1-017` missing department ("General" temptation) | `u003` Ana Gomez (department missing — the "General" default temptation) | TC-011/021/022/023 ASSERT-xd |
+| `ldap-o2-021` missing office ("Central" first-office fallback) | `u003` Ana Gomez (office missing) + `u006` John Perez (office missing) | TC-011/021/022 ASSERT-xd |
+| `ldap-o3-014` missing title ("N/A" placeholder) | `u006` John Perez (title missing) | TC-011/021/022 ASSERT-xd |
+| `ldap-o1-018` fully-gapped | `u008` Marco Diaz — only uid + name present | TC-011 clause walk; cross-entry inheritance attack |
+| Named search target "Gómez, Elena" | `u001` Maria Gomez (fully populated) + `u011` "Gomez, Maria Clara" (comma in name — RFC 4180 CSV quoting) | TC-009; TC-022 |
+| — (fixture edge added at materialization) | `u010` Nora Cross (South) — parentheses in name (LDAP filter escaping round-trip) | `LdapGatewayTests` |
+| — (fixture edge added at materialization) | `u005` Eva Ruiz — missing department + email | TC-011 clause walk |
+
+**Materialization verdict:** the executed fixture carries every falsifiability element the design requires — deliberate gaps across all six corporate attributes, all four substitution temptations ("General" default, "Central" first-office fallback, "N/A" placeholder, cross-entry inheritance), the empty-string edge, the unresolvable uid, and two additional escaping/quoting edges. The clause-by-clause evidence in § Findings (Cycle 1 formal-pass record) is therefore valid evidence against the FOUR-clause bar.
+
 ### Test Identities (stub OIDC issuer)
 
 | ID | uid | Role(s) | Purpose |
@@ -938,11 +960,11 @@ All data is synthetic and self-contained — no production AD data, no real empl
 | HR-001 | hr001 | HR Administrator | news management actor (TC-013…TC-016); HR review/export/category actor (TC-021, TC-022, TC-023) |
 | e099 | e099 | (no AD entry) | **D-9 extreme**: uid with clocking events in PostgreSQL but NO AD entry — an unresolvable uid must map to all-null display data and the row must stay (TC-021, TC-022) |
 
-**Token variants (TC-007, TC-017, TC-018, TC-019, TC-021…TC-023):** V1 valid Employee (roles: ["employee"]); V2 valid HR Administrator (roles: ["employee","hr-administrator"]); V3 expired (valid signature, exp in the past); V4 bad signature (valid structure, wrong signing key); V5 absent (no Authorization header). Role claim names are the stub's configuration — the test asserts the PORTAL maps whatever claims the issuer sends (SEC-002), not a hardcoded claim path.
+**Token variants (TC-007, TC-017, TC-018, TC-019, TC-021…TC-023):** V1 valid Employee (roles: ["employee"]); V2 valid HR Administrator (roles: ["employee","hr-administrator"]); V3 expired (valid signature, exp in the past); V4 bad signature (valid structure, wrong signing key); V5 absent (no Authorization header). Role claim names are the stub's configuration — the test asserts the PORTAL maps whatever claims the issuer sends (SEC-002), not a hardcoded claim path. **Executed matrix extension (Iter 3):** the materialized suite additionally exercises wrong-issuer, wrong-audience, alg-none, unknown-kid, malformed-token, JWKS-unreachable, and malformed-JWKS variants (10 rejection variants total — `KeycloakAuthProviderTests` @ 3a63509).
 
 ### Disposable LDAP Directory (R001 fixture — TC-009…TC-012, TC-021…TC-023)
 
-64 synthetic entries, 3 offices (O1/O2/O3), 20 each. Six corporate attributes per entry (FR-010): displayName, title, department, office, mail, telephoneNumber (extension). **Re-seeded Iter 2 per the stakeholder's behavioural-bar decision and UC-004 S4 — the gaps are the point: they are seeded deliberately so the clauses can be proven to hold against them. Re-seeded AGAIN Iter 3 (A-28) with substitution-attempt fixtures — the fourth clause (no invented values) must be able to FAIL, so the fixture seeds the exact temptations a lazy implementation would take: a default department, a first-office fallback, a placeholder title, and a fully-gapped entry.** The prior population-rate column is dropped with the statistical criterion (a self-seeded rate measures our own test data — it cannot fail, so it proves nothing).
+64 synthetic entries, 3 offices (O1/O2/O3), 20 each. Six corporate attributes per entry (FR-010): displayName, title, department, office, mail, telephoneNumber (extension). **Re-seeded Iter 2 per the stakeholder's behavioural-bar decision and UC-004 S4 — the gaps are the point: they are seeded deliberately so the clauses can be proven to hold against them. Re-seeded AGAIN Iter 3 (A-28) with substitution-attempt fixtures — the fourth clause (no invented values) must be able to FAIL, so the fixture seeds the exact temptations a lazy implementation would take: a default department, a first-office fallback, a placeholder title, and a fully-gapped entry.** The prior population-rate column is dropped with the statistical criterion (a self-seeded rate measures our own test data — it cannot fail, so it proves nothing). **Iter 3 formal pass: the EXECUTED fixture is the 11-entry materialization above (§ Fixture Materialization Mapping) — every gap shape + substitution temptation present; the 64-entry scale is the Construction fixture.**
 
 | Office | Entries | Deliberate gap | Purpose |
 |---|---|---|---|
@@ -989,13 +1011,15 @@ Additional fixture edges: `ldap-o2-013` carries an **empty-string** telephoneNum
 | W1 (winter) | 2026-12-15T12:00:00Z | 07:00:00, offset -05:00 (standard) | same 12:00Z must render differently — a fixed -05:00 fails here |
 | Month bounds | September 2026 | local calendar days in America/Havana → UTC bounds | payroll day = local calendar day, never the server's |
 
+**Executed instants (Iter 3 formal pass — `TimeServiceTests` @ 825e087):** summer 2026-09-01T12:58:12Z → `2026-09-01T08:58:12-04:00`; winter 2026-01-15T12:58:12Z → `2026-01-15T07:58:12-05:00`; September month bounds → 2026-09-01T04:00:00Z / 2026-10-01T04:00:00Z (local calendar days); January month bounds → 2026-01-01T05:00:00Z / 2026-02-01T05:00:00Z. All PASS — the DST boundary holds.
+
 ### Offline Queue Data (TC-004…TC-006, TC-020)
 
-Controlled press instants T1/T2 (TC-004/005: 2 events) and 10 alternating presses at 30 s intervals (TC-020: capacity boundary). Each press carries a harness-generated idempotency key (UUID) — the same keys are replayed verbatim in TC-006's duplicate-replay phase.
+Controlled press instants T1/T2 (TC-004/005: 2 events) and 10 alternating presses at 30 s intervals (TC-020: capacity boundary). Each press carries a harness-generated idempotency key (UUID) — the same keys are replayed verbatim in TC-006's duplicate-replay phase. **Executed (Iter 3):** 5-event and full-capacity (10-event) batches, double-replay batches, and a mixed online+queued same-key press — all PASS (`OfflineResilienceTests` @ 0a7b1a2, `OfflineQueueTests` @ cb4b843).
 
 ### Worker Category Fixture
 
-`worker-categories.json` (ADR-004) test copy: ["Administrative", "Technical", "Operational"] — a representative FIXED list; no CRUD path exists anywhere in the portal (CON-013), so the fixture only needs to load and be read. TC-023 assigns "Operational" to `ldap-o3-011` and `ldap-o1-017`. **Clause (d) note (A-28):** the category select starts EMPTY for every employee — no default category is pre-selected for a gapped employee; only HR's explicit selection persists (the "default category" substitution temptation is seeded against, not with).
+`worker-categories.json` (ADR-004) test copy: ["Administrative", "Technical", "Operational"] — a representative FIXED list; no CRUD path exists anywhere in the portal (CON-013), so the fixture only needs to load and be read. TC-023 assigns "Operational" to `ldap-o3-011` and `ldap-o1-017`. **Clause (d) note (A-28):** the category select starts EMPTY for every employee — no default category is pre-selected for a gapped employee; only HR's explicit selection persists (the "default category" substitution temptation is seeded against, not with). **Iter 3 formal pass:** the category mechanism (assignment persistence + AUD-004 audit) is Construction scope — TC-023's R001-bar share (locatable/selectable, blank fields, no substitution) is PASS; the assignment/audit assertions execute with the Construction mechanism.
 ## Traceability
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
