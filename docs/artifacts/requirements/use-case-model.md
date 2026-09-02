@@ -1095,13 +1095,13 @@ Storyboards SB-01…SB-07 are submitted for stakeholder validation with this ite
 |---|---|---|---|
 | UC-001 | FR-004 | Refines | Use-Case Realizations (Designer); Test priority 1 (Test Designer); R003/R004 PoCs (Architect) |
 | UC-002 | FR-005 | Refines | Use-Case Realizations (Designer) |
-| UC-003 | FR-007 | Refines | Use-Case Realizations (Designer) |
+| UC-003 | FR-007 | Refines | Use-Case Realizations (Designer); SB-06 storyboard (UI Designer, Iter 4) |
 | UC-004 | FR-010 | Refines | Use-Case Realizations (Designer); Test priority 1 (Test Designer); R001 PoC (Architect) |
 | UC-005 | FR-001 | Refines | Use-Case Realizations (Designer) |
 | UC-006 | FR-002 | Refines | Use-Case Realizations (Designer); CSV column set v1 detailed (RS, Elab Iter 1) |
 | UC-007 | FR-003 | Refines | Use-Case Realizations (Designer) |
 | UC-008 | FR-006 | Refines | Use-Case Realizations (Designer) |
-| UC-009 | FR-008 | Refines | Use-Case Realizations (Designer) |
+| UC-009 | FR-008 | Refines | Use-Case Realizations (Designer); SB-07 storyboard (UI Designer, Iter 4) |
 | UC-010 | FR-009 | Refines | Use-Case Realizations (Designer); Test priority 1 (Test Designer); R006 (audit design) |
 | ACT-001 | STK-003 | Derives | UC-001, UC-002, UC-003, UC-004 |
 | ACT-002 | STK-001 | Derives | UC-005, UC-006, UC-007, UC-008, UC-009, UC-010 |
@@ -1120,3 +1120,5 @@ Storyboards SB-01…SB-07 are submitted for stakeholder validation with this ite
 | UC-005 EF-1 | SEC-006 | Refines | (Supplementary Specification — role enforcement) |
 | UC-006 CSV column set | FR-002, CON-005, CON-006, INT-005 + stakeholder decisions (ISO-8601 offset export, local payroll day, office zone America/Havana) | Refines | STD-003 (CSV format); UC-006 AF-2 (abort on AD unavailable); UC-006 AF-3 (blank cells on missing attributes — every event row present, never substituted) |
 | UC-009 EF-1 | SEC-006 | Refines | (Supplementary Specification — role enforcement) |
+| SB-06 storyboard (UC-003, UI Designer, Iter 4) | FR-007, BG-003 (80% adoption within 3 months), R002 (adoption risk), CON-011 + stakeholder decision (Elaboration Iter 2, verbatim: "newest first" — stack ALL featured banners, ordered newest first) | Refines | SCR-01, SCR-03 (banner stack rendering); P-02 + SCR-03 Salt wireframe (Design Model); SB-03 frame 4 (publish-side banner contract); stakeholder validation (STK-001, STK-003) |
+| SB-07 storyboard (UC-009, UI Designer, Iter 4) | FR-008, NFR-005, AUD-002 (all versions traceable), CON-012, SEC-006 | Refines | SCR-08 → SCR-07 (edit mode) navigation (Design Model Navigation Map); SB-03 (publish) + SB-04 (unpublish) — the news-lifecycle storyboard set; stakeholder validation (STK-001) |
