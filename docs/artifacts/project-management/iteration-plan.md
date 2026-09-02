@@ -20,12 +20,12 @@
 ## Plan and Milestones
 ### Coarse Cross-Iteration Roadmap
 
-8 total iterations — within the 6 ± 3 rule. Elaboration holds 3 of 8 (~38%, above the ~20% rubber-profile starting point) because the only HIGH-magnitude risk (R001) requires empirical validation this phase, the stakeholder refused paper-only validation, and the code delivery has not landed in two iterations — the profile bends to the risk profile, not to the heuristic. Construction remains 3 iterations; Transition 1.
+9 total iterations — at the upper bound of the 6 ± 3 rule, justified against the risk profile: the only HIGH-magnitude risk (R001) required empirical validation the stakeholder refused to accept on paper; the code delivery landed only in Iter 3 (R013, stakeholder-attributed); and the stakeholder's binding all-findings directive plus the confirmed R6 path require one record-propagation pass (~2,750K — a fraction of a full iteration's box; record corrections only). Elaboration holds 4 of 9; Construction remains 3; Transition 1.
 
 | Phase | Iterations | Milestone | Gate Criteria | Human Gate Queue |
 |---|---|---|---|---|
 | Inception | 2 — **CLOSED** | LCO — **ACHIEVED** | Scope agreed; risks identified; architecture direction sound | **MEASURED: 0s** — stakeholder answered in-round (recorded actual) |
-| Elaboration | 3 (Iter 1, Iter 2 reviewed — LCA NO-GO both; Iter 3 CURRENT) | LCA — re-presented at Elab Iter 3 close | Architecture baselined; R001/R003/R004 retired EMPIRICALLY (code evidence); ALL findings closed; Construction viable | **Estimate NONE** — bounded in Risk List R012 (14-day suspension ceiling); measured actuals reported at each Iteration Assessment (Iter 1: 0:35:14; Iter 2: 10:01:08) |
+| Elaboration | 4 (Iters 1–3 reviewed — LCA NO-GO each; **Iter 4 record-propagation CURRENT**) | LCA — re-presented at Iter 4 close (R6) | Architecture baselined — **OBSERVED** (PR #6 merged to main, APPROVED); R001/R003/R004 RETIRED empirically (recorded this close pass); ALL findings closed; Construction viable | **Estimate NONE** — bounded in Risk List R012 (14-day suspension ceiling); measured actuals: Iter 1 0:35:14; Iter 2 10:01:08; Iter 3 0:00:00 (20 interactions, all in-round) |
 | Construction | 3 | IOC | All 10 FRs implemented and tested; all 5 ACs verified; deployable on Windows Server | **Estimate NONE** — R012; measured actual at the Construction close assessment |
 | Transition | 1 | PR | System in production; 80% adoption measured; documentation delivered | **Estimate NONE** — R012; measured actual at the Transition close assessment |
 
@@ -34,12 +34,13 @@
 | Record | Iterations | Agent time | Stakeholder queue | Tokens | Agent runs | Artifacts |
 |---|---|---|---|---|---|---|
 | Inception (phase-level — governs phase accounting) | 2 | 28 min | 0s | 1,347,939 | 11 | 10 |
-| Elaboration Iter 1 (iteration-level — governs box sizing) | 1 | 6:00:59 | 0:35:14 | 12,523,281 | — | — |
-| Elaboration Iter 2 (iteration-level — governs box sizing) | 1 | 4:41:27 | 10:01:08 | 13,363,814 | 18 | 13 |
+| Elaboration Iter 1 (iteration-level — record-side) | 1 | 6:00:59 | 0:35:14 | 12,523,281 | — | — |
+| Elaboration Iter 2 (iteration-level — record-side) | 1 | 4:41:27 | 10:01:08 | 13,363,814 | 18 | 13 |
+| Elaboration Iter 3 (iteration-level — **code-delivering**) | 1 | 3:35:12 | 0:00:00 | 27,143,633 | 22 | 13 |
 
-> **Conflict resolution (recorded, carried):** the Inception Iteration Assessment quotes a 3,550,308-token cumulative across its two cycles; the phase-level record governs — one row per CLOSED phase, no per-iteration velocity is quoted from it. Iteration-shaped actuals (Iter 1: 12,523,281; Iter 2: 13,363,814) govern every later budget box. The two clocks are never summed.
+> **Conflict resolution (recorded, carried):** the Inception Iteration Assessment quotes a 3,550,308-token cumulative across its two cycles; the phase-level record governs — one row per CLOSED phase, no per-iteration velocity is quoted from it. Iteration-shaped actuals govern every later budget box. The two clocks are never summed.
 
-**Sizing consequence:** spend is dominated by reasoning over the accumulated artifact surface, not by output volume. Every budget box below is sized from the measured iteration-shaped actuals; where no comparable actual exists (Construction, Transition), the figure is an explicit assumption with its basis named.
+**Sizing consequence — the CONTENT-CLASS lesson (Iter 3 close):** spend is dominated by reasoning over the accumulated artifact surface, and the surface now splits into two measured content classes: **record-side iterations** (Iter 1: 12,523,281; Iter 2: 13,363,814 — artifact evolution and review only) and **code-delivering iterations** (Iter 3: 27,143,633 — the full delivery chain: 3 mechanisms + dual-coverage tests + 3 PR reviews + merges + the 23-case execution pass + baseline-close PR + 4-lens cumulative re-review + fourth-clause propagation). Every later box is sized by content class from these measured actuals; where no comparable actual exists, the figure is an explicit assumption with its basis named.
 
 ```plantuml
 @startgantt
@@ -57,12 +58,16 @@ title Employee Portal — Iteration Sequence and Human Gates\nUNANCHORED: no pro
 [Elaboration Iter 2 - reviewed, LCA NO-GO] starts at [Elaboration Iter 1 - reviewed, LCA NO-GO]'s end
 [Elaboration Iter 2 - reviewed, LCA NO-GO] is colored in lightyellow
 
-[Elaboration Iter 3 CURRENT - convergence] lasts 7 days
-[Elaboration Iter 3 CURRENT - convergence] starts at [Elaboration Iter 2 - reviewed, LCA NO-GO]'s end
-[Elaboration Iter 3 CURRENT - convergence] is colored in lightblue
+[Elaboration Iter 3 - reviewed, LCA NO-GO] lasts 7 days
+[Elaboration Iter 3 - reviewed, LCA NO-GO] starts at [Elaboration Iter 2 - reviewed, LCA NO-GO]'s end
+[Elaboration Iter 3 - reviewed, LCA NO-GO] is colored in lightyellow
+
+[Elaboration record-propagation pass - CURRENT] lasts 7 days
+[Elaboration record-propagation pass - CURRENT] starts at [Elaboration Iter 3 - reviewed, LCA NO-GO]'s end
+[Elaboration record-propagation pass - CURRENT] is colored in lightblue
 
 [Construction Iter 1] lasts 7 days
-[Construction Iter 1] starts at [Elaboration Iter 3 CURRENT - convergence]'s end
+[Construction Iter 1] starts at [Elaboration record-propagation pass - CURRENT]'s end
 
 [Construction Iter 2] lasts 7 days
 [Construction Iter 2] starts at [Construction Iter 1]'s end
@@ -73,7 +78,7 @@ title Employee Portal — Iteration Sequence and Human Gates\nUNANCHORED: no pro
 [Transition Iter 1] lasts 7 days
 [Transition Iter 1] starts at [Construction Iter 3]'s end
 
-[LCA gate re-presentation] happens at [Elaboration Iter 3 CURRENT - convergence]'s end
+[LCA gate re-presentation] happens at [Elaboration record-propagation pass - CURRENT]'s end
 [IOC gate review] happens at [Construction Iter 3]'s end
 [PR gate review] happens at [Transition Iter 1]'s end
 @endgantt
@@ -81,70 +86,59 @@ title Employee Portal — Iteration Sequence and Human Gates\nUNANCHORED: no pro
 
 > **Two clocks, never summed:** iteration bar lengths are structural sequencing units, NOT measured durations — actual duration is governed by the token budget box and recorded in the Iteration Assessment. Human gates carry NO queue estimate in this plan (A-13): a gate is a risk, bounded in Risk List R012; only measured actuals are reported, at each Iteration Assessment.
 
-### Fine-Grained Plan — Elaboration Iteration 3 (CURRENT, tracking — convergence continuation)
+### Fine-Grained Plan — Elaboration Iteration 4 (CURRENT, building — record-propagation pass)
 
-This iteration continues the convergence cycle: the code evidence chain (A-16) is the critical path and the stakeholder-stated priority; the record corrections (A-17…A-31) run as a parallel track. The critical chain below shows the sequential agent stretches from iteration start to the LCA re-presentation, each annotated with its token budget.
+This pass executes the stakeholder-confirmed R6 path: record corrections first, then the R6 re-presentation with the evidence package and a fresh sanction request. **No code, no design, no new validation** — the validation substance exists and is observed (Test Case Cycle 1 formal pass, CI-traced); the records lag it. The critical chain below shows the sequential agent stretches from pass start to the R6 re-presentation, each annotated with its token budget.
 
-**Iteration budget box: ~12,500K tokens** [ASSUMPTION — scaled from the measured iteration-shaped actuals (Iter 1: 12,523,281; Iter 2: 13,363,814); basis: same 9-role shape, 13-artifact accumulated surface, convergence-cycle review load. Carried from the Iter 2 close-pass correction (F6/A-22) — the F6 lesson applied: the box is sized from measured fact at plan-build time, not from an assumption chain. Work items sum ~9,255K; the ~3,245K headroom absorbs PR rework loops (request_changes → fix → re-review) — the box does not grow to fit scope.]
+**Pass budget box: ~2,750K tokens** [ASSUMPTION — record-correction content class; basis: the record-side iterations' measured per-artifact correction cost (Iter 1/Iter 2 actuals ~12.5–13.4M across full-artifact evolutions and 4-lens reviews), scaled to this pass's scope — six targeted section evolutions plus the R6 gate; no code, no design, no new validation. The box does not grow to fit scope.]
 
 ```plantuml
 @startuml
 !theme plain
-title Employee Portal — Elaboration Iteration 3 (Convergence Continuation) Critical Chain\nSequential agent stretches from iteration start to LCA re-presentation, each with token budget\nBox ~12,500K (basis: measured iteration actuals); TC set = 23 cases; FOUR-clause bar; A-16 is P0
-
-|Project Manager|
-start
-:Iteration 3 plan + Risk List reappraisal\nR013 code-delivery continuity registered\nSTK-004 written deliverables request (R010);
-note right: ~830K tokens\nCOMMITTED this pass\nParallel track (~1,140K, off-chain):\nA-25/A-26 System Analyst, A-27 Designer,\nA-17/A-20 Process Engineer, A-19 Test\nManager - all phase-exit conditions
-
-|Implementer|
-:Three mechanisms, evolutionary in src/:\nR001 disposable LDAP directory + FOUR-clause\nbehavioural bar, gaps and substitution\nattempts seeded deliberately (A-2)\nR003 stub OIDC issuer (A-3)\nR004 offline queue + idempotent sync (A-4)\ndual-coverage tests per mechanism\nready-for-review labels;
-note right: ~2,600K tokens\nP0 - stakeholder-stated priority;\ncarried two iterations, zero CI\nevidence as of plan-build (R013)
-
-|Code Reviewer|
-:One PR per ready branch, base iteration/E1\nchecklist CR-1..CR-7 applied per PR\nterminal disposition each (A-6);
-note right: ~625K tokens
-
-|Integrator|
-:Merge APPROVED PRs into iteration/E1;
-note right: ~310K tokens
-
-|Test Designer|
-:A-28 fourth-clause test steps land FIRST\n(assert blank, not substituted;\nsubstitution-attempt fixtures seeded)\nthen execute TC-001..TC-023 against\nthe validation fixtures;
-note right: ~1,460K tokens\nA-28 BEFORE execution - a clause\nthat cannot fail proves nothing
+title Employee Portal — Elaboration Iteration 4 (Record-Propagation Pass) Critical Chain\nSequential agent stretches from pass start to the R6 re-presentation; box ~2,750K by content class\nNo code, no design, no new validation — record propagation only (stakeholder-confirmed path)
 
 |Software Architect|
-:PoC artifact evolution: empirical\nR001/R003/R004 results, 23-case\nenumerations (A-21), FOUR-clause x\nfour-consumer R001 evidence (A-29)\nSAD fourth-clause propagation (A-31);
-note right: ~1,250K tokens
+start
+:A-32 PoC artifact Results and Findings rewritten\nwith the OBSERVED results (the R6 evidence\npackage core - the one Major):\nR001 FOUR clauses x FOUR consumers, R003\nmatrix, R004 simulation; verdict distribution\n15/0/8 with the 8 BLOCKED stated as a\nrecorded SCOPE decision (stakeholder framing\ndirective - deferred to Construction, not\nmissing); regression baseline; delivery rows\nto MERGED with PR numbers; Document Control;
+note right: ~1,250K tokens\nP1 - gates the R6 package
 
-|Project Manager|
-:Iteration Assessment - measured actuals,\nwork-item status reconciliation to SCM\nevidence\nLCA evidence package assembly;
-note right: ~730K tokens
+|Software Architect|
+:A-33 SAD LCA criterion 3 updated to the\nobserved state (rides the A-32 evolution)\nA-36 CONTRIBUTING.md ARCH-6 extended\nwith the fourth clause verbatim;
+note right: ~360K tokens
+
+|Test Designer / Test Manager|
+:A-34 Test Case Document Control summary\nreconciled to the per-case record 15/0/8\nA-35 TES mission verdict + INC-1 + quality\nmetrics from the observed per-case record;
+note right: ~300K tokens\nparallel with the Architect stretches\n(independent artifacts)
+
+|Process Engineer|
+:Development Case ARCH-6 gap flag\nclosed on A-36 verification;
+note right: ~90K tokens
+
+|Review Coordinator + Management Reviewer|
+:R6 re-presentation entry gate (coordinator-\nenforced): findings ledger EMPTY across all\n13 artifacts (verified via the findings system,\nnot narrative) + evidence package assembled +\ncorrections committed + fresh sanction\nrequest to STK-001;
+note right: ~500K tokens\nLCA-5 is the gate's own pending\ndecision - GRANTED sanction is the\nonly path to requiresIteration false
 stop
 @enduml
 ```
 
-### Work Items — Elaboration Iteration 3 (convergence continuation)
+### Work Items — Elaboration Iteration 4 (record-propagation pass)
 
-Statuses reflect actual repository state as of plan-build 2026-09-02 (verified via `scm_get_build_status` this pass): `iteration/E1` has **no CI runs** — zero pushes have landed; `main` is GREEN (run 33598979875). No work item may show "Complete" without SCM evidence — the reconciliation is exit criterion 12, re-executed at this iteration's close.
+Statuses reflect the verified findings ledger (2026-09-02) and the observed SCM state. No work item may show "Complete" without evidence — the reconciliation is exit criterion 12, re-executed at this pass's close.
 
-| # | Work Item | Owner Role | Token Budget | Depends On | Status (SCM-evidence-based) |
+| # | Work Item | Owner Role | Token Budget | Depends On | Status |
 |---|---|---|---|---|---|
-| 1 | Iteration 3 plan + Risk List reappraisal: R013 registered, trends updated, STK-004 request specified | Project Manager | ~830K | — | **Complete** — this plan + the Risk List reappraisal committed this pass |
-| 2 | STK-004 written deliverables request (R010): LDAP service account, Keycloak client registration, Windows Server provisioning — response NOT an exit condition | Project Manager | ~100K | — | In progress — no recorded issuance as of plan-build (unevidenced two passes); PM-owned obligation this iteration (exit criterion 9) |
-| 3 | **R001 mechanism (A-2):** disposable LDAP directory, attribute mapping, graceful degradation; FOUR-clause behavioural bar — gaps AND substitution-attempt fixtures seeded deliberately | Implementer | ~1,040K | — | In progress — carried two iterations; zero CI evidence on `iteration/E1` as of plan-build; stakeholder-stated priority this pass (R013) |
-| 4 | **R003 mechanism (A-3):** stub OIDC issuer, token validation, role-claim extraction | Implementer | ~830K | — | In progress — carried; zero CI evidence as of plan-build |
-| 5 | **R004 mechanism (A-4):** localStorage queue, idempotent sync endpoint, 5-minute drop simulation | Implementer | ~730K | — | In progress — carried; zero CI evidence as of plan-build |
-| 6 | PR reviews: one per ready branch (base `iteration/E1`), CR-1…CR-7, terminal disposition each (A-6) | Code Reviewer | ~625K | Work Items 3–5 | Pending — zero ready-for-review branches as of plan-build |
-| 7 | Merge APPROVED PRs into `iteration/E1` | Integrator | ~310K | Work Item 6 | Pending |
-| 8 | A-28 fourth-clause test steps FIRST (assert blank, not substituted; substitution-attempt fixtures), then execute TC-001…TC-023 against the validation fixtures (all 23 currently BLOCKED on SCM Issue #1) | Test Designer | ~1,460K | Work Item 7 | Pending — blocked on mechanism merge; A-28 lands BEFORE execution |
-| 9 | PoC artifact evolution: empirical R001/R003/R004 results + 23-case enumerations (A-21) + FOUR-clause × four-consumer R001 evidence (A-29) | Software Architect | ~1,250K | Work Item 8 | Pending — requires executed test results (artifact exists with honest PENDING ledger) |
-| 10 | SAD fourth-clause propagation (A-31) — §Quality PoC Plan R001 record to four clauses | Software Architect | ~210K | — | Pending — Architect-owned, rides the PoC/SAD evolution |
-| 11 | Iteration Assessment: measured actuals, work-item status reconciliation to SCM evidence | Project Manager | ~730K | Work Items 1–10 | Pending — authored at iteration close, AFTER the reviewers rule |
-| 12 | Fourth-clause propagation + record corrections (parallel track): A-25 (UC Model), A-26 (Supp Spec) — System Analyst; A-27 (Design Model) — Designer, MUST land with the mechanism build; A-17 (DC featured-banner), A-20 (DC TC enumeration) — Process Engineer; A-19 (TES TC enumeration) — Test Manager | System Analyst / Designer / Process Engineer / Test Manager | ~1,140K | — | In progress — owned by their roles; all phase-exit conditions per the all-findings directive |
-| **Total** | | | **~9,255K** (box: ~12,500K; ~3,245K rework headroom) | | |
+| 1 | **A-32 — PoC artifact § Results and Findings rewritten with the OBSERVED results** (R001 four-clause × four-consumer clause-by-clause; R003 matrix; R004 simulation; 15/0/8 with the 8 BLOCKED stated as a recorded scope decision; regression baseline; delivery rows → MERGED; Issue #1 closure; Document Control) — closes PoC F2 (Major) | Software Architect | ~1,250K | — | Pending — requires only the observed Test Case record (exists); the pass's P1 |
+| 2 | **A-33 — SAD §Quality LCA criterion 3** updated to the observed state — closes SAD F4 (Minor) | Software Architect | ~210K | — | Pending — rides the A-32 evolution |
+| 3 | **A-36 — CONTRIBUTING.md ARCH-6 extended with the fourth clause verbatim** — closes DC F3 (Minor, with the Process Engineer's flag closure) | Software Architect | ~150K | — | Pending |
+| 4 | **A-34 — Test Case Document Control summary reconciled to the per-case record** (15/0/8; TC-017/TC-018 named in the BLOCKED set; recorded scope decision framing) — closes Test Case F1 (Minor) | Test Designer / Test Manager | ~180K | — | Pending |
+| 5 | **A-35 — TES mission verdict + INC-1 + quality metrics** updated from the observed per-case record — closes TES F2 (Minor) | Test Manager | ~120K | — | Pending |
+| 6 | Development Case ARCH-6 gap flag closed on A-36 verification | Process Engineer | ~90K | Work Item 3 | Pending |
+| 7 | Findings-ledger closure by emitting lenses (PoC F2, SAD F4, Test Case F1, TES F2, DC F3; Iteration Plan F8 — remediation recorded this close pass, closure owned by the Management Reviewer lens) — verified via the findings system, not narrative | All emitting lenses | ~150K | Work Items 1–6 | Pending |
+| 8 | R6 re-presentation: evidence package + fresh sanction request to STK-001 (coordinator-enforced entry gate) | Review Coordinator + Management Reviewer | ~500K | Work Item 7 | Pending — LCA-5 is the gate's own pending decision |
+| 9 | Iteration Assessment (record-propagation pass close): measured actuals, work-item reconciliation | Project Manager | ~100K | Work Items 1–8 | Pending — authored at pass close, AFTER the reviewers rule |
+| **Total** | | | **~2,750K** (box: ~2,750K; no headroom — record corrections carry no PR-loop risk) | | |
 
-> **Status discipline (F3/F7 lesson, both directions):** every "Complete" is backed by a commit SHA or CI run; every "In progress"/"Pending" names its blocking evidence. A status that cannot show evidence reverts to In progress, never to Complete — and a status that HAS evidence must not understate it either.
+> **Status discipline (F3/F7 lesson, both directions):** every "Complete" is backed by a commit SHA or CI run; every "Pending" names its blocking evidence. The three narrative-tracked Code Reviewer Minors (F-CR-E3-1/2/3) are Construction-scope remediations with recorded owners — they are NOT work items of this pass.
 
 ### Construction Schedule Baseline (from measured actuals — preserved; verified MET at the LCA-4 criterion)
 
@@ -152,21 +146,20 @@ All 10 UCs assigned; UC IDs verified against the Use-Case Model authority (LCO F
 
 | Construction Iteration | Use Cases | FRs | Key Risks Retired |
 |---|---|---|---|
-| Construction Iter 1 | UC-001 (Clock In/Out), UC-002 (Own History), UC-005 (Review Clockings), UC-007 (Assign Category) | FR-004, FR-005, FR-001, FR-003 | R004 residual (AC-005 formal test), R008 (CRUD validation) |
+| Construction Iter 1 | UC-001 (Clock In/Out), UC-002 (Own History), UC-005 (Review Clockings), UC-007 (Assign Category) | FR-004, FR-005, FR-001, FR-003 | R004 residual (AC-005 formal test), R008 (CRUD validation + PG adapter per INT-016, F-CR-E3-1) |
 | Construction Iter 2 | UC-003 (Browse News), UC-008 (Publish), UC-009 (Edit), UC-010 (Unpublish) | FR-007, FR-006, FR-008, FR-009 | R006 (audit mechanism verified end-to-end) |
 | Construction Iter 3 | UC-004 (Directory Search), UC-006 (CSV Export) | FR-010, FR-002 | R011 + R010 (production-instance integration — STK-004 deliverables), R005 (LDAP performance) |
 
-**Construction sizing:** [ASSUMPTION — 3 iterations × ~12,500K tokens each, basis: the MEASURED Elaboration iteration actuals (Iter 1: 12,523,281; Iter 2: 13,363,814) — Construction adds feature implementation volume but reuses the validated PoC mechanisms. Refined at each Elaboration Iteration Assessment as measured actuals accumulate — no fine-grained Construction plan is produced now (planning beyond the horizon is waste).]
+**Construction sizing:** [ASSUMPTION — 3 iterations sized by content class from the MEASURED Elaboration actuals: code-delivering iterations (Iter 3: 27,143,633) are the comparable class for feature-implementation iterations; record-side actuals govern review-heavy passes. Refined at each Iteration Assessment as measured actuals accumulate — no fine-grained Construction plan is produced now (planning beyond the horizon is waste).]
 
 ### Next Iteration Preview — Construction Iteration 1 (coarse only)
 
 | Aspect | Plan |
 |---|---|
-| Primary objective | Clocking cluster: UC-001, UC-002, UC-005, UC-007 implemented as running features on the validated mechanisms (offline queue, OIDC consumption, LDAP gateway) |
-| Entry condition | LCA sanction GRANTED + empty findings ledger + completed convergence scope (Review Record R6 entry gate) |
+| Primary objective | Clocking cluster: UC-001, UC-002, UC-005, UC-007 implemented as running features on the validated mechanisms (offline queue, OIDC consumption, LDAP gateway) + the PG adapter per INT-016 (R008; F-CR-E3-1 remediation) |
+| Entry condition | LCA sanction GRANTED + empty findings ledger + completed record-propagation scope (Review Record R6 entry gate) |
 | Fine plan | **Built at LCA sanction, not before** — planning beyond the current horizon in fine-grained detail is waste; the coarse baseline above is the commitment |
-| Key risks | R010 (STK-004 deliverables — trigger: not confirmed by Construction Iter 1 start), R008, R002 (adoption design) |
-
+| Key risks | R010 (STK-004 deliverables — **the written request is issued at Construction Iter 1 plan-build through the stakeholder-facing channel, STK-001 relaying to STK-004 per the Vision's engagement model; trigger: STK-004 confirmation by Construction Iter 1 start**), R008, R002 (adoption design) |
 ## Resources
 ### Agent Role Profile — Elaboration Iteration 3 (convergence continuation)
 
