@@ -210,14 +210,13 @@ All 10 UCs assigned; UC IDs verified against the Use-Case Model authority (LCO F
 > UC IDs cross-checked against the Use-Case Model §Use-Case Survey (authority) — LCO F1 lesson applied; re-verified clean at the Iter 1 review (LCA-4 PASS).
 
 ## Evaluation Criteria
-
 ### Layer 1 — Declared Acceptance Criteria Status
 
 | AC ID | Description | Addressed This Iteration? | Evidence / Deferral |
 |---|---|---|---|
 | AC-001 | Employee can clock in/out without HR help | Partial evidence this iteration | UC-001 mechanisms validated empirically (offline queue, idempotency, OIDC consumption); running feature is Construction Iter 1 |
 | AC-002 | HR can publish news without technical assistance | Deferred to Construction Iter 2 | UC-008 analyzed; audit mechanism designed (R006 — Design Model clean at review) |
-| AC-003 | Employee finds colleague's phone/email in <10 seconds | Partial evidence this iteration | R001 behavioural bar validated against the disposable directory (every employee rendered, no hidden entries, no errors); production-AD performance + data quality at Construction Iter 3 (R010 + R011) |
+| AC-003 | Employee finds colleague's phone/email in <10 seconds | Partial evidence this iteration | R001 behavioural bar validated against the disposable directory (every employee rendered, no hidden entries, no errors, no substitution); production-AD performance + data quality at Construction Iter 3 (R010 + R011) |
 | AC-004 | 80% of employees complete one clocking with no training | Deferred to Transition Iter 1 | Adoption measurement requires a deployed system (BG-003) |
 | AC-005 | System works temporarily offline (5-min network drop) | Partial evidence this iteration | R004 mechanism validated: 5-minute drop simulated, queue, reconnect, idempotent sync, zero duplicates/losses; formal AC test at Construction Iter 1 |
 
@@ -227,20 +226,19 @@ No AC is absent from this table. All 5 declared acceptance criteria are accounte
 
 | # | Exit Criterion | Verification Method |
 |---|---|---|
-| 1 | R001 empirically validated against the disposable LDAP directory — **behavioural bar** (stakeholder Iter 2 answer): (a) every employee rendered whether or not attributes are complete; (b) a missing attribute never removes someone from search results; (c) a missing attribute never raises an error — gaps seeded deliberately; applies to UC-004/005/006/007 | **Code evidence:** mechanism merged to `iteration/E1` (CI run green), dual-coverage tests pass, TC execution results in the Architectural Proof-of-Concept artifact. The dropped >90% figure is NOT evidence — it measured our own seeded data |
+| 1 | R001 empirically validated against the disposable LDAP directory — **FOUR-clause behavioural bar** (stakeholder Iter 2 answer + verdict-gate contribution): (a) every employee rendered whether or not attributes are complete; (b) a missing attribute never removes someone from search results; (c) a missing attribute never raises an error; (d) a missing attribute is displayed as missing — never replaced by a default, a placeholder, a guessed value, or another employee's value — gaps seeded deliberately, including substitution-attempt fixtures; applies to UC-004/005/006/007 | **Code evidence:** mechanism merged to `iteration/E1` (CI run green), dual-coverage tests pass, TC execution results in the Architectural Proof-of-Concept artifact. The dropped >90% figure is NOT evidence — it measured our own seeded data |
 | 2 | R003 empirically validated against the stub OIDC issuer: token validation succeeds; Employee + HR Administrator roles extracted from claims; redirect flow completes | Code evidence: merged PR + CI green + TC results in the PoC artifact |
 | 3 | R004 empirically validated (direct): 5-minute drop simulated; sync ≤ 60 s; zero duplicates (idempotency key); zero losses; confirmation < 1 s both paths | Code evidence: merged PR + CI green + TC results in the PoC artifact |
-| 4 | SAD corrected: §Quality PoC Plan carries the EMPIRICAL disposition (A-7); §Logical View dependencies reconciled with the Design Model — COMP-001 IAUD, COMP-010 IDirectoryService (A-9) | SAD committed; Reviewer lens closes SAD F1 and SAD F3 in the findings ledger |
-| 5 | Architectural Proof-of-Concept artifact produced, carrying empirical R001/R003/R004 results (A-8) | PoC artifact committed; Reviewer lens closes SAD F2 |
-| 6 | CONTRIBUTING.md committed before the first mechanism PR (A-5) | File in the repository root; Code Reviewer lens closes F-CR-E1-2 |
+| 4 | SAD corrected: §Quality PoC Plan carries the EMPIRICAL disposition (A-7); §Logical View dependencies reconciled with the Design Model — COMP-001 IAUD, COMP-010 IDirectoryService (A-9) | SAD committed; Reviewer lens closes SAD F1 and SAD F3 in the findings ledger — **DONE: SAD F1/F3 ledger-closed 2026-09-02** |
+| 5 | Architectural Proof-of-Concept artifact produced, carrying empirical R001/R003/R004 results (A-8) | PoC artifact committed; Reviewer lens closes SAD F2 — **PARTIAL: artifact exists with honest PENDING ledger; empirical results absent (SAD F2 persists, 2nd occurrence)** |
+| 6 | CONTRIBUTING.md committed before the first mechanism PR (A-5) | File in the repository root; Code Reviewer lens closes F-CR-E1-2 — **DONE: committed, sha 6662813…** |
 | 7 | Carried from Iter 1 — VERIFIED: Development Case PoC-trigger record corrected (trigger FIRED recorded; DC clean at review) | Review Record per-artifact verdict: Development Case Approved |
 | 8 | Carried from Iter 1 — VERIFIED: Construction schedule baselined from measured actuals, UC IDs against authority | LCA-4 criterion MET at the Iter 1 review (Management lens) |
-| 9 | STK-004 written deliverables request issued (R010); response NOT required for Elaboration exit | Request recorded; R010 status in the Risk List |
+| 9 | STK-004 written deliverables request issued (R010); response NOT required for Elaboration exit | Request recorded; R010 status in the Risk List — **NOT EVIDENCED this cycle: no recorded issuance; rolls to the next pass** |
 | 10 | All 5 ACs accounted | Layer 1 table complete — AC-001 through AC-005 |
-| 11 | **ALL open findings closed — every lens, every severity** (A-12; stakeholder directive: "fix all the findings even if they are minors prior to move to next phase") | **Findings ledger EMPTY** — verified via the findings system across all artifacts at iteration close, not via narrative claims; the milestone verdict must confirm the ledger is empty, not merely that Criticals are closed |
-| 12 | Work-item statuses reconciled to SCM evidence (A-11) — no "Complete" without a commit SHA or CI run | Iteration Assessment records the reconciliation; any status without evidence reverts to In progress |
-| 13 | LCA evidence package assembled and re-presented with a fresh sanction request | Entry gate per the Review Record: empty ledger + evidence package (PoC artifact, mechanism code on iteration/E1, TC-001…TC-020 executed) + corrections committed + review materials distributed |
-
+| 11 | **ALL open findings closed — every lens, every severity** (A-12; stakeholder directive: "fix all the findings even if they are minors prior to move to next phase") | **Findings ledger EMPTY** — verified via the findings system across all artifacts at iteration close, not via narrative claims; the milestone verdict must confirm the ledger is empty, not merely that Criticals are closed — **NOT MET: ledger carries 2 Critical / 3 Major / 5 Minor open (verified 2026-09-02)** |
+| 12 | Work-item statuses reconciled to SCM evidence (A-11) — no "Complete" without a commit SHA or CI run | Iteration Assessment records the reconciliation; any status without evidence reverts to In progress — **DONE this close pass: WI 2/9/11 corrected (F7); WI 3–5 remain honestly In progress** |
+| 13 | LCA evidence package assembled and re-presented with a fresh sanction request | Entry gate per the Review Record: empty ledger + evidence package (PoC artifact, mechanism code on iteration/E1, TC-001…TC-023 executed) + corrections committed + review materials distributed — **NOT MET: package not assemblable without code evidence** |
 ## Traceability
 
 | Element | Traces From | Link Type | Traces To |
