@@ -189,24 +189,22 @@ All 10 UCs assigned; UC IDs verified against the Use-Case Model authority (LCO F
 | Agent work | ~8,750K tokens planned within the ~12,500K box (~3,750K rework headroom); elapsed time measured at iteration close | Budget box [ASSUMPTION — scaled from the measured Iter 1 iteration actual 12,523,281; corrected this close pass, F6]; actuals recorded in the Iteration Assessment |
 | Human gates | **Estimate NONE** — bounded in Risk List R012 (14-day suspension ceiling; nothing auto-filled). Mitigation: in-round stakeholder answering, as measured at LCO (queue 0s — recorded actual), at the Iter 1 LCA consultation (answered in-round), and at the Iter 2 verdict gate (queue 10:01:08 across 21 interactions — recorded actual; growth traced to process defects, not stakeholder availability). STK-004 response: external queue tracked as R010 (Transfer) — not a project gate, no estimate quoted | Planning rule (Review Record A-13/A-15); measured LCO + Iter 2 actuals |
 ## Use Cases and Scenarios Addressed
-
-**This iteration's use-case scope (convergence cycle):** the empirical validation exercises UC-001 (Clock In/Out — OIDC consumption, offline resilience, idempotency) and the four AD-reading use cases UC-004 (Directory Search), UC-005 (Review Clockings), UC-006 (CSV Export), UC-007 (Assign Category) — the R001 behavioural bar is confirmed for ALL FOUR per the stakeholder's Iter 2 answer. UC-010 (Unpublish News) carries its audit/soft-delete test cases. All 10 UCs remain refined at the analysis level (Use-Case Model clean at review); none is implemented as a running feature — implementation is Construction.
+**This iteration's use-case scope (convergence cycle):** the empirical validation exercises UC-001 (Clock In/Out — OIDC consumption, offline resilience, idempotency) and the four AD-reading use cases UC-004 (Directory Search), UC-005 (Review Clockings), UC-006 (CSV Export), UC-007 (Assign Category) — the R001 behavioural bar is confirmed for ALL FOUR per the stakeholder's Iter 2 answer, and the FOURTH clause (verdict-gate contribution) extends it: a missing attribute is displayed as missing, never replaced by a default, a placeholder, a guessed value, or another employee's value. UC-010 (Unpublish News) carries its audit/soft-delete test cases. All 10 UCs remain refined at the analysis level (Use-Case Model clean at review); none is implemented as a running feature — implementation is Construction.
 
 | FR ID | Use Case ID | Use Case Name | Elaboration Iter 2 Activity | Construction Iteration |
 |---|---|---|---|---|
 | FR-004 | UC-001 | Clock In and Clock Out | R003 stub-issuer + R004 offline-drop mechanism validation (code evidence); TC execution | Construction Iter 1 |
 | FR-005 | UC-002 | View Own Clocking History | Analysis complete (clean at review); no Iter 2 activity | Construction Iter 1 |
-| FR-001 | UC-005 | Review Employee Clockings | R001 behavioural bar applies (stakeholder-confirmed): event row rendered with blank display fields, clocking data always complete | Construction Iter 1 |
-| FR-003 | UC-007 | Assign Worker Category | R001 behavioural bar applies (stakeholder-confirmed): employee locatable and selectable with blank fields | Construction Iter 1 |
-| FR-007 | UC-003 | Browse News | Analysis complete; featured-banner contract settled (stakeholder Iter 2: newest first) | Construction Iter 2 |
+| FR-001 | UC-005 | Review Employee Clockings | R001 behavioural bar applies (stakeholder-confirmed): event row rendered with blank display fields, clocking data always complete; missing attribute displayed as missing — no substitution | Construction Iter 1 |
+| FR-003 | UC-007 | Assign Worker Category | R001 behavioural bar applies (stakeholder-confirmed): employee locatable and selectable with blank fields; missing attribute displayed as missing — no substitution | Construction Iter 1 |
+| FR-007 | UC-003 | Browse News | Analysis complete; featured-banner contract settled (stakeholder Iter 2: banners STACK, newest first) | Construction Iter 2 |
 | FR-006 | UC-008 | Publish News | Analysis complete (clean at review) | Construction Iter 2 |
 | FR-008 | UC-009 | Edit Published News | Analysis complete (clean at review) | Construction Iter 2 |
 | FR-009 | UC-010 | Unpublish News | Audit + soft-delete test cases executed this cycle (TC set) | Construction Iter 2 |
-| FR-010 | UC-004 | Search Employee Directory | R001 behavioural bar validated against the disposable LDAP directory (gaps seeded deliberately): every employee rendered; missing attribute never removes from results; never raises an error | Construction Iter 3 |
-| FR-002 | UC-006 | Export Monthly Clocking Report | R001 behavioural bar applies (stakeholder-confirmed): every event row exported with blank cells for missing display fields, no abort | Construction Iter 3 |
+| FR-010 | UC-004 | Search Employee Directory | R001 behavioural bar validated against the disposable LDAP directory (gaps seeded deliberately): every employee rendered; missing attribute never removes from results; never raises an error; displayed as missing — no substitution | Construction Iter 3 |
+| FR-002 | UC-006 | Export Monthly Clocking Report | R001 behavioural bar applies (stakeholder-confirmed): every event row exported with blank cells for missing display fields, no abort; missing attribute displayed as missing — no substitution | Construction Iter 3 |
 
 > UC IDs cross-checked against the Use-Case Model §Use-Case Survey (authority) — LCO F1 lesson applied; re-verified clean at the Iter 1 review (LCA-4 PASS).
-
 ## Evaluation Criteria
 ### Layer 1 — Declared Acceptance Criteria Status
 
