@@ -120,7 +120,6 @@ Every threshold is quantified upstream (Supplementary Specification, Risk List, 
 **Note on the R001 threshold (preserved — extends the Iter 2/Iter 3 note):** the Iter 1 record carried ">90% of sampled users per office with all six attributes populated," sourced to the Risk List. The stakeholder decided (Elab Iter 2) the figure is invented and is **dropped**: measured against a disposable directory the team seeds itself, a percentage measures our own test data — it cannot fail, so it proves nothing. The bar is **behavioural, not statistical**: the four clauses above, with gaps seeded **deliberately** in the disposable directory so each clause can actually fail. **At the Iter 2 verdict gate the stakeholder added the FOURTH clause, verbatim: "a missing attribute is displayed as missing. It is never replaced by a default, a placeholder, a guessed value, or another employee's value"** — with the rationale, verbatim: "Blank is an answer. 'General', or the first office in the list, is a fabrication — and on the CSV that reaches payroll a fabricated department is worse than an empty cell. An empty cell gets questioned. A plausible wrong one does not." The first three clauses stop data from being LOST; the fourth stops it from being INVENTED. The statistical measurement of the real AD's data quality is a Construction activity (R011 residual, STK-004-dependent) and is **excluded from the LCA evidence package**. **Iter 4: the four-clause bar is OBSERVED to hold across all four consumers** (Test Case Cycle 1 clause-by-clause evidence table).
 
 ## Test Summary
-
 ### Master Test Workflow (Elaboration Iteration 4 — record-propagation pass)
 
 ```plantuml
@@ -139,7 +138,7 @@ if (All three risk validations PASS their\nacceptance criteria?) then (yes - OBS
   :R004 validation OBSERVED - drop simulation PASS\n(TC-004/005/006, TC-020) - zero duplicates, zero\nlosses, sync <= 60 s, confirmation < 1 s both paths;
   :Regression baseline ESTABLISHED - 15 executed PASS\nresults, merge-sequence re-runs GREEN\n(33617283642 -> 33617446626 -> 33617748483);
   :8 BLOCKED cases = recorded SCOPE decision\n(stakeholder framing directive, Iter 3) - deferred\nto Construction, not missing; zero FAIL ->\nzero new defects; Issue #1 CLOSED cr:complete;
-  :Remaining - record propagation ONLY\nA-32 PoC results ledger (Architect, the one Major)\nA-34 TC summary reconciliation (done this pass)\nA-35 this mission-verdict update (done this pass)\nA-33 SAD criterion 3 (observed done, Architect)\nA-36 ARCH-6 (Architect + Process Engineer)\nPM close-pass reappraisal;
+  :Remaining - record propagation ONLY\nA-32 PoC results ledger (Architect, the one Major)\nA-35 this mission-verdict update (done)\nA-34 TC summary reconciliation (Test\nDesigner-owned - OPEN; this role's upsert\nwas REJECTED by the DC 6 ownership guard)\nA-33 SAD criterion 3 (observed done, Architect)\nA-36 ARCH-6 (Architect + Process Engineer)\nPM close-pass reappraisal;
 else (no)
   :Raise defect in SCM issue tracker;\nrepeat validation after fix (regression policy);
 endif
@@ -239,7 +238,7 @@ partition "Sequence 2 - validate (P1) - DONE (observed 2026-09-02)" {
 }
 partition "Sequence 3 - evidence records (P1) - CURRENT" {
   :A-35 (THIS REVISION, Test Manager) - TES mission\nverdict, INC-1, quality metrics, risk trends updated\nfrom the observed per-case record;
-  :A-34 (THIS PASS, Test Designer / Test Manager) -\nTest Case Document Control summary reconciled to\nthe per-case record 15/0/8;
+  :A-34 (Test Designer, PENDING) - Test Case\nDocument Control summary reconciliation to\nthe per-case record 15/0/8 - this role's\nco-execution attempt was REJECTED by the\nDC 6 ownership guard (Test Case is Test\nDesigner-owned; no commit, no damage);
   :A-32 (Software Architect, PENDING) - PoC artifact\nResults and Findings rewritten with the OBSERVED\nresults - the R6 evidence-package core, the one Major;
   :A-33 (Architect, OBSERVED DONE) - SAD LCA criterion 3\nevidence updated to the observed state;
   :A-36 (Architect + Process Engineer, PENDING) -\nARCH-6 fourth-clause extension;
@@ -316,7 +315,6 @@ Every merged mechanism PR triggers a re-run of all previously validated mechanis
 | UC-010 | FR-009 | — | Functional + audit verification |
 
 **Coverage assessment (unchanged):** all 5 ACs mapped to at least one UC. AC-001/AC-004/AC-005 → UC-001 (highest-risk convergence: OIDC + offline + persistence); AC-003 → UC-004 (only HIGH risk, R001); AC-002 → UC-008. **Iter 4 note: AC-005's technical substance (5-minute drop, sync, idempotency) is OBSERVED PASS at the mechanism level (TC-004/005/006, TC-020); AC-001/AC-002/AC-003/AC-004 end-to-end verification is Construction/Transition scope per the Evaluation Mission boundary.**
-
 ## Defects and Incidents
 
 ### Defect Lifecycle (preserved — governs all defect management)
