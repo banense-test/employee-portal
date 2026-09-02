@@ -270,7 +270,6 @@ end note
 **Execution status (Cycle 2 record, 2026-09-02):** the implementation under test was re-inspected empirically on `iteration/E1` — `Program.cs` (sha 5a1f720) is still a bare Razor Pages boot (no auth middleware, no services) and `EmployeePortal.csproj` (sha 9a04a31) still has zero package references — **byte-identical to the Cycle 1 inspection**. All 23 cases (TC-001…TC-020 from Iter 1 plus TC-021…TC-023 designed this iteration) therefore remain **Designed → Blocked** on SCM Issue #1 (severity:blocker — mechanism code absent). CI trigger configuration was verified correct in Cycle 1 (`ci.yml` covers `iteration/**` for push and PR), so the blocker remains code delivery, not test infrastructure. Full evidence in § Findings. No test counts, pass rates, or durations are claimed.
 
 ## Test Case Catalog
-
 ### Catalog Overview — UC→TC Traceability
 
 | TC | UC / Flow | Level | Type | Automation | Priority |
@@ -757,11 +756,44 @@ stop
 
 | Item | Value | Source |
 |---|---|---|
+| Smoke test (build stability gate — Tester execution pass) | **PASS** — CI green on `main`, run 33550619216 (started 2026-09-01 19:37:50Z, completed 19:38:39Z) | `scm_get_build_status("main")` |
 | Implementation under test | `iteration/E1` — `Program.cs` sha 5a1f720b0f03be897f524e9d1e8425440d5aa540 (bare Razor Pages boot: `AddRazorPages`/`MapRazorPages` only — no auth middleware, no service registrations) and `EmployeePortal.csproj` sha 9a04a31ebe4a98f731982c8ce0a74ba952e7b10d (zero package references — no Npgsql, no LDAP, no OIDC/JWT) — **byte-identical to the Cycle 1 inspection (2026-09-01)** | `scm_get_file_content("iteration/E1")` |
-| Verdict | **TC-001…TC-023 all BLOCKED (23/23; zero PASS, zero FAIL, zero SKIP)** — SCM Issue #1 (severity:blocker) remains open | Issue #1 |
-| CI trigger configuration | Verified CORRECT in Cycle 1 (`ci.yml` sha 8444392 — `iteration/**` covered for push+PR); unchanged — the blocker is code delivery, not CI infrastructure | Cycle 1 record (preserved below) |
+| Test-code state | `SmokeTests.cs` sha dc835d2b30f80ceb96a5cb296cb29364e52423e4 — single `Assert.True(true)`; CR-2 dual coverage 0/3 mechanisms | `scm_get_file_content("iteration/E1")` |
+| **Mechanism branch probes (Tester execution pass — NEW evidence)** | **Zero CI runs on ALL THREE mechanism branches**: `feature/E1-R001`, `feature/E1-R003`, `feature/E1-R004` — no code has been pushed at the source; the handoff is absent, not merely unmerged | `scm_get_build_status` ×3 |
+| CI on `iteration/E1` | No runs found — zero pushes have landed on the integration branch | `scm_get_build_status("iteration/E1")` |
+| Defect census (Tester execution pass) | **2 open issues**: #1 (blocker/critical) and #2 (minor/high) — **both `cr:approved` + `assigned:implementer`** (CCM triage complete; delivery pending) | `scm_list_issues` (all states) |
+| Verdict | **TC-001…TC-023 all BLOCKED (23/23; zero PASS, zero FAIL, zero SKIP)** — confirmed by independent Tester re-inspection against fresh branch-level evidence | Issue #1 |
 
-**Per-case verdicts — Cycle 2 (23/23 BLOCKED):**
+**Tester execution pass — evaluation flow (S2 smoke gate → S3 evaluation → S4 defect census; every value from an actual tool call):**
+
+```plantuml
+@startuml
+title Tester Execution Pass — Elaboration Iteration 2, Cycle 1 (2026-09-02)\nS2 smoke gate -> S3 evaluation -> S4 defect census — every value from an actual tool call
+
+start
+partition "S2 — Smoke test (build stability gate, heuristic 1)" {
+  :scm_get_build_status("main")\nreturns **GREEN** — run 33550619216\n(started 2026-09-01 19:37:50Z,\ncompleted 19:38:39Z);
+  :Smoke verdict: **PASS** —\nbuild stable; detailed testing may proceed;
+}
+partition "S3 — Test and evaluate (architecture validation)" {
+  :Re-inspect implementation under test (iteration/E1):\nProgram.cs sha 5a1f720 — bare Razor Pages boot\n(no auth middleware, no service registrations);\nEmployeePortal.csproj sha 9a04a31 —\nzero package references (no Npgsql / LDAP / OIDC);\nSmokeTests.cs sha dc835d2 —\nsingle Assert.True(true), CR-2 dual coverage 0/3;
+  :Probe the three mechanism branches:\nfeature/E1-R001, feature/E1-R003,\nfeature/E1-R004 — **zero CI runs on all three**\n(no code pushed at the source);
+  if (Mechanism code present in any build tree?) then (no — byte-identical to Cycle 1)
+    :Verdict: **TC-001..TC-023 all BLOCKED**\n(23/23; zero PASS, zero FAIL, zero SKIP)\n— confirmed against fresh branch-level evidence;
+  else (yes)
+    :Execute against validation fixtures\n(disposable LDAP, stub OIDC, PG dev, drop sim);
+  endif
+}
+partition "S4 — Change requests for defects" {
+  :Defect census — scm_list_issues (all states):\n2 open: #1 (blocker/critical) and #2 (minor/high),\nBOTH cr:approved + assigned:implementer\n(CCM triage complete; delivery pending);
+  :Zero FAIL verdicts this cycle ->\n**zero NEW defects to formalize**;\nthe blocker (mechanism code absent) is already\nIssue #1 with canonical CCM labels —\nno duplicate raised;
+}
+:Record verdicts + evidence in Test Case\nFindings (this artifact);\nMission verdict: NOT YET ACHIEVED —\nblocked on code delivery (Issue #1),\nowned by Implementer (A-2..A-4),\ngated by Code Reviewer (A-6);
+stop
+@enduml
+```
+
+**Per-case verdicts — Cycle 2 (23/23 BLOCKED; independently confirmed by the Tester execution pass):**
 
 | Case group | Verdict | Blocking cause (empirically confirmed) | CR |
 |---|---|---|---|
@@ -772,9 +804,13 @@ stop
 | TC-019 (R003 token validation matrix) | **BLOCKED** | R003 mechanism absent — the empirical R003 validation the stakeholder mandated cannot run | Issue #1 |
 | **TC-021, TC-022, TC-023 (UC-005/006/007 AF-3 — R001 behavioural bar, NEW this iteration)** | **BLOCKED** | R001 mechanism (CLS-009 LdapGateway) and the shared display-data path (CLS-003 GetDisplayData, INT-008 extension) absent — the four-consumer bar validation cannot run | Issue #1 |
 
+**Tester pass confirmation of the blocking causes:** the branch probes (zero CI runs on all three `feature/E1-*` branches) independently confirm every Issue-#1 blocking cause — no mechanism code exists at the source, so no case in any group can execute. The verdicts are BLOCKED, not SKIPPED: each case's preconditions, procedure, and pass criteria are fully specified and regression-ready; only the implementation under test is absent.
+
 **Regression status:** still zero prior PASS results exist — **the first execution has not occurred; there is nothing to re-run**. The regression baseline activates with the first executed PASS; from that point the mandatory policy applies (re-run ALL prior results after EVERY merged PR).
 
-**Cycle 2 verdict for the Evaluation Mission:** NOT YET ACHIEVED — exit criteria 1–3 (empirical R001/R003/R004 validation) still have no code evidence. What changed this cycle is the INSTRUMENT, not the verdict: TC-011 now validates the stakeholder-decided behavioural bar (the >90% statistical criterion is dropped — it was invented and could not fail against self-seeded data), the fixture is re-seeded with deliberate gaps per UC-004 S4, and the R001 validation now covers all four AD-reading consumers (TC-011 + TC-021/022/023) as the stakeholder confirmed. The blocker remains code delivery (Issue #1), owned by the Implementer and gated by the Code Reviewer (actions A-2…A-6).
+**Cycle 2 verdict for the Evaluation Mission:** NOT YET ACHIEVED — exit criteria 1–3 (empirical R001/R003/R004 validation) still have no code evidence. What changed this cycle is the INSTRUMENT, not the verdict: TC-011 now validates the stakeholder-decided behavioural bar (the >90% statistical criterion is dropped — it was invented and could not fail against self-seeded data), the fixture is re-seeded with deliberate gaps per UC-004 S4, and the R001 validation now covers all four AD-reading consumers (TC-011 + TC-021/022/023) as the stakeholder confirmed. **The Tester execution pass adds branch-level confirmation: zero CI runs on `feature/E1-R001`/`R003`/`R004` prove the handoff is absent at the source — the blocker is code delivery (Issue #1, cr:approved, assigned:implementer), owned by the Implementer (A-2…A-4) and gated by the Code Reviewer (A-6). Zero FAIL verdicts → zero new defects to formalize; the blocker is already Issue #1 with canonical CCM labels — no duplicate raised.**
+
+**Test-code materialization status (Tester pass, re-confirmed):** the Tester role holds no SCM push tooling this cycle, and with zero mechanism code in the build tree there is nothing under test to script against. Test-code materialization remains folded into **Issue #1's remediation scope**: the Implementer ships dual-coverage automated tests per mechanism (CR-2), materializing this artifact's automation architecture (§ Test Automation Architecture) in `tests/EmployeePortal.Tests/`, so the run is repeatable in CI per the Work Order instruction. Flagged explicitly — not silently dropped.
 
 ### Findings — Elaboration Iteration 1, Cycle 1 (Execution Record — historical, preserved)
 
@@ -808,7 +844,6 @@ stop
 | **#2** | CONTRIBUTING.md absent — programming-guidelines baseline missing for CR-1 review of the first mechanism PR | `change-request, cr:logged, nature:defect, severity:minor, priority:medium` | Review Record F-CR-E1-2, action A-5; code-review checklist CR-1 |
 
 **Test-code materialization status:** the Tester role holds no SCM push tooling this cycle, and with zero mechanism code in the build tree there is nothing under test to script against. Test-code materialization is therefore folded into **Issue #1's remediation scope**: the Implementer ships dual-coverage automated tests per mechanism (CR-2), materializing this artifact's automation architecture (§ Test Automation Architecture) in `tests/EmployeePortal.Tests/`, so the run is repeatable in CI. Flagged explicitly — not silently dropped.
-
 ## Test Data
 
 All data is synthetic and self-contained — no production AD data, no real employee identities. Fixtures are reusable Construction assets (R011 mitigation, Test Evaluation Summary recommendation 4).
