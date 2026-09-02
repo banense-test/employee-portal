@@ -45,7 +45,13 @@ public class LdapGatewayTests
     {
         var (gateway, _) = Create();
         var result = await gateway.SearchAsync(new DirectorySearchCriteria(Office: "North"));
-        Assert.Equal(3, result.Count); // Pablo, Eva, John
+        // Pablo + Eva. John Perez's office is deliberately MISSING (substitution-attempt fixture):
+        // an office filter legitimately excludes entries with no office attribute — that is query
+        // semantics, not the behavioural bar. The bar (SEQ-004 AF-2) governs the rendering of
+        // RETURNED entries, never the filter's match set.
+        Assert.Equal(2, result.Count);
+        Assert.Contains(result, e => e.DisplayName == "Pablo Ruiz");
+        Assert.Contains(result, e => e.DisplayName == "Eva Ruiz");
     }
 
     [Fact]
