@@ -8,14 +8,13 @@
 | Date | 2026-09-02 |
 | Elaboration Changes | **Iter 3 (this revision):** (1) **A-28 executed (Test Designer-owned action from the Review Record's stakeholder-contribution propagation chain, deadline BEFORE TC execution — met):** TC-011 and TC-021/022/023 extended with fourth-clause verification steps; the disposable LDAP fixture re-seeded with substitution-attempt fixtures per the stakeholder's direction ("Add a fourth clause to all four"); catalog, goals table, automation architecture, workflow/lifecycle diagrams, test data and traceability updated — the R001 bar is now FOUR clauses × four consumers. (2) **Execution-state transition (honest, evidence-based):** the Cycle 1–2 blocking cause (Issue #1 — mechanism code absent) is resolved at the source: the Implementer handed off three ready-for-review branches, the Code Reviewer issued 3 APPROVED terminal dispositions (PRs #3/#4/#5 base `iteration/E1`, CI green ×3, per the Review Record Iter 3 code-review-lens record), and the mechanisms are merged to `iteration/E1` — verified first-hand this revision via file probes (shas above); the 19 mechanism-covered cases are Scripted (Implementer dual-coverage suites, CR-2 verified) with verdicts PENDING; TC-013…TC-016 remain BLOCKED on Construction scheduling. **Iter 2 (preserved):** Risk List F1 share resolved — TC-011 rewritten to the R001 behavioural bar (the >90% statistical criterion dropped per the stakeholder decision: invented, and against self-seeded data it cannot fail, so it proves nothing); TC-021/022/023 designed (four-consumer coverage, stakeholder-confirmed "Yes"); Cycle 2 execution record: all 23 BLOCKED with branch-level evidence (zero CI runs on the mechanism branches — the handoff absent at the source). **Iter 1 (preserved):** 20 test cases (TC-001…TC-020) covering UC-001, UC-004, UC-010 (test priority 1), the R003 authentication mechanism, and SEC-006/SEC-007 — each with preconditions, input data, expected outcome, pass/fail criteria, attacked failure scenario, automation hints, and interface points (INT-006…INT-019); automation architecture specified; Cycle 1 execution record preserved in § Findings |
 ## Test Scope
-
 ### Evaluation Mission Alignment
 
-This test model is the verification counterpart of the Use-Case Model for the **Elaboration Evaluation Mission** (Test Evaluation Summary): empirically validate the three architecturally significant mechanisms — **R001 (HIGH, disposable LDAP directory) > R003 (SIGNIFICANT, stub OIDC issuer) > R004 (SIGNIFICANT, direct)** — against the architecture baseline (SAD COMP-001…011, ADR-001…004; Design Model CLS-001…027, INT-006…INT-019). Per the binding stakeholder decision, the PoC is produced in Elaboration and validated empirically; these test cases are the executable instrument of that validation, ready to run the moment the Implementer hands off the mechanisms (Review Record actions A-2…A-4; SCM Issue #1).
+This test model is the verification counterpart of the Use-Case Model for the **Elaboration Evaluation Mission** (Test Evaluation Summary): empirically validate the three architecturally significant mechanisms — **R001 (HIGH, disposable LDAP directory) > R003 (SIGNIFICANT, stub OIDC issuer) > R004 (SIGNIFICANT, direct)** — against the architecture baseline (SAD COMP-001…011, ADR-001…004; Design Model CLS-001…027, INT-006…INT-019). Per the binding stakeholder decision, the PoC is produced in Elaboration and validated empirically. **Iter 3 state change:** the three mechanisms are now MERGED to `iteration/E1` (verified first-hand — see Findings), so the instrument is no longer waiting on the handoff; the formal execution pass runs against the fixtures and the verdicts land in the PoC results ledger.
 
-**R001 validation bar (stakeholder decision, Elaboration Iter 2 — governs this revision):** the bar is **behavioural, not statistical**. The prior ">90% of sampled users per office" figure is dropped — it is invented, and measured against a disposable directory the team seeds itself it cannot fail, so it proves nothing. The architectural risk is what the portal DOES when an attribute is absent. The three clauses, proven against deliberately-seeded gaps: **(a)** every employee is rendered whether or not their attributes are complete; **(b)** a missing attribute never removes someone from results; **(c)** a missing attribute never raises an error. The stakeholder confirmed ("Yes") that the bar applies to **all four AD-reading use cases** — UC-004 (declared home, FR-010), UC-005 (FR-001), UC-006 (FR-002), UC-007 (FR-003) — so the R001 PoC exercises all four consumers through the one LDAP contract (INT-010, one graceful-degradation policy via INT-008). Real-AD data-quality measurement belongs to Construction (R011 residual, STK-004-dependent) and is excluded from the LCA evidence package.
+**R001 validation bar (stakeholder decisions, Elab Iter 2 + Iter 2 verdict gate — governs this revision):** the bar is **behavioural, not statistical**, and it is now **FOUR clauses**. The prior ">90% of sampled users per office" figure is dropped — it is invented, and measured against a disposable directory the team seeds itself it cannot fail, so it proves nothing. The architectural risk is what the portal DOES when an attribute is absent. The four clauses, proven against deliberately-seeded gaps **and substitution-attempt fixtures**: **(a)** every employee is rendered whether or not their attributes are complete; **(b)** a missing attribute never removes someone from results; **(c)** a missing attribute never raises an error; **(d)** a missing attribute is displayed as missing — it is never replaced by a default, a placeholder, a guessed value, or another employee's value (stakeholder, verbatim, at the Iter 2 verdict gate). The first three clauses stop data from being LOST; the fourth stops it from being INVENTED. The stakeholder confirmed ("Yes") that the bar applies to **all four AD-reading use cases** — UC-004 (declared home, FR-010), UC-005 (FR-001), UC-006 (FR-002), UC-007 (FR-003) — so the R001 PoC exercises all four consumers through the one LDAP contract (INT-010, one graceful-degradation policy via INT-008). Real-AD data-quality measurement belongs to Construction (R011 residual, STK-004-dependent) and is excluded from the LCA evidence package.
 
-**In scope (this iteration):** test case design for UC-001, UC-004, UC-010 (all flows: main + AF + EF), the R003 token-validation matrix, SEC-006/SEC-007 role enforcement, and the R001 behavioural bar across all four AD-reading consumers (UC-004 AF-2; UC-005/006/007 AF-3) — with automation architecture, test data, and UC→TC traceability; **execution** of every case whose mechanism code exists in SCM (Cycle 2 result: none exists — all BLOCKED, see Findings).
+**In scope (this iteration):** test case design for UC-001, UC-004, UC-010 (all flows: main + AF + EF), the R003 token-validation matrix, SEC-006/SEC-007 role enforcement, and the FOUR-clause R001 behavioural bar across all four AD-reading consumers (UC-004 AF-2; UC-005/006/007 AF-3) — with automation architecture, test data, and UC→TC traceability; **execution-state transition** of every case whose mechanism code exists in SCM (Iter 3 result: the three mechanisms are merged — the 19 mechanism-covered cases are Scripted with verdicts PENDING; see Findings).
 
 **Out of scope (per Evaluation Mission):** full functional testing of all 10 UCs (Construction); execution against production AD/Keycloak (Construction, R010/R011); full-scale load testing (Construction); usability/adoption testing (AC-004, Transition pilot); UI visual-fidelity testing against CON-011 (Construction).
 
@@ -23,12 +22,12 @@ This test model is the verification counterpart of the Use-Case Model for the **
 
 ### Measurable Testing Goals (per Quality Dimension)
 
-Every goal is quantified from upstream artifacts — none invented here. Upstream thresholds marked `[ASSUMPTION — requires validation]` (2 s ignore window, queue capacity ≥ 10, sync ≤ 60 s, 95th-percentile basis) are treated by this test model as **the validation targets themselves**: the tests below are the empirical instrument that retires those assumptions. The R001 goal is the stakeholder-decided behavioural bar — deliberately not a percentage.
+Every goal is quantified from upstream artifacts — none invented here. Upstream thresholds marked `[ASSUMPTION — requires validation]` (2 s ignore window, queue capacity ≥ 10, sync ≤ 60 s, 95th-percentile basis) are treated by this test model as **the validation targets themselves**: the tests below are the empirical instrument that retires those assumptions. The R001 goal is the stakeholder-decided FOUR-clause behavioural bar — deliberately not a percentage.
 
 | Quality Dimension | Measurable Goal | Threshold Source | Validated By |
 |---|---|---|---|
 | Reliability | 5-minute drop tolerated; queued events never lost; exact duplicates rejected; events ordered by recorded timestamp; sync ≤ 60 s after restore | REL-002, REL-003, AC-005, ADR-003 | TC-004, TC-005, TC-006, TC-020 |
-| Functionality | One clocking event per press; status-aware button; six directory attributes displayed; unpublish = soft delete with record retained; **every AD-reading consumer renders every employee — blank fields on missing attributes, no removal, no error (behavioural bar, all four consumers)** | FR-004, FR-009, FR-010, CON-012, FR-001, FR-002, FR-003 + R001 behavioural bar (stakeholder decision, Elab Iter 2) | TC-001…TC-003, TC-009…TC-011, TC-013…TC-016, TC-021…TC-023 |
+| Functionality | One clocking event per press; status-aware button; six directory attributes displayed; unpublish = soft delete with record retained; **every AD-reading consumer renders every employee — blank fields on missing attributes, no removal, no error, and NO SUBSTITUTION (four-clause behavioural bar, all four consumers: the rendered/exported value is exactly blank — never a default, placeholder, guessed value, or another employee's value)** | FR-004, FR-009, FR-010, CON-012, FR-001, FR-002, FR-003 + R001 behavioural bar (stakeholder decisions, Elab Iter 2 + verdict gate) | TC-001…TC-003, TC-009…TC-011, TC-013…TC-016, TC-021…TC-023 |
 | Performance | Clocking confirmation < 1 s on BOTH online and offline paths; LDAP query hard timeout 5 s | PRF-002, PRF-003, NFR-002 | TC-001, TC-004, TC-011, TC-012 |
 | Security | OIDC token validated; roles extracted from claims; HR-only functions reject Employee-role sessions; employee sees only own clockings; no anonymous access | SEC-001, SEC-002, SEC-003, SEC-006, SEC-007, R003 | TC-007, TC-017, TC-018, TC-019 |
 | Usability | Colleague's email + extension visible on the result card (no detail view); displayed times render America/Havana local, DST-aware — never raw UTC or server time | USA-003, USA-008, AC-003 | TC-008, TC-009, TC-011 |
@@ -49,13 +48,13 @@ Multi-level coverage is deliberate: unit level (FakeClock DST boundary, audit at
 
 ### Test Automation Architecture (stubs, drivers, fakes)
 
-Test infrastructure is a deliverable, not a convenience. The component diagram below is the shared automation architecture referenced by every case's automation notes; test scripts and suites are code in `tests/EmployeePortal.Tests/` (co-owned with the Implementer), gated by CI on every push (CR-5 hard gate).
+Test infrastructure is a deliverable, not a convenience. The component diagram below is the shared automation architecture referenced by every case's automation notes; test scripts and suites are code in `tests/EmployeePortal.Tests/` (co-owned with the Implementer), gated by CI on every push (CR-5 hard gate). **Iter 3: the harness is materialized** — `EmployeePortal.Tests.csproj` (sha 23b9d1) carries xunit 2.9.2 + Microsoft.NET.Test.Sdk 17.12.0 and references the portal project; the Implementer's dual-coverage suites (CR-2 verified by the Code Reviewer, CI green ×3) implement this architecture against the merged mechanisms.
 
 ```plantuml
 @startuml
 skinparam componentStyle rectangle
 skinparam fontSize 11
-title Test Automation Architecture - Elaboration Iteration 2\nStubs, drivers, fixtures and fakes - one LDAP contract, four AD-reading consumers (UC-004/005/006/007)
+title Test Automation Architecture - Elaboration Iteration 3\nStubs, drivers, fixtures and fakes - one LDAP contract, four AD-reading consumers (UC-004/005/006/007)\nFOUR-clause R001 bar - clause (d) verified against substitution-attempt fixtures (A-28)
 
 package "Test Harness (tests/EmployeePortal.Tests)" {
   component "Unit Test Driver (xUnit)\nblack-box contract + white-box paths (CR-2)" as UNITD <<driver>>
@@ -66,7 +65,7 @@ package "Test Harness (tests/EmployeePortal.Tests)" {
 
 package "Validation Fixtures" {
   component "Stub OIDC Issuer (R003)\nsigned JWTs: Employee / HR Admin /\nexpired / bad signature / no roles" as STUBOIDC <<stub>>
-  component "Disposable LDAP Directory (R001)\n60 synthetic entries, 3 offices,\ndeliberate gaps: extension / job title /\ndepartment + empty-string edge +\nunresolvable uid e099 (D-9)" as LDAPFIX <<stub>>
+  component "Disposable LDAP Directory (R001)\n64 synthetic entries, 3 offices,\ndeliberate gaps: extension / job title /\ndepartment + empty-string edge +\nunresolvable uid e099 (D-9) +\nSUBSTITUTION-ATTEMPT fixtures (A-28):\n'General' default dept, 'Central'\nfirst-office fallback, 'N/A' placeholder,\nfully-gapped entry" as LDAPFIX <<stub>>
   database "PostgreSQL dev instance\nreal engine (ADR-002, R008)" as PGDEV <<fixture>>
   component "Drop-Simulation Control\noffline / online switching (R004)" as DROPC <<driver>>
 }
@@ -122,10 +121,16 @@ note bottom of LDAPFIX
   Stakeholder decision: a disposable
   directory, NOT production AD. Gaps
   are seeded deliberately (UC-004 S4)
-  and the three behavioural clauses
+  and the FOUR behavioural clauses
   are proven against them across
   UC-004/005/006/007 (TC-011,
-  TC-021..TC-023). Production
+  TC-021..TC-023). Clause (d) is
+  proven against the substitution-
+  attempt fixtures: the rendered or
+  exported value must be BLANK -
+  never "General", never "Central",
+  never "N/A", never another
+  employee's value. Production
   fidelity = R011 (Construction).
 end note
 
@@ -139,83 +144,72 @@ end note
 @enduml
 ```
 
-**Stub/driver justification (testability contract):** the stub OIDC issuer and disposable LDAP directory exist because the stakeholder explicitly refused to wait on STK-004 (R010) — R003 is proven by consuming tokens correctly, not by how the issuer got its users; R001 is a data-shape question answered by a disposable directory with deliberately-seeded gaps. The PostgreSQL dev instance is the REAL declared engine because idempotency (`ON CONFLICT`), the UNIQUE constraint, and the append-only REVOKE are engine semantics an in-memory fake cannot reproduce. The unit-level fakes exist because the Design Model made every subsystem boundary an interface (INT-006…INT-019) — the testability entry points are consumed here, not re-invented. The HR AD-reading cases (TC-021…TC-023) run at Integration level against the same disposable directory and the shared INT-008 GetDisplayData path, so the R001 PoC validates one contract across all four consumers without waiting for Construction UI.
+**Stub/driver justification (testability contract):** the stub OIDC issuer and disposable LDAP directory exist because the stakeholder explicitly refused to wait on STK-004 (R010) — R003 is proven by consuming tokens correctly, not by how the issuer got its users; R001 is a data-shape question answered by a disposable directory with deliberately-seeded gaps **and substitution-attempt fixtures**. The PostgreSQL dev instance is the REAL declared engine because idempotency (`ON CONFLICT`), the UNIQUE constraint, and the append-only REVOKE are engine semantics an in-memory fake cannot reproduce. The unit-level fakes exist because the Design Model made every subsystem boundary an interface (INT-006…INT-019) — the testability entry points are consumed here, not re-invented. The HR AD-reading cases (TC-021…TC-023) run at Integration level against the same disposable directory and the shared INT-008 GetDisplayData path, so the R001 PoC validates one contract across all four consumers without waiting for Construction UI.
 
 ### Test Workflow — UC Scenario to Executable Test Case
 
 ```plantuml
 @startuml
-title Test Workflow - UC Scenario to Executable Test Case (Elaboration Iteration 2)
+title Test Workflow - UC Scenario to Executable Test Case (Elaboration Iteration 3)
 
 start
-:Load architecturally significant UCs\n(test priority 1): UC-001, UC-004, UC-010\n+ the R001 behavioural bar's four AD-reading\nconsumers (UC-004/005/006/007 AF-2/AF-3);
+:Load architecturally significant UCs\n(test priority 1): UC-001, UC-004, UC-010\n+ the R001 behavioural bar's four AD-reading\nconsumers (UC-004/005/006/007 AF-2/AF-3)\n+ the FOURTH clause (A-28): blank is the\nfinal value - never a default, placeholder,\nguess, or another employee's value;
 :Walk every flow (main + AF + EF)\nwith adversarial intent:\nwhat failure does this test attack?;
 :Design TC-NNN: preconditions, input data,\nexpected outcome, pass/fail criteria;
 :Assign test level (unit / integration / system)\n+ automation feasibility per case;
 :Map observable interface points (INT-006..INT-019)\n+ required stubs, drivers, fakes;
 :Register UC-to-TC traceability\n(TC-001..TC-023, 23 cases);
-if (Mechanism code handed off?\n(Review Record F-CR-E1-1)) then (yes)
-  :Script the case in tests/EmployeePortal.Tests\n(regression-ready from creation);
-  :Execute against validation fixtures:\nstub OIDC issuer, disposable LDAP\ndirectory, PostgreSQL dev, drop simulation;
+if (Mechanism code handed off?\nF-CR-E1-1 RESOLVED Iter 3:\nmechanisms merged to iteration/E1) then (yes - current state)
+  :Script the case in tests/EmployeePortal.Tests\n(regression-ready from creation;\nImplementer dual-coverage suites,\nCR-2 verified, CI green x3);
+  :Execute against validation fixtures:\nstub OIDC issuer, disposable LDAP\ndirectory (substitution-attempt\nfixtures seeded), PostgreSQL dev,\ndrop simulation;
   if (All assertions hold?) then (yes)
     :Verdict PASSED;\nevidence: CI run + merged PR;
   else (no)
     :Verdict FAILED;\ndefect raised in SCM issue tracker;
   endif
   :Regression: re-run ALL prior results\nafter every merged PR (mandatory);
-else (no - state at design time)
-  :Verdict BLOCKED: designed + regression-ready;\nexecution waits on actions A-1..A-6;
+else (no - historical state, Cycles 1-2)
+  :Verdict BLOCKED: designed + regression-ready;\nexecution waited on actions A-1..A-6\n(resolved Iter 3);
 endif
 :Results feed the Test Evaluation Summary\n(mission: R001 > R003 > R004, empirical);
 stop
 @enduml
 ```
 
-**Test Evaluation Flow — Cycle 2 execution record (2026-09-02):**
+**Test Evaluation Flow — Cycle 3 record (2026-09-02, this revision):**
 
 ```plantuml
 @startuml
-title Test Evaluation Flow - Elaboration Iteration 2, Cycle 1 (2026-09-02)
+title Test Evaluation Flow - Elaboration Iteration 3, Cycle 1 (2026-09-02)
 
 start
-:S1 DISCOVER
-Load Test Case (TC-001..TC-020), Review Record
-(Risk List F1 names TC-011, binding all-findings
-directive), Use-Case Model (UC-005/006/007 AF-3,
-stakeholder-confirmed Yes, UC-004 S4 bar walk),
-SAD Logical View (COMP-003/004/010), Design Model
-(D-9, INT-008/010/013 extensions, SEQ-005..007);
-:S2 CORRECT THE INSTRUMENT (Risk List F1 share)
-TC-011 rewritten: the statistical criterion
-(90 percent per office) is DROPPED per the
-stakeholder decision - invented, measured against
-a self-seeded directory it cannot fail, proves
-nothing. Replaced by the behavioural bar (three
-clauses). Fixture re-seeded with deliberate gaps
-per UC-004 S4;
-:S3 EXTEND COVERAGE
-TC-021 (UC-005 AF-3), TC-022 (UC-006 AF-3),
-TC-023 (UC-007 AF-3) designed - the R001 PoC now
-exercises ALL FOUR AD-reading UCs;
-:S4 EXECUTE - inspect implementation under test
-scm_get_file_content on iteration/E1 returns:
-Program.cs sha 5a1f720 (bare Razor Pages boot,
-no auth middleware) and EmployeePortal.csproj
-sha 9a04a31 (zero package references);
-if (Mechanism code present in the build tree?) then (no - byte-identical to Cycle 1)
-  :Verdict: TC-001..TC-023 all BLOCKED
-(SCM Issue 1 open: R001/R003/R004 mechanisms
-absent, no Npgsql / LDAP / JWT packages);
-  :Regression status: still zero prior
-PASS results - the first execution has not
-occurred (nothing to re-run);
-else (yes)
-  :Execute against fixtures
-(disposable LDAP with seeded gaps,
-stub OIDC, PG dev, drop simulation);
-endif
-:Record honest verdicts + evidence
-in Test Case Findings (this artifact);
+partition "S1 - DISCOVER" {
+  :Load Review Record (Iter 3):\nA-28 assigned to Test Designer -\nextend TC-011 + TC-021/022/023 with\nfourth-clause verification steps +\nsubstitution-attempt fixtures,\ndeadline BEFORE TC execution;
+  :Load the stakeholder's fourth clause,\nverbatim: "a missing attribute is\ndisplayed as missing. It is never\nreplaced by a default, a placeholder,\na guessed value, or another\nemployee's value.";
+  :Load the Iter 3 code-review record:\n3 mechanism PRs APPROVED\n(base iteration/E1, CI green x3),\nF-CR-E1-1 RESOLVED;
+}
+partition "S2 - EXTEND THE INSTRUMENT (A-28)" {
+  :TC-011 + TC-021/022/023 extended with\nASSERT-xd steps: the rendered or\nexported value for every missing\nattribute is EXACTLY blank;
+  :Disposable LDAP fixture re-seeded with\nsubstitution-attempt fixtures:\n"General" default-department temptation,\n"Central" first-office fallback,\n"N/A" placeholder title,\nfully-gapped entry;
+}
+partition "S3 - VERIFY IMPLEMENTATION UNDER TEST" {
+  :scm_get_file_content on iteration/E1:\nLdapGateway.cs sha b8df8b7 (four-clause\ndegradation incl. clause d),\nKeycloakAuthProvider.cs sha 7bd4cfd,\nClockingsRepository.cs sha 017cbcd,\noffline-queue.js sha 9ac644a,\nEmployeePortal.Tests.csproj sha 23b9d1\n(xunit 2.9.2 - the zero-package\nstate is gone);
+  :The three mechanisms are MERGED to\niteration/E1 - the Cycle 1-2 blocking\ncause (Issue #1) is resolved at the\nsource;
+}
+partition "S4 - EXECUTION-STATE TRANSITION" {
+  if (Mechanism code present in the build tree?) then (yes - first time)
+    :19 mechanism-covered cases transition\nDesigned -> Scripted\n(Implementer dual-coverage suites,\nCR-2 verified, CI green x3);
+    :Verdicts PENDING - none claimed:\nthe formal execution pass and the\nPoC results ledger own the verdicts;
+    :TC-013..TC-016 remain BLOCKED on\nConstruction scheduling (news/audit\nis Construction scope - never an\nIssue #1 blocker);
+  else (no)
+    :BLOCKED verdicts (historical\nCycles 1-2 path);
+  endif
+}
+partition "S5 - DEFECT CENSUS" {
+  :Zero FAIL verdicts this revision ->\nzero new defects to formalize;
+  :Issue #1 resolved at the source\n(F-CR-E1-1 RESOLVED, Review Record\nIter 3) - no duplicate raised;
+}
+:Record the transition + evidence in\nTest Case Findings (this artifact);\nMission verdict: NOT YET ACHIEVED -\nverdicts PENDING the formal execution\npass against the fixtures;
 stop
 @enduml
 ```
@@ -224,7 +218,7 @@ stop
 
 ```plantuml
 @startuml
-title Test Case Lifecycle (TC-001..TC-023) - Elaboration Iteration 2
+title Test Case Lifecycle (TC-001..TC-023) - Elaboration Iteration 3
 
 state "Designed" as DESIGNED
 state "Scripted" as SCRIPTED
@@ -235,12 +229,12 @@ state "Failed" as FAILED
 
 [*] --> DESIGNED : case specified (this artifact):\npreconditions, input data, expected\noutcome, pass/fail criteria, UC trace
 
-DESIGNED --> SCRIPTED : mechanism code handed off\n(F-CR-E1-1 resolved) + case scripted\nin tests/EmployeePortal.Tests
-DESIGNED --> BLOCKED : code handoff absent\n(current state of all 23 cases)
+DESIGNED --> SCRIPTED : mechanism code handed off\n(F-CR-E1-1 RESOLVED Iter 3:\nmechanisms merged to iteration/E1)\n+ case scripted in tests/EmployeePortal.Tests\n(Implementer dual-coverage suites,\nCR-2 verified)
+DESIGNED --> BLOCKED : code handoff absent\n(historical: Cycles 1-2, all 23 cases)
 
-BLOCKED --> SCRIPTED : handoff arrives\n(Review Record actions A-1..A-6)
+BLOCKED --> SCRIPTED : handoff arrives\n(RESOLVED Iter 3 - the 19 mechanism-covered\ncases transition; TC-013..TC-016 remain\nBLOCKED on Construction scheduling -\nnews/audit is Construction scope,\nnever an Issue #1 blocker)
 
-SCRIPTED --> EXECUTED : fixtures ready:\nstub OIDC issuer, disposable LDAP,\nPG dev, drop simulation
+SCRIPTED --> EXECUTED : execution pass runs against\nfixtures: stub OIDC issuer, disposable\nLDAP (substitution-attempt fixtures),\nPG dev, drop simulation\n(PENDING - no verdicts claimed yet)
 
 EXECUTED --> PASSED : every assertion holds\n(evidence: CI run + merged PR)
 EXECUTED --> FAILED : any assertion violated\n(defect raised in SCM tracker)
@@ -252,23 +246,25 @@ PASSED --> [*] : iteration closes; mission verdict\nrecorded (Test Evaluation Su
 FAILED --> [*] : only by explicit Test\nManager deferral decision
 
 DESIGNED : regression-ready from creation:\npreconditions + expected output\nfully specified
-SCRIPTED : automated; runs in CI on\nevery push (CR-5 hard gate)
-BLOCKED : honest state at design time:\nzero SCM code evidence for the\nthree mechanisms (F-CR-E1-1)
+SCRIPTED : automated; runs in CI on\nevery push (CR-5 hard gate).\nCURRENT STATE (Iter 3): the 19\nmechanism-covered cases - verdicts\nPENDING, none claimed
+BLOCKED : CURRENT STATE (Iter 3):\nTC-013..TC-016 only - news/audit\nmechanism is Construction scope\n(exit criteria 1-3 cover\nR001/R003/R004 only)
 PASSED : evidence linked: CI run id\n+ merged PR (no fabricated results)
 FAILED : defect lifecycle: NEW -> TRIAGED\n-> ... -> VERIFIED -> CLOSED
 
-note right of BLOCKED
-  Design is complete and executable
-  the moment the Implementer
-  hands off the R001/R003/R004
-  mechanisms (actions A-2..A-4).
-  No pass counts are claimed.
+note right of SCRIPTED
+  Iter 3 transition: the Cycle 1-2
+  blocking cause (Issue #1 -
+  mechanism code absent) is
+  resolved at the source; the
+  formal execution pass and the
+  PoC results ledger own the
+  verdicts - this artifact claims
+  none.
 end note
 @enduml
 ```
 
-**Execution status (Cycle 2 record, 2026-09-02):** the implementation under test was re-inspected empirically on `iteration/E1` — `Program.cs` (sha 5a1f720) is still a bare Razor Pages boot (no auth middleware, no services) and `EmployeePortal.csproj` (sha 9a04a31) still has zero package references — **byte-identical to the Cycle 1 inspection**. All 23 cases (TC-001…TC-020 from Iter 1 plus TC-021…TC-023 designed this iteration) therefore remain **Designed → Blocked** on SCM Issue #1 (severity:blocker — mechanism code absent). CI trigger configuration was verified correct in Cycle 1 (`ci.yml` covers `iteration/**` for push and PR), so the blocker remains code delivery, not test infrastructure. Full evidence in § Findings. No test counts, pass rates, or durations are claimed.
-
+**Execution status (Cycle 3 record, 2026-09-02):** the implementation under test was re-inspected empirically on `iteration/E1` — the three mechanisms are MERGED and present in the build tree: `LdapGateway.cs` (sha b8df8b7 — CLS-009 with the FOUR-clause graceful-degradation contract, clause (d) implemented as "missing or empty AD value → null; null is the FINAL mapped value"), `KeycloakAuthProvider.cs` (sha 7bd4cfd — CLS-010 with RS256/JWKS signature validation, exp/iss/aud/sub enforcement, verbatim role extraction), `ClockingsRepository.cs` (sha 017cbcd — interim in-memory adapter enforcing the UNIQUE idempotency_key contract, replaced by the PG adapter in Construction Iteration 1 per R008), `offline-queue.js` (sha 9ac644a — CLS-008 browser half: localStorage queue, capacity 10, press-time capture, sync on 200 OK), and `EmployeePortal.Tests.csproj` (sha 23b9d1 — xunit 2.9.2 + Microsoft.NET.Test.Sdk 17.12.0; the Cycle 1–2 zero-package state is gone). The 19 mechanism-covered cases (TC-001…TC-012, TC-017…TC-023) transition **Designed → Scripted** with verdicts **PENDING — none claimed**: the formal execution pass against the fixtures and the PoC results ledger own the verdicts, and this artifact fabricates no results. TC-013…TC-016 remain **BLOCKED on Construction scheduling** — the news/audit mechanism is Construction scope (exit criteria 1–3 cover R001/R003/R004 only), so they were never Issue #1 blockers. Full evidence in § Findings.
 ## Test Case Catalog
 ### Catalog Overview — UC→TC Traceability
 
