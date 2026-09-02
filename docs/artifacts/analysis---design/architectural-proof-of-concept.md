@@ -155,23 +155,132 @@ stop
 **Delivery protocol (BRANCHING_STRATEGY §5.2):** the Implementer builds each mechanism in `src/` on `feature/E1-{risk-id}` branches based on `iteration/E1`, ships dual-coverage unit tests (black-box contract + white-box paths), and labels each branch `ready-for-review`; the Code Reviewer opens one PR per branch (base `iteration/E1`) and applies CR-1…CR-7 with terminal dispositions; the Integrator merges APPROVED PRs. **The Test Designer executes TC-001…TC-023 against the validation fixtures** (23 cases per the Test Case § Test Case Catalog authority — TC-021/022/023 are the UC-005/006/007 AF-3 behavioural-bar validation cases; the fourth-clause verification steps per action A-28 land BEFORE TC execution so the fourth clause can actually fail). Empirical results feed this artifact's § Results and Findings.
 
 ## Results and Findings
+**Status as of 2026-09-02 (OBSERVED results ledger — action A-32, Elab Iter 4 record-propagation pass; every value below is cited from the Test Case Cycle 1 formal-pass record and first-hand SCM verification; no result is claimed beyond that record):**
 
-**Status as of 2026-09-02 (honest ledger — no result is claimed before it is observed):**
+## Delivery chain — MERGED (observed first-hand)
 
 | Item | Status | Evidence |
 |---|---|---|
-| Per-risk dispositions recorded (single-mechanism ×3) | **DONE** | `record_poc_decision` executed for R001, R003, R004 (Iter 2); **R001 re-recorded with the FOUR-clause bar (Iter 3, this iteration)** |
-| Validation protocol + acceptance criteria established | **DONE** | § Approach (this artifact); SAD § Quality PoC Plan corrected to the empirical disposition (SAD F1 resolved, Iter 2); **four-clause bar + 23-case enumeration incorporated (Iter 3 — actions A-29/A-21)** |
-| R001 mechanism code (COMP-007/CLS-009 + disposable directory fixture) | **PENDING — Implementer (A-2)** | `iteration/E1` verified skeleton-only (no `Services/`, no `Infrastructure/`, no LDAP packages — re-verified 2026-09-02); zero PRs in any state |
-| R003 mechanism code (COMP-006/CLS-010 + stub issuer fixture) | **PENDING — Implementer (A-3)** | Same SCM state (re-verified 2026-09-02) |
-| R004 mechanism code (COMP-009/CLS-008 + drop simulation) | **PENDING — Implementer (A-4)** | Same SCM state (re-verified 2026-09-02) |
-| TC-001…TC-023 execution | **PENDING — Test Designer** | All 23 test cases BLOCKED on mechanism delivery (Test Case Cycle 2 record; SCM Issue #1 open — re-verified 2026-09-02) |
-| Empirical results R001 / R003 / R004 | **PENDING** | No empirical result exists yet. This section is evolved with observed results as the mechanisms land — pass/fail recorded per acceptance criterion, never projected. The R001 results row will record clause-by-clause evidence for all FOUR clauses across TC-011 + TC-021/022/023 |
+| Per-risk dispositions recorded (single-mechanism ×3) | **DONE** | `record_poc_decision` executed for R001, R003, R004 (Iter 2); R001 re-recorded with the FOUR-clause bar (Iter 3) |
+| Validation protocol + acceptance criteria established | **DONE** | § Approach (this artifact); SAD § Quality PoC Plan corrected to the empirical disposition (SAD F1 resolved, Iter 2); four-clause bar + 23-case enumeration incorporated (Iter 3 — actions A-29/A-21) |
+| R001 mechanism code (COMP-007/CLS-009 + disposable directory fixture) | **MERGED — VALIDATED** | PR #3 (feature/E1-R001 → `iteration/E1`), APPROVED (review 5088169328), CI green (run 33615260971); baseline-close PR #6 → `main` (review state APPROVED, merged); `LdapGateway.cs` sha b8df8b7 on main — the FOUR-clause graceful-degradation contract in code (clause (d): "missing or empty AD value → null; null is the FINAL mapped value") |
+| R003 mechanism code (COMP-006/CLS-010 + stub issuer fixture) | **MERGED — VALIDATED** | PR #4 (feature/E1-R003 → `iteration/E1`), APPROVED (review 5088169517), CI green (run 33615945653); `KeycloakAuthProvider.cs` sha 7bd4cfd — RS256/JWKS signature validation, exp/iss/aud/sub enforcement, verbatim role extraction |
+| R004 mechanism code (COMP-009/CLS-008 + drop simulation) | **MERGED — VALIDATED** | PR #5 (feature/E1-R004 → `iteration/E1`), APPROVED (review 5088169685), CI green (run 33616121855); `ClockingsRepository.cs` sha 017cbcd (interim adapter — see honest boundary note below), `offline-queue.js` sha 9ac644a |
+| TC-001…TC-023 execution | **COMPLETE — 15 PASS · 0 FAIL · 8 BLOCKED** | Formal execution pass (Test Case Cycle 1 record, Tester); execution trace CI run 33617748483 (`dotnet test` on the merged tree, GREEN); the 8 BLOCKED cases are a **recorded SCOPE decision — deferred to Construction, not missing** (see verdict distribution below) |
+| SCM Issue #1 (mechanism code absent — blocker) | **CLOSED (cr:complete)** | Closed on the merged-PR + executed-TC evidence; verified first-hand this pass |
+| Empirical results R001 / R003 / R004 | **OBSERVED — PASS (all three)** | Clause-by-clause, per consumer, below — the R6 evidence package's core |
 
-**Interim finding (design-level, already actionable):** the FOUR-clause behavioural bar changes what the disposable-directory fixture must contain — gaps must be seeded **deliberately** (missing job title / extension / email / department / office across all 3 offices) so each of the first three behavioural clauses can actually fail, **and substitution-attempt fixtures must be seeded (a default category, a first-office fallback) so the fourth clause can actually fail** — a mechanism that silently substitutes a default would otherwise pass vacuously. A uniformly-populated fixture would pass vacuously and prove nothing. This requirement is now part of the fixture specification the Implementer builds against (Design Model A-27 contract: missing attribute = null/blank, NEVER a default, placeholder, guessed value, or another employee's value).
+```plantuml
+@startuml
+title PoC Empirical Validation Results — Elaboration Iter 3 Formal Execution Pass\nVerdicts: 15 PASS / 0 FAIL / 8 BLOCKED — the 8 BLOCKED are a recorded SCOPE decision (deferred to Construction, not missing)\nExecution trace: CI run 33617748483; post-merge main GREEN run 33620993027
 
-**What this artifact does NOT claim:** it does not claim R001/R003/R004 are retired. Retirement is recorded only when the empirical results land and the acceptance criteria are observed to hold. The LCA re-presentation requires this section to carry those observed results — clause-by-clause, per consumer, for R001.
+object "R001 — AD LDAP attribute consistency (HIGH, exposure=9)\nVALIDATION OBSERVED: FOUR clauses x FOUR consumers PASS" as R001 {
+  Vehicle: disposable LDAP directory —
+  materialized 11-entry fixture @ 5b84206
+  (every gap shape + substitution temptation)
+  Clause (a) every employee rendered : PASS x4
+  Clause (b) never removed for missing attr : PASS x4
+  Clause (c) never raises an error : PASS x4
+  Clause (d) displayed as missing, never
+  substituted : PASS x4 — NOT General,
+  NOT Central, NOT N/A, no cross-entry
+  inheritance (substitution-attempt fixtures)
+  Evidence: TC-011 + TC-021/022/023
+  BehaviouralBarTests @ 3660454,
+  LdapGatewayTests @ caec358,
+  ReportExportServiceTests @ 4bbb732,
+  DirectoryServiceTests @ 06c5bd4
+}
 
+object "R003 — OIDC integration (SIGNIFICANT)\nVALIDATION OBSERVED: token matrix PASS" as R003 {
+  Vehicle: stub OIDC issuer (signed tokens + JWKS)
+  Redirect flow completes before any
+  content renders : PASS (TC-007)
+  Valid token validated via issuer JWKS;
+  roles extracted verbatim : PASS (TC-019)
+  10 rejection variants at the request
+  boundary (expired, tampered, wrong
+  issuer, wrong audience, alg-none,
+  unknown kid, malformed, missing bearer) : PASS
+  Evidence: KeycloakAuthProviderTests @ 3a63509
+}
+
+object "R004 — Offline fault tolerance (SIGNIFICANT)\nVALIDATION OBSERVED: drop simulation PASS" as R004 {
+  Vehicle: direct 5-minute drop simulation (AC-005)
+  Confirmation under 1 s on both paths : PASS
+  Zero losses; sync within 60 s of restore : PASS
+  Exact duplicates rejected, never a second
+  row (double replay + mixed online/queued) : PASS
+  Queue capacity at least 10 boundary : PASS
+  Evidence: TC-001/004/005/006 + TC-020
+  OfflineResilienceTests @ 0a7b1a2,
+  OfflineQueueTests @ cb4b843,
+  ClockingServiceTests @ 58476ca
+}
+
+object "Delivery chain — MERGED (observed first-hand)" as DEL {
+  PR #3 (R001) merged to iteration/E1 — APPROVED
+  PR #4 (R003) merged to iteration/E1 — APPROVED
+  PR #5 (R004) merged to iteration/E1 — APPROVED
+  PR #6 baseline-close merged to main — APPROVED
+  Issue #1 CLOSED cr:complete
+  main CI GREEN run 33620993027
+}
+
+object "8 BLOCKED — recorded SCOPE decision\n(production AD and Keycloak integration belongs\nto Construction) — deferred, not missing" as BLK {
+  TC-003, TC-010 — UI mechanisms
+  TC-017, TC-018 — endpoint/request surfaces
+  (the R003 boundary foundation IS
+  validated via TC-019)
+  TC-013..TC-016 — news/audit mechanism
+  Zero FAIL verdicts — zero new defects
+}
+
+R001 -[hidden]-> R003
+R003 -[hidden]-> R004
+R004 -[hidden]-> DEL
+DEL -[hidden]-> BLK
+@enduml
+```
+
+## R001 — clause-by-clause evidence (FOUR clauses × FOUR consumers — the R6 evidence-gate shape)
+
+Source: Test Case Cycle 1 formal-pass record (the authority — this ledger claims nothing beyond it). The bar was proven against the materialized disposable-LDAP fixture (`Fixtures/DisposableLdapDirectory.cs` @ sha 5b84206 — 11 entries materializing the design spec at reduced scale with **every gap shape and every substitution temptation present**, so the four-clause bar's falsifiability is intact; the 64-entry scale is the Construction fixture concern, not a falsifiability concern — the bar is behavioural, not statistical).
+
+| Clause | UC-004 directory search (TC-011) | UC-005 HR review (TC-021) | UC-006 CSV export (TC-022) | UC-007 category lookup (TC-023) |
+|---|---|---|---|---|
+| **(a)** every employee rendered | **PASS** — all matching entries incl. gapped | **PASS** — every event row incl. the unresolvable uid (D-9: all-null display data, row stays) | **PASS** — CSV row count == event count, no row dropped | **PASS** — gapped employee locatable by name |
+| **(b)** never removed for a missing attribute | **PASS** — gapped entries present in results | **PASS** — no employee removed from the review | **PASS** — no row dropped; ad_user_id always present | **PASS** — not hidden from the lookup |
+| **(c)** never raises an error | **PASS** — no exception across the clause walk | **PASS** — no error on gapped + unresolvable | **PASS** — no abort on gapped rows | **PASS** — no error on lookup |
+| **(d)** displayed as missing — never substituted | **PASS** — department NOT "General", office NOT "Central", title NOT "N/A"; no cross-entry inheritance | **PASS** — display fields null, never substituted | **PASS** — truly empty cells (`u003,Ana Gomez,,,`) — the file reaches payroll | **PASS** — blank fields; selectable via the always-present uid |
+
+**Clause (d) is verified against the substitution-attempt fixtures** (A-28): a "General" default department, a "Central" first-office fallback, an "N/A" placeholder title, and a fully-gapped entry attacking cross-entry inheritance — each fixture is the exact value a plausible-but-wrong implementation would produce, and each ASSERT-xd step fails if any of them appears. Blank is the answer. The three first clauses stop data from being LOST; the fourth stops it from being INVENTED — and on the CSV that reaches payroll, a fabricated department is worse than an empty cell (stakeholder rationale, verbatim).
+
+## R003 — token-validation matrix (OBSERVED PASS)
+
+TC-019 (Integration, risk validation) PASS via `KeycloakAuthProviderTests` @ 3a63509 → CI run 33617748483: redirect flow completes; valid tokens validated via the issuer's JWKS with kid matching; Employee and HR Administrator roles extracted **verbatim — never invented** (test-asserted); expired, tampered, wrong-issuer, wrong-audience, alg-none, unknown-kid, malformed, and missing-bearer variants all rejected at the request boundary (401, next not invoked); token-without-roles → empty set. TC-007 PASS: unauthenticated requests redirect to the issuer (302) BEFORE any content renders; expired tokens rejected at the request boundary. **The portal consumes and validates an OIDC token correctly** — the stakeholder's R003 bar — regardless of how the issuer got its users (CON-004).
+
+## R004 — 5-minute drop simulation (OBSERVED PASS)
+
+TC-004/005/006 + TC-020 + TC-001 PASS via `OfflineResilienceTests` @ 0a7b1a2, `OfflineQueueTests` @ cb4b843, `ClockingServiceTests` @ 58476ca → CI run 33617748483: confirmation **< 1 s on both online and offline-queued paths** (PRF-002); queued events hold press-time UTC capture (DAT-001) and recorded-timestamp order (REL-002); on restore, sync completes **≤ 60 s** (REL-003) with **zero losses** and the queue cleared on 200 OK; **exact duplicates rejected, never a second row** — verified against double-replay batches AND a mixed online+queued same-key press; queue capacity **≥ 10** boundary holds (overflow event not queued). AC-005's drop scenario is validated directly.
+
+**Honest evidence boundary (recorded, not absorbed):** the REL-002 idempotency contract was validated **at the repository seam** against the interim in-memory `ClockingsRepository` (sha 017cbcd), which enforces the UNIQUE idempotency_key contract (duplicate → `RejectedDuplicate`, never a second row — ARCH-7). The PostgreSQL engine realization (`ON CONFLICT (idempotency_key) DO NOTHING` against the real engine) lands **Construction Iteration 1 per R008** — tracked as Code Reviewer finding F-CR-E3-1 with its `[DEFERRED]` marker carried in the PR record. The mechanism contract is proven; the engine binding is Construction scope.
+
+## Verdict distribution — 23 cases (the stakeholder's framing directive, binding)
+
+**15 PASS · 0 FAIL · 8 BLOCKED.** Per the stakeholder's Iter 3 directive, verbatim: *"the 8 BLOCKED test cases are a recorded SCOPE decision (production AD and Keycloak integration belongs to Construction), not an open gap. State it that way in the evidence package so the LCA reads them as deferred, not as missing."* The 8 BLOCKED cases are: TC-003, TC-010 (UI mechanisms — the 2 s HomeView debounce and the P-05 empty state); TC-017, TC-018 (the `/hr/*` and `/history` endpoint/request surfaces — Construction controllers; the R003 boundary foundation they lean on IS validated via TC-019, and the service-seam own-data-only semantics are validated via `ClockingServiceTests`); TC-013…TC-016 (the news/audit mechanism — Construction scope, incl. the PG-engine REVOKE semantics of TC-016 per R008). These are honest corrections recorded by the execution pass (the Cycle 3 state-transition record had over-claimed them as Scripted-executable) — recording them as PASS would have been paper-only validation. **None of the 8 is an Elaboration exit-criterion blocker: exit criteria 1–3 cover R001/R003/R004 only, and all three are OBSERVED PASS.** Zero FAIL verdicts → zero new defects formalized.
+
+**Additional honest note (carried from the Test Case record):** TC-009's six-field criterion — five fields execution-asserted; the email field verified by first-hand inspection of the positional mapping in `MapEntry` (no separate email assertion exists — recorded honestly, not paper-passed).
+
+## Regression baseline — ESTABLISHED
+
+The 15 executed PASS results form the regression baseline. The merge sequence itself exercised the mandatory policy: PR #3 merged → CI GREEN 33617283642; PR #5 merged → CI GREEN 33617446626 (R004 suites re-running R001's); PR #4 merged → CI GREEN 33617748483 (R003 suites re-running both) — every merged PR re-ran ALL prior suites, all GREEN (`ci.yml` @ 5a2ba38). Post-merge, `main` is GREEN (run 33620993027, verified first-hand this pass). From this point, ANY subsequent merged PR re-runs all 15.
+
+## What this artifact claims — and does not claim
+
+**Claims:** the empirical validation of R001, R003, and R004 is **OBSERVED** — the acceptance criteria of § Approach are observed to hold, clause-by-clause and per consumer, against the merged evolutionary mechanisms with CI-traced execution evidence. The stakeholder's binding bar — "I will not accept an LCA that validates a HIGH architectural risk on paper only" — is satisfied by observed, CI-traced results for the HIGH risk (R001) and both SIGNIFICANT risks.
+
+**Does NOT claim:** (1) risk RETIREMENT recording — R001/R003/R004 → RETIRED in the Risk List is the Project Manager's close-pass reappraisal (Work Item 11, stakeholder-confirmed); this ledger supplies the evidence that reappraisal cites. (2) Production-instance integration — R010 (STK-004 deliverables) and R011 (validation-environment fidelity) are Construction residuals; the fixtures are retained as reusable Construction test assets. (3) Real-AD data-quality measurement — a Construction activity with R010 delivery, excluded from the LCA evidence package by the stakeholder's own decision. (4) The 8 BLOCKED cases as executed — they are deferred by scope decision, and the R6 evidence package presents the verdict distribution as 15 executed PASS + 8 deferred-by-scope-decision, zero FAIL.
 ## Architectural Implications
 
 1. **The mechanisms are the Construction baseline.** COMP-007, COMP-006, and COMP-009 are built as production code in `src/` (Services/ and Infrastructure/ per the Implementation View) — the PoC does not create a parallel throwaway tree. What the validation exercises is what Construction inherits.
