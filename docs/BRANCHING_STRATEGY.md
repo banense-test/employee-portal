@@ -2,9 +2,9 @@
 
 **Project:** Employee Portal (Cuba Corp)
 **Phase:** Inception → Transition
-**Current Phase:** Elaboration (Iteration 4 — record-propagation pass)
+**Current Phase:** Elaboration (Iteration 5 — record-correction pass)
 **Maintainer:** Configuration Manager
-**Last Updated:** 2026-09-02 (Elaboration Iter 4, Cycle 1 — E4 workspace CLOSED: iteration-close PR #8 merged to main (consolidated review APPROVED + main CI green, re-verified post-merge); tag `baseline-elaboration-E4-v1` written on merge SHA `f47e99b8`; register row ESTABLISHED. E3-v1 remains ESTABLISHED — E4-v1 is a distinct iteration baseline building on it, not a re-tag)
+**Last Updated:** 2026-09-02 (Elaboration Iter 5, Cycle 1 — E5 workspace CLOSED: iteration-close PR #10 merged to main (consolidated review APPROVED + main CI green, re-verified post-merge); tag `baseline-elaboration-E5-v1` written on merge SHA `58484d21`; register row ESTABLISHED. E3-v1 and E4-v1 remain ESTABLISHED — E5-v1 is a distinct iteration baseline building on them, not a re-tag)
 
 ---
 
@@ -207,12 +207,12 @@ note right of WS
   terminal dispositions (reviews 5088169328 /
   5088169517 / 5088169685 — zero Critical,
   zero Major), merged by the Integrator.
-  LAMClosePR DONE: PR #6 (iteration/E1 -> main)
-  opened by the Integrator, consolidated review
-  state APPROVED. GATE PASSED: review APPROVED +
-  main CI green (run 33598979875). TAG WRITTEN:
-  baseline-elaboration-E3-v1 on merge SHA
-  c79154782f719c3e97b098cf3abd3ea83a3b553b.
+  LAMClosePR DONE: PR #6 (iteration/E1 ->
+  main) opened by the Integrator, consolidated
+  review state APPROVED. GATE PASSED: review
+  APPROVED + main CI green (run 33598979875).
+  TAG WRITTEN: baseline-elaboration-E3-v1 on
+  merge SHA c79154782f719c3e97b098cf3abd3ea83a3b553b.
 end note
 
 note right of TAG
@@ -314,6 +314,93 @@ note right of WS4
   (run 33629662894, re-verified post-merge).
   TAG WRITTEN: baseline-elaboration-E4-v1 on
   merge SHA f47e99b814fd54a7317dcedbf682e1df8e9395c0.
+end note
+@enduml
+```
+
+#### Baseline Identification Lifecycle — Elaboration E5 workspace (CLOSED, recorded 2026-09-02)
+
+```plantuml
+@startuml
+title Baseline Identification Lifecycle — Elaboration E5 workspace CLOSED at Iteration 5 (position recorded 2026-09-02)
+
+[*] --> WS5
+state "WorkspaceSetup\nIntegrator creates iteration/E5" as WS5 {
+  WS5 : only the Integrator writes iteration/* (invariant 8.1)
+  WS5 : iteration/E5 is the integration workspace
+  WS5 : of the record-correction pass
+}
+WS5 --> MW5 : workspace exists\n(DONE — created at Iter 5 open)
+state "IntegrationWork\nEMPTY integration set\n(record-correction pass)" as MW5 {
+  MW5 : no code handoff entered the gate
+  MW5 : 0 ready-for-review branches
+  MW5 : 0 open PRs at cycle open
+  MW5 : tree unchanged vs E4-v1
+  MW5 : 3/3 mechanisms remain VERIFIED on main
+}
+MW5 --> LAM5 : integration set complete\n(DONE — empty set, nothing to merge)
+state "LAMClosePR\niteration/E5 -> main" as LAM5 {
+  LAM5 : opened by the Integrator at LAM close
+  LAM5 : reviewed — consolidated state APPROVED
+}
+LAM5 --> GATE5 : PR #10 opened + APPROVED\n(DONE — 2026-09-02)
+state GATE5 <<choice>>
+GATE5 --> TAG5 : [review state == APPROVED\nAND main CI == green]\n(PASSED — both gates verified: review\nAPPROVED; main CI green run 33639518709,\nre-verified post-merge)
+GATE5 --> BLK5 : [gate failure]
+state "Tagged\nbaseline-elaboration-E5-v1" as TAG5 {
+  TAG5 : scm_create_tag — audit message carries
+  TAG5 : PR number + merge SHA + review chain + CI URL
+  TAG5 : register row PENDING -> ESTABLISHED
+}
+state "BlockerIssue\nseverity:blocker + nature:defect" as BLK5 {
+  BLK5 : DO NOT tag — a tag on a red build
+  BLK5 : or an unreviewed commit is a defect
+  BLK5 : fix applied, then gates re-verified
+}
+BLK5 --> GATE5 : re-check both gates
+TAG5 --> [*] : architecture baseline established\n(merge SHA 58484d21)
+
+note right of TAG5
+  TAG NAMING: the iteration/E5 workspace
+  closed at the END of Elaboration Iteration 5
+  (the record-correction pass). Per §7's
+  iteration-number rule, the tag encodes the
+  CLOSING iteration: baseline-elaboration-E5-v1.
+  The branch name and the closing iteration
+  coincide — no naming reconciliation needed.
+  baseline-elaboration-E4-v1 (merge SHA
+  f47e99b8) REMAINS ESTABLISHED: E5-v1 is a
+  distinct iteration baseline that BUILDS ON
+  E4-v1 (E4 content + the E5 integration
+  record; empty integration set), not a
+  re-tag — no SUPERSEDED flip. E3-v1 (merge
+  SHA c7915478) also remains ESTABLISHED.
+  Re-tag (v2, v3...) only after an explicit
+  rollback or post-baseline critical fix.
+end note
+
+note right of WS5
+  CLOSED POSITION (2026-09-02, Elab Iter 5,
+  Cycle 1 — record-correction pass): the E5
+  workspace traversed every state.
+  IntegrationWork DONE with an EMPTY set:
+  the pass's work is artifact-record
+  corrections owned by other roles (A-37
+  Test Manager, A-38 Software Architect,
+  A-39 Process Engineer) — no code handoff
+  is owed, none entered the gate (0
+  ready-for-review branches, 0 open PRs at
+  cycle open; tree unchanged vs E4-v1).
+  LAMClosePR DONE: PR #10 (iteration/E5 ->
+  main) opened by the Integrator,
+  consolidated review state APPROVED
+  (verified via
+  scm_get_pull_request_review_state).
+  GATE PASSED: review APPROVED + main CI
+  green (run 33639518709, re-verified
+  post-merge). TAG WRITTEN:
+  baseline-elaboration-E5-v1 on merge SHA
+  58484d213fa199dbbd3c99472d6eed548b87e8c6.
 end note
 @enduml
 ```
@@ -453,10 +540,20 @@ so no reconciliation is needed. `baseline-elaboration-E3-v1` **remains ESTABLISH
 E4-v1 is a distinct iteration baseline that **builds on** E3-v1 (E3 content plus
 the E4 R003 state-comment correction), not a re-tag — no SUPERSEDED flip applies.
 
+**E5 position (recorded 2026-09-02, Elab Iter 5):** the `iteration/E5` workspace
+closed at the end of **Elaboration Iteration 5** (the record-correction pass); its
+tag is `baseline-elaboration-E5-v1` — branch name and closing iteration coincide,
+so no reconciliation is needed. `baseline-elaboration-E4-v1` **remains ESTABLISHED**:
+E5-v1 is a distinct iteration baseline that **builds on** E4-v1 (E4 content plus
+the E5 integration record; the integration set was EMPTY — no code handoff entered
+the gate this pass), not a re-tag — no SUPERSEDED flip applies. E3-v1 likewise
+remains ESTABLISHED.
+
 | Tag | Status | Iteration-close PR | Head SHA | Architect review ID | `main` CI run URL (tag time) | Notable findings |
 |---|---|---|---|---|---|---|
 | `baseline-elaboration-E3-v1` | **ESTABLISHED** — tag written 2026-09-02 after dual-gate verification | #6 (`iteration/E1 → main`, merged 2026-09-02) | `c79154782f719c3e97b098cf3abd3ea83a3b553b` | PR #6 consolidated review state **APPROVED** (verified via `scm_get_pull_request_review_state`, 2026-09-02); per-mechanism approval chain (Code Reviewer, base `iteration/E1`): PR #3 R001 — review 5088169328, PR #4 R003 — review 5088169517, PR #5 R004 — review 5088169685 | run 33598979875 — https://api.github.com/repos/banense-test/employee-portal/actions/runs/33598979875/logs (completed 2026-09-02 06:29:05Z) | 3 Minor code-review findings open (F-CR-E3-1 interim INT-016 adapter deviation — DEFERRED to Construction Iter 1 per R008; F-CR-E3-2 INT-011 contract-table gap — Designer next pass; F-CR-E3-3 OIDC state-comment overstatement — Implementer next code touch): owned, non-blocking, phase-exit conditions per the stakeholder all-findings directive. SCM Issue #1 (severity:blocker, cr:approved): remediation evidence now in SCM (PRs #3/#4/#5 merged to `iteration/E1`; PR #6 merged to `main`) — CR state transition owned by the CCM. LCA evidence package (TC-001…TC-023 execution + PoC empirical results) remains open work owned by other roles — **this tag freezes the architecture baseline; it does NOT declare the LCA milestone achieved** |
 | `baseline-elaboration-E4-v1` | **ESTABLISHED** — tag written 2026-09-02 after dual-gate verification | #8 (`iteration/E4 → main`, merged 2026-09-02) | `f47e99b814fd54a7317dcedbf682e1df8e9395c0` | PR #8 consolidated review state **APPROVED** (verified via `scm_get_pull_request_review_state`, 2026-09-02); correction approval chain (Code Reviewer, base `iteration/E4`): PR #7 R003 state-comment — review 5090059324, CI green run 33632200967 | run 33629662894 — https://api.github.com/repos/banense-test/employee-portal/actions/runs/33629662894/logs (completed 2026-09-02 12:25:01Z; re-verified post-merge) | F-CR-E3-3 RESOLVED in this baseline (PR #7 — all three overstated-CSRF comment locations corrected with the honest [DEFERRED — lands with the session mechanism, Construction] marker). F-CR-E3-1 (interim INT-016 adapter — PG adapter lands Construction Iter 1 per R008) and F-CR-E3-2 (INT-011 contract-table evolution — Designer next pass) remain open, Construction-scope/Designer-owned, non-Elaboration-blocking. Builds on `baseline-elaboration-E3-v1` (merge SHA `c7915478`) — distinct iteration baseline, not a re-tag. The 8 BLOCKED test cases are a recorded SCOPE decision — production AD and Keycloak integration belongs to Construction (R010), deferred, not missing (stakeholder framing directive, Iter 3). **This tag freezes the architecture baseline at E4 close; it does NOT declare the LCA milestone achieved** — phase-level sanction remains withheld per the stakeholder all-findings directive; the fresh sanction request fires at the R6 re-presentation with the evidence package |
+| `baseline-elaboration-E5-v1` | **ESTABLISHED** — tag written 2026-09-02 after dual-gate verification | #10 (`iteration/E5 → main`, merged 2026-09-02) | `58484d213fa199dbbd3c99472d6eed548b87e8c6` | PR #10 consolidated review state **APPROVED** (verified via `scm_get_pull_request_review_state`, 2026-09-02); integration set EMPTY this pass — no per-mechanism PR chain (the 3/3 mechanisms remain VERIFIED on main from the E3/E4 approval chain: PR #3 R001 — review 5088169328, PR #4 R003 — review 5088169517, PR #5 R004 — review 5088169685, PR #7 R003 state-comment — review 5090059324) | run 33639518709 — https://api.github.com/repos/banense-test/employee-portal/actions/runs/33639518709/logs (completed 2026-09-02 14:04:14Z; re-verified post-merge) | EMPTY integration set — E5 is the record-correction pass; no code handoff entered the gate (0 ready-for-review branches, 0 open PRs at cycle open; tree unchanged vs E4-v1). Open record-propagation findings are artifact-record corrections owned by other roles (TES#F3 Major — A-37 Test Manager; PoC#F3 Minor — A-38 Software Architect; DC#F4 Minor — A-39 Process Engineer) — none is an SCM defect, none blocks this tag. F-CR-E3-1 (interim INT-016 adapter — PG adapter lands Construction Iter 1 per R008) and F-CR-E3-2 (INT-011 contract-table evolution — Designer next pass) remain open, Construction-scope/Designer-owned, non-Elaboration-blocking. Zero open SCM issues — Issues #1/#2/#9 all closed (cr:complete) on their verified evidence. The 8 BLOCKED test cases are a recorded SCOPE decision — production AD and Keycloak integration belongs to Construction (R010), deferred, not missing (stakeholder framing directive, Iter 3). Builds on `baseline-elaboration-E4-v1` (merge SHA `f47e99b8`) — distinct iteration baseline, not a re-tag. **This tag freezes the architecture baseline at E5 close; it does NOT declare the LCA milestone achieved** — phase-level sanction remains withheld per the stakeholder all-findings directive; the fresh sanction request fires at the R6 re-presentation with the evidence package |
 
 **Status vocabulary:** `PENDING` (iteration in progress; gates not yet evaluable) →
 `ESTABLISHED` (tag written on an APPROVED + CI-green commit) → `SUPERSEDED`
@@ -500,14 +597,16 @@ CONS ..> REG : one row per tag
 TRANS ..> REG : one row per tag
 
 note bottom of ELAB
-  E4 v1 status: ESTABLISHED — dual gate
+  E5 v1 status: ESTABLISHED — dual gate
   verified 2026-09-02 (iteration-close
-  PR #8 APPROVED; main CI green, run
-  33629662894); tag written on merge SHA
-  f47e99b8. Builds on E3-v1 (merge SHA
-  c7915478, ESTABLISHED) — the E4
-  record-propagation pass added the R003
-  state-comment correction (PR #7).
+  PR #10 APPROVED; main CI green, run
+  33639518709); tag written on merge SHA
+  58484d21. Builds on E4-v1 (merge SHA
+  f47e99b8, ESTABLISHED) — the E5
+  record-correction pass carried an EMPTY
+  integration set (integration record
+  only; no code handoff). E3-v1 (merge
+  SHA c7915478) also remains ESTABLISHED.
   See Baseline Register (§7.1).
 end note
 
@@ -594,12 +693,14 @@ branches and PRs they authorize:
   `src/` on `feature/E1-{risk-id}` branches based on `iteration/E1`.
 - **Elaboration test priority:** R001 > R003 > R004; first test cases target UC-001, UC-004, UC-010.
 - **Three blocking deployment dependencies on STK-004:** server, LDAP, Keycloak client.
-- **Architecture baseline (ESTABLISHED):** `baseline-elaboration-E4-v1` (2026-09-02) —
+- **Architecture baseline (ESTABLISHED):** `baseline-elaboration-E5-v1` (2026-09-02) —
   the E3 baseline content (SAD 4+1 + R001/R003/R004 evolutionary mechanism code +
   dual-coverage mechanism tests, frozen at `baseline-elaboration-E3-v1`, merge SHA
-  `c7915478`) plus the E4 R003 state-comment correction (PR #7, F-CR-E3-3 remediation),
-  frozen on merge SHA `f47e99b8` after dual-gate verification (PR #8 APPROVED; main CI
-  green run 33629662894). Construction feature branches build on this baseline.
+  `c7915478`) plus the E4 R003 state-comment correction (PR #7, F-CR-E3-3 remediation,
+  frozen at `baseline-elaboration-E4-v1`, merge SHA `f47e99b8`) plus the E5 integration
+  record (empty integration set — record-correction pass), frozen on merge SHA
+  `58484d21` after dual-gate verification (PR #10 APPROVED; main CI green run
+  33639518709). Construction feature branches build on this baseline.
 
 ---
 
@@ -614,9 +715,11 @@ branches and PRs they authorize:
 | Escalation procedures | RUP Ch.13 (CCB) | DependsOn | scm_create_issue |
 | R001 (LDAP risk) | Declared risk | DependsOn | feature/E1-R001-* branch family |
 | STK-004 (Infra Team) | Declared stakeholder | DependsOn | Deployment dependencies (server, LDAP, Keycloak client) |
-| Baseline Register (§7.1) | RUP Ch.13; Elaboration Iter 1 work order (baseline identification scheme) | Refines | `baseline-elaboration-E3-v1` (ESTABLISHED 2026-09-02 — E1 workspace closed at end of Elab Iter 3); `baseline-elaboration-E4-v1` (ESTABLISHED 2026-09-02 — E4 workspace closed at end of Elab Iter 4); every future baseline tag |
+| Baseline Register (§7.1) | RUP Ch.13; Elaboration Iter 1 work order (baseline identification scheme) | Refines | `baseline-elaboration-E3-v1` (ESTABLISHED 2026-09-02 — E1 workspace closed at end of Elab Iter 3); `baseline-elaboration-E4-v1` (ESTABLISHED 2026-09-02 — E4 workspace closed at end of Elab Iter 4); `baseline-elaboration-E5-v1` (ESTABLISHED 2026-09-02 — E5 workspace closed at end of Elab Iter 5); every future baseline tag |
 | Baseline Identification Content Map (§7.2) | RUP Ch.13; SAD (4+1 baseline, COMP-001…011, ADR-001…004) | Refines | SAD, mechanism code (`src/`), regression suite, release candidates |
 | E1 lifecycle diagram (§5.2) | BRANCHING_STRATEGY §5.2, §6; Review Record F-CR-E1-1 (RESOLVED Iter 3 — 3 branches, 3 PRs, 3 APPROVED); verified SCM state 2026-09-02 | Refines | `iteration/E1 → main` flow (PR #6, merged 2026-09-02); `baseline-elaboration-E3-v1` (tag written 2026-09-02, merge SHA `c7915478`) |
 | E4 lifecycle diagram (§5.2) | BRANCHING_STRATEGY §5.2, §6; Review Record Iter 4 code-review-lens record (PR #7 APPROVED review 5090059324; F-CR-E3-3 RESOLVED); verified SCM state 2026-09-02 (PR #8 merged, merge SHA `f47e99b8`) | Refines | `iteration/E4 → main` flow (PR #8, merged 2026-09-02); `baseline-elaboration-E4-v1` (tag written 2026-09-02, merge SHA `f47e99b8`) |
+| E5 lifecycle diagram (§5.2) | BRANCHING_STRATEGY §5.2, §6; Review Record Iter 5 code-review-lens record (No-PRs-To-Review — 0 ready-for-review branches, 0 open PRs, main GREEN run 33639518709); verified SCM state 2026-09-02 (PR #10 merged, merge SHA `58484d21`) | Refines | `iteration/E5 → main` flow (PR #10, merged 2026-09-02); `baseline-elaboration-E5-v1` (tag written 2026-09-02, merge SHA `58484d21`) |
 | `baseline-elaboration-E4-v1` register row (§7.1) | RUP Ch.13; dual-gate verification record 2026-09-02 (PR #8 review state APPROVED via scm_get_pull_request_review_state; main CI green run 33629662894, re-verified post-merge) | Refines | Construction entry baseline; every future baseline tag |
+| `baseline-elaboration-E5-v1` register row (§7.1) | RUP Ch.13; dual-gate verification record 2026-09-02 (PR #10 review state APPROVED via scm_get_pull_request_review_state; main CI green run 33639518709, re-verified post-merge) | Refines | Construction entry baseline; every future baseline tag |
 | CONTRIBUTING.md (branch-strategy section) | Review Record F-CR-E1-2 / A-5 (CM share — committed, verified 2026-09-02) | Implements | CR-1 citable rule baseline (branch/PR/merge matters) |
