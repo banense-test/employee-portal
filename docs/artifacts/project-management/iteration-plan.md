@@ -161,36 +161,46 @@ All 10 UCs assigned; UC IDs verified against the Use-Case Model authority (LCO F
 | Fine plan | **Built at LCA sanction, not before** — planning beyond the current horizon in fine-grained detail is waste; the coarse baseline above is the commitment |
 | Key risks | R010 (STK-004 deliverables — **the written request is issued at Construction Iter 1 plan-build through the stakeholder-facing channel, STK-001 relaying to STK-004 per the Vision's engagement model; trigger: STK-004 confirmation by Construction Iter 1 start**), R008, R002 (adoption design) |
 ## Resources
-### Agent Role Profile — Elaboration Iteration 3 (convergence continuation)
+### Agent Role Profile — Elaboration Iteration 4 (record-propagation pass)
 
-| Agent Role | Discipline | Intensity | Active This Iteration | Token Budget | Key Deliverable |
+| Agent Role | Discipline | Intensity | Active This Pass | Token Budget | Key Deliverable |
 |---|---|---|---|---|---|
-| Project Manager | Project Management | High | Yes | ~1,660K | Iter 3 plan + Risk List reappraisal (R013); STK-004 request; Iteration Assessment with SCM-evidence reconciliation; LCA evidence package |
-| Implementer | Implementation | Critical | Yes | ~2,600K | The three mechanisms (R001 FOUR-clause bar / R003 stub issuer / R004 offline sync) with dual-coverage tests — the stakeholder-stated priority |
-| Code Reviewer | Implementation | Critical | Yes | ~625K | Terminal PR dispositions per mechanism (CR-1…CR-7) |
-| Integrator | Implementation | High | Yes | ~310K | APPROVED PRs merged to iteration/E1 |
-| Software Architect | Analysis & Design | Critical | Yes | ~1,460K | PoC artifact evolution (empirical results, A-21/A-29) + SAD fourth-clause propagation (A-31) |
-| Test Designer | Test | High | Yes | ~1,460K | A-28 fourth-clause steps + TC-001…TC-023 executed against the validation fixtures |
-| System Analyst / Designer / Process Engineer / Test Manager | Requirements / A&D / Environment / Test | Medium | Yes (parallel track) | ~1,140K | A-25, A-26, A-27, A-17, A-19, A-20 record corrections |
-| **Total** | | | | **~9,255K** | |
+| Software Architect | Analysis & Design | High | Yes | ~1,610K | A-32 PoC results ledger (the R6 evidence package core — the one Major) + A-33 SAD criterion 3 + A-36 ARCH-6 fourth clause |
+| Test Designer / Test Manager | Test | Medium | Yes | ~300K | A-34 Test Case summary reconciliation + A-35 TES mission verdict update |
+| Process Engineer | Environment | Low | Yes | ~90K | Development Case ARCH-6 gap flag closure on A-36 verification |
+| Review Coordinator + Management Reviewer | Project Management | High | Yes | ~500K | R6 re-presentation entry gate + fresh sanction request to STK-001 |
+| Project Manager | Project Management | Medium | Yes | ~250K | Pass tracking; findings-ledger closure verification; Iteration Assessment at pass close |
+| **Total** | | | | **~2,750K** | |
+
+> The Implementer, Code Reviewer, Integrator, System Analyst, Designer, and Test Designer's execution roles are NOT active this pass — no code, no design, no new validation (stakeholder-confirmed path). The three narrative-tracked Code Reviewer Minors (F-CR-E3-1/2/3) are Construction-scope remediations with recorded owners, not this pass's work.
 
 ### Budget Split Across Disciplines
 
 | Discipline | Token Share | Rationale |
 |---|---|---|
-| Implementation (Implementer + Code Reviewer + Integrator) | ~38% | Critical intensity — the convergence cycle's central objective is CODE EVIDENCE for empirical risk retirement (F3 / SAD F2 / F-CR-E1-1 converge here); the stakeholder-stated priority |
-| Analysis & Design | ~16% | Critical intensity — the PoC artifact evolution that carries the empirical results into the LCA evidence package + SAD propagation |
-| Project Management | ~18% | High intensity — plan/risk governance, STK-004 engagement, assessment reconciliation, evidence-package assembly |
-| Test | ~16% | High intensity — A-28 steps + 23 blocked test cases unblocked and executed against the fixtures |
-| Parallel record corrections (Requirements / A&D / Environment) | ~12% | Medium intensity — A-17, A-19, A-20, A-25, A-26, A-27; all phase-exit conditions per the all-findings directive |
+| Analysis & Design | ~59% | The PoC results ledger is the R6 evidence package's core artifact (PoC F2, the one Major) — the pass's P1; the SAD criterion-3 correction and ARCH-6 extension ride the same role |
+| Test | ~11% | Two record corrections (Test Case summary; TES verdict) from the observed per-case record |
+| Project Management | ~27% | The R6 gate itself (coordinator-enforced entry verification + fresh sanction request) + PM pass tracking and close assessment |
+| Environment | ~3% | One flag closure on verification |
 
 ### Two Clocks (never summed)
 
-| Clock | Elaboration Iteration 3 | Basis |
+| Clock | Elaboration Iteration 4 (record-propagation pass) | Basis |
 |---|---|---|
-| Agent work | ~9,255K tokens planned within the ~12,500K box (~3,245K rework headroom); elapsed time measured at iteration close | Budget box [ASSUMPTION — scaled from the measured iteration actuals (Iter 1: 12,523,281; Iter 2: 13,363,814)]; actuals recorded in the Iteration Assessment |
-| Human gates | **Estimate NONE** — bounded in Risk List R012 (14-day suspension ceiling; nothing auto-filled). Mitigation: in-round stakeholder answering, as measured at LCO (queue 0s), Iter 1 (0:35:14), and Iter 2 (10:01:08 across 21 interactions — growth traced to process defects, not stakeholder availability). STK-004 response: external queue tracked as R010 (Transfer) — not a project gate, no estimate quoted | Planning rule (Review Record A-13/A-15); measured actuals |
+| Agent work | ~2,750K tokens planned (box = work-item sum; no headroom — record corrections carry no PR-loop risk); elapsed time measured at pass close | Budget box [ASSUMPTION — record-correction content class; basis: the record-side iterations' measured per-artifact correction cost, scaled to six targeted section evolutions plus the R6 gate] |
+| Human gates | **Estimate NONE** — bounded in Risk List R012 (14-day suspension ceiling; nothing auto-filled). Mitigation: in-round stakeholder answering, as measured at LCO (0s), Iter 1 (0:35:14), Iter 2 (10:01:08), Iter 3 (0:00:00 — 20 interactions, all in-round). The R6 fresh sanction request is the pass's one stakeholder touchpoint | Planning rule (Review Record A-13/A-15); measured actuals |
 
+### Iteration 3 Actuals (recorded at close — the basis the pass box is sized against)
+
+| Metric | Planned (Iter 3) | Actual (measured) | Variance |
+|---|---|---|---|
+| Token spend | ~12,500K box; ~9,255K work-item sum | 27,143,633 | ~2.17× the box — root cause: CONTENT CLASS (the box was sized from record-side iterations; Iter 3 carried the full code-delivery chain + 4-lens cumulative re-review + fourth-clause propagation). The ~3,245K rework headroom was NOT consumed by PR loops (all 3 PRs approved first pass) — the overrun was delivery volume, not rework |
+| Agent elapsed time | Measured at close | 3:35:12 | More work in less time than Iter 2 (4:41:27) — 22 invocations at higher parallelism; the code chain ran through 5 roles |
+| Stakeholder queue | Estimate NONE (R012) | 0:00:00 | 20 interactions, ALL answered in-round — the Iter 2 process-defect growth did not recur; emission discipline held |
+| Agent invocations | — | 22 | 9 roles active |
+| User interactions | — | 20 | R6-path confirmation + framing directive + verdict-gate contribution ("nothing else new") + review consultations |
+| Artifacts | — | 13 | Inventory unchanged |
+| Avg quality | — | 9.9 / 10 | Reviewer-assessed |
 ## Use Cases and Scenarios Addressed
 **This iteration's use-case scope (convergence continuation):** the empirical validation exercises UC-001 (Clock In/Out — OIDC consumption, offline resilience, idempotency) and the four AD-reading use cases UC-004 (Directory Search), UC-005 (Review Clockings), UC-006 (CSV Export), UC-007 (Assign Category) — the R001 behavioural bar is confirmed for ALL FOUR per the stakeholder's Iter 2 answer, and the FOURTH clause (verdict-gate contribution) extends it: a missing attribute is displayed as missing, never replaced by a default, a placeholder, a guessed value, or another employee's value. UC-010 (Unpublish News) carries its audit/soft-delete test cases. All 10 UCs remain refined at the analysis level (Use-Case Model clean at both reviews); none is implemented as a running feature — implementation is Construction.
 
