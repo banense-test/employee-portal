@@ -1861,6 +1861,58 @@ DC §4 trigger re-evaluation at the LCA re-presentation point: the project still
 | Business-lens Iter 3 re-review (this record) | Work Order (Elab Iter 3 — LCA milestone review, business modeling lens); DC §4 classification (ProcessEngineer re-record 2026-09-02: isBusinessProcessLed=false, Inception verdict unchanged, no CR re-opened); Vision (Inception, Approved — BPL signal re-verified absent); Use-Case Model (Elaboration Iter 3 revision — zero BM sections re-verified, read in full); findings ledger (Vision, Use-Case Model, Supplementary Specification, Review Record — all four empty; zero BusinessReviewer findings project-wide); stakeholder Iter 3 answers cross-checked (R6-path confirmation, BLOCKED-cases framing — process decisions, no business-process signal) | Reviews | R6 re-presentation gate (zero BM conditions); Review Record cumulative (business-lens Iter 3 record); ReviewCoordinator LCA verdict aggregation |
 | BR-OK-INACTIVE verdict (Iter 3, sustained) | DC §4 activation rule (Business Modeling ACTIVE only when business-process-led = true); IARI DC baseline discipline-intensity matrix (BM High in Elaboration applies only to BPL-true projects); Iter 1 + Iter 2 BR-OK-INACTIVE verdicts (sustained, not re-created) | Refines | R6 re-presentation (BM remains INACTIVE unless a CR re-triggers the classification); Construction and Transition (no BM deliverable owed); ProcessEngineer (re-trigger owner) |
 | BM prior-findings reconciliation (Iter 3) | read_artifact_findings executed for Vision, Use-Case Model, Supplementary Specification, Review Record (2026-09-02) — all four return empty arrays; zero resolve_artifact_finding calls owed; zero record_artifact_finding calls owed (a clean business-lens verdict on an INACTIVE discipline emits no finding) | Refines | Findings ledger (single source of truth — zero BusinessReviewer entries across the entire project); cross-lens ownership invariant (Inception findings belong to the Reviewer and ManagementReviewer lenses, all RESOLVED) |
+
+### Elaboration Iteration 4, Cycle 1 — Code-Review Lens Findings (Code Reviewer, 2026-09-02)
+
+**New findings this cycle: NONE — zero findings of any severity.** PR #7 (the record-propagation pass's code handoff — the F-CR-E3-3 state-comment remediation) passes checklist CR-1…CR-7 clean; no defect was found in the diff, and no uncited-taste observation is recorded (anti-pattern 2 discipline: findings cite rules; this diff violates none).
+
+**Prior-findings reconciliation (this lens — narrative-tracked findings, executed this cycle):** this lens's three Iter 3 narrative findings were re-examined against the observed SCM state:
+
+| Finding Key | Severity | Location | Status (Iter 4) | Evidence |
+|---|---|---|---|---|
+| **F-CR-E3-3** | Minor | PR #4 (Iter 3) — `src/EmployeePortal/Infrastructure/KeycloakAuthProvider.cs` (`OidcMiddleware` / `IAuthProvider`) | **RESOLVED (Iter 4, PR #7)** | PR #7 diff verified: all three overstated-CSRF locations corrected (interface XML doc; guard clause — false "(CSRF protection)" claim removed from the exception message; middleware challenge site), each carrying the honest `[DEFERRED — lands with the session mechanism, Construction]` marker; CI GREEN run 33632200967; terminal disposition APPROVED (review 5090059324). The remediation prescribed in Iter 3 is delivered in full — the code now says exactly what it does. |
+| **F-CR-E3-1** | Minor | PRs #3/#5 (Iter 3) — interim `InMemoryClockingsRepository` vs Design Model INT-016 | **OPEN — unchanged, Construction scope** | No PG adapter landed this cycle (correct — R008 assigns it to Construction Iteration 1); the `[DEFERRED]` marker is carried in this record (Iter 3 row). No new evidence changes the finding; it is not re-emitted (one ledger entry per logical defect). |
+| **F-CR-E3-2** | Minor | PR #4 (Iter 3) — `IAuthProvider` operations absent from the INT-011 contract table | **OPEN — unchanged, Designer-owned** | No Design Model evolution landed this cycle; the contract-table evolution remains assigned to the Designer's next Design Model pass. Not re-emitted (one ledger entry per logical defect). |
+
+**Defect Distribution — Iteration 4 (severity × scope, Code-Review Lens):**
+
+```plantuml
+@startuml
+title Elaboration Iter 4 - Code-Review Defect Distribution\nClosures + open findings (Code Reviewer lens, 2026-09-02)
+
+object "Closures this cycle (this lens)" as C1 {
+  F-CR-E3-3 Minor : RESOLVED
+  PR #7 APPROVED (review 5090059324)
+  - all three overstated-CSRF comment
+  locations corrected
+  - false "(CSRF protection)" claim
+  removed from the exception message
+  - honest DEFERRED marker recorded
+  (session mechanism, Construction)
+}
+object "New findings this cycle (this lens)" as C2 {
+  Critical 0, Major 0, Minor 0
+  PR #7 passes CR-1..CR-7 clean;
+  no new defect recorded
+}
+object "Open after this cycle (this lens)" as C3 {
+  F-CR-E3-1 Minor : OPEN - Construction
+  scope (interim IClockingsRepository vs
+  INT-016 final contract; PG adapter
+  lands Construction Iter 1 per R008;
+  DEFERRED marker carried in the record)
+  F-CR-E3-2 Minor : OPEN - Designer-owned
+  (INT-011 contract-table evolution,
+  next Design Model pass)
+  Both narrative-tracked,
+  non-Elaboration-blocking
+}
+C1 -[hidden]-> C2
+C2 -[hidden]-> C3
+@enduml
+```
+
+**Ledger state after this cycle (this lens):** 2 open narrative Minors (F-CR-E3-1, F-CR-E3-2) — both Construction-scope/Designer-owned, both carried with concrete remediation and owners, neither an Elaboration exit blocker (the stakeholder's all-findings directive binds PHASE TRANSITION; both findings' remediations are assigned to Construction work by their own recorded dispositions, consistent with the stakeholder's Iter 3 framing directive that Construction-scope mechanisms are deferred, not missing). This lens's Elaboration-blocking findings: **zero** — the code-review gate is CLOSED for this cycle: every PR that entered the gate (PR #7) left with a terminal disposition, and no ready-for-review branch or open PR remains unreviewed.
 ## Resolutions and Actions
 ### Convergence-Cycle Review Calendar (Review Coordinator — Elaboration Iteration 2)
 
