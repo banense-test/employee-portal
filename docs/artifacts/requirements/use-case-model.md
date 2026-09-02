@@ -342,16 +342,16 @@ stop
 
 **Alternative Flows:**
 - **AF-1: No results.** At step 5, if AD returns no matches, the system displays "No colleagues found" with a suggestion to refine the search.
-- **AF-2: LDAP attribute missing (R001).** At step 5, if a returned entry has missing attributes (e.g., extension not populated), the system displays the available fields and leaves missing fields blank rather than hiding the entry. **R001 behavioural bar (stakeholder decision, Elaboration Iter 2) — all three clauses hold:** (a) every employee is rendered whether or not their attributes are complete; (b) a missing attribute never removes someone from search results; (c) a missing attribute never raises an error.
+- **AF-2: LDAP attribute missing (R001).** At step 5, if a returned entry has missing attributes (e.g., extension not populated), the system displays the available fields and leaves missing fields blank rather than hiding the entry. **R001 behavioural bar (stakeholder decision, Elaboration Iter 2; fourth clause added at the Iter 2 verdict gate, propagated Iter 3) — all four clauses hold:** (a) every employee is rendered whether or not their attributes are complete; (b) a missing attribute never removes someone from search results; (c) a missing attribute never raises an error; (d) **a missing attribute is displayed as missing. It is never replaced by a default, a placeholder, a guessed value, or another employee's value.**
 - **AF-3: LDAP connection failure.** At step 4, if the LDAP connection fails, the system displays "Directory temporarily unavailable." There is no local fallback — CON-006 forbids a local copy of employee data.
 
-**R001 empirical validation bar (stakeholder decision, Elaboration Iter 2 — replaces the prior >90% statistical criterion, which is dropped as invented):** The bar is **behavioural, not statistical**. The prior ">90% of sampled users per office with all six corporate attributes populated" figure had no declared source (the declared R001 names no percentage; the PoC decision names none) and, measured against a disposable directory the team seeds itself, it would measure the team's own test data — it cannot fail, so it proves nothing. The architectural risk is what the portal DOES when an attribute is absent, not how many attributes are missing (a property of the real directory nobody can know until STK-004 delivers). **The bar, in the stakeholder's words:** "every employee is rendered whether or not their attributes are complete; a missing attribute never removes someone from search results; a missing attribute never raises an error. Seed the gaps deliberately and prove those three hold. That retires R001 empirically, this phase, without the production directory." The percentage belongs to a different activity — measuring the real AD's data quality once STK-004 delivers — tracked in Construction (R011 residual), kept out of the LCA evidence package.
+**R001 empirical validation bar (stakeholder decision, Elaboration Iter 2 — replaces the prior >90% statistical criterion, which is dropped as invented; fourth clause added at the Iter 2 verdict gate, propagated Iter 3):** The bar is **behavioural, not statistical**. The prior ">90% of sampled users per office with all six corporate attributes populated" figure had no declared source (the declared R001 names no percentage; the PoC decision names none) and, measured against a disposable directory the team seeds itself, it would measure the team's own test data — it cannot fail, so it proves nothing. The architectural risk is what the portal DOES when an attribute is absent, not how many attributes are missing (a property of the real directory nobody can know until STK-004 delivers). **The bar, in the stakeholder's words:** "every employee is rendered whether or not their attributes are complete; a missing attribute never removes someone from search results; a missing attribute never raises an error. Seed the gaps deliberately and prove those three hold. That retires R001 empirically, this phase, without the production directory." **Fourth clause (stakeholder contribution at the Iter 2 verdict gate, verbatim):** "a missing attribute is displayed as missing. It is never replaced by a default, a placeholder, a guessed value, or another employee's value." With the stakeholder's stated rationale, verbatim: "Blank is an answer. 'General', or the first office in the list, is a fabrication — and on the CSV that reaches payroll a fabricated department is worse than an empty cell. An empty cell gets questioned. A plausible wrong one does not." The first three clauses stop data from being LOST; the fourth stops it from being INVENTED. The percentage belongs to a different activity — measuring the real AD's data quality once STK-004 delivers — tracked in Construction (R011 residual), kept out of the LCA evidence package.
 
 **Scenarios (discovery walk):**
 - **S1:** Employee searches "Gómez" → sees all colleagues named Gómez with their title, department, office, email, and extension.
 - **S2:** Employee filters by department "IT" → sees all IT department colleagues.
 - **S3:** Employee searches by office → sees all colleagues in that office; some entries have missing extension numbers (R001) and show blank fields, not hidden entries.
-- **S4 (R001 bar walk, Elaboration Iter 2):** The disposable directory is deliberately seeded with gaps — one entry missing extension, one missing job title, one missing department. A search matching all three returns all three entries (clause a); none is removed from the results (clause b); no error is raised and the missing fields render blank (clause c). The same search against a fully-populated disposable directory renders identically for the complete entries.
+- **S4 (R001 bar walk, Elaboration Iter 2; clause d added Iter 3):** The disposable directory is deliberately seeded with gaps — one entry missing extension, one missing job title, one missing department. A search matching all three returns all three entries (clause a); none is removed from the results (clause b); no error is raised and the missing fields render blank (clause c); and the rendered value for each missing field is blank — never a default, a placeholder, a guessed value, or another employee's value (clause d — the fixture seeds substitution attempts, e.g. a default category or a first-office fallback, so the clause can actually fail). The same search against a fully-populated disposable directory renders identically for the complete entries.
 
 **Activity Diagram:**
 
@@ -369,7 +369,7 @@ if (LDAP connection to AD succeeds?) then (yes)
   if (Matching entries returned?) then (yes)
     :Display entries: name, job title, department,\noffice, email, extension;
     if (Some corporate attributes missing? (R001)) then (yes - AF-2)
-      :Show missing fields blank - entry NOT hidden,\nno error raised (R001 behavioural bar);
+      :Show missing fields blank - entry NOT hidden,\nno error raised, blank NEVER substituted\n(R001 behavioural bar, clauses a-d);
     endif
     :Employee views colleague contact information;
   else (no - AF-1)
@@ -403,7 +403,7 @@ stop
 **Alternative Flows:**
 - **AF-1: No events match the filter.** At step 5, the system displays a message that no clocking records match.
 - **AF-2: AD unavailable.** At step 5, events remain viewable from PostgreSQL (they are portal data), but employee display attributes cannot be resolved; the system shows the AD user id and marks display attributes as unavailable. No local fallback exists (CON-006).
-- **AF-3: AD attribute missing (R001) — stakeholder-confirmed (Elaboration Iter 2).** At step 5, if a matching employee's AD display attributes are partially populated (e.g., department or office missing), the event row is displayed with the missing display fields blank — the employee is NOT removed from the review and no error is raised. The clocking data itself (event type, timestamp) is always complete: it is portal data from PostgreSQL, never AD data. *Confirmation recorded:* asked whether the R001 behavioural bar applies to all four AD-reading use cases and not only the directory search, the stakeholder answered **"Yes"** — this flow is a confirmed requirement. *Rationale:* the R001 behavioural bar (stakeholder decision, Elaboration Iter 2) governs what the portal does when an attribute is absent — every employee is rendered whether or not their attributes are complete; a missing attribute never removes someone from results; a missing attribute never raises an error — and UC-005 reads the same AD attributes through the same LDAP Query Mechanism as UC-004.
+- **AF-3: AD attribute missing (R001) — stakeholder-confirmed (Elaboration Iter 2); fourth clause added at the Iter 2 verdict gate, propagated Iter 3.** At step 5, if a matching employee's AD display attributes are partially populated (e.g., department or office missing), the event row is displayed with the missing display fields blank — the employee is NOT removed from the review and no error is raised. **A missing attribute is displayed as missing: it is never replaced by a default, a placeholder, a guessed value, or another employee's value.** The clocking data itself (event type, timestamp) is always complete: it is portal data from PostgreSQL, never AD data. *Confirmation recorded:* asked whether the R001 behavioural bar applies to all four AD-reading use cases and not only the directory search, the stakeholder answered **"Yes"** — this flow is a confirmed requirement. *Fourth clause recorded:* the stakeholder directed "Add a fourth clause to all four" at the Iter 2 verdict gate. *Rationale:* the R001 behavioural bar (stakeholder decision, Elaboration Iter 2; extended Iter 3) governs what the portal does when an attribute is absent — every employee is rendered whether or not their attributes are complete; a missing attribute never removes someone from results; a missing attribute never raises an error; a missing attribute is displayed as missing, never substituted — and UC-005 reads the same AD attributes through the same LDAP Query Mechanism as UC-004.
 
 **Exception Flows:**
 - **EF-1: Role denial.** At step 2, if the authenticated session holds only the Employee role, the system denies access to the clocking review page (SEC-006). No clocking data for other employees is revealed.
@@ -429,7 +429,7 @@ if (HR Administrator role in claims?) then (yes)
       :Read employee display attributes on demand\n(read-only - CON-005, CON-006);
       |Portal|
       if (Some employees have missing AD attributes? - R001) then (yes - AF-3)
-        :Display ALL matching events;\nmissing display fields render blank,\nemployee NOT removed, no error\n(R001 behavioural bar);
+        :Display ALL matching events;\nmissing display fields render blank,\nemployee NOT removed, no error,\nblank NEVER substituted\n(R001 behavioural bar, clauses a-d);
       else (no)
         :Display matching events with\ncomplete employee display data;
       endif
@@ -469,7 +469,7 @@ stop
 **Alternative Flows:**
 - **AF-1: No events for the month.** At step 3, if no clocking records exist for the selected month, the system informs HR and produces no file.
 - **AF-2: AD unavailable.** At step 4, if AD cannot be reached, the system aborts the export with "Directory temporarily unavailable" — no partial file is produced (a report with unresolved employee identities would be misleading for payroll/records use).
-- **AF-3: AD attribute missing (R001) — stakeholder-confirmed (Elaboration Iter 2).** At step 4, if an employee's AD display attributes are partially populated, the export proceeds: every event row is present, and the missing display fields (employee_name, department, office) are written as blank cells — no abort, no error. The row's identity is never in doubt: `ad_user_id` (column 1) is the identifier the portal itself stores (CON-006) and is always present; the clocking columns (event_timestamp, event_type) are portal data and always complete. *Confirmation recorded:* asked whether the R001 behavioural bar applies to all four AD-reading use cases and not only the directory search, the stakeholder answered **"Yes"** — this flow is a confirmed requirement. *Rationale:* the R001 behavioural bar (stakeholder decision, Elaboration Iter 2) governs what the portal does when an attribute is absent — every employee is rendered, a missing attribute never removes someone, a missing attribute never raises an error — and UC-006 reads the same AD attributes through the same LDAP Query Mechanism as UC-004. AF-2 (AD unreachable) and AF-3 (individual attributes missing) are distinct conditions with distinct contracts: AF-2 aborts because NO identity data can be resolved; AF-3 exports because the identity (ad_user_id) is resolved and only display fields are blank.
+- **AF-3: AD attribute missing (R001) — stakeholder-confirmed (Elaboration Iter 2); fourth clause added at the Iter 2 verdict gate, propagated Iter 3.** At step 4, if an employee's AD display attributes are partially populated, the export proceeds: every event row is present, and the missing display fields (employee_name, department, office) are written as blank cells — no abort, no error. **A missing attribute is written as missing: it is never replaced by a default, a placeholder, a guessed value, or another employee's value.** The row's identity is never in doubt: `ad_user_id` (column 1) is the identifier the portal itself stores (CON-006) and is always present; the clocking columns (event_timestamp, event_type) are portal data and always complete. *Confirmation recorded:* asked whether the R001 behavioural bar applies to all four AD-reading use cases and not only the directory search, the stakeholder answered **"Yes"** — this flow is a confirmed requirement. *Fourth clause recorded:* the stakeholder directed "Add a fourth clause to all four" at the Iter 2 verdict gate, with the rationale, verbatim: "on the CSV that reaches payroll a fabricated department is worse than an empty cell. An empty cell gets questioned. A plausible wrong one does not." *Rationale:* the R001 behavioural bar (stakeholder decision, Elaboration Iter 2; extended Iter 3) governs what the portal does when an attribute is absent — every employee is rendered, a missing attribute never removes someone, a missing attribute never raises an error, a missing attribute is displayed as missing, never substituted — and UC-006 reads the same AD attributes through the same LDAP Query Mechanism as UC-004. AF-2 (AD unreachable) and AF-3 (individual attributes missing) are distinct conditions with distinct contracts: AF-2 aborts because NO identity data can be resolved; AF-3 exports because the identity (ad_user_id) is resolved and only display fields are blank.
 
 **CSV column set v1 (Requirements Specifier, Elaboration Iter 1) — one row per clocking event, columns in this order:**
 
@@ -482,7 +482,7 @@ stop
 | 5 | event_timestamp | Event time in ISO-8601 with explicit offset, America/Havana local time (format YYYY-MM-DDThh:mm:ss±hh:mm; the offset is the one in force at the event time per the IANA zone database) | FR-004 recorded timestamp (stored UTC); stakeholder decisions (Elaboration Iter 1) |
 | 6 | event_type | IN or OUT | FR-004 |
 
-**CSV scope notes:** Job title, email, and extension are excluded — they are directory attributes (FR-010), not clocking data. Timestamps are stored in UTC and exported in ISO-8601 with an explicit offset in America/Havana local time (IANA identifier, DST-aware — a fixed offset would silently shift the payroll day boundary when the clocks change); the selected month's boundaries are computed in America/Havana local time — the payroll day is the local calendar day, never the server's (stakeholder decisions, Elaboration Iter 1). All 3 offices share this one timezone (stakeholder-confirmed). Volatility: Medium — downstream payroll/records consumers may reshape the column set; the export format must be encapsulated so column changes do not ripple (Use-Case Survey volatility rationale). AF-2 guarantees no partial file when AD is unreachable; AF-3 guarantees every event row is present when individual attributes are missing (blank cells, no abort — the row identity is carried by ad_user_id). Export is HR-only; employees have no export (FR-005 is view-only).
+**CSV scope notes:** Job title, email, and extension are excluded — they are directory attributes (FR-010), not clocking data. Timestamps are stored in UTC and exported in ISO-8601 with an explicit offset in America/Havana local time (IANA identifier, DST-aware — a fixed offset would silently shift the payroll day boundary when the clocks change); the selected month's boundaries are computed in America/Havana local time — the payroll day is the local calendar day, never the server's (stakeholder decisions, Elaboration Iter 1). All 3 offices share this one timezone (stakeholder-confirmed). Volatility: Medium — downstream payroll/records consumers may reshape the column set; the export format must be encapsulated so column changes do not ripple (Use-Case Survey volatility rationale). AF-2 guarantees no partial file when AD is unreachable; AF-3 guarantees every event row is present when individual attributes are missing (blank cells, no abort — the row identity is carried by ad_user_id; per clause d, a blank cell is the written value, never a substituted one). Export is HR-only; employees have no export (FR-005 is view-only).
 
 **Activity Diagram:**
 
@@ -496,7 +496,7 @@ if (Clocking events exist for selected month?) then (yes)
     :Compile events from PostgreSQL (one row per event);
     :Read employee display attributes from AD on demand (CON-005, CON-006);
     if (Some employees have missing AD attributes? - R001) then (yes - AF-3)
-      :Generate CSV - every event row present,\nmissing fields as blank cells,\nno abort, no error (R001 behavioural bar;\nad_user_id resolves identity - CON-006);
+      :Generate CSV - every event row present,\nmissing fields as blank cells,\nno abort, no error, blank cells\nNEVER substituted (R001 behavioural bar;\nad_user_id resolves identity - CON-006);
     else (no)
       :Generate CSV file;
     endif
@@ -535,7 +535,7 @@ stop
 **Alternative Flows:**
 - **AF-1: Same category re-selected.** At step 5, if the selected category equals the current value, nothing is persisted and no audit entry is written (NFR-005 audits *changes*).
 - **AF-2: AD unavailable.** At step 3, employee lookup is blocked; the system informs HR that the directory is temporarily unavailable. The assignment cannot proceed without AD (the portal holds no employee display data — CON-006). *(Formalized in Elaboration Iter 2 from prior prose — the flow was already specified in the alternative-flows text; the activity diagram now renders it, closing a prior spec-diagram mismatch.)*
-- **AF-3: AD attribute missing (R001) — stakeholder-confirmed (Elaboration Iter 2).** At step 3, if the located employee's AD display attributes are partially populated, the employee remains locatable and selectable: missing display fields render blank, the entry is not hidden, and no error is raised. The assignment target is unambiguous — HR selects the employee by their AD-resolved entry, and the persisted mapping stores the AD user id (CON-006), which is always present. *Confirmation recorded:* asked whether the R001 behavioural bar applies to all four AD-reading use cases and not only the directory search, the stakeholder answered **"Yes"** — this flow is a confirmed requirement. *Rationale:* the R001 behavioural bar (stakeholder decision, Elaboration Iter 2) governs what the portal does when an attribute is absent — every employee is rendered, a missing attribute never removes someone, a missing attribute never raises an error — and UC-007 reads the same AD attributes through the same LDAP Query Mechanism as UC-004.
+- **AF-3: AD attribute missing (R001) — stakeholder-confirmed (Elaboration Iter 2); fourth clause added at the Iter 2 verdict gate, propagated Iter 3.** At step 3, if the located employee's AD display attributes are partially populated, the employee remains locatable and selectable: missing display fields render blank, the entry is not hidden, and no error is raised. **A missing attribute is displayed as missing: it is never replaced by a default, a placeholder, a guessed value, or another employee's value.** The assignment target is unambiguous — HR selects the employee by their AD-resolved entry, and the persisted mapping stores the AD user id (CON-006), which is always present. *Confirmation recorded:* asked whether the R001 behavioural bar applies to all four AD-reading use cases and not only the directory search, the stakeholder answered **"Yes"** — this flow is a confirmed requirement. *Fourth clause recorded:* the stakeholder directed "Add a fourth clause to all four" at the Iter 2 verdict gate, with the stated rationale that "an employee nobody can select is an employee nobody can categorize" — a substituted display value would let HR select confidently against a fabricated identity. *Rationale:* the R001 behavioural bar (stakeholder decision, Elaboration Iter 2; extended Iter 3) governs what the portal does when an attribute is absent — every employee is rendered, a missing attribute never removes someone, a missing attribute never raises an error, a missing attribute is displayed as missing, never substituted — and UC-007 reads the same AD attributes through the same LDAP Query Mechanism as UC-004.
 
 **Business rules:** CON-013 — the category list is fixed and externally configured; no create/edit/rename/delete of categories in the portal UI. CON-006 — the portal stores only AD user id → category. NFR-005/AUD-004 — every category change is audited.
 
@@ -549,7 +549,7 @@ start
 if (AD reachable for employee lookup?) then (yes)
   :HR locates employee by AD user id\n(display data read-only from AD);
   if (Located employee has missing AD attributes? - R001) then (yes - AF-3)
-    :Show employee with missing fields blank -\nstill locatable, no error\n(R001 behavioural bar);
+    :Show employee with missing fields blank -\nstill locatable, no error, blank\nNEVER substituted\n(R001 behavioural bar, clauses a-d);
   else (no)
     :Show employee with complete display data;
   endif
@@ -737,6 +737,8 @@ These references realize the **user-interface-specific parts of each use case** 
 
 **Elaboration Iter 2 evolution (User Interface Designer — convergence cycle):** storyboard **SB-05** added — the R001 behavioural bar visualized across the three HR AD-reading screens (UC-005/006/007). The stakeholder confirmed this iteration (asked whether the behavioural bar applies to all four AD-reading use cases and not only the directory search, the stakeholder answered **"Yes"**), so the bar's rendering contract on the HR screens is now a validated interaction requirement, not a compact text row only. SB-01…SB-04, the compact references, and the design-reference reconciliations are preserved exactly as reviewed at the Elaboration Iter 1 LCA review (zero findings). Salt wireframes for the primary screens (SCR-01 Home; SCR-04 Directory — the latter rendering the R001 blank-field contract) are added to the Design Model §Boundary Classes and Navigation Map this iteration.
 
+**Elaboration Iter 3 evolution (System Analyst — fourth-clause propagation, A-25):** the bar's rendering contract in SB-02 frame 4, SB-05, and the compact UI flow references for UC-005/006/007 now carries the FOURTH clause — a missing attribute is displayed as missing, never replaced by a default, a placeholder, a guessed value, or another employee's value (stakeholder contribution at the Iter 2 verdict gate, binding). The screen-level rendering contract for the blank fields is owned by the User Interface Designer (Design Model P-05, A-27); this artifact records the requirement the screens must satisfy.
+
 **Screen registry (summary — formal definition in Design Model):**
 
 | Screen | Name | Realizes |
@@ -803,7 +805,7 @@ stop
 | 1 | 1–2 | SCR-04 | Open Directory → search bar: name input, department select, office select, Search button | USA-003 |
 | 2 | 3 | SCR-04 | Enter criteria → press Search | USA-003 |
 | 3 | 4–5 | SCR-04 | LDAP query (5 s hard timeout, PRF-003) → person cards with all six corporate fields on the card — no detail view needed | USA-003, CON-006 |
-| 4 | 6–7 | SCR-04 | AF-1: "No colleagues found" + refine suggestion; AF-2: missing attributes shown blank, entry NOT hidden (R001); AF-3: "Directory temporarily unavailable" (no local fallback) | R001, CON-006 |
+| 4 | 6–7 | SCR-04 | AF-1: "No colleagues found" + refine suggestion; AF-2: missing attributes shown blank, entry NOT hidden, blank never substituted (R001, clauses a–d); AF-3: "Directory temporarily unavailable" (no local fallback) | R001, CON-006 |
 
 ```plantuml
 @startuml
@@ -821,7 +823,7 @@ if (LDAP connection succeeds?) then (yes)
   if (Entries match?) then (yes)
     :Display person cards: name, job title,\ndepartment, office, email, extension\n- all fields on the card;
     if (Some attributes missing? - R001) then (yes - AF-2)
-      :Show blank fields - entry NOT hidden;
+      :Show blank fields - entry NOT hidden,\nnever substituted (clause d);
     endif
   else (no - AF-1)
     :Show "No colleagues found"\n+ suggestion to refine;
@@ -908,15 +910,15 @@ stop
 @enduml
 ```
 
-#### SB-05 — UC-005 / UC-006 / UC-007: R001 behavioural bar across the HR AD-reading screens (FR-001, FR-002, FR-003) — storyboard (Elaboration Iter 2)
+#### SB-05 — UC-005 / UC-006 / UC-007: R001 behavioural bar across the HR AD-reading screens (FR-001, FR-002, FR-003) — storyboard (Elaboration Iter 2; clause d propagated Iter 3)
 
-The stakeholder confirmed this iteration that the R001 behavioural bar applies to **all four AD-reading use cases**, not only the directory search. The bar's three clauses: **(a)** every employee is rendered whether or not their attributes are complete; **(b)** a missing attribute never removes someone from results; **(c)** a missing attribute never raises an error. UC-004's rendering contract is already visualized in SB-02 frame 4. This storyboard visualizes the same bar on the three HR screens, where the rendering stakes differ per use case: the review table must show **every event row** (clocking data is portal data, always complete); the CSV export must write **every event row with blank cells** for missing display fields (ad_user_id resolves identity — no abort); the category lookup must keep the employee **locatable and selectable**.
+The stakeholder confirmed this iteration that the R001 behavioural bar applies to **all four AD-reading use cases**, not only the directory search. The bar's four clauses: **(a)** every employee is rendered whether or not their attributes are complete; **(b)** a missing attribute never removes someone from results; **(c)** a missing attribute never raises an error; **(d)** a missing attribute is displayed as missing — never replaced by a default, a placeholder, a guessed value, or another employee's value (stakeholder contribution at the Iter 2 verdict gate, propagated Iter 3). UC-004's rendering contract is already visualized in SB-02 frame 4. This storyboard visualizes the same bar on the three HR screens, where the rendering stakes differ per use case: the review table must show **every event row** (clocking data is portal data, always complete); the CSV export must write **every event row with blank cells** for missing display fields (ad_user_id resolves identity — no abort; a blank cell is the written value, never a substituted one); the category lookup must keep the employee **locatable and selectable**.
 
 | Frame | UC step | Screen | User action → System response | Criteria |
 |---|---|---|---|---|
-| 1 | UC-005 steps 3–5 | SCR-05 | Open report [HR role] → all-employees table; names resolved from AD on demand; employee with missing AD attributes → **row rendered with blank display fields, NOT removed, no error** (AF-3) — clocking columns (event type, timestamp) always complete | R001 bar (a)(b)(c), USA-008 |
-| 2 | UC-006 steps 3–6 | SCR-05 | Select month + "Export CSV" → **every event row written**; missing display fields as blank cells; no abort (AF-3); ad_user_id (column 1) always present | R001 bar, INT-005, STD-003 |
-| 3 | UC-007 steps 3–5 | SCR-06 | Locate employee → entry with missing attributes rendered with **blank fields, still locatable and selectable**; no error (AF-3) | R001 bar, CON-013 |
+| 1 | UC-005 steps 3–5 | SCR-05 | Open report [HR role] → all-employees table; names resolved from AD on demand; employee with missing AD attributes → **row rendered with blank display fields, NOT removed, no error, blank never substituted** (AF-3) — clocking columns (event type, timestamp) always complete | R001 bar (a)(b)(c)(d), USA-008 |
+| 2 | UC-006 steps 3–6 | SCR-05 | Select month + "Export CSV" → **every event row written**; missing display fields as blank cells; no abort (AF-3); ad_user_id (column 1) always present; blank cells never substituted | R001 bar, INT-005, STD-003 |
+| 3 | UC-007 steps 3–5 | SCR-06 | Locate employee → entry with missing attributes rendered with **blank fields, still locatable and selectable**; no error; blank never substituted (AF-3) | R001 bar, CON-013 |
 | 4 | UC-007 steps 6–8 | SCR-06 | Select category from FIXED list → confirm → mapping persisted (ad_user_id → category, CON-006) + audited (AUD-004) | CON-006, AUD-004 |
 
 ```plantuml
@@ -929,7 +931,7 @@ start
 :Load clocking events from PostgreSQL\n(portal data: event type + timestamp always complete);
 :Resolve employee display attributes\nfrom AD on demand (CON-005, CON-006);
 if (Some employees have missing AD attributes?) then (yes - UC-005 AF-3)
-  :Render EVERY matching event row;\nmissing display fields blank,\nemployee NOT removed, no error;
+  :Render EVERY matching event row;\nmissing display fields blank,\nemployee NOT removed, no error,\nnever substituted (clause d);
 else (no)
   :Render event rows with complete display data;
 endif
@@ -938,7 +940,7 @@ endif
 :Select month, press "Export CSV";
 |Portal|
 if (AD reachable for display attributes?) then (yes)
-  :Write EVERY event row to the CSV;\nmissing display fields as blank cells,\nno abort, no error (UC-006 AF-3 -\nad_user_id resolves identity);
+  :Write EVERY event row to the CSV;\nmissing display fields as blank cells,\nno abort, no error, never substituted\n(UC-006 AF-3 - ad_user_id resolves identity);
   :Deliver CSV download;
 else (no - UC-006 AF-2)
   :Show "Directory temporarily unavailable";\nabort export - no partial file;
@@ -948,7 +950,7 @@ endif
 |Portal|
 :Employee lookup from AD display data (read-only);
 if (Located employee has missing AD attributes?) then (yes - UC-007 AF-3)
-  :Render employee with blank fields -\nstill locatable and selectable, no error;
+  :Render employee with blank fields -\nstill locatable and selectable, no error,\nnever substituted (clause d);
 else (no)
   :Render employee with complete display data;
 endif
@@ -968,9 +970,9 @@ stop
 |---|---|---|---|---|
 | UC-002 (FR-005) | SCR-02 | Select "My Clocking History" → current-month table (Date, Clock In, Clock Out, Hours, Status) rendered from PostgreSQL | AF-1 empty state; AF-2 queued-not-yet-synced note; EF-1 "History temporarily unavailable" inline | USA-001, USA-008 |
 | UC-003 (FR-007) | SCR-01, SCR-03 | Load → featured banner at top + list newest-first; category chips (All/General/HR/IT/Events) → filtered list | AF-1 "No news in this category"; AF-2 empty state; EF-1 "News temporarily unavailable" inline | USA-001, USA-007 |
-| UC-005 (FR-001) | SCR-05 | Open [HR role] → all-employees table; filter by employee / date range → matching events, names resolved from AD on demand | AF-1 "No clocking records match"; AF-2 AD user id shown, display attributes marked unavailable; AF-3 missing display fields blank, employee NOT removed, no error (R001 behavioural bar — stakeholder-confirmed); EF-1 role denial → SCR-09 | SEC-006, USA-008 |
-| UC-006 (FR-002) | SCR-05 | Select month + "Export CSV" → file download (ISO-8601 with explicit offset, per stakeholder decision) | AF-1 "No clocking records for this month"; AF-2 "Directory temporarily unavailable" — export aborted, no partial file; AF-3 missing display fields as blank cells, every event row present, no abort (R001 behavioural bar — stakeholder-confirmed) | INT-005, SEC-006 |
-| UC-007 (FR-003) | SCR-06 | Open [HR role] → locate employee (AD display data, read-only) → select category from FIXED list → confirm → mapping persisted + audited | AF-1 same category → "unchanged", nothing persisted, no audit entry; AF-2 "Directory temporarily unavailable"; AF-3 missing display fields blank, employee still locatable, no error (R001 behavioural bar — stakeholder-confirmed) | CON-013, AUD-004 |
+| UC-005 (FR-001) | SCR-05 | Open [HR role] → all-employees table; filter by employee / date range → matching events, names resolved from AD on demand | AF-1 "No clocking records match"; AF-2 AD user id shown, display attributes marked unavailable; AF-3 missing display fields blank, employee NOT removed, no error, blank never substituted (R001 behavioural bar — stakeholder-confirmed; clause d propagated Iter 3); EF-1 role denial → SCR-09 | SEC-006, USA-008 |
+| UC-006 (FR-002) | SCR-05 | Select month + "Export CSV" → file download (ISO-8601 with explicit offset, per stakeholder decision) | AF-1 "No clocking records for this month"; AF-2 "Directory temporarily unavailable" — export aborted, no partial file; AF-3 missing display fields as blank cells, every event row present, no abort, blank cells never substituted (R001 behavioural bar — stakeholder-confirmed; clause d propagated Iter 3) | INT-005, SEC-006 |
+| UC-007 (FR-003) | SCR-06 | Open [HR role] → locate employee (AD display data, read-only) → select category from FIXED list → confirm → mapping persisted + audited | AF-1 same category → "unchanged", nothing persisted, no audit entry; AF-2 "Directory temporarily unavailable"; AF-3 missing display fields blank, employee still locatable, no error, blank never substituted (R001 behavioural bar — stakeholder-confirmed; clause d propagated Iter 3) | CON-013, AUD-004 |
 | UC-009 (FR-008) | SCR-08 → SCR-07 (edit mode) | Select published item → form loads current version → modify + save → updated, audited (all versions traceable) | AF-1 inline validation; AF-2 "no longer published" notice, edit not applied; EF-1 role denial → SCR-09 | AUD-002, SEC-006 |
 
 #### Design-reference reconciliations (CON-011 — R007 mitigation)
@@ -983,7 +985,7 @@ The design reference is authoritative for the visual layer; three reconciliation
 
 #### Storyboard validation status
 
-Storyboards SB-01…SB-05 are submitted for stakeholder validation with this iteration's review (STK-001 sponsor, STK-003 end-user representatives). **SB-05 visualizes the R001 behavioural bar exactly as stakeholder-confirmed this iteration** — the same three clauses the disposable-directory validation proves empirically with deliberately-seeded gaps (UC-004 S4 bar walk; R001 PoC, Work Item 7). Any feedback is recorded in the Review Record and traced to requirement impacts — the prototype-as-probe principle. The User-Interface Prototype artifact is **[OMITTED — trigger not fired per Development Case §5.2]**; these storyboards inside the Use-Case Model, plus the Boundary Classes and Navigation Map (now with Salt wireframes for SCR-01 and SCR-04) in the Design Model, carry the interaction design. Full UI traceability: Design Model §Traceability.
+Storyboards SB-01…SB-05 are submitted for stakeholder validation with this iteration's review (STK-001 sponsor, STK-003 end-user representatives). **SB-05 visualizes the R001 behavioural bar exactly as stakeholder-confirmed — now FOUR clauses** (clause d added at the Iter 2 verdict gate: a missing attribute is displayed as missing, never substituted) — the same four clauses the disposable-directory validation proves empirically with deliberately-seeded gaps, including substitution-attempt fixtures (UC-004 S4 bar walk; R001 PoC, Work Item 7). Any feedback is recorded in the Review Record and traced to requirement impacts — the prototype-as-probe principle. The User-Interface Prototype artifact is **[OMITTED — trigger not fired per Development Case §5.2]**; these storyboards inside the Use-Case Model, plus the Boundary Classes and Navigation Map (now with Salt wireframes for SCR-01 and SCR-04) in the Design Model, carry the interaction design. Full UI traceability: Design Model §Traceability.
 ## Traceability
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
