@@ -145,6 +145,123 @@ end note
 | R012 | Human-gate queue: the LCA/IOC/PR milestone sanction gates and stakeholder consultation rounds depend on a human deciding when to sit down. A gate is a RISK, not an estimate — the plan quotes no queue figure (A-13); the queue is bounded HERE. | SCHEDULE | 1 | 2 | MINOR | Accept | Project Manager | OPEN — bounded, monitored each gate | **IMPROVED — second consecutive zero-queue iteration** — measured Iter 4 queue 0:00:00 across 22 interactions (the heaviest interaction load of the phase), ALL answered in-round; the emission-format standing rule held under load. Cumulative actuals: LCO 0s; Iter 1 0:35:14; Iter 2 10:01:08; Iter 3 0:00:00; Iter 4 0:00:00 — far below the 14-day suspension ceiling |
 | R013 | Code-delivery continuity: the convergence critical path (A-16) runs through the Implementer, and no mechanism code had landed for TWO consecutive iterations. The stakeholder attributes the absence to a technical problem beyond the Implementer's control and states the code push as the priority for Iter 3. | RESOURCE | 2 | 3 | SIGNIFICANT | Accept | Project Manager | **RESOLVED — Iter 3 close pass** | **RESOLVED ON OBSERVED EVIDENCE — VERIFIED at Iter 4** — the stakeholder-stated priority FULFILLED and verified: 3 mechanisms merged (PRs #3/#4/#5, APPROVED ×3), baseline-close PR #6 merged to main (APPROVED), formal TC pass COMPLETE (15/0/8, trace CI 33617748483), Issue #1 CLOSED cr:complete; the contingency (phase cannot close without code) was never triggered |
 | **R014** | **Record-propagation self-propagation (NEW — Iter 5 plan-build):** the record-propagation defect class is SELF-PROPAGATING — each pass's landings stale the prior pass's "remaining work" enumerations, and the review that verifies the landings mints new findings against the stale siblings. It minted findings in TWO consecutive passes (Iter 3: 5; Iter 4: 3 — all citing same-pass landings), and under the stakeholder's binding all-findings directive every minted finding blocks the R6 gate: the class can delay the phase close by one pass per occurrence if not terminated. | SCHEDULE | 3 | 2 | **SIGNIFICANT** | Accept | Project Manager | **OPEN — MITIGATING (the same-pass discipline is the mitigation, carried as Iter 5 pass exit criterion 4)** | **NEW — registered at the Iter 5 plan-build** (the R013 precedent applies: a blocker recurring two consecutive passes without a register entry is a risk-management failure). Mitigation: the same-pass discipline (DC, adopted Iter 4) applied to the pass's OWN landings — when A-37…A-39 land, EVERY record enumerating what remains is updated IN THAT PASS. Contingency: the R6 entry-gate verification (findings system, all 13 artifacts) catches a stale enumeration BEFORE re-presentation and re-opens the PASS, not the phase. Trigger: any new record-propagation finding minted at the Iter 5 review |
+
+### Elaboration Iter 3 Close-Pass Reappraisal — Risk Retirement Recording (preserved)
+
+```plantuml
+@startuml
+!theme plain
+title Employee Portal — Elaboration Iter 3 Close-Pass Risk Reappraisal\nRetirement recorded on OBSERVED evidence (PM, Work Item 11)
+
+class "R001 AD LDAP Attributes\nHIGH (P=3, I=3) RETIRED (Elab scope)" as R001 {
+  Retired on: formal TC pass 15/0/8\n(trace CI 33617748483)
+  Evidence: FOUR clauses x FOUR\nconsumers PASS - TC-011 +\nTC-021/022/023, clause (d)\nverified against substitution-\nattempt fixtures (NOT General,\nNOT Central, NOT N/A, no\ncross-entry inheritance)
+  Mechanism: PR 3 merged to\niteration/E1 (APPROVED, review\n5088169328); LdapGateway b8df8b7
+  Residual: production-AD data\nquality -> R011 (Construction,\nstakeholder decision - outside\nthe LCA evidence package)
+}
+
+class "R003 OIDC Integration\nSIGNIFICANT (P=2, I=3) RETIRED (Elab scope)" as R003 {
+  Retired on: token-validation\nmatrix PASS - RS256 via issuer\nJWKS with kid matching, exp/iss/\naud/sub enforced, roles extracted\nverbatim, failing states rejected\nat the request boundary (401)
+  Mechanism: PR 4 merged (APPROVED,\nreview 5088169517)
+  Residual: production claim\nshapes -> R011 (Construction)
+}
+
+class "R004 Offline Fault Tolerance\nSIGNIFICANT (P=2, I=3) RETIRED (Elab scope)" as R004 {
+  Retired on: 5-min drop simulation\nPASS - zero duplicates (double\nreplay AND mixed online+queued),\nzero losses, sync <= 60 s,\nconfirmations < 1 s, recorded-\norder preservation (AC-005)
+  Mechanism: PR 5 merged (APPROVED,\nreview 5088169685)
+  Follow-on: formal AC-005 feature\ntest at Construction Iter 1;\nPG engine semantics R008
+}
+
+class "R013 Code-Delivery Continuity\nSIGNIFICANT (P=2, I=3) RESOLVED" as R013 {
+  Resolved on: the stakeholder-stated\npriority FULFILLED - 3 mechanisms\nmerged (PRs 3/4/5), baseline-close\nPR 6 merged to main (APPROVED),\nformal TC pass COMPLETE, Issue 1\nCLOSED cr:complete
+  The two-iteration absence did not\nrecur; the contingency (phase\ncannot close without code) was\nnever triggered
+}
+
+class "R010 STK-004 Deliverables\nSIGNIFICANT (P=2, I=3) TRANSFER" as R010 {
+  Blocks: production-instance\nintegration ONLY (Construction)
+  PM obligation (close-pass record,\nF8 remediation): the written\nrequest is NOT issued - concrete\nblocker: no direct STK-004 channel\nin this runtime (the questionnaire\nreaches STK-001 only), and the\nstakeholder's Iter 3 directive\nconfirms production AD/Keycloak\nintegration is Construction scope
+  Obligation CARRIED to the\nConstruction Iter 1 plan with\nR010's own trigger (STK-004\nconfirmation by Construction\nIter 1 start). Response NOT an\nexit condition (stakeholder)
+}
+
+class "R012 Human-Gate Queue\nMINOR (P=1, I=2) ACCEPT" as R012 {
+  Measured: LCO 0 s; Iter 1 0:35:14;\nIter 2 10:01:08; Iter 3 0:00:00\n(20 interactions, ALL in-round -\nthe Iter 2 process-defect growth\ndid not recur)
+  Contingency: suspends at 14 days
+}
+
+R013 ..> R001 : unblocked the validation
+R013 ..> R003 : unblocked the validation
+R013 ..> R004 : unblocked the validation
+R001 ..> R011 : residual carried
+R003 ..> R011 : residual carried
+R010 ..> R011 : production instances close the gap
+R004 -[hidden]-> R010
+R010 -[hidden]-> R012
+R012 -[hidden]-> R013
+
+note bottom of R013
+  Close-pass reappraisal (Work Item 11,
+  stakeholder-confirmed): retirement is
+  recorded ONLY on observed evidence -
+  the formal TC pass is CI-traced, and
+  the 8 BLOCKED cases are a recorded
+  SCOPE decision (deferred to
+  Construction, not missing) per the
+  stakeholder's framing directive.
+end note
+@enduml
+```
+
+### Elaboration Iter 5 Plan-Build Reappraisal — R014 Registration and R012 Trend Update (new)
+
+```plantuml
+@startuml
+!theme plain
+title Employee Portal — Elaboration Iter 5 Plan-Build Risk Reappraisal (PM)\nR014 registered (record-propagation self-propagation); R012 trend updated; all other rows terminal or stable
+
+[*] --> Landing
+state "A landing occurs in a pass\n(e.g. A-37 lands: the TES remainder-\nenumerations updated from the observed\nsame-pass state)" as Landing
+state "Sibling records written EARLIER in\nthe same pass still enumerate the\nlanding as PENDING or OPEN" as Stale
+state "The review verifies the landing AND\nreads the stale siblings -> a NEW\nrecord-propagation finding is minted\n(Iter 3: 5 minted; Iter 4: 3 minted -\nall citing same-pass landings)" as Minted
+state "R6 entry gate BLOCKED: the ledger is\nnot empty - the stakeholder's binding\nall-findings directive makes every new\nfinding a phase-exit condition" as Blocked
+
+Landing --> Stale : records lag landings\n(the class's mechanism)
+Stale --> Minted : cross-artifact contradiction\n(the DC F1 / Risk List F2 class)
+Minted --> Blocked
+
+state "R014 MITIGATION - the SAME-PASS discipline\n(DC, adopted Iter 4) applied to the pass's OWN\nlandings: when A-37..A-39 land, EVERY record\nenumerating what remains is updated IN THAT\nPASS - carried as Iter 5 pass exit criterion 4\n(Work Item 4, ~800K)" as Cure
+Blocked --> Cure : R014 CONTINGENCY: the R6 entry-gate\nverification (findings system, all 13\nartifacts) catches a stale enumeration\nBEFORE re-presentation - it re-opens\nthe PASS, not the phase
+Cure --> [*] : the class terminates at R6 -\nthe pass mints no successor finding
+
+note right of Minted
+  R014 (NEW): SIGNIFICANT
+  P=3 (occurred two consecutive
+  passes), I=2 (delays the phase
+  close by one pass each time; no
+  code, design, or validation
+  impact). Owner: Project Manager.
+  Strategy: Accept. Trigger: any
+  new record-propagation finding
+  minted at the Iter 5 review.
+end note
+
+note bottom of Cure
+  Same reappraisal, R012 trend update:
+  Iter 4 measured 0:00:00 across 22
+  interactions (the heaviest load of
+  the phase) - second consecutive
+  zero-queue iteration. Cumulative:
+  LCO 0s; Iter 1 0:35:14; Iter 2
+  10:01:08; Iter 3 0:00:00; Iter 4
+  0:00:00 - far below the 14-day
+  suspension ceiling. All other
+  register rows: terminal (R001/R003/
+  R004 RETIRED, R013 RESOLVED) or
+  stable with no new evidence.
+end note
+@enduml
+```
+
+> The Iter 3 plan-build reappraisal diagram (validation paths, R013 registration, STALLED trends) is preserved in SCM history at the plan-build revision — the close-pass record above supersedes the trend states it carried, per the reappraisal discipline (updated every iteration). The Iter 5 plan-build reappraisal above supersedes the Iter 3 close-pass trend states in the register table the same way; the retirement records themselves are terminal and unchanged.
 ## Risk Mitigation and Contingency
 ### R001 — AD LDAP Attribute Consistency (HIGH) — RETIRED (Elaboration scope), recorded at the Iter 3 close pass
 
