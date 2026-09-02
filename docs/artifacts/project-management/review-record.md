@@ -1592,6 +1592,14 @@ Actions A-16…A-21 remediate the findings recorded by this lens this cycle. The
 | **A-21** | **Update the Architectural Proof-of-Concept's two stale TC enumerations** (§ Results and Findings ledger row; § Approach delivery protocol) to the 23-case set when the artifact is evolved for the empirical results (the A-8/A-16 evolution already mandates rewriting exactly this table); the R001 results row must record clause-by-clause evidence for all four consumers (TC-011 + TC-021/022/023) — closes Architectural Proof-of-Concept F1 (Minor) | Software Architect | Minor | LCA evidence-package accuracy; four-consumer bar evidence scope |
 
 **Iter 2 action-chain status (this lens's view, for the Coordinator):** A-7, A-9, A-10 — DONE and ledger-closed by this lens (resolve_artifact_finding, 2026-09-02). A-5, A-12, A-13, A-14, A-15 — remediation verified present; closure owned by the emitting lenses (Code Reviewer for A-5; Management Reviewer for A-12…A-15). A-1 — DONE (branch exists). A-2, A-3, A-4, A-6, A-8, A-11 — OPEN (code delivery pending; Issue #1 open; zero PRs). A-16…A-21 — NEW this cycle, owned as listed above.
+
+### Business Modeling Lens — Resolutions and Actions (Business Reviewer, Iteration 2 — convergence cycle, 2026-09-02)
+
+| # | Action | Owner | Severity | Blocks |
+|---|---|---|---|---|
+| — | **None.** Zero findings emitted from this lens this iteration; zero prior BusinessReviewer findings open (findings ledger read for Vision, Use-Case Model, Supplementary Specification, Review Record — all four return empty arrays; zero BusinessReviewer findings exist across the entire project). No BM action item exists for the convergence cycle. | — | — | — |
+
+**BM discipline disposition for the convergence cycle (Iter 2 re-verification):** remains INACTIVE — sustained. The DC §4 classification (`isBusinessProcessLed = false`, ProcessEngineer re-check 2026-09-02) is verified CORRECT against the Vision and the Use-Case Model; no Change Request has re-opened it. Re-trigger condition (unchanged): a Change Request that introduces business-process reengineering, workflow transformation, or a business object model re-opens the DC §4 classification (owner: ProcessEngineer) — until then, no BM deliverable is owed at the LCA re-presentation, in Construction, or in Transition, and this lens's next review obligation arises only if the classification changes.
 ## Disposition
 ### Elaboration Iteration 1, Cycle 1 — Code-Review Gate Disposition
 
