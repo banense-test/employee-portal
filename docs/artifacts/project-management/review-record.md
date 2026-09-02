@@ -1569,6 +1569,81 @@ end note
 ### Business Modeling Lens — Findings (Business Reviewer, Iteration 2 — convergence cycle, 2026-09-02)
 
 **NONE — zero findings, zero recommendations, zero BM conditions.** The Business Modeling discipline remains INACTIVE per DC §4 (`isBusinessProcessLed = false`, ProcessEngineer re-check 2026-09-02, independently verified by this lens against the Vision and the Use-Case Model — see § Review Scope and Criteria, business-lens Iter 2 subsection). No BM artifact exists to receive a finding, and none is required for a non-BPL project. No `record_artifact_finding` was emitted from this lens this iteration; no prior BusinessReviewer finding exists to close. The business lens therefore adds **zero entries** to the findings ledger the Review Coordinator must empty before the LCA re-presentation — the open gates (SAD F2, Iteration Plan F3, F-CR-E1-1 and the record corrections A-17…A-21) belong to the technical, management and code-review lenses.
+
+### Elaboration Iteration 2 — New Findings (Management LCA Lens — Management Reviewer, PRA, 2026-09-02)
+
+All four findings emitted via `record_artifact_finding` (2026-09-02) before this upsert. The Critical is a re-emission under its existing findingKey (2nd occurrence — one ledger entry per logical defect); the other three are genuinely new defects minted fresh keys.
+
+| Finding Key | Severity | Artifact | Description (summary) | Remediation (summary) |
+|---|---|---|---|---|
+| **Iteration Plan F3** (re-emission, 2nd occurrence) | **Critical** | Iteration Plan — Layer 2 exit criteria 1–3; Work Items 3–5 | **PERSISTS — record side fixed, code-evidence side unmet.** The plan's exit criteria 1–3 now correctly require SCM code evidence as the verification method (A-11 record side), work-item statuses are reconciled to SCM evidence, and exit criterion 12 mandates status reconciliation — the plan no longer misstates its own completion state. But the substance the criteria demand is absent as of this review (2026-09-02): zero mechanism code in SCM, zero pull requests in ANY state, zero ready-for-review branches, SCM Issue #1 open, TC-001…TC-023 all BLOCKED. Work Items 3–5 show "In progress — no CI evidence" — honest, but the empirical validation of R001 (HIGH, exposure=9), R003, R004 that the stakeholder made the phase's central objective remains unexecuted. The LCA gate cannot close this cycle. This finding closes only when the empirical results are OBSERVED, not when the delivery is planned. | Complete the convergence-cycle delivery chain (A-2…A-6, A-8, A-16): mechanisms as evolutionary production code in src/ on feature/E1-{risk} branches with dual-coverage tests, ready-for-review labels; terminal PR dispositions (base iteration/E1); Integrator merges APPROVED PRs; Test Designer executes TC-001…TC-023; empirical results land in the PoC artifact § Results and Findings; Issue #1 closes on merged mechanism-PR evidence. PM reconciles Work Item 3–5 statuses to observed SCM state at iteration close (exit criterion 12). LCA re-presented at R6 with the evidence package and a fresh sanction request. |
+| **Iteration Plan F6** | **Major** | Iteration Plan — Iteration budget box; work-item sum; rework headroom; Resources token budgets; Construction sizing assumption | **The Iteration 2 budget box was not re-sized from the measured actual, contradicting the Iteration Assessment's binding adjustment.** The Iter 1 close-out recorded the measured iteration actual of 12,523,281 tokens against the 1,200K box (~10.4× variance), root-caused it, and listed as the FIRST binding input to the next Iteration Plan: "Re-size the Iter 2 budget box from the measured 12,523,281 actual — the 1,200K assumption is disproven; the box is rebuilt from fact with its basis named." The Iter 2 plan instead retains "1,200K tokens [ASSUMPTION — remainder of the ~2,400K Elaboration phase box (2 × the Iter 1 box; basis: the Iter 1 box was scaled from the MEASURED Inception actual, 1,347,939 tokens phase-level)]" — the same disproven assumption chain, one step further from fact. Work items sum ~840K against a box the measured shape says is ~10× too small; the ~360K "rework headroom" is a fiction at this scale. A cost-boxed iteration whose box is calibrated to a figure the project has already measured and disproven is not a credible basis for LCA-6 or for Construction sizing, which inherits the same basis. | Project Manager re-sizes the Iteration 2 budget box from the measured iteration actual (12,523,281 tokens) with its basis named — e.g. ~12,500K [ASSUMPTION — scaled from the measured Elab Iter 1 iteration actual; basis: same 9-role shape, 13-artifact accumulated surface, convergence-cycle review load] — or a deliberately different figure with the delta from the measured actual explicitly justified. Update the box, the work-item sum, the rework-headroom note, the Resources section token budgets, and the Construction sizing assumption (which must inherit the iteration-shaped actual, not the phase-level Inception record) in the same pass. Two clocks remain separate; no person-weeks are produced. |
+| **Iteration Plan F7** | **Minor** | Iteration Plan — Work Items 2 and 9 (status column) | **Two work-item statuses are stale against verified repository state, violating the plan's own status discipline** ("every 'Complete' above is backed by a commit SHA or CI run; every 'In progress'/'Pending' names its blocking evidence"). Work Item 2 (CONTRIBUTING.md, A-5) shows "In progress — no SCM evidence as of 2026-09-02" — but CONTRIBUTING.md is committed (sha `6662813…`, verified via the Development Case tool-verification 2026-09-02), so the item is complete with evidence and the status understates delivery. Work Item 9 (SAD re-correction, A-7 + A-9) shows "In progress — SAD corrections owned by the Architect this cycle" — but the SAD §Quality PoC Plan carries the empirical disposition with the explicit supersession note and the §Logical View dependencies are reconciled with the Design Model (SAD F1 and SAD F3 RESOLVED via resolve_artifact_finding by the Reviewer lens, 2026-09-02), so the record-side work is done and the status understates it. Same defect class as LCO F2 / Iteration Plan F3's status-honesty lesson: status must cite repository state, not intent — in both directions. | Project Manager reconciles Work Item 2 → "Complete — CONTRIBUTING.md committed (sha 6662813…)" and Work Item 9 → "Complete (record side) — SAD §Quality empirical disposition + §Logical View reconciliation committed; SAD F1/F3 ledger-closed 2026-09-02" in the same pass as the budget-box correction (F6), citing the evidence per the plan's own status discipline. Work Item 10 (PoC artifact) remains Pending — it requires the executed test results, which do not yet exist. |
+| **Risk List F2** | **Major** | Risk List — R007 mitigation (featured-banner rendering contract) | **R007's mitigation mis-transcribes the stakeholder's featured-banner decision — it records the option the stakeholder did NOT select.** The stakeholder was asked (UI Designer, Elab Iter 2): "stack all featured banners (newest first), or show only the newest featured item?" and answered "newest first". The Design Model (authoritative UI artifact) retired its P-02 PENDING marker with the faithful reading: stack ALL featured banners, ordered newest first — every featured item renders its own banner, no featured flag silently dropped. The Risk List R007 mitigation instead states: "when more than one item is featured, show only the NEWEST featured item — no stacked banners" — describing the OTHER option, the one not selected. "Newest first" is an ordering statement; ordering presupposes plurality. Same defect class as Development Case F1 (Major, Reviewer lens, Iter 2): a mis-transcription of an answered stakeholder decision that contradicts the authoritative record. The Risk List is a governance artifact every role reads for risk context; a wrong decision record there propagates the wrong contract into R007's mitigation reasoning and any downstream consumer of the risk register. | Project Manager corrects the R007 mitigation to the Design Model's recorded contract, citing the verbatim answer: featured banners STACK, ordered newest first — every featured item renders its own banner (ordering by the same date criterion as the FR-007 list; renders above the list on SCR-03 and above the history preview on SCR-01). Remove the "show only the NEWEST featured item — no stacked banners" gloss. Coordinate with the Process Engineer's parallel correction of Development Case F1 (same defect class, same verbatim answer) so the two governance artifacts record the identical contract. |
+
+### Defect Distribution — Iteration 2 (severity × artifact, Management Lens)
+
+```plantuml
+@startuml
+title Elaboration Iter 2 - Management-Lens Defect Distribution\nseverity x artifact (Management Reviewer, 2026-09-02)
+
+object "Iteration Plan" as D1 {
+  Critical 1 : F3 PERSISTS
+  (2nd occurrence) - record side
+  fixed (exit criteria demand
+  code evidence; statuses
+  honest; criterion 12 added),
+  code side unmet (zero PRs,
+  Issue #1 open, TC-001..TC-023
+  BLOCKED)
+  Major 1 : NEW - budget box
+  not re-sized from the measured
+  12,523,281 iteration actual;
+  contradicts the Iteration
+  Assessment's binding adjustment
+  Minor 1 : NEW - WI 2 + WI 9
+  statuses stale vs verified
+  repository state (sha 6662813;
+  SAD F1/F3 ledger-closed)
+  Resolved this revision:
+  F4 (Major), F5 (Minor)
+}
+object "Risk List" as D2 {
+  Major 1 : NEW - R007 mitigation
+  mis-transcribes the featured-banner
+  decision ("show only the NEWEST
+  featured item - no stacked banners"
+  = the UNSELECTED option; faithful
+  record: stack ALL, newest first)
+  Resolved this revision:
+  F1 (Minor - trend column + R012)
+}
+object "Iteration Assessment" as D3 {
+  Clean from this lens - the
+  Elab Iter 1 close-out is honest
+  (measured actuals, root-caused
+  variance, binding adjustments);
+  the Elab Iter 2 assessment is
+  authored AFTER this review -
+  absence expected, never a finding
+}
+
+D1 -[hidden]-> D2
+D2 -[hidden]-> D3
+
+note bottom of D3
+  TOTAL (this lens, after this
+  revision): 1 Critical, 2 Major,
+  1 Minor open across 2 artifacts;
+  3 prior findings ledger-closed
+  (Iteration Plan F4, F5; Risk List
+  F1). All open findings are
+  phase-exit conditions per the
+  stakeholder's all-findings
+  directive.
+end note
+@enduml
+```
 ## Resolutions and Actions
 ### Convergence-Cycle Review Calendar (Review Coordinator — Elaboration Iteration 2)
 
