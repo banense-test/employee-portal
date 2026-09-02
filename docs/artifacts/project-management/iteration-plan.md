@@ -20,7 +20,6 @@
 5. **Carry R010 (STK-004) engagement** — written deliverables request; response NOT a condition of Elaboration exit (stakeholder decision).
 
 ## Plan and Milestones
-
 ### Coarse Cross-Iteration Roadmap
 
 7 total iterations — within the 6 ± 3 rule. Elaboration holds 2 of 7 (~29%, above the ~20% rubber-profile starting point) because the only HIGH-magnitude risk (R001) requires empirical validation this phase; the profile bends to the risk profile, not to the heuristic.
@@ -82,64 +81,64 @@ title Employee Portal — Iteration Sequence and Human Gates\nUNANCHORED: no pro
 
 This iteration is the convergence cycle the Review Record schedules: code evidence for empirical risk retirement, artifact corrections, findings closure, LCA evidence package. The critical chain below shows the sequential agent stretches from iteration start to the LCA re-presentation, each annotated with its token budget.
 
-**Iteration budget box: 1,200K tokens** [ASSUMPTION — remainder of the ~2,400K Elaboration phase box (2 × the Iter 1 box; basis: the Iter 1 box was scaled from the MEASURED Inception actual, 1,347,939 tokens phase-level); refined from Iter 1 measured actuals at the Iteration Assessment. Work items sum ~840K; the ~360K headroom absorbs PR rework loops (request_changes → fix → re-review) — the box does not grow to fit scope.]
+**Iteration budget box: ~12,500K tokens** [ASSUMPTION — scaled from the measured Elab Iter 1 iteration actual 12,523,281; basis: same 9-role shape, 13-artifact accumulated surface, convergence-cycle review load. **Corrected this close pass (Iteration Plan F6, action A-22):** the prior 1,200K box re-derived the disproven assumption chain one step further from fact, against the Iteration Assessment's first binding adjustment — "Re-size the Iter 2 budget box from the measured 12,523,281 actual — the 1,200K assumption is disproven." The measured Iter 2 actual (13,363,814) confirms the corrected box's scale (~1.07×). Work items sum ~8,750K; the ~3,750K headroom absorbs PR rework loops (request_changes → fix → re-review) — the box does not grow to fit scope.]
 
 ```plantuml
 @startuml
 !theme plain
-title Employee Portal — Elaboration Iter 2 (Convergence Cycle) Critical Chain\nSequential agent stretches from iteration start to LCA re-presentation, each with token budget
+title Employee Portal — Elaboration Iter 2 (Convergence Cycle) Critical Chain\nSequential agent stretches from iteration start to LCA re-presentation, each with token budget\nBox re-sized from the measured iteration actual (F6, A-22); TC set = 23 cases (F3-Reviewer, A-18)
 
 |Project Manager|
 start
 :Convergence-cycle plan + risk corrections\nbehavioural bar (A-10), all-findings\ncriterion (A-12), queue forecasts removed\n(A-13), trend column (A-14), R012 (A-15);
-note right: ~100K tokens\nCOMMITTED this pass
+note right: ~1,040K tokens\nCOMMITTED
 
 |Implementer|
 :CONTRIBUTING.md guidelines baseline (A-5)\nthen three mechanisms, evolutionary in src/:\nR001 disposable LDAP dir + behavioural\nbar, gaps seeded (A-2)\nR003 stub OIDC issuer (A-3)\nR004 offline queue + idempotent sync (A-4)\ndual-coverage tests per mechanism\nready-for-review labels;
-note right: ~270K tokens\nIN PROGRESS - iteration/E1 has\nno CI runs as of 2026-09-02
+note right: ~2,810K tokens\nIN PROGRESS - iteration/E1 has\nno CI runs as of 2026-09-02
 
 |Code Reviewer|
 :One PR per ready branch, base iteration/E1\nchecklist CR-1..CR-7 applied per PR\nterminal disposition each (A-6);
-note right: ~60K tokens
+note right: ~625K tokens
 
 |Integrator|
 :Merge APPROVED PRs into iteration/E1;
-note right: ~30K tokens
+note right: ~310K tokens
 
 |Test Designer|
-:Execute TC-001..TC-020 against the\nvalidation fixtures - disposable LDAP\ndirectory with gaps seeded deliberately,\nstub OIDC issuer, drop simulation;
-note right: ~120K tokens
+:Execute TC-001..TC-023 against the\nvalidation fixtures - disposable LDAP\ndirectory with gaps seeded deliberately,\nstub OIDC issuer, drop simulation;
+note right: ~1,250K tokens
 
 |Software Architect|
 :SAD PoC Plan re-correction to the\nempirical disposition (A-7)\nLogical View dependency reconciliation (A-9)\nArchitectural Proof-of-Concept artifact\ncarrying empirical R001/R003/R004 results (A-8);
-note right: ~180K tokens
+note right: ~1,870K tokens
 
 |Project Manager|
-:Iteration Assessment - measured actuals,\nWork Item 7-9 status reconciliation to\nSCM evidence (A-11)\nLCA evidence package assembly;
-note right: ~70K tokens
+:Iteration Assessment - measured actuals,\nWork Item 3-5 status reconciliation to\nSCM evidence (A-11)\nLCA evidence package assembly;
+note right: ~730K tokens
 stop
 @enduml
 ```
 
 ### Work Items — Elaboration Iteration 2 (convergence cycle)
 
-Statuses reflect actual repository state as of 2026-09-02 (LCO F2 lesson + F3 remediation discipline): `iteration/E1` exists but has **no CI runs** and no mechanism code evidence; `main` is GREEN (run 33550619216). No work item may show "Complete" without SCM evidence — the reconciliation is exit criterion 12.
+Statuses reflect actual repository state as of 2026-09-02 (LCO F2 lesson + F3 remediation discipline): `iteration/E1` exists but has **no CI runs** and no mechanism code evidence; `main` is GREEN (run 33598979875). No work item may show "Complete" without SCM evidence — the reconciliation is exit criterion 12.
 
 | # | Work Item | Owner Role | Token Budget | Depends On | Status (SCM-evidence-based) |
 |---|---|---|---|---|---|
-| 1 | Convergence-cycle Iteration Plan + Risk List corrections: R001 behavioural bar (A-10), all-findings criterion (A-12), queue forecasts removed (A-13), trend column (A-14), R012 added (A-15) | Project Manager | ~100K | — | **Complete** — Risk List committed (SHA 0e2e427); this plan committed this pass |
-| 2 | CONTRIBUTING.md guidelines baseline (coding standards + branch-strategy section) — CR-1 precondition (A-5) | Implementer / Software Architect / ConfigurationManager | ~20K | — | In progress — P0, before the first mechanism PR; no SCM evidence as of 2026-09-02 |
-| 3 | **R001 mechanism:** disposable LDAP directory, attribute mapping, graceful degradation; **behavioural bar** — gaps seeded deliberately, three clauses proven (A-2) | Implementer | ~100K | Work Item 2 | In progress — no CI runs on iteration/E1 as of 2026-09-02; branch `feature/E1-R001` not yet labeled ready-for-review |
-| 4 | **R003 mechanism:** stub OIDC issuer, token validation, role-claim extraction (A-3) | Implementer | ~80K | Work Item 2 | In progress — no CI evidence as of 2026-09-02 |
-| 5 | **R004 mechanism:** localStorage queue, idempotent sync endpoint, 5-minute drop simulation (A-4) | Implementer | ~70K | Work Item 2 | In progress — no CI evidence as of 2026-09-02 |
-| 6 | PR reviews: one per ready branch (base `iteration/E1`), CR-1…CR-7, terminal disposition each (A-6) | Code Reviewer | ~60K | Work Items 3–5 | Pending — zero ready-for-review branches as of 2026-09-02 |
-| 7 | Merge APPROVED PRs into `iteration/E1` | Integrator | ~30K | Work Item 6 | Pending |
-| 8 | Execute TC-001…TC-020 against the validation fixtures (all 20 currently BLOCKED on SCM Issue #1) | Test Designer | ~120K | Work Item 7 | Pending — blocked on mechanism merge |
-| 9 | SAD re-correction: §Quality PoC Plan to the empirical disposition (A-7) + §Logical View dependency reconciliation COMP-001/COMP-010 (A-9) | Software Architect | ~100K | — | In progress — SAD corrections owned by the Architect this cycle |
-| 10 | Architectural Proof-of-Concept artifact carrying empirical R001/R003/R004 results (A-8) | Software Architect | ~80K | Work Items 8, 9 | Pending — requires executed test results |
-| 11 | Iteration Assessment: measured actuals, token-record reconciliation, Work Item 3–5 status reconciliation to SCM evidence (A-11) | Project Manager | ~70K | Work Items 1–10 | Pending — authored at iteration close (Assess touchpoint) |
-| 12 | STK-004 written deliverables request follow-up (R010 mitigation — carried from Iter 1) | Project Manager | ~10K | — | In progress — response NOT required for Elaboration exit (stakeholder decision) |
-| **Total** | | | **~840K** (box: 1,200K; ~360K rework headroom) | | |
+| 1 | Convergence-cycle Iteration Plan + Risk List corrections: R001 behavioural bar (A-10), all-findings criterion (A-12), queue forecasts removed (A-13), trend column (A-14), R012 added (A-15) | Project Manager | ~1,040K | — | **Complete** — Risk List committed (SHA 0e2e427); this plan committed this pass |
+| 2 | CONTRIBUTING.md guidelines baseline (coding standards + branch-strategy section) — CR-1 precondition (A-5) | Implementer / Software Architect / ConfigurationManager | ~210K | — | **Complete** — CONTRIBUTING.md committed (sha 6662813…, verified via the Development Case tool-verification 2026-09-02) [status corrected this close pass, F7] |
+| 3 | **R001 mechanism:** disposable LDAP directory, attribute mapping, graceful degradation; **behavioural bar** — gaps seeded deliberately, four clauses proven (A-2) | Implementer | ~1,040K | Work Item 2 | In progress — no CI runs on iteration/E1 as of 2026-09-02; branch `feature/E1-R001` not yet labeled ready-for-review |
+| 4 | **R003 mechanism:** stub OIDC issuer, token validation, role-claim extraction (A-3) | Implementer | ~830K | Work Item 2 | In progress — no CI evidence as of 2026-09-02 |
+| 5 | **R004 mechanism:** localStorage queue, idempotent sync endpoint, 5-minute drop simulation (A-4) | Implementer | ~730K | Work Item 2 | In progress — no CI evidence as of 2026-09-02 |
+| 6 | PR reviews: one per ready branch (base `iteration/E1`), CR-1…CR-7, terminal disposition each (A-6) | Code Reviewer | ~625K | Work Items 3–5 | Pending — zero ready-for-review branches as of 2026-09-02 |
+| 7 | Merge APPROVED PRs into `iteration/E1` | Integrator | ~310K | Work Item 6 | Pending |
+| 8 | Execute TC-001…TC-023 against the validation fixtures (all 23 currently BLOCKED on SCM Issue #1) | Test Designer | ~1,250K | Work Item 7 | Pending — blocked on mechanism merge |
+| 9 | SAD re-correction: §Quality PoC Plan to the empirical disposition (A-7) + §Logical View dependency reconciliation COMP-001/COMP-010 (A-9) | Software Architect | ~1,040K | — | **Complete (record side)** — SAD §Quality empirical disposition + §Logical View reconciliation committed; SAD F1/F3 ledger-closed 2026-09-02 [status corrected this close pass, F7] |
+| 10 | Architectural Proof-of-Concept artifact carrying empirical R001/R003/R004 results (A-8) | Software Architect | ~830K | Work Items 8, 9 | Pending — requires executed test results |
+| 11 | Iteration Assessment: measured actuals, token-record reconciliation, Work Item 3–5 status reconciliation to SCM evidence (A-11) | Project Manager | ~730K | Work Items 1–10 | **Complete** — authored at iteration close (this close pass, 2026-09-02) |
+| 12 | STK-004 written deliverables request follow-up (R010 mitigation — carried from Iter 1) | Project Manager | ~100K | — | In progress — response NOT required for Elaboration exit (stakeholder decision) |
+| **Total** | | | **~8,750K** (box: ~12,500K; ~3,750K rework headroom) | | |
 
 > **Status discipline (F3 remediation):** every "Complete" above is backed by a commit SHA or CI run; every "In progress"/"Pending" names its blocking evidence. The Iteration Assessment (Work Item 11) reconciles all statuses to SCM state at iteration close — a status that cannot show evidence reverts to In progress, never to Complete.
 
@@ -153,7 +152,7 @@ All 10 UCs assigned; UC IDs verified against the Use-Case Model authority (LCO F
 | Construction Iter 2 | UC-003 (Browse News), UC-008 (Publish), UC-009 (Edit), UC-010 (Unpublish) | FR-007, FR-006, FR-008, FR-009 | R006 (audit mechanism verified end-to-end) |
 | Construction Iter 3 | UC-004 (Directory Search), UC-006 (CSV Export) | FR-010, FR-002 | R011 + R010 (production-instance integration — STK-004 deliverables), R005 (LDAP performance) |
 
-**Construction sizing:** [ASSUMPTION — 3 iterations × ~1,200K tokens each, basis: Elaboration box scaled from the measured Inception actual; Construction adds feature implementation volume but reuses the validated PoC mechanisms. Refined at each Elaboration Iteration Assessment as measured actuals accumulate — no fine-grained Construction plan is produced now (planning beyond the horizon is waste).]
+**Construction sizing:** [ASSUMPTION — 3 iterations × ~12,500K tokens each, basis: the MEASURED Elaboration iteration actuals (Iter 1: 12,523,281; Iter 2: 13,363,814) — Construction adds feature implementation volume but reuses the validated PoC mechanisms. **Corrected this close pass (F6):** the prior basis (3 × 1,200K, scaled from the phase-level Inception record) inherited the disproven assumption chain; Construction sizing now inherits the iteration-shaped actuals. Refined at each Elaboration Iteration Assessment as measured actuals accumulate — no fine-grained Construction plan is produced now (planning beyond the horizon is waste).]
 
 ### Next Iteration Preview — Construction Iteration 1 (coarse only)
 
@@ -163,7 +162,6 @@ All 10 UCs assigned; UC IDs verified against the Use-Case Model authority (LCO F
 | Entry condition | LCA sanction GRANTED + empty findings ledger + completed convergence scope (Review Record entry gate) |
 | Fine plan | **Built at LCA sanction, not before** — planning beyond the current horizon in fine-grained detail is waste; the coarse baseline above is the commitment |
 | Key risks | R010 (STK-004 deliverables — trigger: not confirmed by Construction Iter 1 start), R008, R002 (adoption design) |
-
 ## Resources
 
 ### Agent Role Profile — Elaboration Iteration 2 (convergence cycle)
