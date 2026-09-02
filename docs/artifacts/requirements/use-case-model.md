@@ -741,6 +741,8 @@ These references realize the **user-interface-specific parts of each use case** 
 
 **Elaboration Iter 3 evolution (User Interface Designer — featured-banner stack visualization):** the stakeholder-decided featured-banner rendering contract (Iter 2, recorded verbatim: "newest first" — stack ALL featured banners, ordered newest first) is now visualized end-to-end: **SB-03 frame 4** and the **UC-003 compact reference** state the stack contract explicitly (each featured item renders its own banner — no featured flag silently dropped), and the **SCR-03 News Salt wireframe** (Design Model §Boundary Classes and Navigation Map, added this iteration) renders the two-featured state — the stack newest-first above the list, each banner in the reference's warn-tinted style. This closes the visualization gap on the one stakeholder-decided UI contract that two governance artifacts mis-transcribed in Iter 2 (Development Case F1, Risk List F2 — both Major, same defect class): the interaction references now state the contract unambiguously so no consumer can read "newest first" as "single banner". SB-01…SB-05 frames and all other content are preserved exactly as reviewed (zero findings on this artifact).
 
+**Elaboration Iter 4 evolution (User Interface Designer — storyboard completion per the Work Order instruction):** storyboards **SB-06 (UC-003 Browse News)** and **SB-07 (UC-009 Edit Published News)** added — the two critical flows that lacked full storyboards. UC-003 is the main-page adoption gateway (BG-003: 80% employee adoption within 3 months; R002 adoption risk — employees who never open News never adopt the portal) and carries the stakeholder-decided featured-banner stacking contract; UC-009 completes the audited news lifecycle (NFR-005/AUD-002 — every edit audited, all versions traceable). With SB-06/SB-07, every critical flow now has a visual storyboard submitted for stakeholder validation: AC-001/AC-004 (SB-01), AC-003 (SB-02), AC-002 (SB-03), CON-012 (SB-04), the R001 four-clause bar (SB-05), the BG-003 adoption gateway (SB-06), the NFR-005 audit trail (SB-07). UC-002 remains compact-referenced (a read-only current-month table view — proportionality). The compact rows for UC-003 and UC-009 are absorbed into SB-06/SB-07 (their AF/EF frames are carried in the storyboard tables). All UC specifications, flows, and activity diagrams are unchanged — zero findings and zero CRs target this artifact across all three full-coverage review cycles.
+
 **Screen registry (summary — formal definition in Design Model):**
 
 | Screen | Name | Realizes |
@@ -966,16 +968,116 @@ stop
 @enduml
 ```
 
+#### SB-06 — UC-003: Browse News (FR-007) — storyboard (Elaboration Iter 4)
+
+UC-003 is the adoption gateway: the main page and the News screen are what every employee sees daily (BG-003 — 80% adoption within 3 months; R002 — employees who never open News never adopt the portal). The storyboard visualizes the stakeholder-decided featured-banner stacking contract (Iter 2, recorded verbatim: "newest first") in the interaction sequence — the same contract the SCR-03 Salt wireframe renders (Design Model §Boundary Classes and Navigation Map) and that two governance artifacts mis-transcribed in Iter 2 (Development Case F1, Risk List F2): the storyboard makes the stack contract unambiguous at the interaction level for stakeholder validation.
+
+| Frame | UC-003 step | Screen | User action → System response | Criteria |
+|---|---|---|---|---|
+| 1 | 1–2 | SCR-01 / SCR-03 / EX-01 | Open portal (SCR-01) or select "News" (SCR-03) → [session expired] redirect to Keycloak (AF-2); credentials → OIDC token with roles | SEC-001 |
+| 2 | 3–4 | SCR-01 / SCR-03 | Published news loads newest-first → **featured banner STACK renders at top: ALL featured items render their own banner, ordered newest first** (P-02, stakeholder decision Iter 2; SCR-03 wireframe) — no featured flag silently dropped; list renders below the stack | USA-007, FR-006/FR-007 |
+| 3 | 5–6 | SCR-03 | Select category chip (All / General / HR / IT / Events) → filtered list (the stack renders per step 4; the filter applies to the list, steps 5–6) | USA-001 |
+| 4 | AF-1 / AF-2 / EF-1 | SCR-03 | AF-1: "No news in this category"; AF-2: empty state; EF-1: "News temporarily unavailable" inline — no partial list (P-05) | P-05, NFR-004 |
+
+```plantuml
+@startuml
+title SB-06 - UC-003 UI Storyboard: Browse News (FR-007)\nFeatured-banner stack + category filter - the adoption gateway (BG-003)
+|Employee|
+start
+:Open portal (SCR-01) or select "News" (SCR-03);
+|Portal|
+if (OIDC session expired?) then (yes - AF-2)
+  :Redirect to Keycloak login (EX-01);
+  |Employee|
+  :Enter corporate credentials;
+endif
+|Portal|
+if (PostgreSQL reachable?) then (yes)
+  :Load published news sorted by date (newest first);
+  if (Published news exist?) then (yes)
+    :Render featured banner STACK at top:\nALL featured items render their own banner,\nordered newest first (P-02, stakeholder\ndecision Iter 2 - SCR-03 wireframe);\nrender the news list below, newest first;
+    |Employee|
+    :Browse news read-only\n(no comments, no reactions);
+    :Select a category chip\n(All / General / HR / IT / Events);
+    |Portal|
+    :Filter the list by selected category;
+    if (Items in selected category?) then (yes)
+      :Display filtered list;
+    else (no - AF-1)
+      :Display "No news in this category";
+    endif
+  else (no - AF-2)
+    :Display empty-state message (P-05);
+  endif
+else (no - EF-1)
+  :Display "News temporarily unavailable"\ninline - no partial list (P-05);
+endif
+|Employee|
+:See banner stack + list, filtered list,\nempty state, or unavailable message;
+stop
+@enduml
+```
+
+#### SB-07 — UC-009: Edit Published News (FR-008) — storyboard (Elaboration Iter 4)
+
+UC-009 completes the audited news lifecycle: publish (SB-03) → edit (SB-07) → unpublish (SB-04). The edit flow carries NFR-005/AUD-002 — every edit is audited exactly like the original publication, and the trail records all versions, not just the final one — plus the AF-2 concurrent-unpublish guard (editing an unpublished record would muddy the audit trail; the record is retained read-only per CON-012). The storyboard visualizes the SCR-08 → SCR-07 (edit mode) navigation and the three outcome paths (updated + audited / not-published notice / inline validation) for stakeholder validation.
+
+| Frame | UC-009 step | Screen | User action → System response | Criteria |
+|---|---|---|---|---|
+| 1 | 1–3 | SCR-08 | Open News Management [HR role] → list with status; "Edit" offered on published items only → select "Edit" → form loads current version (SCR-07, edit mode) | SEC-006 |
+| 2 | 4–5 | SCR-07 (edit mode) | Modify fields (title, body, date, category, featured flag) → save | USA-005 |
+| 3 | 6–8 | SCR-07 | Valid fields + item still published → persist + audit entry (editor + timestamp, post-edit snapshot — AUD-002: all versions traceable, not just the final one) → confirmation; updated item visible on SCR-03 | AUD-002, NFR-005 |
+| 4 | AF-1 / AF-2 / EF-1 | SCR-07 / SCR-08 / SCR-09 | AF-1: invalid fields highlighted inline → correct → resubmit; AF-2: "no longer published" notice — edit NOT applied, record retained read-only for audit (CON-012); EF-1: role denial → SCR-09, no item loaded | P-05, CON-012, SEC-006 |
+
+```plantuml
+@startuml
+title SB-07 - UC-009 UI Storyboard: Edit Published News (FR-008)\nAudited edit flow - all versions traceable (AUD-002, NFR-005)
+|HR Administrator|
+start
+:Open News Management (SCR-08);
+|Portal|
+:Authenticate HR via Keycloak OIDC;
+if (HR Administrator role in claims?) then (yes)
+  :List news items with status;\n"Edit" offered on published items only;
+  |HR Administrator|
+  :Select "Edit" on a published item;
+  |Portal|
+  :Load current version into the edit form\n(SCR-07, edit mode);
+  |HR Administrator|
+  :Modify fields (title, body, date,\ncategory, featured flag) and save;
+  |Portal|
+  if (Required fields valid?) then (yes)
+    if (Item still published - no concurrent unpublish?) then (yes)
+      :Persist updated news item;
+      :Append audit entry: editor + timestamp,\npost-edit snapshot (AUD-002, NFR-005 -\nall versions traceable, not just the final one);
+      :Confirm - updated item visible\nto employees (SCR-03, UC-003);
+    else (no - AF-2)
+      :Inform HR: item no longer published;\nedit NOT applied - record retained\nread-only for audit (CON-012);
+    endif
+  else (no - AF-1)
+    :Highlight invalid fields inline (P-05);
+    |HR Administrator|
+    :Correct and resubmit;
+  endif
+else (no - EF-1)
+  :Deny access - redirect to SCR-09 (SEC-006);\nno news item loaded;
+endif
+|HR Administrator|
+:See confirmation, notice, or validation errors;
+stop
+@enduml
+```
+
 #### Compact UI flow references — remaining UCs
+
+UC-003 and UC-009 were promoted to full storyboards (SB-06, SB-07) in Elaboration Iter 4; their compact rows are absorbed into the storyboard tables above. UC-005/006/007 remain compact-referenced here — SB-05 visualizes their shared R001-bar flow; these rows carry their per-UC AF/EF frames and criteria.
 
 | UC | Screen(s) | Main-flow frames (user action → system response) | Alternative / exception frames | Criteria |
 |---|---|---|---|---|
 | UC-002 (FR-005) | SCR-02 | Select "My Clocking History" → current-month table (Date, Clock In, Clock Out, Hours, Status) rendered from PostgreSQL | AF-1 empty state; AF-2 queued-not-yet-synced note; EF-1 "History temporarily unavailable" inline | USA-001, USA-008 |
-| UC-003 (FR-007) | SCR-01, SCR-03 | Load → featured banner STACK at top (ALL featured items render their own banner, ordered newest first — P-02, stakeholder decision Iter 2; SCR-03 wireframe) + list newest-first; category chips (All/General/HR/IT/Events) → filtered list (the stack renders per UC-003 step 4; the filter applies to the list, steps 5–6) | AF-1 "No news in this category"; AF-2 empty state; EF-1 "News temporarily unavailable" inline | USA-001, USA-007 |
 | UC-005 (FR-001) | SCR-05 | Open [HR role] → all-employees table; filter by employee / date range → matching events, names resolved from AD on demand | AF-1 "No clocking records match"; AF-2 AD user id shown, display attributes marked unavailable; AF-3 missing display fields blank, employee NOT removed, no error, blank never substituted (R001 behavioural bar — stakeholder-confirmed; clause d propagated Iter 3); EF-1 role denial → SCR-09 | SEC-006, USA-008 |
 | UC-006 (FR-002) | SCR-05 | Select month + "Export CSV" → file download (ISO-8601 with explicit offset, per stakeholder decision) | AF-1 "No clocking records for this month"; AF-2 "Directory temporarily unavailable" — export aborted, no partial file; AF-3 missing display fields as blank cells, every event row present, no abort, blank cells never substituted (R001 behavioural bar — stakeholder-confirmed; clause d propagated Iter 3) | INT-005, SEC-006 |
 | UC-007 (FR-003) | SCR-06 | Open [HR role] → locate employee (AD display data, read-only) → select category from FIXED list → confirm → mapping persisted + audited | AF-1 same category → "unchanged", nothing persisted, no audit entry; AF-2 "Directory temporarily unavailable"; AF-3 missing display fields blank, employee still locatable, no error, blank never substituted (R001 behavioural bar — stakeholder-confirmed; clause d propagated Iter 3) | CON-013, AUD-004 |
-| UC-009 (FR-008) | SCR-08 → SCR-07 (edit mode) | Select published item → form loads current version → modify + save → updated, audited (all versions traceable) | AF-1 inline validation; AF-2 "no longer published" notice, edit not applied; EF-1 role denial → SCR-09 | AUD-002, SEC-006 |
 
 #### Design-reference reconciliations (CON-011 — R007 mitigation)
 
@@ -987,7 +1089,7 @@ The design reference is authoritative for the visual layer; three reconciliation
 
 #### Storyboard validation status
 
-Storyboards SB-01…SB-05 are submitted for stakeholder validation with this iteration's review (STK-001 sponsor, STK-003 end-user representatives). **SB-05 visualizes the R001 behavioural bar exactly as stakeholder-confirmed — now FOUR clauses** (clause d added at the Iter 2 verdict gate: a missing attribute is displayed as missing, never substituted) — the same four clauses the disposable-directory validation proves empirically with deliberately-seeded gaps, including substitution-attempt fixtures (UC-004 S4 bar walk; R001 PoC, Work Item 7). Any feedback is recorded in the Review Record and traced to requirement impacts — the prototype-as-probe principle. The User-Interface Prototype artifact is **[OMITTED — trigger not fired per Development Case §5.2]**; these storyboards inside the Use-Case Model, plus the Boundary Classes and Navigation Map (now with Salt wireframes for SCR-01, SCR-03, and SCR-04) in the Design Model, carry the interaction design. The featured-banner stacking contract (stakeholder decision, Iter 2) is visualized in the SCR-03 wireframe and stated explicitly in SB-03 frame 4 and the UC-003 reference — submitted for stakeholder validation with this iteration's review. Full UI traceability: Design Model §Traceability.
+Storyboards SB-01…SB-07 are submitted for stakeholder validation with this iteration's review (STK-001 sponsor, STK-003 end-user representatives). **SB-05 visualizes the R001 behavioural bar exactly as stakeholder-confirmed — now FOUR clauses** (clause d added at the Iter 2 verdict gate: a missing attribute is displayed as missing, never substituted) — the same four clauses the disposable-directory validation proves empirically with deliberately-seeded gaps, including substitution-attempt fixtures (UC-004 S4 bar walk; R001 PoC, Work Item 7). **SB-06 (added Iter 4) visualizes the featured-banner stacking contract** (stakeholder decision, Iter 2, recorded verbatim: "newest first" — stack ALL featured banners, ordered newest first) in the interaction sequence of the adoption-gateway flow — the same contract the SCR-03 wireframe renders; **SB-07 (added Iter 4) visualizes the audited-edit flow** (NFR-005/AUD-002 — all versions traceable) completing the news-lifecycle storyboard set (publish SB-03 → edit SB-07 → unpublish SB-04). Any feedback is recorded in the Review Record and traced to requirement impacts — the prototype-as-probe principle. The User-Interface Prototype artifact is **[OMITTED — trigger not fired per Development Case §5.2]**; these storyboards inside the Use-Case Model, plus the Boundary Classes and Navigation Map (with Salt wireframes for SCR-01, SCR-03, and SCR-04) in the Design Model, carry the interaction design. Full UI traceability: Design Model §Traceability.
 ## Traceability
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
