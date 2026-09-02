@@ -14,7 +14,9 @@ public interface IAuthProvider
 {
     void ConfigureOidc(WebApplicationBuilder builder, KeycloakClientOptions options);
 
-    /// <summary>Constructs the issuer's authorize URL — the portal's half of the redirect flow.</summary>
+    /// <summary>Constructs the issuer's authorize URL — the portal's half of the redirect flow.
+    /// The state parameter is carried through to the issuer; round-trip state validation on the
+    /// callback path is [DEFERRED — lands with the session mechanism, Construction].</summary>
     string BuildAuthorizeRedirectUrl(string redirectUri, string state);
 
     /// <summary>Completes the redirect flow: exchanges the authorization code for a token, validates it via the issuer's JWKS, and returns the authenticated user.</summary>
@@ -47,7 +49,11 @@ public sealed class KeycloakAuthProvider(ITokenExchangeClient tokenExchange, IJw
         if (string.IsNullOrWhiteSpace(redirectUri))
             throw new ArgumentException("The redirect URI is required.", nameof(redirectUri));
         if (string.IsNullOrWhiteSpace(state))
-            throw new ArgumentException("The state parameter is required (CSRF protection).", nameof(state));
+            // F-CR-E3-3: the state parameter is required so every challenge carries one, but it is
+            // NOT round-trip validated on the callback path — no expected-state storage exists yet.
+            // Round-trip state validation is [DEFERRED — lands with the session mechanism,
+            // Construction]; as of this phase the parameter provides no CSRF protection.
+            throw new ArgumentException("The state parameter is required.", nameof(state));
 
         var authorize = options.Authority.TrimEnd('/') + AuthorizeEndpointPath;
         return $"{authorize}?client_id={Uri.EscapeDataString(options.ClientId)}"
@@ -258,6 +264,11 @@ public sealed class OidcMiddleware(RequestDelegate next, IAuthProvider authProvi
         }
 
         // Unauthenticated: challenge — redirect to the issuer's authorize endpoint.
+        // F-CR-E3-3: the state parameter is generated per challenge but is NOT round-trip validated
+        // on the callback path — no expected-state storage exists yet. Round-trip state validation
+        // is [DEFERRED — lands with the session mechanism, Construction]. The R003 acceptance
+        // criteria (the portal consumes and validates an OIDC token correctly) are unaffected:
+        // state validation is a session-flow concern, not a token-validation concern.
         context.Response.Redirect(authProvider.BuildAuthorizeRedirectUrl(options.CallbackPath, Guid.NewGuid().ToString("N")));
     }
 }
