@@ -28,6 +28,16 @@
 #               Code Reviewer: APPROVED (review 5088169517); pre-merge CI green (run 33616354216)
 #   Integration COMPLETE: R001 + R003 + R004 mechanisms on iteration/E1
 #
+# Integration record (Integrator — Elaboration Iteration 4, incremental merges):
+#   2026-09-02  PR #7 MERGED — R003 state-comment correction (F-CR-E3-3 remediation)
+#               (COMP-006/CLS-010; OidcMiddleware state-parameter comment — honest
+#               [DEFERRED — lands with the session mechanism, Construction] marker at
+#               all three overstated-CSRF locations; comment-only diff, 1 file +13/-2)
+#               merge SHA 13d0a088021fe78bf6e3e80b2df8e89a6723d32f
+#               Code Reviewer: APPROVED (review 5090059324); pre-merge CI green (run 33632200967)
+#               post-merge verification: the CI run triggered by this push on iteration/E4
+#               (result recorded in the E4 iteration-close PR body)
+#
 # PlantUML dependency sketch:
 # @startuml
 # package "Layer 1: Infrastructure" {
