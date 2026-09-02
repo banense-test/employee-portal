@@ -177,44 +177,47 @@ All 10 UCs assigned; UC IDs verified against the Use-Case Model authority (LCO F
 | Fine plan | **Built at LCA sanction, not before** — planning beyond the current horizon in fine-grained detail is waste; the coarse baseline above is the commitment |
 | Key risks | R010 (STK-004 deliverables — **the written request is issued at Construction Iter 1 plan-build through the stakeholder-facing channel, STK-001 relaying to STK-004 per the Vision's engagement model; trigger: STK-004 confirmation by Construction Iter 1 start**), R008, R002 (adoption design) |
 ## Resources
-### Agent Role Profile — Elaboration Iteration 4 (record-propagation pass)
+### Agent Role Profile — Elaboration Iteration 5 (final record-correction pass)
 
 | Agent Role | Discipline | Intensity | Active This Pass | Token Budget | Key Deliverable |
 |---|---|---|---|---|---|
-| Software Architect | Analysis & Design | High | Yes | ~1,610K | A-32 PoC results ledger (the R6 evidence package core — the one Major) + A-33 SAD criterion 3 + A-36 ARCH-6 fourth clause |
-| Test Designer / Test Manager | Test | Medium | Yes | ~300K | A-34 Test Case summary reconciliation + A-35 TES mission verdict update |
-| Process Engineer | Environment | Low | Yes | ~90K | Development Case ARCH-6 gap flag closure on A-36 verification |
-| Review Coordinator + Management Reviewer | Project Management | High | Yes | ~500K | R6 re-presentation entry gate + fresh sanction request to STK-001 |
-| Project Manager | Project Management | Medium | Yes | ~250K | Pass tracking; findings-ledger closure verification; Iteration Assessment at pass close |
-| **Total** | | | | **~2,750K** | |
+| Test Manager | Test | Medium | Yes | ~1,200K | A-37 TES remainder-enumerations update (the one Major — R6 evidence-package internal consistency) |
+| Software Architect | Analysis & Design | Medium | Yes | ~600K | A-38 PoC sha citation + the Issue #9 closure on the verified A-32 evidence |
+| Process Engineer | Environment | Low | Yes | ~600K | A-39 Development Case status-claims update (three locations, per the DC's own same-pass discipline) |
+| All landing owners (same-pass discipline) | Cross-discipline | — | Yes | ~800K | Every record enumerating what remains updated IN THIS PASS when A-37…A-39 land (R014 mitigation) |
+| Reviewer lens | Project Management | High | Yes | ~500K | Findings-ledger closure on verified corrections (TES F3, PoC F3, DC F4) |
+| Four review lenses + Review Coordinator + Management Reviewer | Project Management | High | Yes | ~16,000K | 4-lens cumulative re-review of ALL 13 artifacts (the re-review tax) + the R6 re-presentation entry gate + fresh sanction request to STK-001 |
+| Project Manager | Project Management | Medium | Yes | ~1,300K | Pass tracking; same-pass discipline enforcement; Iteration Assessment at pass close |
+| **Total** | | | | **~21,000K** | |
 
-> The Implementer, Code Reviewer, Integrator, System Analyst, Designer, and Test Designer's execution roles are NOT active this pass — no code, no design, no new validation (stakeholder-confirmed path). The three narrative-tracked Code Reviewer Minors (F-CR-E3-1/2/3) are Construction-scope remediations with recorded owners, not this pass's work.
+> The Implementer, Code Reviewer, Integrator, System Analyst, Designer, and Test Designer's execution roles are NOT active this pass — no code, no design, no new validation (stakeholder-confirmed path). The 2 narrative-tracked Code Reviewer Minors (F-CR-E3-1/2) are Construction-scope/Designer-owned remediations with recorded owners, not this pass's work.
 
 ### Budget Split Across Disciplines
 
 | Discipline | Token Share | Rationale |
 |---|---|---|
-| Analysis & Design | ~59% | The PoC results ledger is the R6 evidence package's core artifact (PoC F2, the one Major) — the pass's P1; the SAD criterion-3 correction and ARCH-6 extension ride the same role |
-| Test | ~11% | Two record corrections (Test Case summary; TES verdict) from the observed per-case record |
-| Project Management | ~27% | The R6 gate itself (coordinator-enforced entry verification + fresh sanction request) + PM pass tracking and close assessment |
-| Environment | ~3% | One flag closure on verification |
+| Project Management (review + gate + PM) | ~85% | The re-review tax (4 lenses × 13 artifacts, ~12,500K) + the R6 gate (~3,500K) + findings closure (~500K) + PM tracking and close assessment (~1,300K) — the dominant terms, priced INTO the box per the Iter 4 lesson |
+| Test | ~6% | The one Major (A-37 — TES remainder-enumerations) |
+| Analysis & Design | ~3% | A-38 PoC sha citation + the Issue #9 closure |
+| Environment | ~3% | A-39 DC status-claims update |
+| Cross-discipline (same-pass discipline) | ~4% | R014 mitigation — every landing owner updates every record enumerating what remains, in this pass |
 
 ### Two Clocks (never summed)
 
-| Clock | Elaboration Iteration 4 (record-propagation pass) | Basis |
+| Clock | Elaboration Iteration 5 (final record-correction pass) | Basis |
 |---|---|---|
-| Agent work | ~2,750K tokens planned (box = work-item sum; no headroom — record corrections carry no PR-loop risk); elapsed time measured at pass close | Budget box [ASSUMPTION — record-correction content class; basis: the record-side iterations' measured per-artifact correction cost, scaled to six targeted section evolutions plus the R6 gate] |
-| Human gates | **Estimate NONE** — bounded in Risk List R012 (14-day suspension ceiling; nothing auto-filled). Mitigation: in-round stakeholder answering, as measured at LCO (0s), Iter 1 (0:35:14), Iter 2 (10:01:08), Iter 3 (0:00:00 — 20 interactions, all in-round). The R6 fresh sanction request is the pass's one stakeholder touchpoint | Planning rule (Review Record A-13/A-15); measured actuals |
+| Agent work | ~21,000K tokens planned (box = work-item sum; no headroom — record corrections carry no PR-loop risk; the re-review tax is the dominant term and is priced IN); elapsed time measured at pass close | Budget box [ASSUMPTION — record-propagation + re-review-tax content class; basis: the measured Iter 4 actual (24,830,875) with the correction count scaled 5→3 and the re-review tax held constant, plus the R6 gate] |
+| Human gates | **Estimate NONE** — bounded in Risk List R012 (14-day suspension ceiling; nothing auto-filled). Mitigation: in-round stakeholder answering, as measured at LCO (0s), Iter 1 (0:35:14), Iter 2 (10:01:08), Iter 3 (0:00:00), Iter 4 (0:00:00 — 22 interactions, the heaviest load of the phase). The R6 fresh sanction request is the pass's one stakeholder touchpoint | Planning rule (Review Record A-13/A-15); measured actuals |
 
-### Iteration 3 Actuals (recorded at close — the basis the pass box is sized against)
+### Iteration 4 Actuals (recorded at close — the basis the pass box is sized against)
 
-| Metric | Planned (Iter 3) | Actual (measured) | Variance |
+| Metric | Planned (Iter 4) | Actual (measured) | Variance |
 |---|---|---|---|
-| Token spend | ~12,500K box; ~9,255K work-item sum | 27,143,633 | ~2.17× the box — root cause: CONTENT CLASS (the box was sized from record-side iterations; Iter 3 carried the full code-delivery chain + 4-lens cumulative re-review + fourth-clause propagation). The ~3,245K rework headroom was NOT consumed by PR loops (all 3 PRs approved first pass) — the overrun was delivery volume, not rework |
-| Agent elapsed time | Measured at close | 3:35:12 | More work in less time than Iter 2 (4:41:27) — 22 invocations at higher parallelism; the code chain ran through 5 roles |
-| Stakeholder queue | Estimate NONE (R012) | 0:00:00 | 20 interactions, ALL answered in-round — the Iter 2 process-defect growth did not recur; emission discipline held |
-| Agent invocations | — | 22 | 9 roles active |
-| User interactions | — | 20 | R6-path confirmation + framing directive + verdict-gate contribution ("nothing else new") + review consultations |
+| Token spend | ~2,750K box (work-item sum = box; no headroom) | 24,830,875 | ~9.0× the box — root cause: the RE-REVIEW TAX (the box priced only the pass's corrections; the measured cost is dominated by the 4-lens × 13-artifact cumulative re-review, a code handoff the plan declared out of scope (PR #7), the 22-interaction contribution cycle, and the PM close-pass). The decisive evidence: a no-code pass cost ~92% of the code-delivering Iter 3 — the accumulated surface, not the delivery content, dominates spend |
+| Agent elapsed time | Measured at close | 2:58:00 | Work time; never summed with queue; decreased vs Iter 3 (3:35:12) while token spend held (~92%) — the cost is long-context reasoning, not wall-clock work; 23 invocations at high parallelism |
+| Stakeholder queue | Estimate NONE (R012) | 0:00:00 | 22 interactions, ALL answered in-round — the heaviest interaction load of the phase, zero queue; second consecutive zero-queue iteration; the emission-format standing rule held under load |
+| Agent invocations | — | 23 | 5 roles active + the Code Reviewer gate |
+| User interactions | — | 22 | Verdict-gate contribution ("Close all findings and issues opened") + review consultations |
 | Artifacts | — | 13 | Inventory unchanged |
 | Avg quality | — | 9.9 / 10 | Reviewer-assessed |
 ## Use Cases and Scenarios Addressed
