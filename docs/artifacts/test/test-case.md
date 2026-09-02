@@ -280,7 +280,7 @@ end note
 | TC-008 | UC-001 / DAT-001 / USA-008 — timestamp convention, DST boundary | Unit | Data integrity | xUnit + FakeClock | 1 |
 | TC-009 | UC-004 main — search by name, six fields on card | Integration | Functional + Usability | API driver + disposable LDAP | 1 (R001) |
 | TC-010 | UC-004 AF-1 — no results | Integration | Functional | API driver + disposable LDAP | 2 |
-| TC-011 | UC-004 AF-2 / R001 — behavioural bar: deliberate gaps, three clauses | Integration | Functional (risk validation) | API driver + disposable LDAP | 1 (R001, HIGH) |
+| TC-011 | UC-004 AF-2 / R001 — behavioural bar: deliberate gaps + substitution attempts, FOUR clauses | Integration | Functional (risk validation) | API driver + disposable LDAP | 1 (R001, HIGH) |
 | TC-012 | UC-004 AF-3 — LDAP timeout, no local fallback | Integration | Performance + Reliability | API driver + fault injection | 1 |
 | TC-013 | UC-010 main — unpublish = soft delete + audit | System | Functional + Audit | Browser automation + DB assert | 1 |
 | TC-014 | UC-010 AF-1 — cancel: no change, no audit | System | Functional (adversarial) | Browser automation + DB assert | 2 |
@@ -290,11 +290,11 @@ end note
 | TC-018 | SEC-007 — own-data-only history (UC-002 boundary) | System | Security (adversarial) | API driver + stub issuer | 2 |
 | TC-019 | R003 / SEC-001/002/003 — token validation matrix | Integration | Security (risk validation) | API driver + stub issuer | 1 (R003) |
 | TC-020 | UC-001 AF-1 / REL-002 — queue capacity ≥ 10 boundary | System | Reliability (adversarial) | Browser automation + drop control | 2 |
-| TC-021 | UC-005 AF-3 / R001 — every event row rendered, blank display fields | Integration | Functional (risk validation) | API driver + disposable LDAP + DB assert | 1 (R001, HIGH) |
-| TC-022 | UC-006 AF-3 / R001 — every CSV row written, blank cells, no abort | Integration | Functional (risk validation) | API driver + disposable LDAP + DB assert | 1 (R001, HIGH) |
-| TC-023 | UC-007 AF-3 / R001 — employee locatable/selectable with blank fields | Integration | Functional (risk validation) | API driver + disposable LDAP + DB assert | 1 (R001, HIGH) |
+| TC-021 | UC-005 AF-3 / R001 — every event row rendered, blank display fields, no substitution | Integration | Functional (risk validation) | API driver + disposable LDAP + DB assert | 1 (R001, HIGH) |
+| TC-022 | UC-006 AF-3 / R001 — every CSV row written, blank cells, no abort, no substitution | Integration | Functional (risk validation) | API driver + disposable LDAP + DB assert | 1 (R001, HIGH) |
+| TC-023 | UC-007 AF-3 / R001 — employee locatable/selectable with blank fields, no substitution | Integration | Functional (risk validation) | API driver + disposable LDAP + DB assert | 1 (R001, HIGH) |
 
-**Coverage check:** UC-001 — main (TC-001/002), AF-1 (TC-004/005/006/020), AF-2 (TC-007), AF-3 (TC-003), timestamp convention (TC-008). UC-004 — main (TC-009), AF-1 (TC-010), AF-2 (TC-011), AF-3 (TC-012). UC-005 — AF-3 (TC-021). UC-006 — AF-3 (TC-022). UC-007 — AF-3 (TC-023). UC-010 — main (TC-013), AF-1 (TC-014), AF-2 (TC-015), audit/soft-delete invariants (TC-016). Cross-cutting: SEC-006 (TC-017), SEC-007 (TC-018), R003/SEC-001/002/003 (TC-019). **The R001 behavioural bar is covered on all four AD-reading consumers (TC-011 + TC-021/022/023), each with an adversarial clause walk against deliberately-seeded gaps.** Every flow of the three priority UCs has at least one adversarial case; no case exists without a UC or declared-mechanism trace.
+**Coverage check:** UC-001 — main (TC-001/002), AF-1 (TC-004/005/006/020), AF-2 (TC-007), AF-3 (TC-003), timestamp convention (TC-008). UC-004 — main (TC-009), AF-1 (TC-010), AF-2 (TC-011), AF-3 (TC-012). UC-005 — AF-3 (TC-021). UC-006 — AF-3 (TC-022). UC-007 — AF-3 (TC-023). UC-010 — main (TC-013), AF-1 (TC-014), AF-2 (TC-015), audit/soft-delete invariants (TC-016). Cross-cutting: SEC-006 (TC-017), SEC-007 (TC-018), R003/SEC-001/002/003 (TC-019). **The FOUR-clause R001 behavioural bar is covered on all four AD-reading consumers (TC-011 + TC-021/022/023), each with an adversarial clause walk against deliberately-seeded gaps AND substitution-attempt fixtures (A-28, Iter 3) — clause (d) can actually fail.** Every flow of the three priority UCs has at least one adversarial case; no case exists without a UC or declared-mechanism trace.
 
 ### Detailed Test Case Specifications
 
@@ -458,7 +458,7 @@ stop
 | Field | Value |
 |---|---|
 | Traces | UC-004 main flow; FR-010; USA-003; AC-003; SEQ-004 |
-| Preconditions | Disposable LDAP directory loaded (60 entries, § Test Data); E-001 authenticated; target entry "Gómez, Elena" fully populated in office O1 |
+| Preconditions | Disposable LDAP directory loaded (64 entries, § Test Data); E-001 authenticated; target entry "Gómez, Elena" fully populated in office O1 |
 | Input data | Search criteria: name = "Gómez" |
 | Procedure | 1. Open Directory (SCR-04). 2. Enter name "Gómez". 3. Press Search. 4. Inspect result cards. |
 | Expected outcome | All matching colleagues returned; the target card shows ALL SIX corporate fields on the card (name, job title, department, office, email, extension) — no detail view needed (USA-003); end-to-end ≤ 10 s (AC-003) |
@@ -483,37 +483,38 @@ stop
 
 ---
 
-**TC-011 — UC-004 AF-2 / R001: behavioural bar — deliberate gaps, three clauses (Integration, risk validation — HIGH)**
+**TC-011 — UC-004 AF-2 / R001: behavioural bar — deliberate gaps + substitution attempts, FOUR clauses (Integration, risk validation — HIGH)**
 
 | Field | Value |
 |---|---|
-| Traces | UC-004 AF-2; FR-010; **R001 behavioural bar (stakeholder decision, Elab Iter 2 — replaces the dropped >90% statistical criterion)**; USA-003; SEQ-004; CLS-009 MapEntry; INT-010 postcondition extension |
-| Preconditions | Disposable LDAP directory loaded with DELIBERATE attribute gaps (§ Test Data: `ldap-o1-019` missing extension; `ldap-o2-007` missing job title; `ldap-o3-011` missing department — the UC-004 S4 bar walk; plus one empty-string attribute and the D-9 unresolvable uid e099); E-001 authenticated |
-| Input data | One search per gapped entry's match criteria (name fragment matching each), plus one search matching all three gapped entries at once |
+| Traces | UC-004 AF-2; FR-010; **R001 behavioural bar (stakeholder decisions, Elab Iter 2 + Iter 2 verdict gate — FOUR clauses; replaces the dropped >90% statistical criterion)**; USA-003; SEQ-004; CLS-009 MapEntry; INT-010 postcondition extension |
+| Preconditions | Disposable LDAP directory loaded with DELIBERATE attribute gaps (§ Test Data: `ldap-o1-019` missing extension; `ldap-o2-007` missing job title; `ldap-o3-011` missing department — the UC-004 S4 bar walk; plus one empty-string attribute and the D-9 unresolvable uid e099) **AND substitution-attempt fixtures (A-28, Iter 3): `ldap-o1-017` missing department (a "General" default temptation), `ldap-o2-021` missing office (a "Central" first-office fallback), `ldap-o3-014` missing title (an "N/A" placeholder), `ldap-o1-018` fully-gapped (all display attributes missing)**; E-001 authenticated |
+| Input data | One search per gapped/substitution-attempt entry's match criteria (name fragment matching each), plus one search matching all of them at once |
 | Procedure | See procedure diagram below |
-| Expected outcome | **Clause (a):** every gapped entry is RENDERED whether or not its attributes are complete. **Clause (b):** no entry is removed from the results for a missing attribute. **Clause (c):** a missing attribute never raises an error — missing fields render BLANK; the empty-string attribute renders blank too (null-vs-empty mapping edge in CLS-009 MapEntry); no cross-mapped attributes |
-| Pass criteria | ASSERT-1a/1b/1c hold for all three gapped entries; empty-string edge renders blank; zero errors raised |
-| Failure scenario attacked | R001's declared failure mode: an entry with a missing attribute hidden entirely (the directory shows gaps), or a missing attribute raising an error that breaks the search — the exact HIGH risk this validation retires empirically. The prior statistical criterion could not fail against self-seeded data; the behavioural clauses CAN fail — that is what makes them evidence |
-| Automation + interface points | API driver + disposable LDAP; INT-008 Search, INT-010 ILdapGateway.Search + MapEntry; fixture: disposable LDAP directory (NOT production AD — production fidelity is R011, Construction) |
+| Expected outcome | **Clause (a):** every gapped and substitution-attempt entry is RENDERED whether or not its attributes are complete. **Clause (b):** no entry is removed from the results for a missing attribute. **Clause (c):** a missing attribute never raises an error — missing fields render BLANK; the empty-string attribute renders blank too (null-vs-empty mapping edge in CLS-009 MapEntry); no cross-mapped attributes. **Clause (d):** the rendered value for every missing field is EXACTLY blank — `ldap-o1-017`'s department is NOT "General", `ldap-o2-021`'s office is NOT "Central", `ldap-o3-014`'s title is NOT "N/A", and the fully-gapped `ldap-o1-018` inherits NO attribute from any other entry. Blank is the answer — never a default, a placeholder, a guessed value, or another employee's value |
+| Pass criteria | ASSERT-1a/1b/1c/1d hold for all gapped and substitution-attempt entries; empty-string edge renders blank; zero errors raised; zero substitutions observed |
+| Failure scenario attacked | R001's declared failure mode: an entry with a missing attribute hidden entirely (the directory shows gaps), or a missing attribute raising an error that breaks the search — AND the substitution failure mode the fourth clause exists for: a missing department silently rendered as "General", a missing office as "Central" (the first office in the list), a missing title as "N/A", or a fully-gapped entry inheriting a colleague's attribute. The prior statistical criterion could not fail against self-seeded data; the behavioural clauses CAN fail — that is what makes them evidence |
+| Automation + interface points | API driver + disposable LDAP; INT-008 Search, INT-010 ILdapGateway.Search + MapEntry; fixture: disposable LDAP directory with substitution-attempt fixtures (NOT production AD — production fidelity is R011, Construction) |
 
 **Test Procedure — TC-011 (R001 behavioural bar, disposable directory, UC-004 declared home):**
 
 ```plantuml
 @startuml
-title Test Procedure - TC-011: R001 Behavioural Bar (HIGH risk, disposable directory, UC-004)
+title Test Procedure - TC-011: R001 Behavioural Bar (HIGH risk, disposable directory, UC-004)\nFOUR clauses - clause (d) verified against substitution-attempt fixtures (A-28, Iter 3)
 
 start
-:Fixture: disposable LDAP directory - 60 synthetic\nentries, 3 offices (O1/O2/O3, 20 each),\ndeliberate gaps per UC-004 S4:\nldap-o1-019 missing extension,\nldap-o2-007 missing job title,\nldap-o3-011 missing department;\nplus one empty-string attribute\n(null-vs-empty edge) and uid e099\nwith NO AD entry (D-9 extreme);
+:Fixture: disposable LDAP directory - 64 synthetic\nentries, 3 offices (O1/O2/O3), deliberate gaps\nper UC-004 S4: ldap-o1-019 missing extension,\nldap-o2-007 missing job title, ldap-o3-011 missing\ndepartment; empty-string attribute (ldap-o2-013);\nuid e099 with NO AD entry (D-9 extreme);\nSUBSTITUTION-ATTEMPT fixtures (A-28):\nldap-o1-017 missing department ("General"\ndefault temptation), ldap-o2-021 missing office\n("Central" first-office fallback), ldap-o3-014\nmissing title ("N/A" placeholder), ldap-o1-018\nfully-gapped (all display attributes missing);
 :Query via CLS-009 LdapGateway\n(INT-010 ILdapGateway.Search, LDAP v3 read-only);
 if (Query succeeds within 5 s (PRF-003)?) then (yes)
   :Map results to CLS-026 DirectoryEntry\n(six corporate fields, FR-010);
-  :ASSERT-1a clause (a): every gapped entry\nRENDERED - rendered whether or not\nits attributes are complete;
+  :ASSERT-1a clause (a): every gapped and\nsubstitution-attempt entry RENDERED -\nrendered whether or not complete;
   :ASSERT-1b clause (b): no entry removed\nfrom the results for a missing attribute;
   :ASSERT-1c clause (c): no error raised;\nmissing fields render BLANK;\nempty-string attribute renders blank\n(null-vs-empty edge, CLS-009 MapEntry);\nno cross-mapped attribute;
+  :ASSERT-1d clause (d): the rendered value for\nevery missing field is EXACTLY blank -\nldap-o1-017 department is NOT "General",\nldap-o2-021 office is NOT "Central",\nldap-o3-014 title is NOT "N/A", and the\nfully-gapped ldap-o1-018 inherits NO\nattribute from any other entry\n(blank is the answer - never a default,\nplaceholder, guessed value, or\nanother employee's value);
 else (no - UC-004 AF-3 path)
   :ASSERT-2 hard timeout at 5 s;\n"Directory temporarily unavailable";\nno local fallback (CON-006);
 endif
-:Record clause-by-clause results as R001\nempirical evidence (LCA evidence package;\nreal-AD data quality -> Construction R011);
+:Record clause-by-clause results (a-d) as R001\nempirical evidence (LCA evidence package;\nreal-AD data quality -> Construction R011);
 stop
 @enduml
 ```
@@ -655,89 +656,93 @@ stop
 
 ---
 
-**TC-021 — UC-005 AF-3 / R001: behavioural bar on the HR clocking review — every event row rendered (Integration, risk validation — HIGH)**
+**TC-021 — UC-005 AF-3 / R001: behavioural bar on the HR clocking review — every event row rendered, no substitution (Integration, risk validation — HIGH)**
 
 | Field | Value |
 |---|---|
-| Traces | UC-005 AF-3 (stakeholder-confirmed, Elab Iter 2 — answer "Yes"); FR-001; R001 behavioural bar (three clauses); CON-005, CON-006; SEQ-005; CLS-017 (renders every event row); CLS-003 GetDisplayData (INT-008 postcondition extension); D-9 (unresolvable uid → all-null EmployeeDisplayData) |
-| Preconditions | HR-001 authenticated (stub OIDC, HR Administrator token); disposable LDAP directory loaded with deliberate gaps (§ Test Data); PostgreSQL seeded (seed S-4): clocking events this month for `ldap-o1-019` (missing extension), `ldap-o2-007` (missing job title), `ldap-o3-011` (missing department), and `e099` (uid with NO AD entry — the D-9 extreme), plus fully-populated control employees |
+| Traces | UC-005 AF-3 (stakeholder-confirmed, Elab Iter 2 — answer "Yes"; fourth clause added at the Iter 2 verdict gate, propagated Iter 3); FR-001; R001 behavioural bar (FOUR clauses); CON-005, CON-006; SEQ-005; CLS-017 (renders every event row); CLS-003 GetDisplayData (INT-008 postcondition extension); D-9 (unresolvable uid → all-null EmployeeDisplayData) |
+| Preconditions | HR-001 authenticated (stub OIDC, HR Administrator token); disposable LDAP directory loaded with deliberate gaps AND substitution-attempt fixtures (§ Test Data); PostgreSQL seeded (seed S-4): clocking events this month for `ldap-o1-019` (missing extension), `ldap-o2-007` (missing job title), `ldap-o3-011` (missing department), `ldap-o1-017` (missing department — "General" temptation), `ldap-o2-021` (missing office — "Central" fallback), `ldap-o3-014` (missing title — "N/A" placeholder), `ldap-o1-018` (fully-gapped), and `e099` (uid with NO AD entry — the D-9 extreme), plus fully-populated control employees |
 | Input data | Open the all-employees clocking review (SCR-05) with no filter — all events for the current month |
-| Procedure | 1. GET the review data as HR-001. 2. Count rendered event rows; compare to the seeded event count. 3. Inspect the rows for the three gapped employees and e099. 4. Contrast run: LDAP fixture unreachable → reload the review. |
-| Expected outcome | **Clause (a):** EVERY event row is rendered — including rows for the three gapped employees and e099 (D-9: an unresolvable uid maps to all-null display data; the row STAYS). **Clause (b):** no employee is removed from the review for a missing attribute. **Clause (c):** missing display fields render blank; no error raised. Clocking columns (event type, timestamp) are always complete — portal data from PostgreSQL, never AD data. **AF-2 contrast:** with LDAP unreachable, events remain viewable from PostgreSQL; the AD user id is shown and display attributes are marked unavailable — AF-2 (directory down) and AF-3 (attribute missing) are distinct contracts |
-| Pass criteria | All three clauses hold for every gapped row; rendered row count == seeded event count; no error in either run; AF-2 contrast behaves per its own contract |
-| Failure scenario attacked | An employee with missing AD attributes vanishing from the HR review — the review silently under-reports attendance (the exact R001 failure mode in the HR consumer); or an unresolvable uid crashing the review load; or AF-3 mis-implemented as AF-2 (the whole review blocked because one attribute is missing) |
-| Automation + interface points | API driver + disposable LDAP + DB assert; INT-006 (ICLK review query), INT-008 GetDisplayData (postcondition extension), INT-010 ILdapGateway; fixtures: stub OIDC (HR token), disposable LDAP, PG dev |
+| Procedure | 1. GET the review data as HR-001. 2. Count rendered event rows; compare to the seeded event count. 3. Inspect the rows for the gapped, substitution-attempt, and e099 employees. 4. Contrast run: LDAP fixture unreachable → reload the review. |
+| Expected outcome | **Clause (a):** EVERY event row is rendered — including rows for the gapped employees, the substitution-attempt employees, and e099 (D-9: an unresolvable uid maps to all-null display data; the row STAYS). **Clause (b):** no employee is removed from the review for a missing attribute. **Clause (c):** missing display fields render blank; no error raised. **Clause (d):** the display values for every missing field are EXACTLY blank — the department column is NOT "General", the office column is NOT "Central", the title column is NOT "N/A", and no row inherits an attribute from another employee's row. Clocking columns (event type, timestamp) are always complete — portal data from PostgreSQL, never AD data. **AF-2 contrast:** with LDAP unreachable, events remain viewable from PostgreSQL; the AD user id is shown and display attributes are marked unavailable — AF-2 (directory down) and AF-3 (attribute missing) are distinct contracts |
+| Pass criteria | All four clauses hold for every gapped and substitution-attempt row; rendered row count == seeded event count; no error in either run; AF-2 contrast behaves per its own contract |
+| Failure scenario attacked | An employee with missing AD attributes vanishing from the HR review — the review silently under-reports attendance (the exact R001 failure mode in the HR consumer); an unresolvable uid crashing the review load; AF-3 mis-implemented as AF-2 (the whole review blocked because one attribute is missing) — AND the substitution failure mode: a missing department silently rendered as "General" or a missing office as "Central" (the first office in the list), which reads as plausible data in an attendance report and is therefore worse than a blank |
+| Automation + interface points | API driver + disposable LDAP + DB assert; INT-006 (ICLK review query), INT-008 GetDisplayData (postcondition extension), INT-010 ILdapGateway; fixtures: stub OIDC (HR token), disposable LDAP (substitution-attempt fixtures), PG dev |
 
 ---
 
-**TC-022 — UC-006 AF-3 / R001: behavioural bar on the CSV export — every row written, blank cells, no abort (Integration, risk validation — HIGH)**
+**TC-022 — UC-006 AF-3 / R001: behavioural bar on the CSV export — every row written, blank cells, no abort, no substitution (Integration, risk validation — HIGH)**
 
 | Field | Value |
 |---|---|
-| Traces | UC-006 AF-3 (stakeholder-confirmed, Elab Iter 2 — answer "Yes"); FR-002; R001 behavioural bar (three clauses); INT-005 / STD-003 (CSV column contract); CON-006 (ad_user_id always present); SEQ-006; CLS-006 ReportExportService; INT-013 postcondition extension; D-9 |
-| Preconditions | HR-001 authenticated; disposable LDAP with deliberate gaps; PostgreSQL seeded (seed S-4): the same month's events for the three gapped employees, e099, and control employees |
+| Traces | UC-006 AF-3 (stakeholder-confirmed, Elab Iter 2 — answer "Yes"; fourth clause added at the Iter 2 verdict gate, propagated Iter 3); FR-002; R001 behavioural bar (FOUR clauses); INT-005 / STD-003 (CSV column contract); CON-006 (ad_user_id always present); SEQ-006; CLS-006 ReportExportService; INT-013 postcondition extension; D-9 |
+| Preconditions | HR-001 authenticated; disposable LDAP with deliberate gaps AND substitution-attempt fixtures; PostgreSQL seeded (seed S-4): the same month's events for the gapped employees, the substitution-attempt employees, e099, and control employees |
 | Input data | Select the seeded month; Export CSV |
-| Procedure | 1. Request the export. 2. Parse the CSV. 3. Count data rows; compare to the seeded event count. 4. Inspect the rows for the gapped employees and e099. 5. Verify event_timestamp format (ISO-8601 with explicit offset). 6. Contrast run: LDAP fixture unreachable → request the export again. |
-| Expected outcome | **Clause (a):** EVERY event row is written — CSV data-row count == seeded event count, including the gapped employees and e099. **Clause (b):** no row dropped for a missing attribute. **Clause (c):** missing display fields (employee_name, department, office) are BLANK CELLS; no abort, no error. ad_user_id (column 1) always present; event_timestamp ISO-8601 with explicit offset (America/Havana, DST-aware); event_type IN/OUT. **AF-2 contrast:** with LDAP unreachable the export ABORTS with "Directory temporarily unavailable" and NO partial file is produced — AF-2 (no identity resolvable at all) and AF-3 (identity resolved, display fields blank) are distinct contracts |
-| Pass criteria | Row count exact; blank cells present on gapped rows; no abort; ad_user_id complete on every row; contrast run aborts with no partial file |
-| Failure scenario attacked | The export aborting or dropping rows when one employee's department is missing — payroll loses a whole employee's attendance from the report; or AF-3 swallowing AF-2 — a partial file with unresolved identities delivered to payroll, misleading for records use |
-| Automation + interface points | API driver + disposable LDAP + DB assert; INT-013 (IReportExport), INT-008 GetDisplayData (via CLS-003), INT-014 (ITIME — ISO-8601 offset), INT-005/STD-003 (CSV column contract); fixtures: stub OIDC, disposable LDAP, PG dev |
+| Procedure | 1. Request the export. 2. Parse the CSV. 3. Count data rows; compare to the seeded event count. 4. Inspect the rows for the gapped, substitution-attempt, and e099 employees. 5. Verify event_timestamp format (ISO-8601 with explicit offset). 6. Contrast run: LDAP fixture unreachable → request the export again. |
+| Expected outcome | **Clause (a):** EVERY event row is written — CSV data-row count == seeded event count, including the gapped employees, the substitution-attempt employees, and e099. **Clause (b):** no row dropped for a missing attribute. **Clause (c):** missing display fields (employee_name, department, office) are BLANK CELLS; no abort, no error. **Clause (d):** the parsed cells for every missing field are EXACTLY empty — the department cell is NOT "General", the office cell is NOT "Central", the title cell is NOT "N/A" (on the CSV that reaches payroll, a fabricated department is worse than an empty cell: an empty cell gets questioned, a plausible wrong one does not). ad_user_id (column 1) always present; event_timestamp ISO-8601 with explicit offset (America/Havana, DST-aware); event_type IN/OUT. **AF-2 contrast:** with LDAP unreachable the export ABORTS with "Directory temporarily unavailable" and NO partial file is produced — AF-2 (no identity resolvable at all) and AF-3 (identity resolved, display fields blank) are distinct contracts |
+| Pass criteria | Row count exact; blank cells present on gapped rows; no abort; ad_user_id complete on every row; parsed cells exactly empty (zero substitutions); contrast run aborts with no partial file |
+| Failure scenario attacked | The export aborting or dropping rows when one employee's department is missing — payroll loses a whole employee's attendance from the report; AF-3 swallowing AF-2 — a partial file with unresolved identities delivered to payroll — AND the substitution failure mode the fourth clause exists for: a fabricated department ("General") or office ("Central") written into the payroll CSV, where a plausible wrong value is worse than an empty cell because nobody questions it |
+| Automation + interface points | API driver + disposable LDAP + DB assert; INT-013 (IReportExport), INT-008 GetDisplayData (via CLS-003), INT-014 (ITIME — ISO-8601 offset), INT-005/STD-003 (CSV column contract); fixtures: stub OIDC, disposable LDAP (substitution-attempt fixtures), PG dev |
 
 ---
 
-**TC-023 — UC-007 AF-3 / R001: behavioural bar on worker category assignment — employee locatable and selectable (Integration, risk validation — HIGH)**
+**TC-023 — UC-007 AF-3 / R001: behavioural bar on worker category assignment — employee locatable and selectable, no substitution (Integration, risk validation — HIGH)**
 
 | Field | Value |
 |---|---|
-| Traces | UC-007 AF-3 (stakeholder-confirmed, Elab Iter 2 — answer "Yes"); FR-003; R001 behavioural bar (three clauses); CON-006, CON-013; AUD-004, NFR-005; SEQ-007; CLS-020 CategoryController; CLS-004 CategoryService; INT-009 (ICAT), INT-008 (GetDisplayData) |
-| Preconditions | HR-001 authenticated; disposable LDAP with deliberate gaps; `ldap-o3-011` (missing department) has NO current category mapping; `worker-categories.json` test copy loaded (FIXED list, CON-013) |
-| Input data | Locate `ldap-o3-011` in the employee lookup; select "Operational" from the fixed category list; confirm |
-| Procedure | 1. Query the employee lookup for `ldap-o3-011`. 2. Verify the entry renders with the department blank — still locatable and selectable. 3. Select the category; confirm. 4. Query `worker_categories` + `category_audit` via DB assert. |
-| Expected outcome | **Clause (a):** the employee is RENDERED — locatable and selectable with the missing display field blank. **Clause (b):** not hidden from the lookup. **Clause (c):** no error raised. Post-assignment: mapping persisted (ad_user_id → category, two columns only — CON-006); audit entry appended: actor + timestamp + old value + new value (AUD-004) |
-| Pass criteria | All three clauses hold; mapping persisted; audit entry present with correct actor/old/new values |
-| Failure scenario attacked | An employee with a missing attribute being unlocatable in the lookup — HR cannot assign a category and the assignment function silently loses people (the R001 failure mode in the category consumer); or the assignment persisting WITHOUT its audit entry (NFR-005 violation) |
-| Automation + interface points | API driver + disposable LDAP + DB assert; INT-009 (ICAT Assign), INT-008 GetDisplayData, INT-012 (IAUD append), INT-018 (worker_categories repository), INT-019 (category_audit, Add-only); fixtures: stub OIDC, disposable LDAP, PG dev |
+| Traces | UC-007 AF-3 (stakeholder-confirmed, Elab Iter 2 — answer "Yes"; fourth clause added at the Iter 2 verdict gate, propagated Iter 3); FR-003; R001 behavioural bar (FOUR clauses); CON-006, CON-013; AUD-004, NFR-005; SEQ-007; CLS-020 CategoryController; CLS-004 CategoryService; INT-009 (ICAT), INT-008 (GetDisplayData) |
+| Preconditions | HR-001 authenticated; disposable LDAP with deliberate gaps AND substitution-attempt fixtures; `ldap-o3-011` (missing department) and `ldap-o1-017` (missing department — "General" temptation) have NO current category mapping; `worker-categories.json` test copy loaded (FIXED list, CON-013) |
+| Input data | Locate `ldap-o3-011` and `ldap-o1-017` in the employee lookup; select "Operational" from the fixed category list; confirm |
+| Procedure | 1. Query the employee lookup for `ldap-o3-011` and `ldap-o1-017`. 2. Verify both entries render with the department blank — still locatable and selectable. 3. Verify the category select starts EMPTY for both (no default category pre-selected). 4. Select the category; confirm. 5. Query `worker_categories` + `category_audit` via DB assert. |
+| Expected outcome | **Clause (a):** both employees are RENDERED — locatable and selectable with the missing display field blank. **Clause (b):** neither is hidden from the lookup. **Clause (c):** no error raised. **Clause (d):** the displayed department is EXACTLY blank — NOT "General" — and the category select starts EMPTY: no category is pre-selected or defaulted for a gapped employee (the "default category" temptation); only HR's explicit selection persists. Post-assignment: mapping persisted (ad_user_id → category, two columns only — CON-006); audit entry appended: actor + timestamp + old value + new value (AUD-004) |
+| Pass criteria | All four clauses hold for both employees; mapping persisted; audit entry present with correct actor/old/new values |
+| Failure scenario attacked | An employee with a missing attribute being unlocatable in the lookup — HR cannot assign a category and the assignment function silently loses people (the R001 failure mode in the category consumer; an employee nobody can select is an employee nobody can categorize); the assignment persisting WITHOUT its audit entry (NFR-005 violation) — AND the substitution failure mode: a missing department rendered as "General" letting HR select confidently against a fabricated identity, or a default category silently pre-selected so a gapped employee acquires a category HR never chose |
+| Automation + interface points | API driver + disposable LDAP + DB assert; INT-009 (ICAT Assign), INT-008 GetDisplayData, INT-012 (IAUD append), INT-018 (worker_categories repository), INT-019 (category_audit, Add-only); fixtures: stub OIDC, disposable LDAP (substitution-attempt fixtures), PG dev |
 
 **Test Procedure — TC-011 / TC-021 / TC-022 / TC-023 (shared, R001 behavioural bar — one contract, four consumers):**
 
 ```plantuml
 @startuml
-title R001 Behavioural Bar Validation - One Contract, Four Consumers\nTC-011 (UC-004) / TC-021 (UC-005) / TC-022 (UC-006) / TC-023 (UC-007) - stakeholder-confirmed, Elab Iter 2
+title R001 Behavioural Bar Validation - One Contract, Four Consumers\nTC-011 (UC-004) / TC-021 (UC-005) / TC-022 (UC-006) / TC-023 (UC-007)\nFOUR clauses - clause (d) against substitution-attempt fixtures (A-28, Iter 3)
 
 start
-partition "Fixture - deliberately seeded gaps (stakeholder decision, Elab Iter 2)" {
-  :Load disposable LDAP directory (60 entries, 3 offices)\nwith DELIBERATE gaps: ldap-o1-019 missing extension,\nldap-o2-007 missing job title, ldap-o3-011 missing\ndepartment (UC-004 S4) + one empty-string attribute\n(null-vs-empty edge) + uid e099 with NO AD entry (D-9);
-  :Seed PostgreSQL: clocking events for the gapped\nemployees and for e099 (unresolvable uid);
+partition "Fixture - deliberately seeded gaps + substitution attempts (stakeholder decisions, Elab Iter 2 + verdict gate)" {
+  :Load disposable LDAP directory (64 entries, 3 offices)\nwith DELIBERATE gaps: ldap-o1-019 missing extension,\nldap-o2-007 missing job title, ldap-o3-011 missing\ndepartment (UC-004 S4) + empty-string attribute\n(null-vs-empty edge) + uid e099 with NO AD entry (D-9)\n+ SUBSTITUTION-ATTEMPT fixtures (A-28): ldap-o1-017\nmissing department ("General" temptation), ldap-o2-021\nmissing office ("Central" first-office fallback),\nldap-o3-014 missing title ("N/A" placeholder),\nldap-o1-018 fully-gapped;
+  :Seed PostgreSQL: clocking events for the gapped\nemployees, the substitution-attempt employees,\nand e099 (unresolvable uid);
 }
 partition "TC-011 - UC-004 directory search (declared home, FR-010)" {
-  :E-001 searches criteria matching all three gapped entries;
-  :ASSERT-1a all three entries RENDERED\n(clause a: rendered whether or not complete);
-  :ASSERT-1b none removed from the results\n(clause b: a missing attribute never removes someone);
-  :ASSERT-1c missing fields render BLANK, no error raised\n(clause c) + empty-string attribute renders blank\n(null-vs-empty mapping edge, CLS-009 MapEntry);
+  :E-001 searches criteria matching all gapped and\nsubstitution-attempt entries;
+  :ASSERT-1a all entries RENDERED (clause a);
+  :ASSERT-1b none removed from the results (clause b);
+  :ASSERT-1c missing fields render BLANK, no error (clause c)\n+ empty-string attribute renders blank;
+  :ASSERT-1d rendered values EXACTLY blank - NOT "General",\nNOT "Central", NOT "N/A", no attribute inherited from\nanother entry (clause d - blank is the answer);
 }
 partition "TC-021 - UC-005 HR clocking review (FR-001)" {
   :HR-001 opens SCR-05; load all-employees events;
-  :ASSERT-2a EVERY event row rendered - including rows\nfor gapped employees and e099 (clause a; D-9:\nunresolvable uid -> all-null display data, row stays);
-  :ASSERT-2b no employee removed from the review\n(clause b); clocking columns (event type, timestamp)\nalways complete - portal data, never AD data;
+  :ASSERT-2a EVERY event row rendered - including rows\nfor gapped, substitution-attempt, and e099 entries\n(clause a; D-9: unresolvable uid -> all-null display\ndata, row stays);
+  :ASSERT-2b no employee removed from the review (clause b);\nclocking columns always complete - portal data;
   :ASSERT-2c missing display fields blank, no error (clause c);
+  :ASSERT-2d display values EXACTLY blank - department NOT\n"General", office NOT "Central", title NOT "N/A",\nno cross-employee inheritance (clause d);
   :AF-2 contrast: LDAP fixture unreachable ->\nevents STILL viewable from PostgreSQL;\nad_user_id shown, display attributes marked unavailable;
 }
 partition "TC-022 - UC-006 CSV export (FR-002)" {
   :HR-001 selects the seeded month, Export CSV;
-  :ASSERT-3a EVERY event row written - CSV row count ==\nseeded event count, incl. gapped employees and e099\n(clause a);
-  :ASSERT-3b no row dropped for a missing attribute\n(clause b); ad_user_id (column 1) always present;
+  :ASSERT-3a EVERY event row written - CSV row count ==\nseeded event count (clause a);
+  :ASSERT-3b no row dropped (clause b); ad_user_id\n(column 1) always present;
   :ASSERT-3c missing display fields = blank cells,\nno abort, no error (clause c; STD-003);\nevent_timestamp ISO-8601 with explicit offset;
-  :AF-2 contrast: LDAP unreachable -> export ABORTS,\n"Directory temporarily unavailable", NO partial file\n(AF-2 and AF-3 are distinct contracts);
+  :ASSERT-3d parsed cells EXACTLY empty - the department\ncell is NOT "General", the office cell is NOT "Central",\nthe title cell is NOT "N/A" (clause d - on the CSV\nthat reaches payroll a fabricated department is\nworse than an empty cell);
+  :AF-2 contrast: LDAP unreachable -> export ABORTS,\n"Directory temporarily unavailable", NO partial file;
 }
 partition "TC-023 - UC-007 worker category assignment (FR-003)" {
-  :HR-001 opens SCR-06; locate gapped employee ldap-o3-011;
-  :ASSERT-4a employee RENDERED - locatable and\nselectable with blank display fields (clause a);
+  :HR-001 opens SCR-06; locate gapped employee ldap-o3-011\nand substitution-attempt employee ldap-o1-017;
+  :ASSERT-4a employees RENDERED - locatable and\nselectable with blank display fields (clause a);
   :ASSERT-4b not hidden from the lookup (clause b);
   :ASSERT-4c no error raised (clause c);
+  :ASSERT-4d displayed department EXACTLY blank - NOT\n"General" (clause d); the category select starts\nEMPTY - no category is pre-selected or defaulted\nfor a gapped employee (the "default category"\ntemptation); only HR's explicit selection persists;
   :Select category from the FIXED list (CON-013), confirm;
   :ASSERT-5 mapping persisted: ad_user_id -> category\n(two columns only, CON-006); audit appended:\nactor + timestamp + old + new (AUD-004);
 }
-:Record clause-by-clause results as R001 empirical evidence\n(LCA evidence package; real-AD data quality -> Construction R011);
+:Record clause-by-clause results (a-d) as R001 empirical evidence\n(LCA evidence package; real-AD data quality -> Construction R011);
 stop
 @enduml
 ```
@@ -746,7 +751,38 @@ stop
 
 **Cases deferred to Construction (recorded, not designed here):** UC-002/003/005/006/007/008/009 main-flow functional suites (the AF-3 R001-bar flows of UC-005/006/007 are designed NOW — TC-021…TC-023 — because they are part of the R001 PoC's empirical validation; their main flows remain Construction); PRF-001 full-scale page-load percentile measurement; USA-001/006/007/009 visual-fidelity and accessibility passes; AC-002/AC-004 usability tests. These trace to the Evaluation Mission's out-of-scope boundary and the Iteration Plan's Construction assignments — designing them now would exceed the Development Case's Elaboration test intensity (Medium).
 
-### Findings — Elaboration Iteration 2, Cycle 1 (Execution Record)
+### Findings — Elaboration Iteration 3, Cycle 1 (Execution-State Transition Record)
+
+**Execution context (all values from actual tool calls, 2026-09-02 — nothing fabricated):**
+
+| Item | Value | Source |
+|---|---|---|
+| **A-28 status** | **EXECUTED this revision** — TC-011 + TC-021/022/023 extended with fourth-clause verification steps (ASSERT-xd: the rendered/exported value is EXACTLY blank, never a default, placeholder, guessed value, or another employee's value); substitution-attempt fixtures seeded in the disposable LDAP fixture (§ Test Data). Deadline BEFORE TC execution — met: the extension lands in this revision, ahead of the formal execution pass | Review Record A-28 (stakeholder-contribution propagation chain); stakeholder fourth clause, verbatim |
+| Implementation under test | `iteration/E1` — the three mechanisms are **MERGED and present**: `LdapGateway.cs` sha b8df8b7 (CLS-009, FOUR-clause graceful degradation — clause (d) implemented as "missing or empty AD value → null; null is the FINAL mapped value"), `KeycloakAuthProvider.cs` sha 7bd4cfd (CLS-010, RS256/JWKS signature validation, exp/iss/aud/sub enforcement, verbatim role extraction), `ClockingsRepository.cs` sha 017cbcd (interim in-memory adapter enforcing the UNIQUE idempotency_key contract; PG adapter lands Construction Iteration 1 per R008), `offline-queue.js` sha 9ac644a (CLS-008 browser half: localStorage queue, capacity 10, press-time capture, sync clears on 200 OK) | `scm_get_file_content("iteration/E1")` ×4 |
+| Test harness | `EmployeePortal.Tests.csproj` sha 23b9d1 — xunit 2.9.2 + Microsoft.NET.Test.Sdk 17.12.0 + project reference to the portal; **the Cycle 1–2 zero-package state is gone** — the harness is materialized | `scm_get_file_content("iteration/E1")` |
+| Delivery chain (upstream record) | 3 ready-for-review branches handed off; 3 PRs opened base `iteration/E1` (#3 R001, #4 R003, #5 R004); CI green ×3 (runs 33615260971 / 33615945653 / 33616121855); 3 APPROVED terminal dispositions (reviews 5088169328 / 5088169517 / 5088169685); F-CR-E1-1 RESOLVED; merged to `iteration/E1` (verified first-hand by the file probes above) | Review Record, Iter 3 code-review-lens record |
+| Verdict | **19 mechanism-covered cases: Designed → Scripted, verdicts PENDING — none claimed. TC-013…TC-016: BLOCKED on Construction scheduling.** The formal execution pass against the fixtures and the PoC results ledger own the verdicts; this artifact fabricates no results | This revision's probes + upstream record |
+
+**Per-case state transition — Cycle 3 (2026-09-02):**
+
+| Case group | Prior state (Cycle 2) | Current state (Cycle 3) | Basis |
+|---|---|---|---|
+| TC-001…TC-008, TC-020 (UC-001 clocking, offline queue, timestamp convention) | BLOCKED (Issue #1) | **Scripted — verdict PENDING** | R004 mechanism (CLS-008 offline-queue.js sha 9ac644a, ClockingsRepository sha 017cbcd) and R003 mechanism (CLS-010 sha 7bd4cfd) merged to `iteration/E1`; harness materialized (Tests.csproj sha 23b9d1) |
+| TC-009…TC-012 (UC-004 directory) | BLOCKED (Issue #1) | **Scripted — verdict PENDING** | R001 mechanism (CLS-009 LdapGateway sha b8df8b7) merged; four-clause degradation contract present in code |
+| TC-013…TC-016 (UC-010 news/audit) | BLOCKED (Construction scheduling) | **BLOCKED — unchanged** | News/audit mechanism is **Construction scope** (not an Elaboration WI-7…9 mechanism) — design complete; execution deferred with the mechanism. NOT an Elaboration exit-criterion blocker (exit criteria 1–3 cover R001/R003/R004 only) |
+| TC-017, TC-018 (SEC-006/SEC-007 role enforcement) | BLOCKED (Issue #1) | **Scripted — verdict PENDING** | R003 mechanism merged — auth middleware exists to enforce roles (OidcMiddleware rejects at the request boundary) |
+| TC-019 (R003 token validation matrix) | BLOCKED (Issue #1) | **Scripted — verdict PENDING** | R003 mechanism merged — the empirical R003 validation the stakeholder mandated can now run |
+| TC-021, TC-022, TC-023 (UC-005/006/007 AF-3 — FOUR-clause R001 bar) | BLOCKED (Issue #1) | **Scripted — verdict PENDING** | R001 mechanism + shared display-data path merged; **A-28 executed this revision** — fourth-clause steps and substitution-attempt fixtures in place BEFORE the execution pass |
+
+**Honest verdict discipline:** the transition to Scripted is an observed state change (mechanisms merged, harness materialized — both verified first-hand via file probes). It is NOT an execution result. No PASS, FAIL, or duration is claimed for any case; the formal execution pass against the fixtures (stub OIDC issuer, disposable LDAP with substitution-attempt fixtures, PG dev, drop simulation) and the Architectural Proof-of-Concept results ledger own the verdicts. The R6 evidence gate requires clause-by-clause FOUR-clause × four-consumer R001 evidence (TC-011 + TC-021/022/023) — the instrument is now ready to produce exactly that evidence.
+
+**Regression status:** still zero prior PASS results exist — the first execution has not occurred; there is nothing to re-run. The regression baseline activates with the first executed PASS; from that point the mandatory policy applies (re-run ALL prior results after EVERY merged PR).
+
+**Cycle 3 verdict for the Evaluation Mission:** NOT YET ACHIEVED — exit criteria 1–3 (empirical R001/R003/R004 validation) await the formal execution pass and the observed results. What changed this cycle: (1) **A-28 executed** — the instrument now validates FOUR clauses × four consumers with substitution-attempt fixtures, so clause (d) can actually fail; (2) **the blocking cause is resolved at the source** — mechanisms merged, harness materialized, the 19 mechanism-covered cases Scripted. The remaining chain to the evidence package: formal execution pass → results into the PoC artifact § Results and Findings → Issue #1 closure on merged-PR evidence (owned by the Integrator/Architect chain, tracked by SAD F2 / Iteration Plan F3 — other lenses' findings).
+
+**Test-code materialization status (Iter 3 update):** the harness is materialized (`EmployeePortal.Tests.csproj` sha 23b9d1, xunit 2.9.2) and the Implementer's dual-coverage suites implement this artifact's automation architecture (§ Test Automation Architecture) in `tests/EmployeePortal.Tests/` — CR-2 dual coverage verified by the Code Reviewer across all three PRs (black-box contract + white-box paths; the R001 bar suite covers all four consumers with deliberately-seeded substitution-attempt fixtures). The run is repeatable in CI per the mandatory regression policy.
+
+### Findings — Elaboration Iteration 2, Cycle 1 (Execution Record — historical, preserved)
 
 **Execution context (all values from actual tool calls, 2026-09-02 — nothing fabricated):**
 
@@ -755,58 +791,23 @@ stop
 | Smoke test (build stability gate — Tester execution pass) | **PASS** — CI green on `main`, run 33550619216 (started 2026-09-01 19:37:50Z, completed 19:38:39Z) | `scm_get_build_status("main")` |
 | Implementation under test | `iteration/E1` — `Program.cs` sha 5a1f720b0f03be897f524e9d1e8425440d5aa540 (bare Razor Pages boot: `AddRazorPages`/`MapRazorPages` only — no auth middleware, no service registrations) and `EmployeePortal.csproj` sha 9a04a31ebe4a98f731982c8ce0a74ba952e7b10d (zero package references — no Npgsql, no LDAP, no OIDC/JWT) — **byte-identical to the Cycle 1 inspection (2026-09-01)** | `scm_get_file_content("iteration/E1")` |
 | Test-code state | `SmokeTests.cs` sha dc835d2b30f80ceb96a5cb296cb29364e52423e4 — single `Assert.True(true)`; CR-2 dual coverage 0/3 mechanisms | `scm_get_file_content("iteration/E1")` |
-| **Mechanism branch probes (Tester execution pass — NEW evidence)** | **Zero CI runs on ALL THREE mechanism branches**: `feature/E1-R001`, `feature/E1-R003`, `feature/E1-R004` — no code has been pushed at the source; the handoff is absent, not merely unmerged | `scm_get_build_status` ×3 |
-| CI on `iteration/E1` | No runs found — zero pushes have landed on the integration branch | `scm_get_build_status("iteration/E1")` |
+| **Mechanism branch probes (Tester execution pass)** | **Zero CI runs on ALL THREE mechanism branches**: `feature/E1-R001`, `feature/E1-R003`, `feature/E1-R004` — no code has been pushed at the source; the handoff is absent, not merely unmerged | `scm_get_build_status` ×3 |
+| CI on `iteration/E1` | No runs found — zero pushes had landed on the integration branch | `scm_get_build_status("iteration/E1")` |
 | Defect census (Tester execution pass) | **2 open issues**: #1 (blocker/critical) and #2 (minor/high) — **both `cr:approved` + `assigned:implementer`** (CCM triage complete; delivery pending) | `scm_list_issues` (all states) |
 | Verdict | **TC-001…TC-023 all BLOCKED (23/23; zero PASS, zero FAIL, zero SKIP)** — confirmed by independent Tester re-inspection against fresh branch-level evidence | Issue #1 |
-
-**Tester execution pass — evaluation flow (S2 smoke gate → S3 evaluation → S4 defect census; every value from an actual tool call):**
-
-```plantuml
-@startuml
-title Tester Execution Pass — Elaboration Iteration 2, Cycle 1 (2026-09-02)\nS2 smoke gate -> S3 evaluation -> S4 defect census — every value from an actual tool call
-
-start
-partition "S2 — Smoke test (build stability gate, heuristic 1)" {
-  :scm_get_build_status("main")\nreturns **GREEN** — run 33550619216\n(started 2026-09-01 19:37:50Z,\ncompleted 19:38:39Z);
-  :Smoke verdict: **PASS** —\nbuild stable; detailed testing may proceed;
-}
-partition "S3 — Test and evaluate (architecture validation)" {
-  :Re-inspect implementation under test (iteration/E1):\nProgram.cs sha 5a1f720 — bare Razor Pages boot\n(no auth middleware, no service registrations);\nEmployeePortal.csproj sha 9a04a31 —\nzero package references (no Npgsql / LDAP / OIDC);\nSmokeTests.cs sha dc835d2 —\nsingle Assert.True(true), CR-2 dual coverage 0/3;
-  :Probe the three mechanism branches:\nfeature/E1-R001, feature/E1-R003,\nfeature/E1-R004 — **zero CI runs on all three**\n(no code pushed at the source);
-  if (Mechanism code present in any build tree?) then (no — byte-identical to Cycle 1)
-    :Verdict: **TC-001..TC-023 all BLOCKED**\n(23/23; zero PASS, zero FAIL, zero SKIP)\n— confirmed against fresh branch-level evidence;
-  else (yes)
-    :Execute against validation fixtures\n(disposable LDAP, stub OIDC, PG dev, drop sim);
-  endif
-}
-partition "S4 — Change requests for defects" {
-  :Defect census — scm_list_issues (all states):\n2 open: #1 (blocker/critical) and #2 (minor/high),\nBOTH cr:approved + assigned:implementer\n(CCM triage complete; delivery pending);
-  :Zero FAIL verdicts this cycle ->\n**zero NEW defects to formalize**;\nthe blocker (mechanism code absent) is already\nIssue #1 with canonical CCM labels —\nno duplicate raised;
-}
-:Record verdicts + evidence in Test Case\nFindings (this artifact);\nMission verdict: NOT YET ACHIEVED —\nblocked on code delivery (Issue #1),\nowned by Implementer (A-2..A-4),\ngated by Code Reviewer (A-6);
-stop
-@enduml
-```
 
 **Per-case verdicts — Cycle 2 (23/23 BLOCKED; independently confirmed by the Tester execution pass):**
 
 | Case group | Verdict | Blocking cause (empirically confirmed) | CR |
 |---|---|---|---|
-| TC-001…TC-008, TC-020 (UC-001 clocking, offline queue, timestamp convention) | **BLOCKED** | R004 mechanism (CLS-008 OfflineQueueClient) and R003 mechanism (CLS-010) absent from the build tree: `EmployeePortal.csproj` (sha 9a04a31) has zero package references; `Program.cs` (sha 5a1f720) is a bare Razor Pages boot with no auth middleware | Issue #1 |
+| TC-001…TC-008, TC-020 (UC-001 clocking, offline queue, timestamp convention) | **BLOCKED** | R004 mechanism (CLS-008 OfflineQueueClient) and R003 mechanism (CLS-010) absent from the build tree: `EmployeePortal.csproj` (sha 9a04a31) had zero package references; `Program.cs` (sha 5a1f720) was a bare Razor Pages boot with no auth middleware | Issue #1 |
 | TC-009…TC-012 (UC-004 directory) | **BLOCKED** | R001 mechanism (CLS-009 LdapGateway) absent: no LDAP package, no LDAP configuration | Issue #1 |
 | TC-013…TC-016 (UC-010 news/audit) | **BLOCKED** | News/audit mechanism is **Construction scope** (not an Elaboration WI-7…9 mechanism) — design complete; execution deferred with the mechanism. NOT an Elaboration exit-criterion blocker (exit criteria 1–3 cover R001/R003/R004 only) | Construction scheduling |
-| TC-017, TC-018 (SEC-006/SEC-007 role enforcement) | **BLOCKED** | R003 mechanism (CLS-010) absent — no auth middleware exists to enforce roles | Issue #1 |
-| TC-019 (R003 token validation matrix) | **BLOCKED** | R003 mechanism absent — the empirical R003 validation the stakeholder mandated cannot run | Issue #1 |
-| **TC-021, TC-022, TC-023 (UC-005/006/007 AF-3 — R001 behavioural bar, NEW this iteration)** | **BLOCKED** | R001 mechanism (CLS-009 LdapGateway) and the shared display-data path (CLS-003 GetDisplayData, INT-008 extension) absent — the four-consumer bar validation cannot run | Issue #1 |
+| TC-017, TC-018 (SEC-006/SEC-007 role enforcement) | **BLOCKED** | R003 mechanism (CLS-010) absent — no auth middleware existed to enforce roles | Issue #1 |
+| TC-019 (R003 token validation matrix) | **BLOCKED** | R003 mechanism absent — the empirical R003 validation the stakeholder mandated could not run | Issue #1 |
+| TC-021, TC-022, TC-023 (UC-005/006/007 AF-3 — R001 behavioural bar, designed that iteration) | **BLOCKED** | R001 mechanism (CLS-009 LdapGateway) and the shared display-data path (CLS-003 GetDisplayData, INT-008 extension) absent — the four-consumer bar validation could not run | Issue #1 |
 
-**Tester pass confirmation of the blocking causes:** the branch probes (zero CI runs on all three `feature/E1-*` branches) independently confirm every Issue-#1 blocking cause — no mechanism code exists at the source, so no case in any group can execute. The verdicts are BLOCKED, not SKIPPED: each case's preconditions, procedure, and pass criteria are fully specified and regression-ready; only the implementation under test is absent.
-
-**Regression status:** still zero prior PASS results exist — **the first execution has not occurred; there is nothing to re-run**. The regression baseline activates with the first executed PASS; from that point the mandatory policy applies (re-run ALL prior results after EVERY merged PR).
-
-**Cycle 2 verdict for the Evaluation Mission:** NOT YET ACHIEVED — exit criteria 1–3 (empirical R001/R003/R004 validation) still have no code evidence. What changed this cycle is the INSTRUMENT, not the verdict: TC-011 now validates the stakeholder-decided behavioural bar (the >90% statistical criterion is dropped — it was invented and could not fail against self-seeded data), the fixture is re-seeded with deliberate gaps per UC-004 S4, and the R001 validation now covers all four AD-reading consumers (TC-011 + TC-021/022/023) as the stakeholder confirmed. **The Tester execution pass adds branch-level confirmation: zero CI runs on `feature/E1-R001`/`R003`/`R004` prove the handoff is absent at the source — the blocker is code delivery (Issue #1, cr:approved, assigned:implementer), owned by the Implementer (A-2…A-4) and gated by the Code Reviewer (A-6). Zero FAIL verdicts → zero new defects to formalize; the blocker is already Issue #1 with canonical CCM labels — no duplicate raised.**
-
-**Test-code materialization status (Tester pass, re-confirmed):** the Tester role holds no SCM push tooling this cycle, and with zero mechanism code in the build tree there is nothing under test to script against. Test-code materialization remains folded into **Issue #1's remediation scope**: the Implementer ships dual-coverage automated tests per mechanism (CR-2), materializing this artifact's automation architecture (§ Test Automation Architecture) in `tests/EmployeePortal.Tests/`, so the run is repeatable in CI per the Work Order instruction. Flagged explicitly — not silently dropped.
+**Cycle 2 verdict for the Evaluation Mission:** NOT YET ACHIEVED — exit criteria 1–3 (empirical R001/R003/R004 validation) had no code evidence. What changed that cycle was the INSTRUMENT, not the verdict: TC-011 rewritten to the stakeholder-decided behavioural bar (the >90% statistical criterion dropped — invented, and against self-seeded data it cannot fail, so it proves nothing), the fixture re-seeded with deliberate gaps per UC-004 S4, and the R001 validation extended to all four AD-reading consumers (TC-011 + TC-021/022/023) as the stakeholder confirmed. The Tester execution pass added branch-level confirmation: zero CI runs on `feature/E1-R001`/`R003`/`R004` proved the handoff was absent at the source. Zero FAIL verdicts → zero new defects to formalize; the blocker was already Issue #1 with canonical CCM labels — no duplicate raised.
 
 ### Findings — Elaboration Iteration 1, Cycle 1 (Execution Record — historical, preserved)
 
@@ -815,20 +816,20 @@ stop
 | Item | Value | Source |
 |---|---|---|
 | Smoke test (build stability gate) | **PASS** — CI green on `main`, run 33492338439 (started 2026-09-01 09:27:49Z, completed 09:28:38Z) | `scm_get_build_status("main")` |
-| Implementation under test | `iteration/E1` — branch **EXISTS** (Review Record action A-1 DONE; it was absent at the Code Reviewer's cycle) but holds 51 entries: skeleton only — no `Services/`, no `Infrastructure/`, no `worker-categories.json`, no `CONTRIBUTING.md` | `scm_get_repo_tree("iteration/E1")` |
-| CI on `iteration/E1` | No runs found — zero pushes have landed on the branch | `scm_get_build_status("iteration/E1")` |
-| CI trigger configuration | **VERIFIED CORRECT** — push + PR triggers on `main`, `iteration/**`, `chore/**`, `feature/**`, `hotfix/**` (sha 84443920ba9d87e9c1c675cdff1ab9a54bc21da5): the blocker is code delivery, NOT CI infrastructure | `scm_get_file_content(".github/workflows/ci.yml")` |
+| Implementation under test | `iteration/E1` — branch **EXISTS** (Review Record action A-1 DONE; it was absent at the Code Reviewer's cycle) but held 51 entries: skeleton only — no `Services/`, no `Infrastructure/`, no `worker-categories.json`, no `CONTRIBUTING.md` | `scm_get_repo_tree("iteration/E1")` |
+| CI on `iteration/E1` | No runs found — zero pushes had landed on the branch | `scm_get_build_status("iteration/E1")` |
+| CI trigger configuration | **VERIFIED CORRECT** — push + PR triggers on `main`, `iteration/**`, `chore/**`, `feature/**`, `hotfix/**` (sha 84443920ba9d87e9c1c675cdff1ab9a54bc21da5): the blocker was code delivery, NOT CI infrastructure | `scm_get_file_content(".github/workflows/ci.yml")` |
 | Defect baseline before this cycle | 0 issues (all states) — the SCM tracker held no record of the two Review Record findings | `scm_list_issues` (all states) |
 
 **Per-case verdicts — Cycle 1 (20/20 BLOCKED; zero PASS, zero FAIL, zero SKIP):**
 
 | Case group | Verdict | Blocking cause (empirically confirmed) | CR |
 |---|---|---|---|
-| TC-001…TC-008, TC-020 (UC-001 clocking, offline queue, timestamp convention) | **BLOCKED** | R004 mechanism (CLS-008 OfflineQueueClient) and R003 mechanism (CLS-010) absent from the build tree: `EmployeePortal.csproj` (sha 9a04a31) has zero package references — no Npgsql, no LDAP, no OIDC/JWT; `Program.cs` (sha 5a1f720) is a bare Razor Pages boot with no auth middleware | Issue #1 |
+| TC-001…TC-008, TC-020 (UC-001 clocking, offline queue, timestamp convention) | **BLOCKED** | R004 mechanism (CLS-008 OfflineQueueClient) and R003 mechanism (CLS-010) absent from the build tree: `EmployeePortal.csproj` (sha 9a04a31) had zero package references — no Npgsql, no LDAP, no OIDC/JWT; `Program.cs` (sha 5a1f720) was a bare Razor Pages boot with no auth middleware | Issue #1 |
 | TC-009…TC-012 (UC-004 directory) | **BLOCKED** | R001 mechanism (CLS-009 LdapGateway) absent: no LDAP package, no LDAP configuration in `appsettings.json` (sha 10f68b8) | Issue #1 |
-| TC-013…TC-016 (UC-010 news/audit) | **BLOCKED** | News/audit mechanism is **Construction scope** (not an Elaboration WI-7…9 mechanism) — design complete this iteration per WI-10; execution deferred with the mechanism. NOT an Elaboration exit-criterion blocker (exit criteria 1–3 cover R001/R003/R004 only) | Construction scheduling |
-| TC-017, TC-018 (SEC-006/SEC-007 role enforcement) | **BLOCKED** | R003 mechanism (CLS-010) absent — no auth middleware exists to enforce roles | Issue #1 |
-| TC-019 (R003 token validation matrix) | **BLOCKED** | R003 mechanism absent — the empirical R003 validation the stakeholder mandated cannot run | Issue #1 |
+| TC-013…TC-016 (UC-010 news/audit) | **BLOCKED** | News/audit mechanism is **Construction scope** (not an Elaboration WI-7…9 mechanism) — design complete that iteration per WI-10; execution deferred with the mechanism. NOT an Elaboration exit-criterion blocker (exit criteria 1–3 cover R001/R003/R004 only) | Construction scheduling |
+| TC-017, TC-018 (SEC-006/SEC-007 role enforcement) | **BLOCKED** | R003 mechanism (CLS-010) absent — no auth middleware existed to enforce roles | Issue #1 |
+| TC-019 (R003 token validation matrix) | **BLOCKED** | R003 mechanism absent — the empirical R003 validation the stakeholder mandated could not run | Issue #1 |
 
 **Reproduction notes (exact evidence, build ID captured):** build under test = `iteration/E1` @ file shas `Program.cs` 5a1f720b0f03be897f524e9d1e8425440d5aa540, `EmployeePortal.csproj` 9a04a31ebe4a98f731982c8ce0a74ba952e7b10d, `appsettings.json` 10f68b8c8b4f796baf8ddeee7551b6a52b9437cc, `SmokeTests.cs` dc835d2b30f80ceb96a5cb296cb29364e52423e4 (single `Assert.True(true)` — no mechanism tests, CR-2 dual coverage 0/3); smoke baseline = main CI run 33492338439 (GREEN). Expected (Iteration Plan WIs 7–9): evolutionary mechanism code in `src/` for R001/R003/R004 with dual-coverage tests on `feature/E1-{risk-id}` branches labeled `ready-for-review`. Actual: zero mechanism code, zero `ready-for-review` branches, zero PRs.
 
@@ -838,8 +839,6 @@ stop
 |---|---|---|---|
 | **#1** | R001/R003/R004 mechanism code absent from SCM — empirical validation of all Elaboration test cases BLOCKED | `change-request, cr:logged, nature:defect, severity:blocker, priority:critical` | Review Record F-CR-E1-1, actions A-2…A-4; Iteration Plan WIs 7–9, exit criteria 1–3; R001 (HIGH), R003, R004; TC-001…TC-023 |
 | **#2** | CONTRIBUTING.md absent — programming-guidelines baseline missing for CR-1 review of the first mechanism PR | `change-request, cr:logged, nature:defect, severity:minor, priority:medium` | Review Record F-CR-E1-2, action A-5; code-review checklist CR-1 |
-
-**Test-code materialization status:** the Tester role holds no SCM push tooling this cycle, and with zero mechanism code in the build tree there is nothing under test to script against. Test-code materialization is therefore folded into **Issue #1's remediation scope**: the Implementer ships dual-coverage automated tests per mechanism (CR-2), materializing this artifact's automation architecture (§ Test Automation Architecture) in `tests/EmployeePortal.Tests/`, so the run is repeatable in CI. Flagged explicitly — not silently dropped.
 ## Test Data
 
 All data is synthetic and self-contained — no production AD data, no real employee identities. Fixtures are reusable Construction assets (R011 mitigation, Test Evaluation Summary recommendation 4).
