@@ -58,7 +58,7 @@ public sealed class StubOidcIssuer : IJwksProvider, ITokenExchangeClient
         var payloadSegment = Base64Url.Encode(Encoding.UTF8.GetBytes(JsonSerializer.Serialize(payload)));
         var signingInput = headerSegment + "." + payloadSegment;
 
-        var signature = _signingKey.SignData(Encoding.UTF8.GetBytes(signingInput), HashAlgorithmName.SHA256);
+        var signature = _signingKey.SignData(Encoding.UTF8.GetBytes(signingInput), HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
         if (tamperSignature) signature[0] ^= 0xFF; // corrupt one byte — signature verification must fail
 
         return signingInput + "." + Base64Url.Encode(signature);
@@ -88,7 +88,7 @@ public sealed class StubOidcIssuer : IJwksProvider, ITokenExchangeClient
 
     public Task<string> GetJwksJsonAsync(string issuer)
     {
-        var parameters = _signingKey.ExportParameters(includePrivateInformation: false);
+        var parameters = _signingKey.ExportParameters(includePrivateParameters: false);
         var jwk = new Dictionary<string, object?>
         {
             ["kty"] = "RSA",
