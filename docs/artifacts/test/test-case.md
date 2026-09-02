@@ -751,6 +751,133 @@ stop
 
 **Cases deferred to Construction (recorded, not designed here):** UC-002/003/005/006/007/008/009 main-flow functional suites (the AF-3 R001-bar flows of UC-005/006/007 are designed NOW — TC-021…TC-023 — because they are part of the R001 PoC's empirical validation; their main flows remain Construction); PRF-001 full-scale page-load percentile measurement; USA-001/006/007/009 visual-fidelity and accessibility passes; AC-002/AC-004 usability tests. These trace to the Evaluation Mission's out-of-scope boundary and the Iteration Plan's Construction assignments — designing them now would exceed the Development Case's Elaboration test intensity (Medium).
 
+### Findings — Elaboration Iteration 5, Cycle 1 (Verification Record — Tester, 2026-09-02)
+
+**Scope of this pass:** a **verification cycle** — no new code change entered the phase since PR #7 (verified first-hand: 0 `ready-for-review` branches and 0 open PRs per the same-day Code Reviewer Iter 5 record; the `main` tree is unchanged at 85 entries with all mechanism code + the full harness present). The mandatory regression policy (re-run ALL prior results after EVERY merged PR) therefore has **no new merged-PR trigger** — but `ci.yml` runs `dotnet test` on every push, and the `main` branch run 33639518709 re-ran the FULL suite on the release branch: fresh regression evidence this pass verifies first-hand rather than assumes.
+
+**Execution context (all values from actual tool calls, 2026-09-02 — nothing fabricated):**
+
+| Item | Value | Source |
+|---|---|---|
+| Smoke test (build stability gate) | **PASS** — CI GREEN on `main` (run 33639518709, completed 2026-09-02 14:04:14Z) AND on `iteration/E4` (run 33635692521, completed 2026-09-02 13:27:46Z) | `scm_get_build_status` ×2 |
+| Code delta since PR #7 | **ZERO** — `KeycloakAuthProvider.cs` @ 8758844 and `LdapGateway.cs` @ b8df8b7 read first-hand on `main`, byte-identical to the Iter 4/Iter 3 verified states; the honest `[DEFERRED — lands with the session mechanism, Construction]` markers present at all three F-CR-E3-3 locations; the FOUR-clause degradation contract intact (clause (d): "null is the FINAL mapped value"; D-9 unresolvable uid → all-null entry, NEVER omitted) | `scm_get_file_content` ×3 |
+| Build tree | `main` — 85 entries: all mechanism code (Infrastructure/, Services/) + the full harness (10 suites + 2 fixtures) present in the build tree, unchanged vs the Iter 4 verified state | `scm_get_repo_tree` |
+| CI repeatability | `ci.yml` @ 1fa9f70 — push + PR triggers cover `main`, `iteration/**`, `feature/**`; the `test` job regenerates the solution from `src/` + `tests/` and runs `dotnet test` — **every push re-runs ALL suites; the run is repeatable in CI** (Work Order requirement confirmed on the release branch) | `scm_get_file_content` |
+| Regression execution | Full suite re-run GREEN on `main`: run 33639518709 — **the first release-branch full-suite run recorded in this artifact**; the 15-case PASS baseline re-verified on the RELEASE branch | `scm_get_build_status` |
+| Defect / issue census | **ZERO open SCM issues** — #1, #2, #9 all CLOSED `cr:complete` (Issue #9, the PoC results-ledger CR named in this Work Order, closed on the verified A-32 evidence) — the stakeholder's "Close all findings and issues opened" directive is satisfied on the issues side | `scm_list_issues` (all states) |
+| Verdict | **15 PASS · 0 FAIL · 8 BLOCKED — baseline HELD, no verdict changed** | This pass |
+
+**Per-case regression verdicts (Iter 5 — all unchanged from the Iter 4 record; the per-case evidence table in the Iter 3 formal-pass record remains the authoritative per-case record):**
+
+| Case group | Verdict | Basis |
+|---|---|---|
+| TC-007, TC-019 (R003 — the mechanism verified at Iter 4) | **PASS — re-verified** | `KeycloakAuthProvider.cs` @ 8758844 byte-identical on `main`; the full suite re-ran green in run 33639518709 — redirect flow, JWKS validation, verbatim role extraction, and all 10 rejection variants at the request boundary hold |
+| Remaining 13 PASS cases (TC-001, TC-002, TC-004, TC-005, TC-006, TC-008, TC-009, TC-011, TC-012, TC-020, TC-021, TC-022, TC-023) | **PASS — re-verified** | Zero code delta since PR #7 (no file changed); the full suite re-ran green on `main` — the R001 four-clause × four-consumer evidence and the R004 drop-simulation evidence hold unchanged |
+| TC-003, TC-010, TC-017, TC-018 (UI mechanisms / endpoint surfaces) | **BLOCKED — unchanged** | Construction scope (honest corrections from the Iter 3 formal pass stand; no UI/controller mechanism landed) |
+| TC-013…TC-016 (news/audit) | **BLOCKED — unchanged** | Construction scope |
+
+**Test Evaluation Flow — Iter 5 verification cycle (this record):**
+
+```plantuml
+@startuml
+title Test Evaluation Flow - Elaboration Iteration 5, Cycle 1 (2026-09-02)\nVerification cycle: no new code change entered the phase - baseline re-verified on main
+
+start
+partition "S2 - SMOKE: build stability gate" {
+  :scm_get_build_status("main") -> GREEN\nrun 33639518709 (completed 2026-09-02 14:04:14Z);
+  :scm_get_build_status("iteration/E4") -> GREEN\nrun 33635692521 (completed 2026-09-02 13:27:46Z);
+  :Smoke test PASS - testable scope confirmed;
+}
+partition "S3 - VERIFY: no new code change entered the phase" {
+  :Code Reviewer Iter 5 same-day record:\n0 ready-for-review branches, 0 open PRs;
+  :scm_get_repo_tree("main") -> 85 entries,\nunchanged vs the Iter 4 verified state\n(mechanism code + full harness present);
+  :scm_get_file_content x3 on main:\nci.yml @ 1fa9f70; KeycloakAuthProvider.cs\n@ 8758844; LdapGateway.cs @ b8df8b7 -\nbyte-identical to the verified states\n(zero code delta since PR #7);
+  :Mandatory regression policy:\nno NEW merged PR -> no new trigger;\nBUT ci.yml runs dotnet test on every\npush - the main run re-ran ALL suites;
+}
+partition "S3 - REGRESSION re-verification (release branch)" {
+  :Full suite re-run GREEN on main:\nrun 33639518709 - the 15-case PASS\nbaseline re-verified on the RELEASE\nbranch (first main-branch full-suite\nrun recorded in this artifact);
+  :R001 four-clause x four-consumer\nevidence holds (LdapGateway b8df8b7\nread first-hand: clause (d) null is\nthe FINAL mapped value; D-9\nunresolvable uid -> all-null,\nNEVER omitted);
+  :R003 matrix holds (KeycloakAuthProvider\n8758844 read first-hand: RS256/JWKS,\nexp/iss/aud/sub, verbatim role\nextraction; honest DEFERRED state\nmarkers at all three locations);
+  :R004 drop-simulation evidence holds\n(no file in the offline path changed);
+}
+partition "S4 - DEFECT census" {
+  :scm_list_issues(all) -> ZERO open issues:\n#1, #2, #9 all closed cr:complete\n(the stakeholder's "Close all findings\nand issues opened" directive\nsatisfied on the issues side);
+  if (Any FAIL verdict?) then (no - zero)
+    :Zero new defects -> zero CRs raised\n(the CR contract fires only on FAIL);
+    :8 BLOCKED cases unchanged:\nrecorded SCOPE decision, deferred to\nConstruction, not missing;
+  else (yes)
+    :scm_create_issue with canonical CCM labels\n(change-request, cr:logged, nature:defect,\nseverity:*, priority:*);
+  endif
+}
+:Record the verification verdict in the\nTest Case artifact (Document Control +\nthe Iter 5 verification record);
+:Baseline HELD: 15 PASS / 0 FAIL / 8 BLOCKED\n(unchanged; sixth consecutive green\nfull-suite run on the evolution line:\n33617283642 -> 33617446626 ->\n33617748483 -> 33632200967 ->\n33635692521 -> 33639518709);
+stop
+@enduml
+```
+
+**Verdict distribution (Iter 5 verification cycle — 23 cases):**
+
+```plantuml
+@startuml
+title Elaboration Iter 5 - Verification-Cycle Verdict Distribution (23 cases, 2026-09-02)\nNo new code change - baseline re-verified GREEN on main (run 33639518709) - no verdict changed
+
+object "PASS - 15 cases (re-verified, unchanged)" as P {
+  R001 four-clause bar, four consumers:
+  TC-011, TC-021, TC-022, TC-023
+  R003: TC-007, TC-019
+  R004: TC-004, TC-005, TC-006, TC-020
+  Mechanism cases: TC-001, TC-002,
+  TC-008, TC-009, TC-012
+  Evidence: main full-suite run
+  33639518709 GREEN (release branch);
+  mechanism shas byte-identical
+  (LdapGateway b8df8b7,
+  KeycloakAuthProvider 8758844)
+}
+object "FAIL - 0 cases" as F {
+  Zero FAIL verdicts ->
+  zero new defects ->
+  zero CRs raised
+  (the CR contract fires
+  only on a FAIL verdict)
+}
+object "BLOCKED - 8 cases (unchanged)" as B {
+  TC-003, TC-010 - UI mechanisms
+  TC-017, TC-018 - endpoint/request
+  surfaces
+  TC-013..TC-016 - news/audit
+  All Construction scope - a recorded
+  SCOPE decision, deferred to
+  Construction, not missing
+  (stakeholder framing directive,
+  Iter 3, verbatim)
+}
+P -[hidden]-> F
+F -[hidden]-> B
+
+note bottom of B
+  Verification cycle: no new code
+  change entered the phase (0
+  ready-for-review branches, 0 open
+  PRs; tree unchanged; file shas
+  byte-identical). The mandatory
+  regression policy has no new
+  merged-PR trigger; the main-branch
+  CI run re-ran ALL suites GREEN,
+  re-verifying the baseline on the
+  release branch. No verdict changed.
+end note
+@enduml
+```
+
+**Defect census:** zero FAIL verdicts → zero new defects → **zero CRs raised** (the CR contract fires only on a FAIL verdict). The SCM tracker holds **zero open issues** — #1, #2, #9 all `cr:complete`; no duplicate of any resolved finding is raised (one CR = one Issue, whole lifecycle).
+
+**Regression status:** the 15-case baseline is now **RELEASE-BRANCH-VERIFIED** — sixth consecutive green full-suite run on the evolution line: 33617283642 (post-PR #3) → 33617446626 (post-PR #5) → 33617748483 (post-PR #4, the formal-pass trace) → 33632200967 (PR #7 pre-merge) → 33635692521 (post-merge on iteration/E4) → **33639518709 (main — the release branch)**. From this point, any subsequent merged PR re-runs all 15.
+
+**Work Order CR cross-check (this cycle):** the two Change Requests named in this Work Order — [Moderate] Architectural Proof-of-Concept (PoC#F3 → A-38, the sha citation) and [Moderate] Test Evaluation Summary (TES#F3 → A-37, the remainder-enumerations) — are record-propagation corrections owned by the Software Architect and the Test Manager respectively. Neither targets the Test Case artifact; neither is a code handoff; no action is owed here. Their landing verification belongs to the technical lens.
+
+**Iter 5 verdict for the Evaluation Mission:** the executed-TC evidence for exit criteria 1–3 remains valid, current, and now release-branch-verified. No new validation is owed from this pass; the remaining Elaboration work (A-37…A-39 + PM pass-close + the R6 gate) is owned by other roles. The 8 BLOCKED cases remain a recorded SCOPE decision — deferred to Construction, not missing (stakeholder framing directive, Iter 3).
+
 ### Findings — Elaboration Iteration 4, Cycle 1 (Regression Verification Record — Tester, 2026-09-02)
 
 **Scope of this pass:** the record-propagation pass's only code change — **PR #7** (F-CR-E3-3 state-comment remediation; feature/E4-R003-state-comment → iteration/E4; comment-only, 1 file +13/−2; APPROVED review 5090059324; merged @ 13d0a08 per the Integrator's ci.yml record). The mandatory regression policy (re-run ALL prior results after EVERY merged PR — never accept developer assurance as substitute) applies regardless of change size: a comment-only diff still re-runs the full suite.
