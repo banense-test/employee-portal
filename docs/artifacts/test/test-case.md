@@ -836,7 +836,7 @@ F -[hidden]-> B
 
 **Test-code materialization status:** the harness is materialized and the run is repeatable in CI — `EmployeePortal.Tests.csproj` (xunit 2.9.2) + 10 suites + 2 fixtures implement this artifact's automation architecture; CI run 33617748483 is the execution trace; the merge-sequence re-runs (33617283642 → 33617446626 → 33617748483) demonstrate repeatability after every merged PR.
 
-### Findings — Elaboration Iteration 3, Cycle 1 (Execution-State Transition Record — Test Designer, earlier this iteration; preserved; per-case states superseded by the formal-pass verdict table above)
+### Findings — Elaboration Iteration 3, Cycle 1 (Execution-State Transition Record — Test Designer, preserved)
 
 **Execution context (all values from actual tool calls, 2026-09-02 — nothing fabricated):**
 
