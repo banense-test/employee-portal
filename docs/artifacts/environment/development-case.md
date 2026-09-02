@@ -88,43 +88,41 @@ stop
 | Project Management | Pass-close reconciliation (Work Item 9 / exit criterion 12): work-item statuses reconciled to observed SCM state; Iteration Assessment authored in the Assess touchpoint AFTER the reviewers rule; R6 re-presentation with the evidence package and a fresh sanction request — the ledger must be EMPTY (all lenses, all severities) before R6 |
 | Environment | This document; trigger re-evaluation each iteration (mandatory — executed); tool environment verification (executed this iteration — CONTRIBUTING.md re-verified with ARCH-6 four-clause, sha unchanged; lint gap re-verified absent); DC F4 resolved (A-39) |
 ## Artifacts and Templates
-
 ### CORE Artifacts (16) — All Confirmed
 
-All 16 CORE artifacts are produced per their standard ownership and phase schedule. No CORE artifact is omitted; no ownership is reassigned. Primary ownership per IARI baseline — unchanged, not restated here. Elaboration Iter 4 (record-propagation pass) activity mapping:
+All 16 CORE artifacts are produced per their standard ownership and phase schedule. No CORE artifact is omitted; no ownership is reassigned. Primary ownership per IARI baseline — unchanged, not restated here. Elaboration Iter 5 (final record-correction pass) activity mapping:
 
-| CORE Artifact | Record-Propagation-Pass Activity |
+| CORE Artifact | Final-Record-Correction-Pass Activity |
 |---|---|
 | Vision | Preserved (Inception baseline; 0 findings) |
-| Use-Case Model | Preserved — fourth clause propagated (A-25, verified Iter 3); featured-banner stack visualized; zero findings at all three LCA reviews |
+| Use-Case Model | Preserved — fourth clause propagated (A-25, verified Iter 3); featured-banner stack visualized; zero findings at all four LCA reviews |
 | Supplementary Specification | Preserved — four-clause reliability contract (A-26, verified Iter 3); zero findings |
-| Software Architecture Document | LCA criterion 3 evidence updated to the observed state (A-33 — merged PRs #3/#4/#5/#6, Issue #1 closed, R011 residual to Construction); empirical disposition (A-7) and Logical View reconciliation (A-9) done and ledger-closed |
-| Design Model | Preserved — A-27 landed with the build (verified Iter 3: four-clause postconditions, CLS-009 contract, code implements four clauses); zero findings |
-| Implementation Model | Preserved — three mechanisms merged as evolutionary code with dual-coverage tests (A-2..A-4 / A-16, delivered and verified Iter 3) |
-| Test Case | Document Control verdict summary reconciled to the per-case record 15/0/8 (A-34 — naming TC-017/TC-018 in the BLOCKED set, stated as a recorded scope decision) |
-| Test Evaluation Summary | Mission verdict, INC-1, quality metrics, and risk-prioritization trends updated from the observed per-case record (A-35 — thresholds OBSERVED to hold; bottleneck → PoC ledger propagation) |
+| Software Architecture Document | Preserved — criterion 3 cites current repository state (A-33 — landed and ledger-closed Iter 4); empirical disposition (A-7) and Logical View reconciliation (A-9) done and ledger-closed |
+| Design Model | Preserved — A-27 landed with the build (verified Iter 3: four-clause postconditions, CLS-009 contract, code implements four clauses); zero findings; F-CR-E3-2 (INT-011 contract-table evolution) remains Designer-owned, next Design Model pass |
+| Implementation Model | Preserved — three mechanisms merged as evolutionary code with dual-coverage tests (A-2..A-4 / A-16, delivered and verified Iter 3); PR #7 state-comment remediation merged (Iter 4) |
+| Test Case | Preserved — Document Control summary reconciled to the per-case record 15/0/8 (A-34 — landed and ledger-closed Iter 4); Iter 4 regression verification on PR #7 (baseline HELD) |
+| Test Evaluation Summary | A-37 (this pass — the one Major): remainder-enumerations updated from the observed same-pass landings (A-32/A-34/A-36/PM close-pass all DONE; INC-1 bottleneck RESOLVED; Conclusions restated to the current remainder); the mission verdict itself ("VALIDATION SUBSTANCE ACHIEVED — OBSERVED") is correct and unchanged |
 | User Documentation | Deferred to Construction |
 | Release Notes | Deferred to Transition |
-| Iteration Plan | F8 remediation at the close-pass (STK-004 request evidenced or blocker recorded); WI statuses reconciled to observed SCM state (exit criterion 12); budget box from measured actuals (A-22, done) |
-| Iteration Assessment | Record-propagation-pass actuals recorded at close (PM) |
-| Risk List | R001/R003/R004 retirement recorded on observed evidence; R013 resolved; four-clause bar (A-30, done); trend column (A-14, done); R012 bound (A-15, done) |
+| Iteration Plan | Preserved — F8 RESOLVED and ledger-closed at Iter 4 (STK-004 obligation carried to Construction Iter 1 with R010's own trigger); WI statuses reconciled at pass close (exit criterion 12); budget box from measured actuals (A-22, done) |
+| Iteration Assessment | Final-record-correction-pass actuals recorded at close (PM — authored in the Assess touchpoint after the reviewers rule) |
+| Risk List | Preserved — close-pass reappraisal landed: R001/R003/R004 RETIRED on observed evidence; R013 RESOLVED; R010 NARROWED with the obligation relocated; four-clause bar (A-30, done); trend column (A-14, done); R012 bound (A-15, done) |
 | Review Record | Cumulative — the R6 gate appends; findings closed by their emitting lenses |
-| Development Case | This document (Elaboration Iter 4 evolution — F3 resolved: ARCH-6 gap flag closed on verification) |
-| Change Request | Construction onwards (CCM); SCM Issues #1/#2 closed cr:complete |
+| Development Case | This document (Elaboration Iter 5 evolution — F4 resolved: three stale status claims corrected to the observed state, A-39) |
+| Change Request | Construction onwards (CCM); SCM Issues #1/#2/#9 all closed cr:complete |
 
-### OPTIONAL Artifacts (6) — Trigger Evaluation (Elaboration Iter 4)
+### OPTIONAL Artifacts (6) — Trigger Evaluation (Elaboration Iter 5)
 
 | Optional Artifact | §5.2 Trigger Condition | Fired? | Justification |
 |---|---|---|---|
 | Glossary | Domain uses specialist vocabulary requiring stakeholder-validated definitions | **No** | Standard HR/IT intranet vocabulary; no regulated/medical/financial jargon |
-| Architectural Proof-of-Concept | Elaboration phase + at least one technical risk requiring empirical validation (per Risk List) | **YES — FIRED** | Elaboration + R001 (HIGH, P=3 I=3) + R003/R004 (SIGNIFICANT) requiring empirical validation — condition genuinely holds; validation now OBSERVED (CI-traced); the artifact's remaining obligation is record propagation (A-32). See § Optional Artifact Triggers |
+| Architectural Proof-of-Concept | Elaboration phase + at least one technical risk requiring empirical validation (per Risk List) | **YES — FIRED** | Elaboration + R001 (HIGH, P=3 I=3) + R003/R004 (SIGNIFICANT) requiring empirical validation — condition genuinely holds; validation OBSERVED (CI-traced) and the results RECORDED (A-32 landed and ledger-closed at Iter 4); the record-propagation obligation is DISCHARGED. See § Optional Artifact Triggers |
 | Data Model | Data-centric system OR >10 entities OR data-migration in scope | **No** | ~5 tables (clockings, news_items, news_audit, worker_categories, category_audit); not data-centric; no migration; data lives inline in Design Model |
 | Deployment Model | Distributed / multi-node topology, OR multi-environment non-trivial | **No** | Single internal Windows Server (CON-008), corporate network only (CON-009); deployment is a section in SAD |
 | User-Interface Prototype | UX-critical OR UI complexity requiring stakeholder validation before implementation | **No** | CON-011 provides the mandatory, authoritative design; interaction design is carried by Use-Case Model storyboards + Design Model boundary classes/navigation map |
 | Test Plan | Formal delivery / regulatory audit / contractual test reporting | **No** | Internal intranet app; no regulatory or contractual test reporting; per-iteration testing scope lives in the Iteration Plan |
 
-**Result: 1 of 6 OPTIONAL artifacts triggered** (unchanged from Iters 1–3 — the whole set is re-evaluated every iteration; the PoC trigger's condition still genuinely holds).
-
+**Result: 1 of 6 OPTIONAL artifacts triggered** (unchanged from Iters 1–4 — the whole set is re-evaluated every iteration; the PoC trigger's condition still genuinely holds).
 ## Optional Artifact Triggers
 
 Recorded via `record_optional_artifact_triggers` (Elaboration Iter 4, 2026-09-02): `["Architectural Proof-of-Concept"]`. This replaces the prior iteration's set — the whole set is re-evaluated every iteration.
