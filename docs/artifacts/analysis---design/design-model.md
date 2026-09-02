@@ -1608,7 +1608,7 @@ Operation signatures with preconditions / postconditions for every subsystem-bou
 | INT-018 | IWorkerCategoryRepository | GetByUid / Upsert | — | Two data columns only (CON-006); Upsert stages only |
 | INT-019 | IAuditEntryRepository | AddNewsEntry / AddCategoryEntry | — | Add ONLY — the interface exposes no Update, no Delete (DAT-002); the compiler enforces the audit trail's immutability |
 ## Persistent Data Classes
-**Database Designer contribution (Elaboration Iter 1).** The Development Case did not fire the Data Model trigger (§5.2: data lives inline in the Design Model) — this section IS the data model: physical schema, O/R mapping, index strategy, and baseline migration for the five persistent classes CLS-021…CLS-025. CLS-026 DirectoryEntry and CLS-027 EmployeeDisplayData are transient AD projections and are deliberately NOT mapped — **no table stores any AD attribute** (CON-006); `employee_uid` is an untyped string reference with no foreign key, resolved live via CLS-009 (CON-005).
+**Database Designer contribution (Elaboration Iter 1; verified and record-propagated Iter 5).** The Development Case did not fire the Data Model trigger (§5.2: data lives inline in the Design Model) — this section IS the data model: physical schema, O/R mapping, index strategy, and baseline migration for the five persistent classes CLS-021…CLS-025. CLS-026 DirectoryEntry and CLS-027 EmployeeDisplayData are transient AD projections and are deliberately NOT mapped — **no table stores any AD attribute** (CON-006); `employee_uid` is an untyped string reference with no foreign key, resolved live via CLS-009 (CON-005).
 
 ### Persistence Mechanism Resolution (three-level chain)
 
@@ -1968,6 +1968,25 @@ REVOKE UPDATE, DELETE ON category_audit FROM PUBLIC;
 | Q6 news browse | partial index scan, pre-ordered | tens of rows | PRF-001 (< 3 s page) |
 
 Growth: `clockings` ~100K rows/year (SAD sizing) — years of headroom on a single node (CON-008) before any tactic beyond these indexes is warranted.
+
+### Elaboration Iteration 5 — Verification Record (record-propagation, same-pass discipline)
+
+**Status: schema baseline V1 STABLE — verified against the observed end-of-Elaboration state; no schema evolution warranted this iteration.** This record propagates the observed state into the section that owns the schema, per the same-pass record-propagation discipline (adopted Iter 4). What was verified, first-hand, this iteration:
+
+- **Trigger re-check:** the Development Case oracle reports the Data Model optional trigger **NOT FIRED** (5 persistent entities, no data migration in scope, AD data never copied — CON-006). This section remains the data model's home; no standalone Data Model artifact is sanctioned.
+- **Constraint guard:** the SAD's declared engine (PostgreSQL, CON-003 / ADR-002 / Npgsql 10.0.3) matches the stakeholder's declared constraint — no mismatch; all DDL above targets PostgreSQL syntax.
+- **Class inventory unchanged:** the merged Elaboration mechanism code (PRs #3/#4/#5 → `iteration/E1`, PR #6 → `main`, APPROVED; verified in the Review Record Iter 3/4 evidence) introduced **no new persistent classes** — CLS-008 OfflineQueueClient queues in browser localStorage (client-side, never a table), CLS-009 LdapGateway reads AD live (CON-006 — nothing stored), CLS-010 KeycloakAuthProvider is stateless. The five-table mapping above is complete and correct.
+- **Fourth behavioural clause is persistence-neutral:** the stakeholder's fourth clause ("a missing attribute is displayed as missing. It is never replaced by a default, a placeholder, a guessed value, or another employee's value") governs AD attribute *display rendering* — AD attributes are never persisted (CON-006), so no column, constraint, or index changes. The rendering contracts live in the Designer's sections (INT-008/010/013 postconditions, CLS-009); the database stores only `employee_uid` string references.
+- **Featured-banner stack contract needs no schema change:** the stakeholder-confirmed contract (stack ALL featured banners, newest first) is served by the existing `is_featured` column plus `ix_news_items_published` ordering — a query concern, not a schema concern.
+- **Formal trace registration verified:** all five `Realizes` links (CLS-021→`clockings`, CLS-022→`news_items`, CLS-023→`news_audit`, CLS-024→`worker_categories`, CLS-025→`category_audit`) are registered in the trace model and re-queried this iteration — nothing owed.
+- **Findings/CR sweep:** zero findings from any review lens target this section (Design Model PRESERVED-clean at all four LCA reviews); the Work Order's CRs target the Architectural Proof-of-Concept and Test Evaluation Summary — not this artifact.
+- **Construction hand-off (the O/R mapping table above is the implementation contract):** the Construction Iteration 1 PostgreSQL adapter (R008; Code Reviewer finding F-CR-E3-1, `[DEFERRED]` marker carried) implements against this section — `UseIdentityAlwaysColumn` identity, enum→text value converters with DB CHECK as second line, `ON CONFLICT (idempotency_key) DO NOTHING` for sync replay, `ON CONFLICT (employee_uid) DO UPDATE` for the UC-007 upsert, `HasFilter("status = 'published'")` partial indexes, and the audit-table REVOKEs. The interim in-memory `ClockingsRepository` is a test seam realizing INT-016's contract — not a schema change.
+
+**Traceability (Iteration 5 verification record):**
+
+| Element | Traces From | Link Type | Traces To |
+|---|---|---|---|
+| Iter 5 verification record (this subsection) | Development Case oracle (Data Model trigger NOT FIRED, re-checked 2026-09-02); SAD §Data View + ADR-002 (engine match — constraint guard); Review Record Iter 3/4 evidence (merged PRs #3/#4/#5/#6, unchanged class inventory); stakeholder decisions (fourth behavioural clause — display-only; featured-banner stack — query concern); trace model re-query (5 Realizes links verified) | Refines | Construction Iteration 1 PG adapter (R008 / F-CR-E3-1 — the O/R mapping table is its contract); Migration V1 (stable core — Construction adds tables, never restructures) |
 
 ### Traceability (Database Designer contribution)
 
