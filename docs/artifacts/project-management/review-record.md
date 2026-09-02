@@ -585,6 +585,314 @@ end note
 ```
 
 **Prior-findings reconciliation (this lens):** all four prior ManagementReviewer findings (Iteration Plan F1 Major, F2 Minor — Inception) are RESOLVED with successful `resolve_artifact_finding` closures recorded in Inception Iter 2; zero findings carried open into Elaboration Iteration 1 from this lens. The one open finding on the Risk List (untagged >90% criterion) was emitted by the Reviewer lens — per the cross-lens ownership invariant it is not this lens's to resolve.
+
+### Elaboration Iteration 2 — Technical-Lens Re-Review (Reviewer, 2026-09-02 — convergence cycle, calendar events R3/R4)
+
+**Scope and criteria (this lens, this cycle):** ALL 13 artifacts in the inventory, reviewed against the **LCA exit-criteria lens** (convergence-cycle track: R3 corrected-artifact re-reviews + R4 evaluation-criteria verification). Priority order: SAD first (architecture gate), then Design Model, then Use-Case Model, then remaining. Upstream consumption complete before findings: all artifacts read in full; the Work Order's declared scope and the stakeholder's recorded Iter 2 answers (R001 behavioural bar; four-UC confirmation "Yes"; featured banner "newest first") cross-checked; SCM state verified empirically (`scm_list_pull_requests` state=all → zero PRs; `scm_get_file_content` main → no Services/, no Infrastructure/; `scm_get_build_status` main → green run 33598979875; `scm_list_issues` → Issue #1 open, cr:approved, assigned:implementer). Checklists applied per artifact type: SAD → architecture checklist; Design Model → design checklist; UC Model → requirements checklist (Source: FR-NNN guard, cross-cutting guard, per-actor guard); Supp Spec → NFR checklist; Risk List → mitigation/acceptance-criteria checklist; Iteration Plan → plan-integrity checklist; Development Case → IARI baseline conformance + optional-trigger audit; Test Case / TES → test-design checklist; PoC artifact → trigger-condition + validation-protocol checklist. Iteration Assessment excluded per review-point rules (authored by the PM in the Assess touchpoint AFTER this review — its absence is never a finding).
+
+**Prior-findings reconciliation (this lens — executed in the dedicated closure state, tool calls FIRST):** 4 prior findings of this lens with resolution==null were loaded; dispositions: **SAD F1 (Critical) RESOLVED** — §Quality PoC Plan rewritten to the empirical disposition with explicit supersession note; §External Dependencies re-scoped (R010 → production-instance integration only); LCA criterion 3 corrected; all three stale locations named in the finding fixed. **SAD F3 (Minor) RESOLVED** — COMP-001 no longer lists IAUD; COMP-010 resolves via IDIR (INT-008); reconciliation subsection present; SAD and Design Model agree at every subsystem boundary. **Risk List F1 (Minor) RESOLVED** — the >90% figure DROPPED per the stakeholder's Iter 2 answer and replaced by the behavioural bar (three clauses, confirmed for UC-004/005/006/007); production-AD percentage moved to Construction (R010+R011), outside the LCA evidence package. **SAD F2 (Critical) PERSISTS** — left open and re-emitted under its findingKey with fresh SCM evidence (2nd occurrence). [EXIT] closed=3 (Resolved), deferred=0, rejected=0, left-open=1. Total disposed: 4 of 4.
+
+**New findings (this lens, this cycle — all emitted via `record_artifact_finding` before this upsert):**
+
+| Finding Key | Severity | Artifact | Description (summary) | Remediation (summary) |
+|---|---|---|---|---|
+| **SAD F2** (re-emission, 2nd occurrence) | **Critical** | Software Architecture Document (as architecture baseline) + SCM state | **PERSISTS — record side fixed, code-evidence side unmet.** The Architectural Proof-of-Concept artifact now EXISTS (DC-sanctioned, trigger FIRED, Architect-owned) with a sound validation protocol, per-risk single-mechanism dispositions, the R001 behavioural bar, and an honest PENDING ledger. But as of this review (verified 2026-09-02): zero mechanism code in SCM (src/EmployeePortal/Services/ClockingService.cs and src/EmployeePortal/Infrastructure/LdapGateway.cs both not found on main), ZERO pull requests in ANY state, and SCM Issue #1 (severity:blocker, cr:approved, assigned:implementer) still OPEN. Empirical validation of R001 (HIGH, exposure=9), R003, R004 has NOT been performed; TC-001…TC-023 all BLOCKED. The stakeholder's bar — "I will not accept an LCA that validates a HIGH architectural risk on paper only" — is not yet satisfied. The architecture baseline remains structurally sound; the gap is execution of the mandated validation. | Complete the convergence-cycle delivery chain (A-2…A-6, A-8): Implementer delivers the three mechanisms as evolutionary production code in src/ on feature/E1-{risk} branches with dual-coverage tests, labeled ready-for-review; Code Reviewer issues terminal dispositions per PR (base iteration/E1); Integrator merges APPROVED PRs; Test Designer executes TC-001…TC-023 against the fixtures; empirical results land in the PoC artifact § Results and Findings; Issue #1 closes on merged mechanism-PR evidence. This finding closes only when the empirical results are OBSERVED, not when the delivery is planned. |
+| **Development Case F1** | **Major** | Development Case — Tailoring note (Requirements); Stakeholder Decisions Incorporated §(3); Traceability row | **Misrecorded stakeholder decision — cross-artifact contradiction on the featured-banner rendering contract.** The stakeholder was asked: "stack all featured banners (newest first), or show only the newest featured item?" and answered "newest first". The Design Model (authoritative UI artifact) retired its P-02 PENDING marker with the faithful reading: stack ALL featured banners, ordered newest first — every featured item renders its own banner, no featured flag silently dropped. The DC instead glosses the same answer as "newest first (single banner, newest featured item)" — in three places — describing the OTHER option the stakeholder did not select. "Newest first" is an ordering statement; ordering presupposes plurality. The two artifacts contradict on a stakeholder-decided contract that authorizes UC-003 step 4 and UC-008 step 3, and the DC is the governance document every role reads for decision records. | Process Engineer corrects the three DC locations to the Design Model's recorded contract, citing the verbatim answer: featured banners STACK, ordered newest first (every featured item renders its own banner; ordering by the same date criterion as the FR-007 list; renders above the list on SCR-03 and above the history preview on SCR-01). Remove the "(single banner, newest featured item)" gloss everywhere it appears. If genuinely ambiguous, escalate via REQUIRES_USER_INPUT rather than recording either gloss. |
+| **Iteration Plan F3** (Reviewer, Iter 2) | **Minor** | Iteration Plan — Work Item 8; Objective 2; critical-chain diagram | **Stale test-case enumeration vs the Test Case authority.** The plan names the 20-case set ("Execute TC-001…TC-020", "all 20 currently BLOCKED", "TC-001…TC-020 executed") while the Test Case artifact (TC-ID authority) was extended this same iteration to 23 cases: TC-021/022/023 are the UC-005/006/007 AF-3 behavioural-bar validation cases, and its Cycle 2 record reports 23/23 BLOCKED. The plan's own exit criterion 1 requires the behavioural bar validated across ALL FOUR AD-reading use cases — evidence only TC-021/022/023 provide — yet the enumerated execution scope omits them. Same defect class as the LCO F1 UC-ID mismatch. | Update the three stale enumerations to the 23-case set (Work Item 8, Objective 2, critical-chain Test Designer step). Cross-check against the Test Case §Test Case Catalog (authority) before upsert — the LCO F1 lesson applies to TC IDs exactly as it did to UC IDs. |
+| **Test Evaluation Summary F1** | **Minor** | Test Evaluation Summary — mission scope; master workflow; schedule Sequence 2; resources table; INC-1; conclusions; recommendation 1; defect-status row | **Stale test-case enumeration vs the Test Case authority (same class as Iteration Plan F3).** The TES enumerates the 20-case set in eight locations and its mission-scope boundary row states "dedicated per-UC test cases for UC-005/006/007 land in Construction functional suites" — stale against the Test Case artifact, which designed TC-021/022/023 THIS iteration at Integration level as part of the R001 PoC's four-consumer validation. The TES's own acceptance-thresholds table correctly requires the bar "observed across all four AD-reading UCs" — the substance is right; the enumerations and the one scope row are stale. | Update the stale enumerations to the 23-case set and correct the mission-scope boundary row: TC-021/022/023 are DESIGNED and executed THIS convergence cycle as part of the R001 PoC; what lands in Construction is the full functional main-flow suites for UC-005/006/007, not the AF-3 bar cases. |
+| **Development Case F2** | **Minor** | Development Case — discipline workflow diagram; Test tailoring note; CORE artifacts table; role matrix (TestDesigner, Tester) | **Stale test-case enumeration vs the Test Case authority (same class).** The DC enumerates the 20-case set in five locations while the Test Case authority carries 23. The DC's own exit criterion 3 requires the behavioural bar confirmed for UC-004..UC-007 — evidence only TC-021/022/023 provide. | Update the five DC locations to the 23-case set (TC-001..TC-023), cross-checked against the Test Case §Test Case Catalog (authority) — the same ID-verification discipline the DC itself mandates for UC IDs. |
+| **Architectural Proof-of-Concept F1** | **Minor** | Architectural Proof-of-Concept — § Results and Findings ledger row; § Approach delivery protocol | **Stale test-case enumeration vs the Test Case authority (same class) — in the LCA evidence package's core artifact.** The PoC artifact enumerates the 20-case set in two locations: the Results ledger row ("TC-001…TC-020 execution | PENDING — All 20 test cases BLOCKED") and the delivery protocol ("The Test Designer executes TC-001…TC-020"). The Test Case authority carries 23 cases; the PoC's own acceptance criteria require the R001 behavioural bar proven across ALL FOUR AD-reading consumers — evidence only TC-021/022/023 provide — so the execution protocol as written under-scopes the validation whose results this artifact must carry to the LCA gate. (The artifact predates the Test Case extension by one day — its Cycle 1 citation was accurate when written — but the protocol governs the execution that is still pending, so it must reflect the current authority before the results land.) | Software Architect updates the two locations when the PoC artifact is evolved for the empirical results (the A-8/A-16 evolution already mandates rewriting exactly this table): Results ledger row → "TC-001…TC-023 execution | PENDING — All 23 test cases BLOCKED (Test Case Cycle 2 record; SCM Issue #1)"; delivery protocol → "The Test Designer executes TC-001…TC-023 against the validation fixtures". The R001 results row must then record clause-by-clause evidence for all four consumers (TC-011 + TC-021/022/023), not the directory search alone. |
+
+**Compliance Matrix — Technical LCA Lens, Iteration 2 (11 artifacts × checklist dimensions):**
+
+```plantuml
+@startuml
+title Elaboration Iter 2 - Technical LCA Review Compliance Matrix\n11 artifacts x checklist dimensions (Reviewer lens, 2026-09-02)
+
+object "Software Architecture Document" as SAD {
+  4+1 views complete : PASS (7 diagrams)
+  NFR-to-tactic mapping : PASS
+  PoC plan matches stakeholder decision : PASS - F1 RESOLVED
+  Dependencies vs Design Model : PASS - F3 RESOLVED
+  Code evidence for empirical validation : FAIL - F2 persists (2nd occurrence)
+}
+object "Design Model" as DM {
+  UC realizations 10 of 10 : PASS (SEQ-001..010 + AF-3)
+  Full signatures : PASS (CLS-001..027)
+  Interface contracts : PASS (INT-006..019 + bar)
+  Behavioural bar realized : PASS (D-9, four consumers)
+  Featured-banner marker retired : PASS (verbatim answer)
+  Findings : NONE - clean
+}
+object "Use-Case Model" as UCM {
+  Source FR-NNN 10 of 10 : PASS
+  No cross-cutting UCs : PASS
+  AF-3 flows stakeholder-confirmed : PASS
+  Activity diagrams 10 of 10 : PASS
+  Findings : NONE - clean
+}
+object "Supplementary Specification" as SUP {
+  FURPS+ quantified, testable : PASS
+  Behavioural bar one contract : PASS
+  90 percent figure absent : PASS (verified)
+  Findings : NONE - clean
+}
+object "Risk List" as RISK {
+  Behavioural bar replaces figure : PASS - F1 RESOLVED
+  Trend column present : PASS (A-14)
+  R012 gate-queue bound : PASS (A-15)
+  Findings : NONE - clean
+}
+object "Iteration Plan" as PLAN {
+  UC IDs vs authority : PASS
+  Statuses SCM-evidence-based : PASS
+  All-findings criterion : PASS (exit criterion 11)
+  TC enumeration vs authority : FAIL - F3 NEW (Minor)
+}
+object "Development Case" as DC {
+  IARI baseline conformance : PASS
+  PoC trigger FIRED holds : PASS (audited)
+  Featured-banner decision record : FAIL - F1 NEW (Major)
+  TC enumeration : FAIL - F2 NEW (Minor)
+}
+object "Test Case" as TC {
+  23 cases adversarial design : PASS
+  TC-011 behavioural bar : PASS
+  TC-021..023 four consumers : PASS
+  Honest BLOCKED verdicts : PASS
+  Findings : NONE - clean
+}
+object "Test Evaluation Summary" as TES {
+  Thresholds upstream-sourced : PASS
+  Honest NOT YET ACHIEVED : PASS
+  TC enumeration vs authority : FAIL - F1 NEW (Minor)
+}
+object "Architectural Proof-of-Concept" as POC {
+  Trigger condition holds : PASS
+  Vehicles match decision : PASS
+  Behavioural bar acceptance : PASS
+  Honest PENDING ledger : PASS
+  TC enumeration vs authority : FAIL - F1 NEW (Minor)
+  Empirical results : PENDING - blocked by SAD F2
+}
+object "Vision (Inception, carried)" as VIS {
+  Approved at LCO, 0 findings : PRESERVED
+  No finding or CR targets it : PRESERVED
+}
+SAD -[hidden]-> DM
+DM -[hidden]-> UCM
+UCM -[hidden]-> SUP
+SUP -[hidden]-> RISK
+RISK -[hidden]-> PLAN
+PLAN -[hidden]-> DC
+DC -[hidden]-> TC
+TC -[hidden]-> TES
+TES -[hidden]-> POC
+POC -[hidden]-> VIS
+@enduml
+```
+
+**Defect Distribution — Iteration 2 (severity × artifact, this lens):**
+
+```plantuml
+@startuml
+title Elaboration Iter 2 - Defect Distribution\nseverity x artifact, Reviewer lens (2026-09-02)
+
+object "Software Architecture Document" as D1 {
+  Critical 1 : F2 PERSISTS (2nd occurrence)
+  Record side fixed - PoC artifact
+  produced with honest PENDING ledger.
+  Code-evidence side unmet: zero
+  mechanism code, zero PRs in any
+  state, Issue #1 open.
+  Resolved this iteration: F1 (Critical),
+  F3 (Minor)
+}
+object "Development Case" as D2 {
+  Major 1 : F1 NEW - misrecorded
+  featured-banner decision (single
+  banner vs stack, 3 locations)
+  Minor 1 : F2 NEW - stale TC-001..TC-020
+  enumeration (5 locations)
+}
+object "Iteration Plan" as D3 {
+  Minor 1 : F3 NEW - stale TC-001..TC-020
+  enumeration (3 locations) vs the
+  23-case Test Case authority
+}
+object "Test Evaluation Summary" as D4 {
+  Minor 1 : F1 NEW - stale TC enumeration
+  (8 locations) + stale Construction-
+  scope row for TC-021..023
+}
+object "Architectural Proof-of-Concept" as D5 {
+  Minor 1 : F1 NEW - stale TC enumeration
+  (2 locations) in the LCA evidence
+  package's core artifact
+}
+object "Clean artifacts (this lens)" as D6 {
+  Design Model, Use-Case Model,
+  Supplementary Specification, Risk List,
+  Test Case, Vision (preserved)
+  Critical 0, Major 0, Minor 0
+}
+D1 -[hidden]-> D2
+D2 -[hidden]-> D3
+D3 -[hidden]-> D4
+D4 -[hidden]-> D5
+D5 -[hidden]-> D6
+
+note bottom of D1
+  One logical defect per ledger entry:
+  the absent code evidence is tracked
+  ONCE (SAD F2) - the PoC PENDING
+  ledger, the 23 BLOCKED test cases and
+  Issue #1 all observe the same gap and
+  carry no duplicate findings.
+  TOTAL OPEN (this lens): 1 Critical,
+  1 Major, 4 Minor across 5 artifacts.
+end note
+@enduml
+```
+
+**Cross-lens observation (recorded for the Coordinator):** the Management Reviewer lens's four Iter 1 findings (Iteration Plan F3/F4/F5, Risk List F1) have their remediation evidence VERIFIED PRESENT this review (exit criterion 11 added; queue forecasts removed; trend column added; R012 added) — but per the cross-lens ownership invariant, only the Management Reviewer lens may close them; this lens records the verification, it does not emit the closure. The Code Reviewer's F-CR-E1-2 (CONTRIBUTING.md) likewise has remediation VERIFIED PRESENT (committed, sha `6662813…`, per the Development Case tool-verification 2026-09-02) — closure owned by that lens. F-CR-E1-1 remains OPEN and converges with SAD F2 on the same underlying gap.
+
+### Business Modeling Lens — Scope and Criteria (Business Reviewer, Iteration 2 — convergence cycle, 2026-09-02)
+
+**Scope:** the DC §4 business-process-led classification re-verified at the LCA convergence-cycle review, and the Elaboration Iteration 2 artifact set re-checked for BM content. The correct evaluative lens at a lifecycle milestone is EXIT CRITERIA: is the Business Modeling discipline correctly INACTIVE, and did the phase produce exactly the BM deliverables the classification requires (zero, for a non-BPL project)?
+
+**Evidence gathered this iteration (all read in full before the verdict):** DC §4 classification (ProcessEngineer re-check 2026-09-02 — `isBusinessProcessLed = false`, Inception verdict unchanged, no CR re-opened the classification); Vision (Inception, Approved — BPL signal re-assessed); Use-Case Model (Elaboration Iter 2 — BM section inventory: zero BUCs, business workers, business entities, realizations; 10 system UCs trace 1:1 to FR-001…FR-010); Glossary (absent from the inventory — DC §5.2 specialist-vocabulary trigger NOT FIRED, no business-terms obligation); findings ledger (read_artifact_findings executed for Vision, Use-Case Model, Supplementary Specification, Review Record — all four return empty arrays; zero prior BusinessReviewer findings).
+
+**Scenario assessment (reviewer heuristic 1) — sustained:** software-feature-led automation of existing, well-understood manual workflows. The stakeholder's three Iteration 2 answers (R001 behavioural bar; four-UC confirmation "Yes"; featured banner "newest first") were cross-checked — all are system-requirements decisions refining declared FRs; none introduces a business-process signal.
+
+**Gate re-evaluation (what was checked, with evidence):**
+
+```plantuml
+@startuml
+title Business Modeling Lens - DC §4 Gate Re-Evaluation at the LCA Convergence-Cycle Review\n(Business Reviewer, Elaboration Iteration 2, 2026-09-02)
+
+start
+partition "S1 - Evidence gathered (this iteration)" {
+  :DC §4 classification (ProcessEngineer re-check 2026-09-02)\n**isBusinessProcessLed = false** - Inception verdict unchanged;\nno Change Request has re-opened the classification;
+  :Vision (Inception, Approved) - BPL signal re-assessed\ntool replacement (Excel, mass email, PDF directory to one web app);\nno reengineering, workflow transformation, or business object model;
+  :Use-Case Model (Elaboration Iter 2) - BM section inventory\n**zero** business use cases, business workers, business entities,\nor realizations; 10 system UCs trace 1:1 to FR-001..FR-010;
+  :Glossary - absent from the inventory; DC 5.2 trigger NOT FIRED\n(no specialist-vocabulary obligation);
+  :Findings ledger (this lens) - read_artifact_findings executed\nfor Vision, Use-Case Model, Supplementary Specification,\nReview Record: **all four return empty arrays**;
+}
+partition "Independent verification (quality gate)" {
+  :BPL signal check - **absent** (Vision + declared scope);
+  :BM coverage check - **zero sections** (Use-Case Model);
+  :Scenario assessment (heuristic 1) - sustained:\nsoftware-feature-led automation of existing,\nwell-understood manual workflows;
+  :Stakeholder Iter 2 answers cross-checked (behavioural bar,\nfour-UC confirmation, featured banner) - all system-requirements\ndecisions; no business-process signal;
+}
+if (BPL signal present OR BM sections present?) then (no)
+  :State-machine path - **S_INACTIVE**\nBR-OK-INACTIVE per DC §4 - sustained from Inception\nand the Elab Iter 1 LCA review;
+  :Verdict recorded - 0 findings, 0 recommendations,\n0 BM conditions on the LCA re-presentation gate;
+  stop
+else (yes - full Elaboration assessment path)
+  :S2/S3/S4 full assessment path - NOT TAKEN this iteration;
+  stop
+endif
+@enduml
+```
+
+**Checklist compliance (classification criteria PASS with verification basis; BM-specific criteria N/A by classification):**
+
+```plantuml
+@startuml
+title Business Modeling Lens - Elaboration BM Checklist Compliance (Iter 2, 2026-09-02)\nDiscipline INACTIVE per DC §4 - BM-specific criteria N/A by classification; classification criteria PASS with verification basis
+
+object "C1: DC §4 classification correctness" as C1 {
+  STATUS: PASS - verified
+  isBusinessProcessLed = false
+  (ProcessEngineer re-check 2026-09-02);
+  Vision shows tool replacement,
+  no reengineering signal; no CR
+  re-opened the classification
+}
+object "C2: BPL signal (Vision)" as C2 {
+  STATUS: PASS - absent, verified
+  Excel / mass email / PDF directory
+  replaced by one web app; no workflow
+  transformation, no business object
+  model in the declared scope
+}
+object "C3: BM section coverage (UC Model)" as C3 {
+  STATUS: PASS - zero, correct
+  Zero BUCs, business workers,
+  business entities, realizations;
+  10 system UCs trace 1:1 to
+  FR-001..FR-010
+}
+object "C4: Realization coverage (N of M BUCs)" as C4 {
+  STATUS: N/A - INACTIVE
+  No BUCs exist to realize;
+  criterion applies only to
+  BPL-true projects
+}
+object "C5: Worker-entity separation" as C5 {
+  STATUS: N/A - INACTIVE
+  No business workers or
+  business entities modeled
+}
+object "C6: Derivation bridge (worker to actor)" as C6 {
+  STATUS: N/A - INACTIVE
+  No business workers; system actors
+  ACT-001..004 derive directly from
+  STK-003, STK-001, CON-004, CON-005
+}
+object "C7: Business rules audit" as C7 {
+  STATUS: N/A - INACTIVE
+  No BR-NNN register; declared business
+  rules live as CON-007/012/013
+  constraints attached in UC specs
+}
+object "C8: Business-level UML stereotypes" as C8 {
+  STATUS: N/A - INACTIVE
+  No business-level diagrams; the
+  system UML in the Use-Case Model is
+  correctly system-level
+}
+object "C9: Stakeholder representation" as C9 {
+  STATUS: PASS - verified
+  STK-001..004 all represented:
+  ACT-002 (STK-001), ACT-001 (STK-003),
+  STK-002 advisor - no portal role,
+  STK-004 negative stakeholder (CON-014)
+}
+object "C10: Construction readiness (business lens)" as C10 {
+  STATUS: PASS - no BM conditions
+  System UC derivation complete
+  (10 of 10, approved by technical
+  lens); zero BM gate conditions on
+  the LCA re-presentation
+}
+C1 -[hidden]-> C2
+C2 -[hidden]-> C3
+C3 -[hidden]-> C4
+C4 -[hidden]-> C5
+C5 -[hidden]-> C6
+C6 -[hidden]-> C7
+C7 -[hidden]-> C8
+C8 -[hidden]-> C9
+C9 -[hidden]-> C10
+
+note bottom of C10
+  One logical record: the BM
+  discipline is INACTIVE, so the
+  business lens adds ZERO findings
+  to the ledger the coordinator
+  must empty before LCA
+  re-presentation. The open gates
+  (SAD F2, Iteration Plan F3,
+  F-CR-E1-1) belong to the
+  technical, management and
+  code-review lenses.
+end note
+@enduml
+```
+
+**Prior-findings reconciliation (this lens, Iter 2):** [PLAN] artifacts × prior BR findings with resolution==null: Vision: [], Use-Case Model: [], Supplementary Specification: [], Review Record: []. TOTAL: 0. [EXIT] closed=0, deferred=0, rejected=0, left-open=0. Total: 0 of 0. The findings ledger holds zero findings emitted by the BusinessReviewer role across the entire project — nothing to close; no `resolve_artifact_finding` calls owed.
 ## Findings
 ### Elaboration Iteration 1 — New Findings (Code-Review Lens)
 
