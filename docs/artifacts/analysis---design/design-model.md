@@ -896,8 +896,9 @@ end
 @enduml
 ```
 ## Design Packages and Classes
-
 One design model, three packages inside the single deployable (ADR-001). Dependencies point DOWN only; every cross-package reference is an interface.
+
+**Elaboration Iter 3 evolution (Designer — Review Record A-27):** the CLS-009 LdapGateway graceful-degradation contract in the Infrastructure package is extended from three to FOUR clauses — null is the FINAL mapped value for a missing attribute, NEVER substituted by a default, a placeholder, a guessed value, or another employee's value (stakeholder contribution at the Iter 2 verdict gate, binding). No class is added; no signature changes — the fourth clause is a postcondition on the existing mapping behavior. All other content preserved exactly as reviewed.
 
 ```plantuml
 @startuml
@@ -1229,6 +1230,11 @@ note bottom of LDAP
   5 s hard timeout (PRF-003);
   MapEntry leaves missing attributes
   null — entry NOT hidden (R001, AF-2).
+  FOUR-clause bar (A-27, Iter 3): null
+  is the FINAL value — NEVER
+  substituted by a default, a
+  placeholder, a guessed value, or
+  another employee's value.
   BuildFilter/MapEntry are the R001
   volatility point: query strategy
   changes touch this class only.
@@ -1483,7 +1489,6 @@ end note
 | COMP-001 Clocking Service lists IAUD dependency | CLS-001 does NOT depend on IAuditService | NFR-005 scopes audit to news operations (AUD-001…003) and category changes (AUD-004). A clocking event carries its own actor (EmployeeUid) and is immutable (DAT-001) — there is nothing to audit beyond the event row itself. Coupling reduction; no behavior change. |
 | COMP-010 Report Export Service lists ILDAP dependency | CLS-006 depends on IDirectoryService.GetDisplayData (INT-008), which internally uses ILDAP | Display-data resolution exists exactly once (COMP-003) instead of being duplicated in COMP-010. The boundary remains interface-based; the SAD's intent (AD-sourced display data, CON-005) is preserved. |
 | COMP-009 Offline Resilience Handler "internal to COMP-001" | CLS-008 OfflineQueueClient is browser-side (localStorage), calling the sync endpoint (CLS-017.OnPostSync → CLS-001.SyncEvents); the server half is ClockingService.SyncEvents | Consistent with ADR-003 and the SAD Deployment View, which places the localStorage queue on the employee workstation node. "Internal to COMP-001" is realized as: the queue's only server counterpart is COMP-001's sync path. |
-
 ## Interface Contracts
 Operation signatures with preconditions / postconditions for every subsystem-boundary interface. Interfaces INT-001…INT-005 (external system interfaces) are specified in the Supplementary Specification; INT-006…INT-019 are the portal's internal subsystem boundaries.
 
