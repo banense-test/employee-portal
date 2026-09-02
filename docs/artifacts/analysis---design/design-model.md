@@ -1900,9 +1900,11 @@ Growth: `clockings` ~100K rows/year (SAD sizing) — years of headroom on a sing
 | Migration V1 (baseline DDL) | CON-003, ADR-002, R008 | Realizes | Implementer initial EF migration (Construction) |
 | No-Employee-table rule | CON-005, CON-006, CON-007 | Derives | CLS-009 live LDAP resolution (R001 graceful degradation) |
 ## Boundary Classes and Navigation Map
-(User Interface Designer — Elaboration Iter 1, evolved Iter 2 (convergence cycle). This section realizes the user-interface-specific parts of the use cases: the boundary classes the user operates, the formal navigation topology, and the UI patterns every implementer follows. Interaction flows per UC are in the Use-Case Model §Use-Case Specifications → UI Flow References; usability criteria are quantified in the Supplementary Specification §Usability.)
+(User Interface Designer — Elaboration Iter 1, evolved Iter 2 (convergence cycle), evolved Iter 3 (fourth-clause propagation A-27 + featured-banner stack visualization). This section realizes the user-interface-specific parts of the use cases: the boundary classes the user operates, the formal navigation topology, and the UI patterns every implementer follows. Interaction flows per UC are in the Use-Case Model §Use-Case Specifications → UI Flow References; usability criteria are quantified in the Supplementary Specification §Usability.)
 
 **Elaboration Iter 2 evolution (convergence cycle):** (1) **P-05 extended** — the missing-AD-attribute pattern now carries the stakeholder-confirmed R001 behavioural bar across ALL four AD-reading use cases (UC-004/005/006/007), each with its rendering contract; (2) **Salt wireframes added** for the two primary screens — SCR-01 Home (first-use affordance, USA-004) and SCR-04 Directory (10-second lookup, USA-003; the wireframe renders the R001 blank-field contract); (3) **design-reference verification** — the authoritative source was read from the repository (docs/inputs/employee-portal-design.html, sha ba1cb26e): every token, component, and state cited in this section is confirmed present in the reference; the SCR-01 wireframe is completed with the reference's live clock element; **reconciliations 4 and 5** are added (directory-footer sync claim contradicts CON-006; hardcoded filter options are sample data, not specification); (4) **featured-banner rendering contract decided** — asked in-round what the contract is when more than one news item is featured, the stakeholder answered **"newest first"**: stack all featured banners, ordered newest first; the P-02 PENDING marker is retired in place and the Traceability row updated. All other content is preserved exactly as reviewed at the Elaboration Iter 1 LCA review (zero findings on this artifact).
+
+**Elaboration Iter 3 evolution (User Interface Designer — fourth-clause propagation, A-27; featured-banner stack visualization):** (1) **P-05 extended to FOUR clauses** — the missing-AD-attribute pattern now carries the stakeholder's fourth clause verbatim (stakeholder contribution at the Iter 2 verdict gate, binding; Review Record A-27 — design contracts land with the mechanism build so the code implements four clauses): "a missing attribute is displayed as missing. It is never replaced by a default, a placeholder, a guessed value, or another employee's value." The rendering contract is formalized as an activity diagram under P-05, and the on-screen em-dash placeholder (the design reference's own empty-value convention) is distinguished from the CSV's truly empty cell (stakeholder rationale, verbatim: "on the CSV that reaches payroll a fabricated department is worse than an empty cell. An empty cell gets questioned. A plausible wrong one does not."). (2) **SCR-03 News Salt wireframe added** — the featured-banner stacking contract (stakeholder decision, Iter 2, recorded verbatim: "newest first") is now VISUALIZED, not only recorded in P-02: the two-featured state renders the stack newest-first above the list, each banner in the reference's warn-tinted style. This is the one UI contract two governance artifacts mis-transcribed in Iter 2 (Development Case F1, Risk List F2 — both Major, same defect class); the wireframe, plus the updated SB-03 frame 4 and UC-003 reference (Use-Case Model), makes the stack contract visually and textually unambiguous for every consumer. (3) **SCR-04 wireframe contract updated** — the blank-field contract now cites all four clauses. All other content is preserved exactly as reviewed at the Elaboration Iter 2 LCA re-review (zero findings on this artifact). The CLS-009 graceful-degradation contract extension (the Designer-owned part of A-27, §Interface Contracts INT-010) is NOT touched by this update — co-owned-section invariant; it lands with the Designer's next evolution, alongside the mechanism build.
 
 ### Screen Registry
 
@@ -2099,9 +2101,9 @@ end note
 - **Terminal states explicit:** Sign out → `[*]` (topbar, every screen); session expiry → EX-01 (global transition, AF-2).
 - **Guards:** `[HR role]` on all HR-screen transitions (SEC-006 — server-enforced; hiding nav items is defense-in-depth, never the only barrier); `[item published]` on Unpublish/Edit (UC-009 AF-2, UC-010 AF-2); `[session valid/expired]` on entry (AF-2).
 
-### Wireframes (Salt) — primary screens (Elaboration Iter 2)
+### Wireframes (Salt) — primary screens (Elaboration Iter 2; SCR-03 added Iter 3)
 
-The two primary screens carry the highest usability stakes: **SCR-01 Home** is the single primary affordance for first use (USA-004, AC-001, AC-004 — adoption risk R002) and **SCR-04 Directory** carries the 10-second lookup task (USA-003, AC-003) plus the R001 rendering contract. Both wireframes are drawn from the mandatory design reference (CON-011, verified against repository source sha ba1cb26e): topbar (brand-900, user chip, Sign out), sidebar nav (Employee-role view — HR items hidden per P-06), content cards. The Designer details the view classes behind them; the Implementer builds from them.
+The primary screens carry the highest usability stakes: **SCR-01 Home** is the single primary affordance for first use (USA-004, AC-001, AC-004 — adoption risk R002) and **SCR-04 Directory** carries the 10-second lookup task (USA-003, AC-003) plus the R001 rendering contract. **SCR-03 News** (added Iter 3) renders the stakeholder-decided featured-banner stacking contract — the one UI contract decided in-round (Iter 2: "newest first") and mis-transcribed by two governance artifacts in the same iteration (Development Case F1, Risk List F2); the wireframe makes the stack visually unambiguous for the Implementer. All wireframes are drawn from the mandatory design reference (CON-011, verified against repository source sha ba1cb26e): topbar (brand-900, user chip, Sign out), sidebar nav (Employee-role view — HR items hidden per P-06), content cards.
 
 **SCR-01 Home** — clocked-in state shown (the button toggles green ▶ "Clock In" ↔ red ■ "Clock Out" by status, USA-001; never both visible):
 
@@ -2141,7 +2143,43 @@ Today: 08:02 in
 
 Wireframe contract: status chip + status-aware button are the ONLY clocking controls (USA-002: ≤ 2 interactions from Home); the **live clock element** (reference `.now` — 40 px tabular numerals beside the button) renders the current local time and is presentational only — it is never a data field and never substitutes for the recorded timestamp shown in the confirmation; the confirmation renders inline on the card after press (< 1 s, PRF-002); all displayed times are America/Havana local (USA-008); featured banner uses the warn-tinted style (P-02); history preview links to SCR-02.
 
-**SCR-04 Directory** — search results for "Gomez"; the second and third cards deliberately render the **R001 behavioural bar** (stakeholder-confirmed, Elaboration Iter 2): missing attributes render as blank values (em-dash placeholder), the entry is NOT hidden, no error is raised:
+**SCR-03 News** — two items carry the featured flag (the state the stakeholder's Iter 2 decision governs); the stack renders newest-first above the list, each banner in the reference's warn-tinted style (added Iter 3):
+
+```plantuml
+@startsalt
+{
+{Employee Portal | Maria Gomez - Employee | [Sign out]}
+--
+{
+{Home
+My Clocking History
+News
+Directory}
+|
+{News
+--
+{{Featured news
+--
+★ IT Town Hall - Friday 15:00}}
+{{Featured news
+--
+★ HR Benefits enrollment opens Sep 5}}
+--
+{All | General | HR | IT | Events}
+--
+{{New VPN rollout next week
+IT - Sep 2}}
+{{Summer party photos
+Events - Aug 28}}
+}
+}
+}
+@endsalt
+```
+
+Wireframe contract: when more than one item carries the featured flag, ALL featured banners render, stacked newest first (stakeholder decision, Elaboration Iter 2, recorded verbatim: "newest first") — every featured item keeps the FR-006 banner promise, no featured flag is silently dropped; ordering uses the same date criterion as the FR-007 list; the stack renders above the list on SCR-03 and above the history preview on SCR-01 (P-02). Each banner uses the reference's warn-tinted style (#FFF6E2→#FFFBF2 gradient, 4 px warn left border, ★). The banner stack renders per UC-003 step 4; the category chips (All/General/HR/IT/Events) filter the list per UC-003 steps 5–6. Empty results → "No news in this category" (UC-003 AF-1); no published news → empty state (UC-003 AF-2); PostgreSQL unreachable → "News temporarily unavailable" inline (UC-003 EF-1).
+
+**SCR-04 Directory** — search results for "Gomez"; the second and third cards deliberately render the **R001 behavioural bar** (stakeholder-confirmed, Elaboration Iter 2; fourth clause propagated Iter 3): missing attributes render as blank values (em-dash placeholder), the entry is NOT hidden, no error is raised, the blank is never substituted:
 
 ```plantuml
 @startsalt
@@ -2179,7 +2217,7 @@ Email: m.gomez@cubacorp.example | Ext: —}}
 @endsalt
 ```
 
-Wireframe contract: all six corporate fields render ON the card — no detail view needed (USA-003); a missing attribute renders as an empty value ("—") while the field label remains visible, so the user sees the attribute exists but is unpopulated in AD — never "N/A", never an error, never a hidden card (R001 bar clauses a/b/c; UC-004 AF-2); the same blank-value convention applies to the SCR-05 review table and SCR-06 lookup (P-05). Empty results → "No colleagues found" + refine suggestion (UC-004 AF-1); LDAP failure → "Directory temporarily unavailable", no partial data (UC-004 AF-3, CON-006). Filter select options populate from AD on demand — never a hardcoded list (reconciliation 5).
+Wireframe contract: all six corporate fields render ON the card — no detail view needed (USA-003); a missing attribute renders as an empty value ("—") while the field label remains visible, so the user sees the attribute exists but is unpopulated in AD — never "N/A", never a default, never a guessed value, never another employee's value, never an error, never a hidden card (R001 bar clauses a/b/c/d; UC-004 AF-2); the same blank-value convention applies to the SCR-05 review table and SCR-06 lookup (P-05). On-screen blank rendering uses the em-dash placeholder (the design reference's own empty-value convention); the CSV export (UC-006) writes a truly EMPTY cell — no placeholder character — because the file reaches payroll (stakeholder rationale, verbatim: "on the CSV that reaches payroll a fabricated department is worse than an empty cell. An empty cell gets questioned. A plausible wrong one does not."). Empty results → "No colleagues found" + refine suggestion (UC-004 AF-1); LDAP failure → "Directory temporarily unavailable", no partial data (UC-004 AF-3, CON-006). Filter select options populate from AD on demand — never a hardcoded list (reconciliation 5).
 
 ### UI Patterns
 
@@ -2195,7 +2233,7 @@ Coordination artifact for the Designer (view-class detailing), the Implementer (
 **P-02 Visual hierarchy**
 - Topbar (brand-900) → sidebar nav (role-aware, active item brand-100) → content: page title 28 px, subtitle muted, cards (8 px radius, 1 px line border, soft shadow) on bg #F4F7FA, 1120 px container, 24 px gutters.
 - Section headers: 12 px uppercase, muted, bottom border. Table headers: 12 px uppercase muted. Status values: chips/tags (present = accent-tinted, complete = ok tag).
-- Featured news = warn-tinted banner (#FFF6E2→#FFFBF2 gradient, 4 px warn left border, ★) at the top of News and Home (FR-006/FR-007). **Rendering contract when more than one item carries the featured flag — stakeholder decision (Elaboration Iter 2), recorded verbatim: "newest first" — stack ALL featured banners, ordered newest first.** Every featured item renders its own banner (no featured flag is silently dropped — each keeps the FR-006 banner promise); the stack orders by the same date criterion as the FR-007 news list (newest first) and renders above the list on SCR-03 and above the history preview on SCR-01. The contract applies to UC-003 step 4 (featured rendering on Home and News) and UC-008 step 3 (the featured flag HR sets when publishing).
+- Featured news = warn-tinted banner (#FFF6E2→#FFFBF2 gradient, 4 px warn left border, ★) at the top of News and Home (FR-006/FR-007). **Rendering contract when more than one item carries the featured flag — stakeholder decision (Elaboration Iter 2), recorded verbatim: "newest first" — stack ALL featured banners, ordered newest first.** Every featured item renders its own banner (no featured flag is silently dropped — each keeps the FR-006 banner promise); the stack orders by the same date criterion as the FR-007 news list (newest first) and renders above the list on SCR-03 and above the history preview on SCR-01. The contract applies to UC-003 step 4 (featured rendering on Home and News) and UC-008 step 3 (the featured flag HR sets when publishing). Visualized in the SCR-03 wireframe (added Iter 3).
 
 **P-03 Terminology (exact, from declared scope — never synonyms)**
 - "Clock In" / "Clock Out" (FR-004). "Unpublish" — NEVER "Delete" or "Remove" (CON-012; no hard delete exists). "Worker categories" — NEVER "Manage directory" (CON-007; see reconciliation 1). Categories: General, HR, IT, Events (FR-006/FR-007). "Sign out". Directory fields: name, job title, department, office, email, extension (FR-010). UI language: English (design reference).
@@ -2206,9 +2244,39 @@ Coordination artifact for the Designer (view-class detailing), the Implementer (
 **P-05 State patterns (consistent across all screens)**
 - Empty state: friendly one-line message, no skeleton rows (UC-002 AF-1, UC-003 AF-1/AF-2, UC-004 AF-1, UC-005 AF-1).
 - Unavailable state: inline "… temporarily unavailable" message in the content area, NO partial or cached data (UC-002 EF-1, UC-003 EF-1, UC-004 AF-3, UC-006 AF-2, UC-007 AF-2 — CON-006 forbids local fallback).
-- Missing AD attribute: field shown blank, entry NOT hidden, no error — the **R001 behavioural bar (stakeholder-confirmed, Elaboration Iter 2) applies to ALL four AD-reading use cases**, each with its rendering contract: **UC-004 AF-2** directory cards (all six fields on the card, blank values for gaps — SCR-04 wireframe); **UC-005 AF-3** review table (EVERY event row rendered — clocking columns are portal data and always complete; missing display fields blank); **UC-006 AF-3** CSV export (every event row written, missing display fields as blank cells, no abort — ad_user_id resolves identity); **UC-007 AF-3** category lookup (employee still locatable and selectable with blank fields). Blank renders as an empty value with the field label retained (em-dash placeholder on cards/tables) — never "N/A", never an error, never a hidden entry. Visualized in SB-05 (Use-Case Model).
+- Missing AD attribute: field shown blank, entry NOT hidden, no error, **blank never substituted** — the **R001 behavioural bar (stakeholder-confirmed, Elaboration Iter 2; FOURTH clause added at the Iter 2 verdict gate, propagated Iter 3 — A-27) applies to ALL four AD-reading use cases**, all four clauses holding in every consumer: **(a)** every employee is rendered whether or not their attributes are complete; **(b)** a missing attribute never removes someone from results; **(c)** a missing attribute never raises an error; **(d)** *a missing attribute is displayed as missing. It is never replaced by a default, a placeholder, a guessed value, or another employee's value* (stakeholder contribution at the Iter 2 verdict gate, verbatim). Rendering contract per consumer: **UC-004 AF-2** directory cards (all six fields on the card, blank values for gaps — SCR-04 wireframe); **UC-005 AF-3** review table (EVERY event row rendered — clocking columns are portal data and always complete; missing display fields blank); **UC-006 AF-3** CSV export (every event row written, missing display fields as EMPTY cells — no placeholder character, no abort — ad_user_id resolves identity); **UC-007 AF-3** category lookup (employee still locatable and selectable with blank fields). On-screen blank renders as an empty value with the field label retained (em-dash placeholder on cards/tables — the design reference's own empty-value convention); the CSV writes a truly empty cell, per the stakeholder's verbatim rationale: "on the CSV that reaches payroll a fabricated department is worse than an empty cell. An empty cell gets questioned. A plausible wrong one does not." Prohibited substitutions in every consumer: "N/A", a default category ("General"), a first-office fallback, any guessed value, another employee's value. Visualized in SB-02 frame 4 and SB-05 (Use-Case Model); formalized as the activity diagram below.
 - Role denial: SCR-09 inline state, no data revealed (SEC-006).
 - Validation: inline field highlight + message on submit (UC-008 AF-1, UC-009 AF-1).
+
+The four-clause rendering contract as a formal model (added Iter 3 — A-27; the mechanism build implements four clauses):
+
+```plantuml
+@startuml
+title P-05 Missing-AD-Attribute Rendering Pattern - R001 behavioural bar, FOUR clauses\n(stakeholder-confirmed Elab Iter 2; clause d added at the Iter 2 verdict gate, propagated Iter 3 - A-27)
+start
+:AD entry returned for rendering\n(ad_user_id always present;\ndisplay attributes may be missing - R001);
+if (Display attribute populated in AD?) then (yes)
+  :Render the attribute value;
+else (no)
+  :Render the ENTRY - clause (a):\nevery employee is rendered whether\nor not their attributes are complete;
+  :Render the FIELD BLANK - clause (d):\nempty value, field label retained;
+  note right
+    Clause (d), verbatim: "a missing
+    attribute is displayed as missing.
+    It is never replaced by a default,
+    a placeholder, a guessed value,
+    or another employee's value."
+    Prohibited: "General" as a default,
+    "N/A" as a placeholder, a guessed
+    value, another employee's value.
+    Blank is an answer.
+  end note
+  :No error raised - clause (c);\nentry stays in the result set - clause (b);
+endif
+:Consumer renders the blank per its contract:\nUC-004 SCR-04 card - blank field on the card;\nUC-005 SCR-05 table - blank display cell, EVERY row present;\nUC-006 CSV - EMPTY cell (no em-dash), every row written;\nUC-007 SCR-06 lookup - blank fields, still selectable;
+stop
+@enduml
+```
 
 **P-06 Role-based UI (SEC-002/SEC-006)**
 - Employee role sees: Home, Clock In/Out, My history, News, Directory. HR Administrator additionally sees: Publish news, News management, Clocking report, Worker categories (sidebar separator + role tag, per design reference).
