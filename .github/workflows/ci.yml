@@ -14,7 +14,13 @@
 #               (COMP-007/CLS-009; four-clause behavioural bar, UC-004/005/006/007)
 #               merge SHA d413e23dcbb0ffefb842e74aadc9a54ce8fbaf4a
 #               Code Reviewer: APPROVED (review 5088169328); pre-merge CI green (run 33616349487)
-#   Pending:    PR #5 (R004 offline queue + idempotent sync), PR #4 (R003 OIDC stub issuer)
+#               post-merge verification: CI GREEN (run 33617283642)
+#   2026-09-02  PR #5 MERGED — R004 offline queue + idempotent sync
+#               (COMP-009/CLS-008, CLS-001; UNIQUE idempotency_key REL-002,
+#               sync <= 60 s REL-003, AC-005 drop simulation)
+#               merge SHA 3fe41190f0e7d25ca0fd3a3e605e3039364fcabf
+#               Code Reviewer: APPROVED (review 5088169685); pre-merge CI green (run 33616359385)
+#   Pending:    PR #4 (R003 OIDC stub issuer)
 #
 # PlantUML dependency sketch:
 # @startuml
