@@ -163,18 +163,17 @@ All 10 UCs assigned; UC IDs verified against the Use-Case Model authority (LCO F
 | Fine plan | **Built at LCA sanction, not before** — planning beyond the current horizon in fine-grained detail is waste; the coarse baseline above is the commitment |
 | Key risks | R010 (STK-004 deliverables — trigger: not confirmed by Construction Iter 1 start), R008, R002 (adoption design) |
 ## Resources
-
 ### Agent Role Profile — Elaboration Iteration 2 (convergence cycle)
 
 | Agent Role | Discipline | Intensity | Active This Iteration | Token Budget | Key Deliverable |
 |---|---|---|---|---|---|
-| Project Manager | Project Management | High | Yes | ~180K | Convergence plan + Risk List corrections (committed); Iteration Assessment with SCM-evidence reconciliation; LCA evidence package |
-| Implementer | Implementation | Critical | Yes | ~270K | CONTRIBUTING.md + the three mechanisms (R001 behavioural bar / R003 stub issuer / R004 offline sync) with dual-coverage tests |
-| Code Reviewer | Implementation | Critical | Yes | ~60K | Terminal PR dispositions per mechanism (CR-1…CR-7) |
-| Integrator | Implementation | High | Yes | ~30K | APPROVED PRs merged to iteration/E1 |
-| Software Architect | Analysis & Design | Critical | Yes | ~180K | SAD re-correction (A-7, A-9) + Architectural Proof-of-Concept artifact (A-8) |
-| Test Designer | Test | High | Yes | ~120K | TC-001…TC-020 executed against the validation fixtures |
-| **Total** | | | | **~840K** | |
+| Project Manager | Project Management | High | Yes | ~1,870K | Convergence plan + Risk List corrections (committed); Iteration Assessment with SCM-evidence reconciliation; LCA evidence package |
+| Implementer | Implementation | Critical | Yes | ~2,810K | CONTRIBUTING.md + the three mechanisms (R001 behavioural bar / R003 stub issuer / R004 offline sync) with dual-coverage tests |
+| Code Reviewer | Implementation | Critical | Yes | ~625K | Terminal PR dispositions per mechanism (CR-1…CR-7) |
+| Integrator | Implementation | High | Yes | ~310K | APPROVED PRs merged to iteration/E1 |
+| Software Architect | Analysis & Design | Critical | Yes | ~1,870K | SAD re-correction (A-7, A-9) + Architectural Proof-of-Concept artifact (A-8) |
+| Test Designer | Test | High | Yes | ~1,250K | TC-001…TC-023 executed against the validation fixtures |
+| **Total** | | | | **~8,750K** | |
 
 ### Budget Split Across Disciplines
 
@@ -183,15 +182,14 @@ All 10 UCs assigned; UC IDs verified against the Use-Case Model authority (LCO F
 | Implementation (Implementer + Code Reviewer + Integrator) | ~43% | Critical intensity — the convergence cycle's central objective is CODE EVIDENCE for empirical risk retirement (F3 / SAD F2 / F-CR-E1-1 converge here) |
 | Analysis & Design | ~21% | Critical intensity — SAD re-correction + the PoC artifact that carries the empirical results into the LCA evidence package |
 | Project Management | ~21% | High intensity — findings-closure governance, plan/risk corrections, assessment reconciliation, evidence-package assembly |
-| Test | ~14% | High intensity — 20 blocked test cases unblocked and executed against the fixtures |
+| Test | ~14% | High intensity — 23 blocked test cases unblocked and executed against the fixtures |
 
 ### Two Clocks (never summed)
 
 | Clock | Elaboration Iter 2 | Basis |
 |---|---|---|
-| Agent work | ~840K tokens planned within the 1,200K box (~360K rework headroom); elapsed time measured at iteration close | Budget box [ASSUMPTION, basis named above]; actuals recorded in the Iteration Assessment |
-| Human gates | **Estimate NONE** — bounded in Risk List R012 (14-day suspension ceiling; nothing auto-filled). Mitigation: in-round stakeholder answering, as measured at LCO (queue 0s — recorded actual) and at the Iter 1 LCA consultation (answered in-round). STK-004 response: external queue tracked as R010 (Transfer) — not a project gate, no estimate quoted | Planning rule (Review Record A-13/A-15); measured LCO actual |
-
+| Agent work | ~8,750K tokens planned within the ~12,500K box (~3,750K rework headroom); elapsed time measured at iteration close | Budget box [ASSUMPTION — scaled from the measured Iter 1 iteration actual 12,523,281; corrected this close pass, F6]; actuals recorded in the Iteration Assessment |
+| Human gates | **Estimate NONE** — bounded in Risk List R012 (14-day suspension ceiling; nothing auto-filled). Mitigation: in-round stakeholder answering, as measured at LCO (queue 0s — recorded actual), at the Iter 1 LCA consultation (answered in-round), and at the Iter 2 verdict gate (queue 10:01:08 across 21 interactions — recorded actual; growth traced to process defects, not stakeholder availability). STK-004 response: external queue tracked as R010 (Transfer) — not a project gate, no estimate quoted | Planning rule (Review Record A-13/A-15); measured LCO + Iter 2 actuals |
 ## Use Cases and Scenarios Addressed
 
 **This iteration's use-case scope (convergence cycle):** the empirical validation exercises UC-001 (Clock In/Out — OIDC consumption, offline resilience, idempotency) and the four AD-reading use cases UC-004 (Directory Search), UC-005 (Review Clockings), UC-006 (CSV Export), UC-007 (Assign Category) — the R001 behavioural bar is confirmed for ALL FOUR per the stakeholder's Iter 2 answer. UC-010 (Unpublish News) carries its audit/soft-delete test cases. All 10 UCs remain refined at the analysis level (Use-Case Model clean at review); none is implemented as a running feature — implementation is Construction.
