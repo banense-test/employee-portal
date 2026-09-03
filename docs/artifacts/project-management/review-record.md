@@ -1196,7 +1196,7 @@ The record-propagation pass delivered its five named corrections in full (A-32�
 
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
-| Management-lens Iter 4 re-review (this record) | Work Order (Elab Iter 4 — LCA milestone review, management lens); SAD §Quality, Iteration Plan (Elab Iter 4 pass), Risk List (Iter 3 close-pass reappraisal), Iteration Assessment (Iter 3 close-out), Review Record (cumulative) read in full; measured actuals (Inception phase-level; Elab Iter 1: 12,523,281; Iter 2: 13,363,814; Iter 3: 27,143,633); SCM state per the technical lens's same-day first-hand verification (zero open PRs; main GREEN 33639518709; Issues #1/#2 closed; Issue #9 satisfied on the A-32 evidence; CONTRIBUTING.md sha 90e4f2e) | Reviews | LCA milestone gate (CONDITIONAL GO sustained — R6); R6 re-presentation entry gate; actions A-37…A-39 (Reviewer lens); PM pass-close reconciliation |
+| Management-lens Iter 4 re-review (this record) | Work Order (Elab Iter 4 — LCA milestone review, management lens); SAD §Quality, Iteration Plan (Elab Iter 4 pass), Risk List (Iter 3 close-pass reappraisal), Iteration Assessment (Iter 3 close-out), Review Record (cumulative) read in full; measured actuals (Inception phase-level; Elab Iter 1: 12,523,281; Iter 2: 13,363,814; Iter 3: 27,143,633); SCM state per the technical lens's same-day first-hand verification (zero open PRs; main GREEN run 33639518709; Issues #1/#2 closed; Issue #9 satisfied on the A-32 evidence; CONTRIBUTING.md sha 90e4f2e) | Reviews | LCA milestone gate (CONDITIONAL GO sustained — R6); R6 re-presentation entry gate; actions A-37…A-39 (Reviewer lens); PM pass-close reconciliation |
 | Iteration Plan F8 closure (Minor) | The finding's own closure bar (cited evidence in the close-pass artifacts); Iteration Plan Document Control Iter 3 Close-Pass Changes (1) + Next Iteration Preview (Construction Iter 1); Risk List R010 (obligation CARRIED, trigger armed); Iteration Assessment WI-2 reconciliation; stakeholder decision (response NOT an exit condition) | Resolves | The commitment-tracking discipline (blocker-or-evidence, never restatement); Construction Iter 1 plan (R010 written request at plan-build; trigger: STK-004 confirmation by Construction Iter 1 start); Construction Iter 3 integration testing |
 | LCA compliance table + risk retirement state machine + defect distribution + health scorecard (this record) | RUP LCA milestone criteria (6); Risk List close-pass reappraisal (retirement recorded); Test Case Cycle 1 formal-pass record (15/0/8, trace CI 33617748483); PoC observed-results ledger (A-32, landed); management heuristics (risk-retirement trend verification — the line TERMINATES; four-dimension health; milestone-gated progression); all four diagrams validated via generate_uml before embedding | Refines | This Review Record (audit trail — criterion-by-criterion pass/fail, trend evidence, health dimensions, defect concentration); ReviewCoordinator LCA verdict aggregation; R6 re-presentation |
 | CONDITIONAL GO verdict (Iter 4, sustained — conditions narrowed) | LCA-1..LCA-4, LCA-6 MET on observed evidence (LCA-3's residual — the PoC results ledger — DISCHARGED this pass); LCA-5 PENDING by design (R6 fresh sanction request); stakeholder all-findings directive (binding, standing); stakeholder R6-path confirmation ("Yes" + BLOCKED-cases framing directive); verified ledger after this revision (0 Critical / 1 Major / 2 Minor ledger + 2 narrative Minor — all record-propagation class, all owned) | Refines | R6 re-presentation (empty ledger + evidence package + fresh sanction request); phase transition (only on GRANTED sanction); Construction entry |
@@ -1268,7 +1268,7 @@ partition "P1 - The one Major (evidence-package internal consistency)" {
   :A-37 Test Manager updates the TES remainder-\nenumerations from the observed same-pass landings\n(A-32/A-34/A-36/PM close-pass all DONE; INC-1\nbottleneck RESOLVED; Conclusions restated to the\ncurrent remainder) - closes TES F3 (Major);
 }
 partition "P2 - Two Minor record corrections (parallel track)" {
-  :A-38 Software Architect corrects the PoC Traceability\nsha citation (c86ebf7 corrected to the verified file\nsha 90e4f2e, or c86ebf7 cited explicitly as the\nintroducing commit sha) - closes PoC F3 (Minor);
+  :A-38 Software Architect corrects the PoC Traceability\nsha citation (c86ebf7 corrected to the verified file\nsha 90e4f2e, or c86ebf7 cited explicitly as an\nintroducing commit sha) - closes PoC F3 (Minor);
   :A-39 Process Engineer updates the DC's three stale\nA-32/PM-close-pass status claims to the observed\nstate, per the DC's own same-pass discipline -\ncloses DC F4 (Minor);
 }
 partition "P3 - PM pass-close reconciliation" {
@@ -1823,6 +1823,304 @@ endif
 | DC F5 (Minor, NEW) | The DC Milestone Target's enumeration (A-37/A-38 claimed remaining) vs the observed same-pass landings (both landed and ledger-closed); the DC's own binding same-pass record-propagation discipline (second application); the same class as DC F4 (Minor, Iter 4) | Reviews | A-41 (Process Engineer); DC gate-record accuracy |
 | PR disposition record (Iter 5, ∅) | scm_list_pull_requests (open → none); every PR that entered the phase left the gate with a terminal verdict (PRs #3/#4/#5, #6, #7 — all APPROVED, all merged); BRANCHING_STRATEGY §5.2 (iteration line held) | Reviews | Integrator merge gate (satisfied); the architecture-baseline sanction (landed on PR #6 — unchallenged this cycle) |
 | Iter 5 milestone disposition (sanction still withheld) | Stakeholder all-findings directive (verbatim, standing; reinforced at the Iter 4 verdict gate); verified ledger after this revision (0 Critical / 1 Major / 1 Minor ledger + 2 narrative Minor — all record-propagation class, all owned); remaining work = two record corrections (A-40/A-41) + the PM pass-close reconciliation + the R6 gate | Refines | R6 re-presentation (empty ledger + evidence package + fresh sanction request); phase transition (only on GRANTED sanction); Construction entry |
+
+### Elaboration Iteration 6, Cycle 1 — Code-Review-Lens Record (Code Reviewer, 2026-09-03)
+
+**Scope and criteria (this lens, this cycle):** the PR approval loop per the Work Order — discover `ready-for-review` branches, ensure ONE open PR per branch with base `iteration/E6`, review each against checklist CR-1…CR-7 (programming guidelines + dual coverage + SAD/Design Model conformance + acceptance criteria + traceability trailer + build-tree coverage), and emit a terminal disposition per PR. Upstream consumption: the prior Review Record read in full (the cumulative state — this lens's open narrative findings F-CR-E3-1/F-CR-E3-2; the Iter 5 consolidated milestone disposition with the folded stakeholder answer "No, please fix all findings"); the SAD/Design Model baselines carried from the cumulative record (loaded at Iter 1, verified against the merged mechanism code at Iters 3/4 — COMP-001…011, ADR-001…004, CLS-001…027, INT-006…019); the CONTRIBUTING.md guidelines baseline carried (sha 90e4f2e, four-clause ARCH-6, verified first-hand at Iter 4/5). SCM state verified first-hand this cycle: `scm_list_branches_with_label("ready-for-review")` → **0 branches**; `scm_list_pull_requests(state="open")` → **0 open PRs**; `scm_list_pull_requests(state="all")` → **7 PRs, all closed/merged — TWO NEW since the Iter 5 census** (#8 E4-close → main; #10 E5-close → main); `scm_get_repo_tree("main")` → **88 entries** (was 85 — the growth is the E5-close documentation: `docs/implementation-model.md`, the reverse-engineered Implementation Model per DC §6.1, and `docs/integration-records/e5-close.md`; the mechanism code in Infrastructure/, Services/ and tests/ is unchanged); `scm_get_build_status("main")` → **GREEN** (run 33658332611, completed 2026-09-02 17:01:01Z — post-#10); `scm_get_build_status("iteration/E6")` → no CI runs (no integration content this cycle).
+
+**Work Order CRs cross-check (this cycle):** the Work Order names the same two Moderate CRs — [Moderate] Architectural Proof-of-Concept and [Moderate] Test Evaluation Summary. Per the Iter 5 technical-lens record, both were DISCHARGED at Iter 5 (A-38 and A-37 landed and ledger-closed). The current open remainder is the R014 class's successor output: TES F4 (Major → A-40, Test Manager) and DC F5 (Minor → A-41, Process Engineer) — both record-propagation class, neither a code handoff, neither an artifact this lens owns, neither entering the PR gate. Noted for the record; landing verification owned by the technical lens.
+
+**New-PR verification (merged since the Iter 5 census — both verified first-hand this cycle):**
+
+| PR | Branch → Base | Content | Review state (verified) | Checklist assessment |
+|---|---|---|---|---|
+| **#8** | iteration/E4 → main | E4-close baseline consolidation: `.github/workflows/ci.yml` integration-record comment (+11 lines) + `src/EmployeePortal/Infrastructure/KeycloakAuthProvider.cs` — the F-CR-E3-3 comment corrections I APPROVED as PR #7 (review 5090059324), carried to main | **APPROVED** (verified via `scm_get_pull_request_review_state`) | Comment-only diff (1 src file, +13/−2 net with the CI comment); no new product surface; the code content was already reviewed and APPROVED at PR #7 — this PR is the iteration-line close per BRANCHING_STRATEGY §5.2; CI GREEN post-merge |
+| **#10** | iteration/E5 → main | E5-close baseline consolidation: `docs/implementation-model.md` (the reverse-engineered Implementation Model per DC §6.1 — source inventory with shas, component/class/test-coverage diagrams, implementation notes, traceability) + `docs/integration-records/e5-close.md` (the integration outcome record: empty integration set, pedigree chain, CI status, outstanding items) | **APPROVED** (verified via `scm_get_pull_request_review_state`) | Documentation-only diff (2 files, +345/−0, no build impact); the Implementation Model's source inventory cites the verified mechanism shas (LdapGateway b8df8b7, KeycloakAuthProvider 8758844f, OfflineQueue 58924df) and correctly carries F-CR-E3-1 as the interim-repository marker with its Construction disposition; CI GREEN post-merge (run 33658332611) |
+
+**Merge-gate discipline verification (this cycle):** both new baseline-close PRs (#8, #10) were merged to `main` under the **APPROVED** review state — verified first-hand via `scm_get_pull_request_review_state` this cycle. The Integrator's merge precondition (APPROVED-only merges) held on every merge of the phase: PRs #3/#4/#5 (mechanisms), #6 (E3-close), #7 (F-CR-E3-3), #8 (E4-close), #10 (E5-close). No phase-discipline violation exists — every PR rode the iteration line (feature → iteration/E{n} → main at iteration close) per BRANCHING_STRATEGY §5.2.
+
+**Gate Execution — What Was Run This Cycle (Code-Review Lens, Iter 6):**
+
+```plantuml
+@startuml
+title Employee Portal — Code-Review Gate Execution: Elaboration Iter 6, Cycle 1 (2026-09-03)
+
+start
+partition "S1 DISCOVER (executed this cycle)" {
+  :scm_list_branches_with_label("ready-for-review")\nreturns **0 branches**;
+  :scm_list_pull_requests(state="open")\nreturns **0 open PRs**;
+  :scm_list_pull_requests(state="all")\nreturns **7 PRs, all closed/merged** —\nTWO NEW since the Iter 5 census:\n#8 (E4 close) and #10 (E5 close);
+  :scm_get_repo_tree("main")\nreturns 88 entries (was 85) — mechanism\ncode unchanged; growth is the E5-close\ndocumentation (implementation-model.md,\ne5-close.md);
+  :scm_get_build_status("main")\nreturns **GREEN** (run 33658332611,\ncompleted 2026-09-02 17:01:01Z);
+  :scm_get_build_status("iteration/E6")\nreturns no CI runs — no integration\ncontent this cycle;
+}
+partition "New-PR verification (merged since Iter 5)" {
+  :PR #8 (iteration/E4 to main) — review state\n**APPROVED** verified; diff = ci.yml integration\nrecord + the F-CR-E3-3 comment corrections\n(APPROVED as PR #7, review 5090059324);\ncomment-only, no new product surface;
+  :PR #10 (iteration/E5 to main) — review state\n**APPROVED** verified; diff = documentation only\n(implementation-model.md per DC 6.1 +\ne5-close.md); no build impact;
+}
+if (ready-for-review branches exist?) then (no — 0 handoffs)
+  :GUARD FIRES (S1 exit condition);
+  :Disposition: **No-PRs-To-Review**;
+  :S2 loop body: zero iterations —\nno PR enters the checklist;
+  :Persist Review Record (this artifact)\nwith SCM evidence, compliance matrix,\nthe F-CR-E3-2 narrative closure,\ncarried-findings status, zero new findings;
+  stop
+else (yes — expected path, NOT taken this cycle)
+  :Open ONE PR per ready branch\n(base = iteration/E6);
+  :S2 REVIEW PER PR (loop);
+  :Terminal disposition per PR;
+  stop
+endif
+@enduml
+```
+
+**Compliance Matrix — Checklist × Status (Code-Review Lens, Iter 6):**
+
+```plantuml
+@startuml
+title Elaboration Iter 6 — Code-Review Compliance Matrix (checklist x status)
+
+object "CR-1 Programming guidelines conformance" as CR1 {
+  STATUS: NOT EXERCISED
+  Reason: no PR enters the gate
+  Baseline carried: CONTRIBUTING.md
+  sha 90e4f2e (four-clause ARCH-6,
+  verified Iter 4/5)
+}
+object "CR-2 Dual coverage (black-box + white-box)" as CR2 {
+  STATUS: NOT EXERCISED
+  Reason: no PR; the merged mechanism
+  suite (15/0/8, CI-traced) remains
+  the coverage baseline
+}
+object "CR-3 SAD / Design Model conformance" as CR3 {
+  STATUS: VERIFIED THIS CYCLE
+  (record side)
+  The Design Model INT-011 contract
+  table verified first-hand against
+  the merged code (sha 8758844f) —
+  the F-CR-E3-2 closure evidence
+}
+object "CR-4 Traceability trailer (UC-NNN / risk-id)" as CR4 {
+  STATUS: NOT EXERCISED
+  Reason: no PR body or commit
+  exists to carry a trailer
+}
+object "CR-5 Build status hard gate" as CR5 {
+  STATUS: VERIFIED AT DISCOVERY
+  main GREEN (run 33658332611);
+  no PR head SHAs to gate
+}
+object "CR-6 Build-tree coverage (src/ + tests/)" as CR6 {
+  STATUS: VERIFIED ON THE NEW PRs
+  PR #8: src/ file + CI workflow
+  comment; PR #10: docs/ only
+  (no build impact; CI green
+  post-merge confirms)
+}
+object "CR-7 Terminal disposition per PR" as CR7 {
+  STATUS: N/A
+  PR queue empty; guard
+  disposition recorded instead
+}
+object "E-1 Label discovery query" as E1 {
+  EXECUTED — 0 branches
+}
+object "E-2 PR census (open + all)" as E2 {
+  EXECUTED — 0 open; 7 all,
+  2 new since Iter 5 (#8, #10)
+}
+object "E-3 Repo tree (main)" as E3 {
+  EXECUTED — 88 entries;
+  mechanism code unchanged
+}
+object "E-4 CI status (main + iteration/E6)" as E4 {
+  EXECUTED — main GREEN
+  33658332611; E6 no runs
+}
+object "E-5 New-PR review states (#8, #10)" as E5 {
+  EXECUTED — both APPROVED
+  (merge-gate discipline held)
+}
+object "E-6 Design Model INT-011 read" as E6 {
+  EXECUTED — F-CR-E3-2
+  closure verification
+}
+CR1 -[hidden]-> CR2
+CR2 -[hidden]-> CR3
+CR3 -[hidden]-> CR4
+CR4 -[hidden]-> CR5
+CR5 -[hidden]-> CR6
+CR6 -[hidden]-> CR7
+E1 -[hidden]-> E2
+E2 -[hidden]-> E3
+E3 -[hidden]-> E4
+E4 -[hidden]-> E5
+E5 -[hidden]-> E6
+
+note bottom of CR7
+  The checklist is PREPARED, not waived:
+  it applies unchanged to the next PR
+  that enters the gate (Construction
+  feature PRs inherit CR-1..CR-7).
+end note
+@enduml
+```
+
+**SCM Evidence Snapshot (Iter 6 — what actually happened, verified first-hand):**
+
+```plantuml
+@startuml
+title SCM Evidence Snapshot — Elaboration Iter 6, Cycle 1 (2026-09-03)
+
+object "main (release branch)" as MAIN {
+  CI: GREEN — run 33658332611
+  started 2026-09-02 16:59:53Z
+  completed 2026-09-02 17:01:01Z
+  (post-PR-10 merge)
+  --
+  Content: 88 entries — the merged
+  Elaboration baseline PLUS the E5-close
+  documentation (docs/implementation-
+  model.md — the reverse-engineered
+  Implementation Model per DC 6.1;
+  docs/integration-records/e5-close.md);
+  mechanism code in Infrastructure/
+  and Services/ unchanged
+}
+object "ready-for-review branches" as FEAT {
+  Count: 0
+  No Implementer handoff exists this
+  cycle — the remaining Elaboration
+  work is record propagation
+  (A-40/A-41 + PM pass-close), owned
+  by the Test Manager, Process
+  Engineer and Project Manager;
+  no code handoff is owed
+}
+object "Pull requests" as PRS {
+  Open: 0
+  All states: 7 — every PR that
+  entered the phase left the gate
+  with a terminal verdict and is
+  MERGED: #3/#4/#5 mechanisms
+  (APPROVED, iteration/E1), #6
+  E3-close (APPROVED, main), #7
+  F-CR-E3-3 (APPROVED, E4), #8
+  E4-close (APPROVED, main), #10
+  E5-close (APPROVED, main)
+}
+object "iteration/E6 (integration workspace)" as ITER {
+  No CI runs — no integration
+  content this cycle; created by
+  the Integrator when work exists
+  (invariant 8.1)
+}
+MAIN -[hidden]-> FEAT
+FEAT -[hidden]-> PRS
+PRS -[hidden]-> ITER
+
+note bottom of ITER
+  The gate state is CONSISTENT
+  with the phase state: the R014
+  record-correction remainder
+  produces no PRs. The gate holds
+  CR-1..CR-7 ready for the first
+  Construction feature PR.
+end note
+@enduml
+```
+
+**Carried-findings status (this lens — narrative-tracked findings, re-examined against the observed SCM state this cycle):**
+
+| Finding Key | Severity | Location | Status (Iter 6) | Evidence |
+|---|---|---|---|---|
+| **F-CR-E3-1** | Minor | PRs #3/#5 (Iter 3) — interim `InMemoryClockingsRepository` vs Design Model INT-016 | **OPEN — unchanged, Construction scope** | The interim `src/EmployeePortal/Infrastructure/ClockingsRepository.cs` is verified still present in the tree (repo tree read this cycle); the Design Model INT-016 row (read first-hand this cycle) confirms the interim is a **test-seam realization** of the final contract — same UNIQUE idempotency_key behavior, immediate commit, no AddRange — NOT a design change; the E5-close Implementation Model (PR #10, verified this cycle) carries the same disposition with the recorded owner. The PG adapter lands Construction Iteration 1 per R008. No new evidence changes the finding; it is NOT re-emitted (one ledger entry per logical defect). |
+| **F-CR-E3-2** | Minor | PR #4 (Iter 3) — `IAuthProvider` operations absent from the INT-011 contract table | **RESOLVED this cycle — narrative closure executed by this lens** | The Design Model § Interface Contracts read first-hand this cycle: INT-011 now carries ALL FOUR `IAuthProvider` operations (`ConfigureOidc`, `BuildAuthorizeRedirectUrl`, `HandleOidcCallbackAsync`, `GetAuthenticatedUserAsync`), each with preconditions/postconditions, verified against the merged code (`KeycloakAuthProvider` sha 8758844f — PR #4 introduced the surface; PR #7's APPROVED comment-only correction left it unchanged), with the state-parameter semantics aligned to the F-CR-E3-3-corrected code (the precondition no longer labels state "the CSRF parameter"; round-trip validation carries the honest [DEFERRED — session mechanism, Construction] marker). The Designer-owned remediation landed at the Iter 4 evolution and was verified by the Iter 5 Design Model verification pass; the Iter 5 technical-lens record assigned the narrative closure to this lens on its own verification — executed this cycle. One ledger entry per logical defect: CLOSED, not re-emitted. |
+
+**Defect Distribution — Iteration 6 (severity × scope, Code-Review Lens):**
+
+```plantuml
+@startuml
+title Elaboration Iter 6 - Code-Review Defect Distribution\nClosures + open findings (Code Reviewer lens, 2026-09-03)
+
+object "Closures this cycle (this lens - 1)" as C1 {
+  F-CR-E3-2 Minor : RESOLVED
+  The INT-011 contract table now
+  carries all four IAuthProvider
+  operations, verified first-hand
+  against the merged code
+  (KeycloakAuthProvider sha
+  8758844f): ConfigureOidc,
+  BuildAuthorizeRedirectUrl,
+  HandleOidcCallbackAsync,
+  GetAuthenticatedUserAsync —
+  with the state-parameter
+  semantics aligned to the
+  F-CR-E3-3-corrected code.
+  The Designer-owned remediation
+  landed (Iter 4 evolution +
+  Iter 5 verification pass); the
+  narrative closure is executed
+  by this lens on its own
+  verification, per the Iter 5
+  technical-lens record.
+}
+object "New findings this cycle (this lens)" as C2 {
+  Critical 0, Major 0, Minor 0
+  Zero PRs reviewed; the guard
+  disposition carries no defect;
+  the two merged baseline-close
+  PRs (#8, #10) verified clean
+  (comment-only + documentation;
+  both APPROVED before merge)
+}
+object "Open after this cycle (this lens)" as C3 {
+  F-CR-E3-1 Minor : OPEN — Construction
+  scope (interim IClockingsRepository vs
+  INT-016 final contract; the interim
+  ClockingsRepository.cs verified still
+  present in the tree; the Design Model
+  INT-016 row confirms the interim is a
+  test-seam realization; PG adapter lands
+  Construction Iter 1 per R008)
+  This lens's Elaboration-blocking
+  findings: ZERO — the gate is CLOSED
+}
+C1 -[hidden]-> C2
+C2 -[hidden]-> C3
+
+note bottom of C3
+  This lens's narrative ledger:
+  2 open Minors -> 1 (F-CR-E3-2
+  closed). The remaining finding
+  is Construction-scope with a
+  recorded owner — carried per
+  the stakeholder's framing
+  directive (deferred, not
+  missing).
+end note
+@enduml
+```
+
+**Gate disposition (code-review lens, Iter 6): CLOSED — No-PRs-To-Review.** The S1 guard fired: zero `ready-for-review` branches and zero open PRs. No PR received a terminal SCM review decision this cycle because no PR existed; the guard disposition is the cycle's terminal outcome, and the checklist (CR-1…CR-7) is declared PREPARED, not waived — it applies unchanged to the next PR that enters the gate (Construction feature PRs inherit it in full). The gate state is CONSISTENT with the phase state: the remaining Elaboration work is record propagation (A-40/A-41 + PM pass-close), which produces no PRs. Every PR that entered the phase across Iters 1–6 left the gate with a terminal verdict and is MERGED: PRs #3/#4/#5 mechanisms (APPROVED ×3, iteration/E1), PR #6 E3-close (APPROVED, main), PR #7 F-CR-E3-3 (APPROVED, iteration/E4), PR #8 E4-close (APPROVED, main — verified this cycle), PR #10 E5-close (APPROVED, main — verified this cycle). The merge-gate discipline (APPROVED-only merges) held on every merge, verified first-hand this cycle for #8 and #10.
+
+**Iteration completion verdict (code-review lens, Iter 6):** the iteration's code-review objectives are **MET this cycle** — (1) the S1 discovery executed in full with first-hand SCM evidence; (2) the two PRs merged since the Iter 5 census (#8, #10) verified — both left the gate APPROVED before merge, and their diffs are clean (comment-only + documentation; no new product surface); (3) the gate holds no undecided PR and no unreviewed labelled branch; (4) this lens's carried findings re-examined — **F-CR-E3-2 CLOSED on first-hand verification** (the narrative closure the Iter 5 technical-lens record assigned to this lens), F-CR-E3-1 carried unchanged with its recorded Construction-scope disposition; (5) zero new findings of any severity. The milestone is NOT declared achieved by this record — the phase-level sanction remains withheld per the stakeholder's standing all-findings directive (reinforced at the Iter 5 verdict gate, verbatim: "No, please fix all findings"); the remaining open items (TES F4 Major → A-40, Test Manager; DC F5 Minor → A-41, Process Engineer; F-CR-E3-1 carried Construction-scope) belong to their owning lenses and roles, and the technical lens owns the verification of the record corrections' landing.
+
+**Scope adherence (code-review lens, Iter 6):** no scope-creep finding — no code entered the tree this cycle (the mechanism code is unchanged; the tree growth is documentation only, tracing to the DC §6.1 Implementation Model materialization rule and the E5 integration record). The absence of a handoff cannot inflate scope.
+
+**Stakeholder consultation record (this lens, Iter 6):** none owed — no PR, no new finding, no new stakeholder-only decision is surfaced by this review; the R014 remainder's remediation (A-40/A-41) is fully determined by recorded same-pass landings. The next stakeholder touchpoint remains the R6 fresh sanction request (owned by the Review Coordinator + Management Reviewer).
+
+**Revision note (anchoring decision, recorded per the honest-recording discipline):** the Iter 6 code-review-lens record follows the combined-record pattern (the Iter 4/Iter 5 lens precedent: scope + gate execution + compliance matrix + SCM snapshot + carried-findings status + defect distribution + gate disposition + traceability rows in one subsection) and is anchored in § Review Scope and Criteria — the Iter 5 code-review-lens precedent home, with its recorded truncation-risk rationale re-applied unchanged: § Findings and § Disposition (the Iter 4 code-review-lens homes) remain the two largest sections of this cumulative artifact, and anchoring there would require reproducing BOTH in two separate section-scoped upserts — the doubled truncation-induced content-loss risk the Iter 3 section-replacement lesson exists to prevent. The section content carries ALL preserved subsections verbatim plus this new record; read-back verification is executed after the upsert. This record's traceability rows are carried inline below (the artifact-level § Traceability registry is preserved untouched for the same reason).
+
+**Traceability (this lens's Iter 6 rows):**
+
+| Element | Traces From | Link Type | Traces To |
+|---|---|---|---|
+| Code-review-lens Iter 6 record (this record) | Work Order (Elab Iter 6 — PR approval loop; the two Moderate CRs cross-checked — DISCHARGED at Iter 5 per the technical-lens record); prior Review Record read in full (cumulative state — F-CR-E3-1 open, F-CR-E3-2 closure owed to this lens, the Iter 5 consolidated disposition with the folded answer "No, please fix all findings"); SCM state verified first-hand (label query → 0 branches; open-PR census → 0; all-PR census → 7, #8/#10 new; repo tree main → 88 entries, mechanism code unchanged; build status main → GREEN 33658332611; build status iteration/E6 → no runs; review states #8/#10 → APPROVED); Design Model § Interface Contracts read first-hand (the F-CR-E3-2 closure verification) | Reviews | The R6 re-presentation path (the R014 record-correction remainder owned by other roles: A-40/A-41 + PM pass-close); the Integrator merge gate (nothing pending; merge-gate discipline verified held on #8/#10); this cumulative Review Record (Iter 6 code-review-lens record appended; all prior records preserved verbatim) |
+| Guard disposition No-PRs-To-Review (Iter 6) | scm_list_branches_with_label (0), scm_list_pull_requests open (0), scm_get_repo_tree (88 entries), scm_get_build_status (main GREEN 33658332611; iteration/E6 no runs) — all executed 2026-09-03; the phase state (remaining Elaboration work = the R014 record-correction remainder, no code handoff owed) | Refines | The first Construction feature PR (inherits CR-1…CR-7 unchanged); the R6 entry gate (this lens adds zero new ledger entries) |
+| F-CR-E3-2 closure (Iter 6 — narrative, this lens) | Design Model § Interface Contracts (read first-hand this cycle: INT-011 carries all four IAuthProvider operations with preconditions/postconditions, verified against the merged code sha 8758844f; state-parameter semantics aligned to the F-CR-E3-3-corrected code with the honest [DEFERRED — session mechanism, Construction] marker); the Iter 4 Design Model evolution (F-CR-E3-2 RESOLVED — Designer part) + the Iter 5 verification pass (sha citations updated, row label corrected); the Iter 5 technical-lens record (assigned the narrative closure to this lens on its own verification); PR #4 (introduced the surface, APPROVED) + PR #7 (comment-only, APPROVED — surface unchanged) | Resolves | This lens's narrative findings ledger (2 open Minors → 1); the stakeholder all-findings directive (one more finding closed); the R6 entry gate (ledger emptiness — the Designer-owned remediation verified landed); Construction session mechanism (AF-2 — owns the round-trip state validation when it lands) |
+| F-CR-E3-1 (remains open, Iter 6) | Design Model INT-016 (final contract — read first-hand this cycle: the interim InMemoryClockingsRepository confirmed a test-seam realization, same UNIQUE-key behavior, no AddRange) + R008 (Construction build-time validation) + ADR-002; the observed tree (ClockingsRepository.cs still present); the E5-close Implementation Model (PR #10 — carries the same disposition with the recorded owner) | Reviews | Construction Iteration 1 PG adapter (Implementer, R008) + INT-016 confirmation (Designer) — carried with its recorded Construction-scope disposition per the stakeholder's framing directive (deferred, not missing) |
+| New-PR verification record (Iter 6 — PRs #8, #10) | scm_get_pull_request_diff (#8: ci.yml integration record + the F-CR-E3-3 comment corrections APPROVED at PR #7; #10: docs/implementation-model.md + docs/integration-records/e5-close.md, documentation-only); scm_get_pull_request_review_state (#8 → APPROVED; #10 → APPROVED); BRANCHING_STRATEGY §5.2 (iteration line held — feature → iteration/E{n} → main at iteration close); DC §6.1 (the Implementation Model materialization rule — source code in SCM, merges through the review gate) | Reviews | The Integrator merge gate (APPROVED-only merges — verified held on every merge of the phase); the architecture baseline on main (unchallenged; CI GREEN post-#10); the LCA evidence package (the Implementation Model documents the implemented baseline the package cites) |
 ## Findings
 ### Elaboration Iteration 1 — New Findings (Code-Review Lens)
 
