@@ -262,15 +262,15 @@ end note
 
 **Co-ownership discipline (binding):** the Design Model is co-authored by Designer (analysis/design sections), DatabaseDesigner (data sections), and UserInterfaceDesigner (UI sections). Each owns ONLY their sections; every evolution uses section-scoped upserts. A full-document overwrite of a co-owned artifact destroys collaborator sections and is the worst failure in collaborative work.
 ## Guidelines and Procedures
-### Elaboration Iteration 6 Entry Criteria (R014 record-correction cycle — verified met at iteration start)
+### Elaboration Iteration 7 Entry Criteria (single-owner adoption cycle — verified met at iteration start)
 
 | Criterion | Evidence |
 |---|---|
-| LCA Iter 5 review completed — verdict NO-GO CONFIRMED on the R014 self-propagation remainder; the R6 evidence package ASSEMBLED and internally consistent except two stale remainder-enumerations; zero Critical HELD (third consecutive cycle); phase auto-iterates; contribution cycle CLOSED ("No, please fix all findings") | Review Record (Elab Iter 5): requiresIteration = TRUE |
-| Consolidated action chain A-40/A-41 + PM pass-close reconciliation assigned with owners and dependency-ordered priorities (P1 A-40 — the one Major, Test Manager; P2 A-41 — Process Engineer) | Review Record (Coordinator consolidated disposition, Iter 5) |
-| R6 path stakeholder-CONFIRMED ("Yes") with the BLOCKED-cases framing directive folded; Iter 5 verdict-gate answer folded ("No, please fix all findings" — reinforces the standing all-findings directive, adds no new work) | Review Record (Elab Iter 3 + Iter 5, folded answers) |
-| The final record-correction pass delivered all three named corrections (A-37 TES, A-38 PoC sha citation, A-39 DC status claims — all landed and ledger-closed 2026-09-02); the two Work Order CRs DISCHARGED; Issue #9 CLOSED cr:complete; zero open SCM issues at the Iter 5 review | Review Record (Elab Iter 5, verified first-hand) |
-| Development Case finding F5 (A-41) | **Resolved this revision** — the Milestone Target's stale enumeration corrected to the observed state, with the remainder re-verified against the verified findings ledger before upsert, per this DC's own binding same-pass record-propagation discipline |
+| LCA Iter 6 review completed — verdict NO-GO CONFIRMED on the post-write staleness remainder (5 successor Minors, ALL census/remainder currency — no validation substance contradicted); zero Critical HELD (fourth consecutive cycle); phase auto-iterates; the single-owner directive received at the Iter 6 verdict gate | Review Record (Elab Iter 6): requiresIteration = TRUE |
+| Consolidated action chain A-42…A-46 + PM pass-close reconciliation assigned with owners (A-43 — Process Engineer — this DC's F6; A-42 Test Manager; A-44/A-45 System Analyst; A-46 Tester) | Review Record (Coordinator consolidated disposition, Iter 6) |
+| R6 path stakeholder-CONFIRMED ("Yes") with the BLOCKED-cases framing directive; all-findings directive standing (Iter 1, reinforced at the Iter 4 and Iter 5 verdict gates) | Review Record (Elab Iter 3 + Iters 4–5, folded answers) |
+| The R014 record-correction cycle delivered both of its named corrections (A-40 TES, A-41 DC — landed and ledger-closed 2026-09-03); SCM Issues #11/#12 CLOSED cr:complete; Issue #14 OPEN as the CR vehicle for the landed A-40 (remediation landed and ledger-closed; awaits its cr:complete transition) | Review Record (Elab Iter 6, verified first-hand); live SCM census (re-verified this pass) |
+| Development Case finding F6 (A-43) | **Resolved this revision** — both stale Milestone Target items corrected AND the enumeration replaced by the single-owner reference (the terminal cure the stakeholder directed at the Iter 6 verdict gate); remainder re-verified against the verified findings ledger AND the live SCM census immediately before upsert, per this DC's own binding same-pass record-propagation discipline |
 
 ### Elaboration Exit Criteria (LCA) — the gate this phase works toward
 
@@ -278,68 +278,77 @@ end note
 |---|---|---|
 | 1 | Product vision stable | All 10 UCs full-depth; stakeholder decisions recorded and markers retired in place (timestamp convention, America/Havana, offline mechanism, FOUR-clause behavioural bar, featured-news contract — faithful record) |
 | 2 | Architecture stable | SAD 4+1 baseline; ADR-001..004 decided; empirical disposition (A-7, done); dependencies reconciled (A-9, done); four-clause bar record (A-31, done); baseline sanctioned at the PR level (PR #6 merged under APPROVED) and accepted by the management lens (CONDITIONAL GO sustained, condition set turned over); criterion-3 evidence current (A-33 — landed and ledger-closed Iter 4) |
-| 3 | Major risks addressed | **Architectural Proof-of-Concept (FIRED) — produced in Elaboration AND validated empirically: OBSERVED and RECORDED.** R001 four clauses × four consumers PASS against the disposable directory (gaps seeded deliberately; clause (d) verified against substitution-attempt fixtures); R003 token-validation matrix PASS against the stub issuer; R004 drop simulation PASS. The PoC results ledger CARRIES the observed results (A-32 — landed and ledger-closed 2026-09-02) and the Risk List RECORDS the retirement (PM close-pass — landed: R001/R003/R004 RETIRED on observed evidence, R013 RESOLVED, R010 obligation relocated with its concrete blocker). No fabricated results; no statistical population percentage in the LCA evidence package. The 8 BLOCKED cases are a recorded SCOPE decision — deferred to Construction, not missing. Production-instance integration is a separate, smaller risk taken to Construction — no LCA condition depends on STK-004 ticket closure. **Remaining: nothing on this criterion — the record-propagation obligations named at Iter 4 are discharged; the R6 evidence package is assembled** |
+| 3 | Major risks addressed | **Architectural Proof-of-Concept (FIRED) — produced in Elaboration AND validated empirically: OBSERVED and RECORDED.** R001 four clauses × four consumers PASS against the disposable directory (gaps seeded deliberately; clause (d) verified against substitution-attempt fixtures); R003 token-validation matrix PASS against the stub issuer; R004 drop simulation PASS. The PoC results ledger CARRIES the observed results (A-32 — landed and ledger-closed 2026-09-02) and the Risk List RECORDS the retirement (PM close-pass — landed: R001/R003/R004 RETIRED on observed evidence, R013 RESOLVED, R010 obligation relocated with its concrete blocker). No fabricated results; no statistical population percentage in the LCA evidence package. The 8 BLOCKED cases are a recorded SCOPE decision — deferred to Construction, not missing. Production-instance integration is a separate, smaller risk taken to Construction — no LCA condition depends on STK-004 ticket closure. **Nothing remains on this criterion — the record-propagation obligations named at Iter 4 are discharged; the R6 evidence package is assembled** |
 | 4 | Construction plan sufficiently detailed | UC assignments cross-checked against Use-Case Model (F1 lesson); TC enumerations cross-checked against the Test Case catalog (23 cases — F2 lesson); all-findings-closure criterion in the plan (A-12, done); budget box re-sized from the measured actual (A-22, done) |
 | 5 | Stakeholders agree vision achievable | LCA re-presentation sanction — the stakeholder's decision, never self-declared; fresh sanction request at R6 (path stakeholder-CONFIRMED, Iter 3) |
 | 6 | Actual vs planned expenditure acceptable | Two clocks measured apart; never summed; budget boxes derived from measured actuals (A-22, done) |
 | 7 | **DC-specific:** every active discipline has a tailoring section in this Development Case | § Disciplines and Intensity + § Guidelines — met this iteration |
-| 8 | **DC-specific:** tool environment passes verification | CI verified ✓; CONTRIBUTING.md committed and re-verified with the FOUR-clause ARCH-6 ✓ (sha `90e4f2e…`, re-verified first-hand this iteration — gap flag stays closed); `.editorconfig`/`Directory.Build.props` gaps explicitly deferred with rationale (re-verified absent this iteration; non-blocking — CR-1 cites CONTRIBUTING.md) |
-| 9 | **DC-specific (binding stakeholder directive):** findings ledger EMPTY across ALL review lenses and ALL severities (Critical, Major, Minor) before phase transition is sanctioned | Verified via the findings ledger (the single source of truth), never via narrative claims; each finding is closed by its emitting lens. Directive recorded verbatim by the stakeholder at the Iter 1 LCA review, reinforced at the Iter 4 verdict gate ("Close all findings and issues opened") and at the Iter 5 verdict gate ("No, please fix all findings") |
+| 8 | **DC-specific:** tool environment passes verification | CI verified ✓; CONTRIBUTING.md committed and re-verified with the FOUR-clause ARCH-6 ✓ (sha `90e4f2e…`, read first-hand via scm_get_file_content this iteration — gap flag stays closed); `.editorconfig`/`Directory.Build.props` gaps explicitly deferred with rationale (re-verified absent this iteration — `.editorconfig` not found on main via SCM read; non-blocking — CR-1 cites CONTRIBUTING.md) |
+| 9 | **DC-specific (binding stakeholder directive):** findings ledger EMPTY across ALL review lenses and ALL severities (Critical, Major, Minor) before phase transition is sanctioned | Verified via the findings ledger (the single source of truth), never via narrative claims; each finding is closed by its emitting lens. Directive recorded verbatim by the stakeholder at the Iter 1 LCA review, reinforced at the Iter 4 verdict gate ("Close all findings and issues opened") and at the Iter 5 verdict gate ("No, please fix all findings"); the Iter 6 verdict gate adds the single-owner directive (the structural cure for the class that keeps minting the remainder findings) |
 
-### Assessment-Driven Process Improvements (adopted from measured Elaboration Iter 1–5 review data)
+### Assessment-Driven Process Improvements (adopted from measured Elaboration Iter 1–6 review data)
 
 ```plantuml
 @startuml
-title Employee Portal - Assessment-Driven Process Improvement\nElab Iter 5 review data to Iter 6 Development Case changes
+title Employee Portal - Assessment-Driven Process Improvement\nElab Iter 6 review data to Iter 7 Development Case changes
 
 start
-:Load the Review Record (Elab Iter 5 cumulative),
+:Load the Review Record (Elab Iter 6 cumulative),
 the verified findings ledger, and the stakeholder directives;
-partition "Observed data - measured, Iter 5" {
-  :3 closures in one cycle, all Reviewer lens (PoC F3,
-  TES F3, DC F4) - the two Work Order CRs DISCHARGED
-  among them;
-  :Zero Critical open - HELD, third consecutive cycle.
-  Severity profile collapsed from 4 Critical (Iter 1)
-  to 0 Critical (Iters 3-5);
-  :Recurrence rate 0 of 3 - third consecutive zero.
-  Every closure held;
-  :DRE third measurement - review-first HELD. No code
-  entered the tree. Regression baseline 15/0/8 held
-  on main run 33639518709;
-  :2 new findings (1 Major + 1 Minor), BOTH the R014
-  self-propagation class - the trigger fired EXACTLY
-  as the Risk List registered at plan-build;
-  :Stakeholder verdict-gate answer (Iter 5) - verbatim
-  'No, please fix all findings' - reinforces the
-  standing all-findings directive;
+partition "Observed data - measured, Iter 6" {
+  :2 closures in one cycle, both Reviewer lens
+  (TES F4 Major - A-40; DC F5 Minor - A-41) -
+  both held, zero recurrence;
+  :Zero Critical open - HELD, fourth consecutive
+  cycle. 5 new findings, ALL Minor, ALL one
+  subclass: post-write staleness (census and
+  remainder currency only - no validation
+  substance contradicted);
+  :R014 termination test answered YES - the
+  cycle minted 5 successor findings against its
+  own later events; minting severity collapsed
+  to Minor-only census currency;
+  :DRE fourth measurement - review-first HELD.
+  No code entered the tree. Regression baseline
+  15/0/8 held (eighth consecutive green
+  full-suite run);
+  :Stakeholder verdict-gate answer (Iter 6) -
+  the single-owner directive: state the
+  remaining work ONCE in a section that owns
+  it; a document that copies someone else's
+  state will drift from it forever;
 }
 :Root-cause analysis (process gaps, not role errors);
-partition "Process changes adopted - this DC revision, Iter 6" {
-  :Same-pass discipline APPLIED BY ITS OWN AUTHOR
-  (DC F5 resolved) - the Milestone Target corrected to
-  the observed state, remainder re-verified against
-  the verified findings ledger BEFORE upsert;
-  :Current-pass remainder rule ENFORCED - every DC
-  current-state record (entry criteria, rollout plan,
-  tool verification, traceability) refreshed against
-  the Iter 6 landings in THIS pass. The R014 class
-  terminates when a pass mints no successor;
-  :R014 registration VALIDATED - the trigger fired as
-  predicted. The contingency (the R6 entry gate
-  re-opens the PASS, not the phase) bounds the cost
-  at one pass per occurrence;
-  :Evidence-package framing rule HELD - the 8 BLOCKED
-  test cases stated as a recorded SCOPE decision;
+partition "Process changes adopted - this DC revision, Iter 7" {
+  :SINGLE-OWNER RULE ADOPTED (binding) -
+  remaining-work state is owned by the Review
+  Record findings ledger and the SCM issue
+  tracker; artifacts REFERENCE the owner and
+  do not restate its contents. The terminal
+  cure for the R014 self-propagation class -
+  a reference cannot go stale;
+  :DC F6 resolved (A-43) - the Milestone
+  Target's two stale items corrected AND the
+  remainder enumeration replaced by the owner
+  reference, per the rule;
+  :Current-pass remainder rule ENFORCED -
+  every DC current-state record refreshed
+  against this pass's landings (entry
+  criteria, assessment data, measurement
+  actuals, tool verification, rollout plan,
+  traceability);
+  :Evidence-package framing rule HELD - the
+  8 BLOCKED test cases stated as a recorded
+  SCOPE decision;
 }
 :Upsert Development Case (this document);
-:Verify adoption at the Elab Iter 6 Iteration
+:Verify adoption at the Elab Iter 7 Iteration
 Assessment and the R6 re-presentation;
 stop
 @enduml
 ```
 
-Each change is traceable to a specific observed defect with data (the Iter 5 closure velocity and third consecutive zero recurrence; the DRE third measurement; the R014 self-propagation trigger firing exactly as registered; the stakeholder's Iter 5 verdict-gate answer; the tool re-verification) — no speculative process change was adopted. Adoption is verified at the next Iteration Assessment.
+Each change is traceable to a specific observed defect with data (the Iter 6 closure velocity and fourth consecutive zero-Critical cycle; the R014 termination test answering YES with the minting severity collapsed to Minor-only census currency; the stakeholder's Iter 6 verdict-gate single-owner directive; the tool re-verification) — no speculative process change was adopted. Adoption is verified at the next Iteration Assessment.
 
 ### Measurement Policy
 
@@ -351,17 +360,17 @@ IARI measures two quantities: **tokens consumed** and **elapsed time** (split in
 | Agent time vs human queue time ratio | Process bottleneck identification — if human queue time dominates, Process Engineer adjusts review cadence or parallelism | Process Engineer | End of each iteration |
 | Total tokens per phase | Cost-box compliance — iteration ends when exit criteria pass OR budget is spent | Project Manager, Process Engineer | Phase boundary |
 
-**Recorded phase actuals (Inception, closed):** 2 iterations, 28 min agent time, 0s stakeholder queue, 1,347,939 tokens, 11 agent runs, 10 artifacts (work-order recorded actuals). **Recorded phase actuals (Elaboration, 5 iterations to date):** Iter 3 — 3.6 h agent time, 0s stakeholder queue, 27,143,633 tokens, 22 agent runs, 13 artifacts; Iter 4 — 3.0 h agent time, 0s stakeholder queue, 24,830,875 tokens, 23 agent runs, 13 artifacts; Iter 5 — 4.7 h agent time, 0s stakeholder queue, 25,184,977 tokens, 23 agent runs, 13 artifacts (work-order recorded actuals — phase-level record; iterations inside a phase are not recorded separately, so no per-iteration velocity is quoted). **Human-gate planning rule (binding):** a human gate is a RISK, not an estimate — ceiling 14 days (then the process suspends; nothing is auto-filled), actual measured and reported apart, estimate NONE; bound it in the Risk List (R012), never forecast it in the plan.
+**Recorded phase actuals (Inception, closed):** 2 iterations, 28 min agent time, 0s stakeholder queue, 1,347,939 tokens, 11 agent runs, 10 artifacts (work-order recorded actuals). **Recorded phase actuals (Elaboration, 6 iterations to date):** Iter 3 — 3.6 h agent time, 0s stakeholder queue, 27,143,633 tokens, 22 agent runs, 13 artifacts; Iter 4 — 3.0 h agent time, 0s stakeholder queue, 24,830,875 tokens, 23 agent runs, 13 artifacts; Iter 5 — 4.7 h agent time, 0s stakeholder queue, 25,184,977 tokens, 23 agent runs, 13 artifacts; Iter 6 — 6.9 h agent time, 0s stakeholder queue, 27,272,284 tokens, 22 agent runs, 13 artifacts (work-order recorded actuals — phase-level record; iterations inside a phase are not recorded separately, so no per-iteration velocity is quoted). **Human-gate planning rule (binding):** a human gate is a RISK, not an estimate — ceiling 14 days (then the process suspends; nothing is auto-filled), actual measured and reported apart, estimate NONE; bound it in the Risk List (R012), never forecast it in the plan.
 
-### Tool Configuration References (verified 2026-09-03; CONTRIBUTING.md re-verified this iteration — ARCH-6 gap stays closed)
+### Tool Configuration References (verified 2026-09-03, this iteration — CONTRIBUTING.md read first-hand; ARCH-6 gap stays closed)
 
 | Configuration | Owner | File Path | Verified Status |
 |---|---|---|---|
-| CI pipeline | ConfigurationManager | `.github/workflows/ci.yml` | **✅ VERIFIED** (Iter 2) — build + test jobs, .NET 10, triggers on `main`, `iteration/**`, `chore/**`, `feature/**`, `hotfix/**` (push + PR); green on main post-PR-7 (run 33639518709, per Review Record Iter 4) |
+| CI pipeline | ConfigurationManager | `.github/workflows/ci.yml` | **✅ VERIFIED** (Iter 2) — build + test jobs, .NET 10, triggers on `main`, `iteration/**`, `chore/**`, `feature/**`, `hotfix/**` (push + PR); green on main (run 33658332611, per the Code Reviewer lens's same-day Iter 6 verification) |
 | Deploy pipeline skeleton | ConfigurationManager | `.github/workflows/deploy.yml` | **✅ VERIFIED** (Iter 2) — build/publish artifact; deploy-dev/deploy-production jobs correctly deferred to Construction pending R010 (two-gate model) |
 | Programming guidelines | Implementer / Software Architect | `CONTRIBUTING.md` | **✅ COMMITTED, RE-VERIFIED this iteration — ARCH-6 FOUR-CLAUSE GAP CLOSED (stays closed)** (sha `90e4f2e1b91bdb64082dcc9f75a4b32c3cc10f80`, read first-hand via scm_get_file_content this iteration, unchanged from Iter 4) — ARCH-1..ARCH-10 architectural rules with ARCH-6 carrying the FOUR-clause behavioural bar verbatim (citing the stakeholder's Elab Iter 2 + verdict-gate decisions and UC-004 AF-2 / UC-005/006/007 AF-3), coding conventions, branch strategy, PR checklist. CR-1 cites the four-clause contract |
 | Branch strategy documentation | ConfigurationManager | `docs/BRANCHING_STRATEGY.md` | **✅ VERIFIED** (sha `dbe3d9f9b52575f7549bcdd04789efd7e38e9a16`) — branch topology, baseline register, invariants 8.1/8.2/8.4; CONTRIBUTING.md carries the essentials section |
-| Lint / analyzer rules | Implementer | `.editorconfig`, `Directory.Build.props` | **❌ GAP** — files absent (re-verified via SCM this iteration — both not found on main); flagged for owner; non-blocking (CR-1 cites CONTRIBUTING.md); explicitly deferred with rationale — carried to Construction Iter 1 |
+| Lint / analyzer rules | Implementer | `.editorconfig`, `Directory.Build.props` | **❌ GAP** — files absent (re-verified via SCM this iteration — `.editorconfig` not found on main); flagged for owner; non-blocking (CR-1 cites CONTRIBUTING.md); explicitly deferred with rationale — carried to Construction Iter 1 |
 | UI design specification | UserInterfaceDesigner | `docs/inputs/employee-portal-design.html` | **✅ Provided by stakeholder (CON-011)** — mandatory and authoritative |
 
 Guideline content itself (coding standards, UI patterns, test conventions) is authored by the owning discipline experts in the files above — this Development Case references those files and does not duplicate their content. The remaining gap is a process-support item: the Process Engineer flags it; the owner closes it.
@@ -371,14 +380,15 @@ Guideline content itself (coding standards, UI patterns, test conventions) is au
 During active iterations, the Process Engineer serves as the process help desk:
 - Process questions (which template, which artifact, which workflow step) are answered within the same iteration cycle.
 - Blocking process issues are escalated immediately to the stakeholder via the input-emission channel (emission marker immediately followed by a minimal JSON array, on one line).
-- Tool configuration problems are logged and assigned to the owning discipline role. **This iteration: the ARCH-6 fourth-clause gap stays CLOSED on re-verification** (the flag-then-verify loop completed its second cycle at Iter 4 and is re-verified unchanged this iteration); the lint gap (`.editorconfig`, `Directory.Build.props`) remains flagged for the Implementer with explicit deferral rationale — carried to Construction Iter 1.
+- Tool configuration problems are logged and assigned to the owning discipline role. **This iteration: the ARCH-6 fourth-clause gap stays CLOSED on re-verification** (CONTRIBUTING.md read first-hand this iteration, sha `90e4f2e…`, unchanged — the flag-then-verify loop holds); the lint gap (`.editorconfig`, `Directory.Build.props`) remains flagged for the Implementer with explicit deferral rationale — carried to Construction Iter 1.
 - **Question format (binding, from measured Inception lesson):** stakeholder-input payloads use minimal JSON — `question` / `type` / `isRequired` only. `options`, `recommendation`, and `reason` fields break the parser.
 - **Questionnaire free-text rule (binding, from the measured Iter 2 verdict-gate lesson):** contract-confirmation questionnaires MUST carry an OPTIONAL free-text question (type `text`, `isRequired` false) for stakeholder additions. Measured basis: the Iter 2 behavioural-bar confirmation was yes/no with no free-text field, and the stakeholder held the FOURTH behavioural-bar clause for an entire cycle with no field to deliver it in. **Validated at Iter 3:** the free-text field received the stakeholder's framing directive in the same round — its first successful use.
 - **Emission discipline (binding, standing rule — 4 occurrences closed across Iters 1–3):** the emission marker string appears on exactly one line, immediately followed by the valid JSON array, and is never embedded in memory blocks, prose, or artifact content — the parser scans every occurrence, and a marker not immediately followed by a valid JSON array invalidates the turn. **Extended at Iter 3 (3rd/4th occurrences):** the marker string is never written in prose AT ALL — not even in negations; when no question is owed, the marker is simply not written; the rule's scope is confirmed for ALL THREE output channels (completion prose, memory blocks, artifact content). No fabricated question is ever emitted to satisfy the parser — inventing a doubt re-opens answered questions and injects a false blocker into the stakeholder's queue.
 - **Section-scoped upsert rule (binding, from the measured Iter 3 incident):** on canonical-skeleton artifacts, a section-scoped upsert REPLACES the named section — it does not append within it. Appending a new record to a cumulative section requires the section content to carry ALL preserved records verbatim plus the new record. ALWAYS read back after a section-scoped upsert on a co-owned cumulative artifact (the Iter 3 incident destroyed preserved lens records and was restored verbatim from the first full read of the session). An H3-anchored upsert attempt on a canonical-skeleton artifact is REJECTED by the structure validator — the H2-anchored pattern (section body only, header named by the `section` parameter) is the correct one.
-- **Record-propagation discipline (binding, from the measured Iter 3–4 defect class):** when an observed state change lands (merged PR, executed test pass, closed issue), every artifact carrying a record of that state is updated in the SAME pass. A record that says PENDING for observed-complete work is a defect in BOTH directions — understating observed delivery is as dishonest as overstating it (the F7 lesson, applied to results ledgers). **Self-propagation containment (adopted Iter 5, from the measured Iter 4 defect class):** the class is self-propagating — each pass's landings stale the prior pass's remainder-enumerations; therefore remainder-enumerations are written against the CURRENT pass's landings, and a "remaining work" statement is re-verified against the verified findings ledger before any artifact is upserted. **Applied to this DC at Iter 5 (DC F4 resolved — A-39) and again at Iter 6 (DC F5 resolved — A-41): the discipline is executed by its own author, and every DC current-state record is refreshed against the current pass's landings in the same pass.**
+- **Record-propagation discipline (binding, from the measured Iter 3–4 defect class):** when an observed state change lands (merged PR, executed test pass, closed issue), every artifact carrying a record of that state is updated in the SAME pass. A record that says PENDING for observed-complete work is a defect in BOTH directions — understating observed delivery is as dishonest as overstating it (the F7 lesson, applied to results ledgers). **Self-propagation containment (adopted Iter 5, from the measured Iter 4 defect class):** the class is self-propagating — each pass's landings stale the prior pass's remainder-enumerations; therefore remainder-enumerations are written against the CURRENT pass's landings, and a "remaining work" statement is re-verified against the verified findings ledger before any artifact is upserted. **Applied to this DC at Iter 5 (DC F4 resolved — A-39), Iter 6 (DC F5 resolved — A-41), and Iter 7 (DC F6 resolved — A-43): the discipline is executed by its own author, and every DC current-state record is refreshed against the current pass's landings in the same pass.**
+- **Single-owner rule (binding — ADOPTED this revision, from the measured Iter 6 verdict-gate directive):** remaining-work state (open findings, open SCM issues, pending transitions) is OWNED by the Review Record findings ledger and the SCM issue tracker. Artifacts do NOT restate that state in multiple places: state it ONCE in a single section that owns it — or, better, do not enumerate it at all — and every other place that needs it (Milestone Target, master-workflow diagram, schedule) REFERENCES the owning section instead of restating it. Measured basis (the stakeholder's own diagnosis, Iter 6 verdict gate, verbatim): "Four consecutive iterations have fixed some copies and missed others (F1, F2, F3, F4, and now #14). It will not converge… A document that copies someone else's state will drift from it forever." The R014 self-propagation class is the measured proof: five iterations of remainder-enumeration corrections (TES F1→F3→F4→F5; DC F4→F5→F6), each pass's landings staling the prior pass's copies. **A reference cannot go stale — this rule is the class's terminal cure.** Applied to this DC's own Milestone Target this revision (the DC F6 resolution).
 - **Evidence-package framing rule (binding — stakeholder directive, Iter 3):** the 8 BLOCKED test cases are a recorded SCOPE decision (production AD and Keycloak integration belongs to Construction), not an open gap. Every evidence artifact (PoC results ledger, Test Case summary, TES verdict) and the R6 presentation state them as deferred, never as missing.
-- **Marker retirement (binding):** when the stakeholder answers a scope/derivation/assumption marker, the owning role retires the marker in the artifact itself, writing the stakeholder's literal values. Ten decisions have been retired this way (offline mechanism; timestamp convention; office local timezone = America/Havana; PoC empirical scope; R001 behavioural bar + its four-UC scope; featured-news rendering contract; FOURTH behavioural-bar clause; R6-path confirmation + BLOCKED-cases framing; Iter 4 verdict-gate answer — all-findings directive reinforced and extended to the open SCM issues; Iter 5 verdict-gate answer — all-findings directive reinforced for the R014 cycle's remainder) — the discipline is proven and mandatory.
+- **Marker retirement (binding):** when the stakeholder answers a scope/derivation/assumption marker, the owning role retires the marker in the artifact itself, writing the stakeholder's literal values. Eleven decisions have been retired this way (offline mechanism; timestamp convention; office local timezone = America/Havana; PoC empirical scope; R001 behavioural bar + its four-UC scope; featured-news rendering contract; FOURTH behavioural-bar clause; R6-path confirmation + BLOCKED-cases framing; Iter 4 verdict-gate answer — all-findings directive reinforced and extended to the open SCM issues; Iter 5 verdict-gate answer — all-findings directive reinforced for the R014 cycle's remainder; Iter 6 verdict-gate answer — the single-owner directive) — the discipline is proven and mandatory.
 
 ### Incremental Rollout Plan
 
@@ -390,7 +400,8 @@ During active iterations, the Process Engineer serves as the process help desk:
 | Elaboration Iter 3 | Code delivery chain (A-16 — stakeholder-stated priority, FULFILLED); fourth-clause propagation (A-25..A-31); record corrections (A-17..A-24) | **Complete** — reviewed NO-GO CONFIRMED on the record-propagation remainder; the substantive blocker RETIRED on observed evidence; zero Critical open (first time); 12 closures |
 | Elaboration Iter 4 (record-propagation pass) | Record propagation (A-32..A-36 + PM close-pass); DC F3 flag closure; R6 evidence-package assembly | **Complete** — reviewed NO-GO CONFIRMED on the final record-correction remainder; the R6 evidence package ASSEMBLED (A-32..A-36 all landed and ledger-closed); zero Critical HELD; 7 closures |
 | Elaboration Iter 5 (final record-correction pass) | Final record corrections (A-37..A-39 + PM pass-close reconciliation); DC F4 resolution; R6 re-presentation preparation | **Complete** — reviewed NO-GO CONFIRMED on the R014 self-propagation remainder (TES F4 Major, DC F5 Minor — both born of the pass's own landings); the two Work Order CRs DISCHARGED; Issue #9 CLOSED; zero Critical HELD (third consecutive cycle); 3 closures |
-| Elaboration Iter 6 (this — R014 record-correction cycle) | R014 record corrections (A-40 TES — Test Manager; A-41 DC Milestone Target — resolved this revision); PM pass-close reconciliation; R6 re-presentation preparation | **In progress** |
+| Elaboration Iter 6 (R014 record-correction cycle) | R014 record corrections (A-40 TES — landed; A-41 DC Milestone Target — landed); PM pass-close reconciliation; R6 re-presentation preparation | **Complete** — reviewed NO-GO CONFIRMED on the post-write staleness remainder (5 successor Minors, all census/remainder currency); A-40/A-41 landed and ledger-closed; Issues #11/#12 CLOSED cr:complete; zero Critical HELD (fourth consecutive cycle); 2 closures; the single-owner directive received at the verdict gate |
+| Elaboration Iter 7 (this — single-owner adoption cycle) | Single-owner rule adopted (binding — the R014 class's terminal cure); DC F6 resolution (A-43 — the Milestone Target corrected AND the enumeration replaced by the owner reference); census/remainder refreshes (A-42, A-44, A-45, A-46 — other owners); PM pass-close reconciliation; R6 re-presentation preparation | **In progress** |
 | Construction | Full Implementation, Test (execution), Deployment, production-instance integration (STK-004) | Planned |
 | Transition | Documentation, Release Notes, Deployment (final) | Planned |
 ## Traceability
