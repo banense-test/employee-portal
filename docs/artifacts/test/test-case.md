@@ -266,6 +266,75 @@ end note
 
 **Execution status (Cycle 3 record, 2026-09-02):** the implementation under test was re-inspected empirically on `iteration/E1` — the three mechanisms are MERGED and present in the build tree: `LdapGateway.cs` (sha b8df8b7 — CLS-009 with the FOUR-clause graceful-degradation contract, clause (d) implemented as "missing or empty AD value → null; null is the FINAL mapped value"), `KeycloakAuthProvider.cs` (sha 7bd4cfd — CLS-010 with RS256/JWKS signature validation, exp/iss/aud/sub enforcement, verbatim role extraction), `ClockingsRepository.cs` (sha 017cbcd — interim in-memory adapter enforcing the UNIQUE idempotency_key contract, replaced by the PG adapter in Construction Iteration 1 per R008), `offline-queue.js` (sha 9ac644a — CLS-008 browser half: localStorage queue, capacity 10, press-time capture, sync on 200 OK), and `EmployeePortal.Tests.csproj` (sha 23b9d1 — xunit 2.9.2 + Microsoft.NET.Test.Sdk 17.12.0; the Cycle 1–2 zero-package state is gone). The 19 mechanism-covered cases (TC-001…TC-012, TC-017…TC-023) transition **Designed → Scripted** with verdicts **PENDING — none claimed**: the formal execution pass against the fixtures and the PoC results ledger own the verdicts, and this artifact fabricates no results. TC-013…TC-016 remain **BLOCKED on Construction scheduling** — the news/audit mechanism is Construction scope (exit criteria 1–3 cover R001/R003/R004 only), so they were never Issue #1 blockers. Full evidence in § Findings.
 ## Test Case Catalog
+### Findings — Elaboration Iteration 7, Cycle 1 (Record-Correction Revision — Test Designer, 2026-09-03)
+
+**Scope of this revision:** action **A-46** (Test Case#F2, Review Record Iter 6 technical-lens record) — a **record correction, NOT an execution pass**. No new code change entered the phase since the E6-close docs push (Review Record Iter 6 same-day first-hand verification, 2026-09-03: zero open PRs; every PR that entered the phase left the gate APPROVED and merged; `main` GREEN run 33658332611; `iteration/E6` GREEN run 33710055718), so no new execution is owed this revision; the mandatory regression policy stands and any subsequent merged PR re-runs all 15 PASS cases.
+
+**THE OWNING RECORD — SCM issue census (stated ONCE here; every other location in this artifact references this record):**
+
+Per the stakeholder's Iter 6 convergence directive (verbatim: "State the remaining work ONCE, in a single section that owns it. Every other place that needs it — Milestone Target, the master-workflow diagram, the schedule — references that section instead of restating it."), **this record owns the census**. Live state per the Review Record Iter 6 technical-lens first-hand verification (`scm_list_issues`, 2026-09-03):
+
+| Issue | State | Meaning for this artifact |
+|---|---|---|
+| **#14** | **OPEN** — `cr:approved`, assigned:test-manager | The CR vehicle for TES#F4/action A-40, whose remediation LANDED and was ledger-closed 2026-09-03 (Reviewer lens, first-hand). Awaits its `cr:complete` transition (owned by the Test Manager + the CCM). Does **NOT** target the Test Case artifact — no Test Designer/Tester action owed. |
+| #1, #2, #9, #11, #12 | **CLOSED** — all `cr:complete` | #1 mechanism-code blocker (closed Iter 3); #2 CONTRIBUTING.md (closed Iter 3); #9 PoC results-ledger CR (closed Iter 5); #11 (PoC#F3/A-38 vehicle) and #12 (TES#F3/A-37 vehicle) — the two Work Order CR vehicles whose remediations landed and ledger-closed at Iter 5; their `cr:complete` transitions landed AFTER the Iter 6 record's write (the post-write staleness A-46 corrects). |
+
+```plantuml
+@startuml
+title SCM Issue Census - Corrected State (Test Case artifact, action A-46, 2026-09-03)\nCensus source: Review Record Iter 6 technical-lens first-hand verification (scm_list_issues, 2026-09-03)
+
+object "OPEN - 1 CR vehicle" as O {
+  Issue #14
+  cr:approved, assigned:test-manager
+  CR vehicle for TES#F4 / action A-40
+  Remediation LANDED and ledger-closed
+  2026-09-03 (Reviewer lens, first-hand)
+  cr:complete transition owned by
+  the Test Manager + the CCM
+  Does NOT target the Test Case artifact
+}
+object "CLOSED - 5 (all cr:complete)" as C {
+  #1 mechanism-code blocker (Iter 3)
+  #2 CONTRIBUTING.md (Iter 3)
+  #9 PoC results-ledger CR (Iter 5)
+  #11 PoC#F3/A-38 vehicle
+  #12 TES#F3/A-37 vehicle
+  #11/#12 transitions landed AFTER
+  the Iter 6 record's write - the
+  post-write staleness A-46 corrects
+}
+object "Test Case verdict set - UNCHANGED" as V {
+  15 PASS / 0 FAIL / 8 BLOCKED
+  Baseline HELD - eighth consecutive
+  green full-suite run on the evolution
+  line (main 33658332611,
+  iteration/E6 33710055718)
+  8 BLOCKED = recorded SCOPE decision,
+  deferred to Construction, not
+  missing (stakeholder framing
+  directive, Iter 3)
+}
+O -[hidden]-> C
+C -[hidden]-> V
+
+note bottom of V
+  Census stated ONCE here (the owning
+  record); Document Control and
+  Traceability reference this record.
+  The artifact stops restating the SCM
+  tracker's state - a copy drifts
+  (stakeholder Iter 6 convergence
+  directive).
+end note
+@enduml
+```
+
+**A-46 execution (this revision):** the Iter 6 verification record's census statements — the issue-census row, the defect-census paragraph, the Work Order CR cross-check, the S4 census partition of the evaluation-flow diagram, and the remainder enumeration — are corrected in place to **reference this owning record**; the stale "2 open CR vehicles (#11, #12)" claims are removed everywhere they appeared. The verdict set is **UNCHANGED — 15 PASS · 0 FAIL · 8 BLOCKED** (baseline HELD; the 8 BLOCKED cases remain a recorded SCOPE decision, deferred to Construction, not missing — stakeholder framing directive, Iter 3). No verdict, no evidence claim, and no validation substance is altered by this revision.
+
+**Remaining work before R6 (stated ONCE here; referenced everywhere else):** Issue #14's `cr:complete` transition (Test Manager + CCM); the sibling census/remainder corrections owned by other roles this iteration (A-42 TES — Test Manager; A-43 DC — Process Engineer; A-44 UCM, A-45 SUP — System Analyst); the PM pass-close reconciliation; the R6 gate itself. **A-46 (this artifact's share) is EXECUTED this revision.**
+
+**Verdict for the Evaluation Mission:** unchanged — the executed-TC evidence for exit criteria 1–3 remains valid, current, and release-branch-verified (`main` 33658332611; `iteration/E6` 33710055718). This revision contributes record currency only.
+
 ### Findings — Elaboration Iteration 6, Cycle 1 (Verification Record — Tester, 2026-09-03)
 
 **Scope of this pass:** a **verification cycle against two merged baseline-close PRs + the E6-close docs push** — PR #8 (E4-close → `main`: ci.yml integration record + the F-CR-E3-3 comment corrections, comment-only, no new product surface) and PR #10 (E5-close → `main`: `docs/implementation-model.md` + `docs/integration-records/e5-close.md`, documentation only, no build impact) merged since the Iter 5 verification, plus the E6-close push on `iteration/E6` (`e6-close.md` — the branch's only delta vs `main`, 89 vs 88 entries, verified first-hand). The mandatory regression policy (re-run ALL prior results after EVERY merged PR — never accept developer assurance as substitute) fired on both merged PRs regardless of change class: the `main` run re-ran the full suite post-PR-#10, and the `iteration/E6` run re-ran it on the docs-only delta.
@@ -280,7 +349,7 @@ end note
 | Build tree | `main` — 88 entries (was 85; the growth is the E5-close documentation); all mechanism code (Infrastructure/, Services/) + the full harness (10 suites + 2 fixtures) present in the build tree; `iteration/E6` — 89 entries (the one-file docs delta vs `main`) | `scm_get_repo_tree` ×2 |
 | CI repeatability | `ci.yml` @ 1fa9f70 — push + PR triggers cover `main`, `iteration/**`, `feature/**`; the `test` job regenerates the solution from `src/` + `tests/` and runs `dotnet test` — **every push re-runs ALL suites; the run is repeatable in CI** (Work Order requirement confirmed on both branches this pass) | `scm_get_file_content` |
 | Regression execution | Full suite re-run GREEN on `main` (run 33658332611 — covering merged PRs #8 and #10) AND on `iteration/E6` (run 33710055718 — the docs-only delta) | `scm_get_build_status` ×2 |
-| Defect / issue census | **2 open CR vehicles** — #11 (PoC#F3/A-38, `cr:approved`, assigned:software-architect) and #12 (TES#F3/A-37, `cr:approved`, assigned:test-manager): the formal vehicles for the two Work Order CRs whose remediation landed and was ledger-closed at Iter 5 per the Review Record; lifecycle closure owned by the CCM/assignee chain — neither targets the Test Case artifact, no Tester action owed. Issues #1, #2, #9 remain CLOSED `cr:complete` | `scm_list_issues` (all states) |
+| Defect / issue census | **Census stated ONCE in the owning record (Findings — Iter 7) — this row references it:** 1 open CR vehicle (Issue #14 — the TES#F4/A-40 vehicle; remediation landed and ledger-closed 2026-09-03; `cr:complete` transition owned by the Test Manager + the CCM; does not target the Test Case artifact), 5 closed (#1/#2/#9/#11/#12 all `cr:complete` — the #11/#12 transitions landed after this record's write; corrected Iter 7 per A-46) | `scm_list_issues` (all states, at write time) + Review Record Iter 6 first-hand verification (2026-09-03) |
 | Verdict | **15 PASS · 0 FAIL · 8 BLOCKED — baseline HELD, no verdict changed** | This pass |
 
 **Per-case regression verdicts (Iter 6 — all unchanged; the per-case evidence table in the Iter 3 formal-pass record remains the authoritative per-case record):**
@@ -292,11 +361,11 @@ end note
 | TC-003, TC-010, TC-017, TC-018 (UI mechanisms / endpoint surfaces) | **BLOCKED — unchanged** | Construction scope (honest corrections from the Iter 3 formal pass stand; no UI/controller mechanism landed) |
 | TC-013…TC-016 (news/audit) | **BLOCKED — unchanged** | Construction scope |
 
-**Test Evaluation Flow — Iter 6 verification cycle (this record):**
+**Test Evaluation Flow — Iter 6 verification cycle (this record; S4 census partition corrected Iter 7 per A-46):**
 
 ```plantuml
 @startuml
-title Test Evaluation Flow - Elaboration Iteration 6, Cycle 1 (2026-09-03)\nVerification cycle: two baseline-close PRs merged since Iter 5 + the E6-close docs push
+title Test Evaluation Flow - Elaboration Iteration 6, Cycle 1 (2026-09-03)\nVerification cycle: two baseline-close PRs merged since Iter 5 + the E6-close docs push\nS4 census corrected Iter 7 per action A-46 (Test Case#F2)
 
 start
 partition "S2 - SMOKE: build stability gate" {
@@ -318,7 +387,7 @@ partition "S3 - REGRESSION execution (mandatory policy)" {
   :8 BLOCKED cases unchanged - recorded SCOPE\ndecision, deferred to Construction, not missing;
 }
 partition "S4 - DEFECT census" {
-  :scm_list_issues all states -> 2 open issues\n11 and 12 - the formal CR vehicles for the\ntwo Work Order CRs whose remediation landed\nand was ledger-closed at Iter 5;\nlifecycle closure owned by the CCM chain;
+  :scm_list_issues all states -> at write time\n2 open vehicles 11 and 12 - BOTH since\ntransitioned cr:complete (corrected\nIter 7 per A-46; live census: 1 open\nvehicle 14, 5 closed - owning\nstatement: Findings - Iter 7);
   if (Any FAIL verdict?) then (no - zero)
     :Zero new defects -> zero CRs raised\nthe CR contract fires only on FAIL;
   else (yes)
@@ -385,13 +454,13 @@ end note
 @enduml
 ```
 
-**Defect census:** zero FAIL verdicts → zero new defects → **zero CRs raised** (the CR contract fires only on a FAIL verdict). The issue census shows 2 open CR vehicles (#11, #12 — `cr:approved`, assigned to software-architect and test-manager): the formal vehicles for the two Work Order CRs whose remediation landed and was ledger-closed at Iter 5 per the Review Record. Their lifecycle closure is owned by the CCM/assignee chain; neither targets the Test Case artifact; no duplicate of any resolved finding is raised (one CR = one Issue, whole lifecycle).
+**Defect census:** zero FAIL verdicts → zero new defects → **zero CRs raised** (the CR contract fires only on a FAIL verdict). Issue census: **see the owning record (Findings — Iter 7)** — at this record's write time the tracker showed 2 open CR vehicles (#11, #12); both transitioned `cr:complete` after the write (post-write staleness, corrected Iter 7 per A-46), and the live open vehicle is #14 (the TES#F4/A-40 vehicle — remediation landed and ledger-closed 2026-09-03; does not target this artifact). No duplicate of any resolved finding is raised (one CR = one Issue, whole lifecycle).
 
 **Regression status:** the 15-case baseline is now verified through the two baseline-close PRs merged since the Iter 5 verification and on the E6 integration line — **eighth consecutive green full-suite run on the evolution line**: 33617283642 (post-PR #3) → 33617446626 (post-PR #5) → 33617748483 (post-PR #4, the formal-pass trace) → 33632200967 (PR #7 pre-merge) → 33635692521 (post-merge on iteration/E4) → 33639518709 (main — release branch) → **33658332611 (main — post-PR-#10, covering PRs #8 and #10)** → **33710055718 (iteration/E6 — the docs-only close push)**. From this point, any subsequent merged PR re-runs all 15.
 
-**Work Order CR cross-check (this cycle):** the two Change Requests named in this Work Order — [Moderate] Architectural Proof-of-Concept and [Moderate] Test Evaluation Summary — were DISCHARGED at Iter 5 (A-38 and A-37 landed and ledger-closed per the Review Record's Iter 5 technical-lens record). Their formal SCM vehicles (#11, #12) remain open pending the CCM/assignee lifecycle closure — a bookkeeping state, not open remediation work. Neither targets the Test Case artifact; no action is owed here.
+**Work Order CR cross-check (this cycle):** the two Change Requests named in this Work Order — [Moderate] Architectural Proof-of-Concept and [Moderate] Test Evaluation Summary — were DISCHARGED at Iter 5 (A-38 and A-37 landed and ledger-closed per the Review Record's Iter 5 technical-lens record). Their formal SCM vehicles (#11, #12) transitioned `cr:complete` after this record's write (corrected Iter 7 per A-46 — see the owning record, Findings — Iter 7); the live open vehicle is #14, the CR vehicle for TES#F4/A-40 (not a Work Order CR; does not target the Test Case artifact). No action is owed here.
 
-**Iter 6 verdict for the Evaluation Mission:** the executed-TC evidence for exit criteria 1–3 remains valid, current, and release-branch-verified — now re-verified through the two baseline-close PRs and on the E6 integration line. No new validation is owed from this pass; the remaining Elaboration work (A-40 TES remainder-enumerations — Test Manager; A-41 DC Milestone Target — Process Engineer; the PM pass-close reconciliation; the R6 gate) is owned by other roles. The 8 BLOCKED cases remain a recorded SCOPE decision — deferred to Construction, not missing (stakeholder framing directive, Iter 3).
+**Iter 6 verdict for the Evaluation Mission:** the executed-TC evidence for exit criteria 1–3 remains valid, current, and release-branch-verified — now re-verified through the two baseline-close PRs and on the E6 integration line. No new validation is owed from this pass; the remaining-work statement lives ONCE in the owning record (Findings — Iter 7) — at this record's write time it named A-40/A-41, which have since LANDED and ledger-closed (2026-09-03, Reviewer lens); the current remainder is stated there. The 8 BLOCKED cases remain a recorded SCOPE decision — deferred to Construction, not missing (stakeholder framing directive, Iter 3).
 
 ### Catalog Overview — UC→TC Traceability
 
@@ -1193,7 +1262,9 @@ object "PASS - 15 cases" as P {
   Evidence: CI run 33617748483\n+ suite file sha per case
 }
 object "FAIL - 0 cases" as F {
-  Zero FAIL verdicts ->\nzero new defects to\nformalize as CRs.\nIssue #1's executed-TC\nevidence condition\nSATISFIED by this pass\n(closure owned by the\nCCM/Integrator chain)
+  Zero FAIL verdicts ->
+  zero new defects to
+  formalize as CRs.\nIssue #1's executed-TC\nevidence condition\nSATISFIED by this pass\n(closure owned by the\nCCM/Integrator chain)
 }
 object "BLOCKED - 8 cases" as B {
   TC-003 - 2 s HomeView debounce\n(UI mechanism, Construction)
