@@ -124,46 +124,50 @@ All 16 CORE artifacts are produced per their standard ownership and phase schedu
 
 **Result: 1 of 6 OPTIONAL artifacts triggered** (unchanged from Iters 1–4 — the whole set is re-evaluated every iteration; the PoC trigger's condition still genuinely holds).
 ## Optional Artifact Triggers
-Recorded via `record_optional_artifact_triggers` (Elaboration Iter 5, 2026-09-02): `["Architectural Proof-of-Concept"]`. This replaces the prior iteration's set — the whole set is re-evaluated every iteration.
+Recorded via `record_optional_artifact_triggers` (Elaboration Iter 7, 2026-09-03): `["Architectural Proof-of-Concept"]`. This replaces the prior iteration's set — the whole set is re-evaluated every iteration.
 
 ```plantuml
 @startuml
 !theme plain
-title Employee Portal — DC §5.2 Optional Trigger Re-evaluation (Elaboration Iter 5 — final record-correction pass)
+title Employee Portal — DC §5.2 Optional Trigger Re-evaluation (Elaboration Iter 7 — single-owner adoption cycle)
 
 start
 :Load current phase, Risk List,
-and project facts (Iter 5 re-check);
+and project facts (Iter 7 re-check);
 :Re-check each of the 6 OPTIONAL artifacts
 against its §5.2 condition;
 if (Architectural Proof-of-Concept condition still holds?) then (holds)
   :Trigger remains FIRED — re-record the set\nvia record_optional_artifact_triggers;
   :PoC artifact sanctioned;\nowner: Software Architect (baseline-fixed);
   note right
-    Condition re-verified (Elab Iter 5):
-    Elaboration phase (YES) AND at least
+    Condition re-verified (Elab Iter 7):
+    Elaboration phase (YES — the phase is
+    open: LCA sanction withheld, R6
+    re-presentation pending) AND at least
     one technical risk requiring empirical
     validation per Risk List (YES — R001
-    HIGH, exposure 9; R003, R004
-    SIGNIFICANT — all three VALIDATION
-    OBSERVED, CI-traced, and RETIRED
-    (Elaboration scope) with the retirement
-    RECORDED in the Risk List close-pass
-    reappraisal).
+    HIGH, exposure 9; R003, R004 — all
+    three empirically VALIDATED and
+    RETIRED (Elaboration scope), the
+    retirement RECORDED in the Risk List
+    close-pass reappraisal).
     Stakeholder decision (Elab Iter 1,
     binding): produced in Elaboration AND
-    validated empirically — SATISFIED on
-    observed evidence (formal TC pass
-    15 PASS / 0 FAIL / 8 BLOCKED, trace CI
-    run 33617748483; R001 FOUR clauses x
-    FOUR consumers PASS).
-    The record-propagation obligation is
-    DISCHARGED: A-32 LANDED and ledger-closed
-    (2026-09-02) — the Results and Findings
-    ledger CARRIES the observed results; the
-    R6 evidence package core is ASSEMBLED.
-    Remaining: one sha citation correction
-    (A-38, Minor — PoC F3).
+    validated empirically — SATISFIED and
+    RECORDED (formal TC pass 15 PASS /
+    0 FAIL / 8 BLOCKED, trace CI run
+    33617748483; R001 FOUR clauses x FOUR
+    consumers PASS).
+    The artifact is APPROVED — the R6
+    evidence package's core. Its record
+    obligations are DISCHARGED: A-32
+    landed and ledger-closed (Iter 4);
+    the A-38 sha citation landed and
+    ledger-closed (Iter 5). No open
+    finding or correction targets it
+    (re-verified against the findings
+    ledger and the live SCM census this
+    pass).
   end note
 else (not held)
   :NOT FIRED — auditable justification recorded;
@@ -180,7 +184,7 @@ stop
 @enduml
 ```
 
-**PoC disposition (binding for downstream roles — updated with the observed Iter 4 state):** the Software Architect produces the Architectural Proof-of-Concept artifact carrying **empirical results** for R001 (disposable LDAP directory), R003 (stub OIDC issuer), and R004 (direct drop simulation). The mechanisms are the SAD's designed components (COMP-006 OIDC, COMP-007 LDAP, COMP-009 offline resilience) built as evolutionary production code in `src/` — **delivered and merged (PRs #3/#4/#5 → iteration/E1, PR #6 → main, all APPROVED)**. Ownership is baseline-fixed (Software Architect) — this Development Case does not reassign it. **The record-propagation obligation is DISCHARGED: the Results and Findings ledger CARRIES the OBSERVED results (A-32 — landed and ledger-closed 2026-09-02; the R6 evidence package core is ASSEMBLED)** — R001 clause-by-clause FOUR-clause × four-consumer evidence (TC-011 + TC-021/022/023, clause (d) verified against the substitution-attempt fixtures), the R003 token-validation matrix, the R004 drop simulation, the verdict distribution 15/0/8, the regression baseline, the MERGED delivery rows with PR numbers, and Issue #1's closure. The artifact's one remaining correction is the § Traceability sha citation (A-38, Minor — PoC F3). **Per the stakeholder's Iter 3 framing directive (binding): the 8 BLOCKED cases are stated in the evidence package as a recorded SCOPE decision — deferred to Construction, not missing.**
+**PoC disposition (binding for downstream roles — updated with the observed Iter 7 re-verification):** the Software Architect produces the Architectural Proof-of-Concept artifact carrying **empirical results** for R001 (disposable LDAP directory), R003 (stub OIDC issuer), and R004 (direct drop simulation). The mechanisms are the SAD's designed components (COMP-006 OIDC, COMP-007 LDAP, COMP-009 offline resilience) built as evolutionary production code in `src/` — **delivered and merged (PRs #3/#4/#5 → iteration/E1, PR #6 → main, all APPROVED)**. Ownership is baseline-fixed (Software Architect) — this Development Case does not reassign it. **The artifact is APPROVED — the R6 evidence package's core. Its record obligations are DISCHARGED: the Results and Findings ledger CARRIES the OBSERVED results (A-32 — landed and ledger-closed at Iter 4), and the § Traceability sha citation is corrected (A-38 — landed and ledger-closed at Iter 5). No open finding or correction targets the artifact (re-verified against the findings ledger this pass).** The observed results: R001 clause-by-clause FOUR-clause × four-consumer evidence (TC-011 + TC-021/022/023, clause (d) verified against the substitution-attempt fixtures), the R003 token-validation matrix, the R004 drop simulation, the verdict distribution 15/0/8, the regression baseline, the MERGED delivery rows with PR numbers, and Issue #1's closure. **Per the stakeholder's Iter 3 framing directive (binding): the 8 BLOCKED cases are stated in the evidence package as a recorded SCOPE decision — deferred to Construction, not missing.**
 
 **R001 validation bar — BEHAVIOURAL, not statistical (stakeholder decisions, Elab Iter 2 + Iter 2 verdict gate; markers retired in place):** the stakeholder's decisions, in their own words:
 
@@ -193,7 +197,7 @@ stop
 
 **Scope of the behavioural bar (stakeholder confirmation, Elab Iter 2):** the bar applies to **all four AD-reading use cases** — UC-004 (person card: blank fields), UC-005 (HR clocking review: event row with blank display fields — clocking data is portal data, always complete), UC-006 (CSV export: every event row exported with blank cells for missing display fields, no abort — ad_user_id always present), UC-007 (worker category assignment: employee locatable and selectable with blank fields). The fourth clause applies to all four per the stakeholder's "Add a fourth clause to all four."
 
-**Binding consequences:** (1) the PoC artifact's R001 evidence is the FOUR behavioural clauses verified against the disposable directory with gaps seeded deliberately — a statistical population percentage is NOT LCA evidence; (2) the production-AD data-quality measurement is Construction integration work (R010/R011), excluded from the LCA evidence package; (3) the disposable directory and stub issuer are PoC scaffolding retained as reusable Construction test fixtures — they do not alter the declared architecture (ADR-001..004 unchanged); (4) the R6 evidence gate requires FOUR-clause × four-consumer R001 evidence (TC-011 + TC-021/022/023) — **SATISFIED on observed evidence, now RECORDED in the PoC results ledger (A-32)**; (5) the 8 BLOCKED test cases are presented as a recorded SCOPE decision — deferred to Construction, not missing (stakeholder framing directive, Iter 3).
+**Binding consequences:** (1) the PoC artifact's R001 evidence is the FOUR behavioural clauses verified against the disposable directory with gaps seeded deliberately — a statistical population percentage is NOT LCA evidence; (2) the production-AD data-quality measurement is Construction integration work (R010/R011), excluded from the LCA evidence package; (3) the disposable directory and stub issuer are PoC scaffolding retained as reusable Construction test fixtures — they do not alter the declared architecture (ADR-001..004 unchanged); (4) the R6 evidence gate requires FOUR-clause × four-consumer R001 evidence (TC-011 + TC-021/022/023) — **SATISFIED on observed evidence, RECORDED in the PoC results ledger (A-32)**; (5) the 8 BLOCKED test cases are presented as a recorded SCOPE decision — deferred to Construction, not missing (stakeholder framing directive, Iter 3).
 
 Re-evaluation schedule: every iteration, mandatory. A trigger may newly fire via a Change Request or scope expansion; a fired trigger is re-verified against its condition (an auditable claim, checked at review).
 ## Roles and Ownership
