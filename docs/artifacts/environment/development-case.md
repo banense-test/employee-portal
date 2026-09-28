@@ -18,7 +18,7 @@ primary ownership — is not restated here and is not redefined by this document
 | Dimension | Finding |
 |---|---|
 | Process artifacts in the repository | None prior to this iteration. This is the project's first iteration; no prior Development Case, no prior Review Record, no open Change Request. |
-| Agent role count | 25 roles available per the baseline roster. Business Modeling is inactive, so BusinessProcessAnalyst and BusinessReviewer are not invoked. |
+| Agent role count | 25 roles available per the baseline roster. Business Modeling is inactive as a discipline: no Business Modeling workflow runs and no Business Use-Case Model, Business Object Model or Business Rules artifact is produced. This removes no CORE artifact — the Vision remains CORE and is produced by its fixed primary owner. BusinessReviewer is not invoked, since no business-model artifact exists for it to review. |
 | Process maturity target | CMMI Level 2 (Managed): requirements management, configuration management, project management basics. No statistical process control, no defect-prevention programme — the project has 10 use cases, 4 risks and one delivery. |
 | Version control and CI | Hosted SCM provider with hosted CI (CON-036). CI never holds production data or credentials and never deploys; Infrastructure deploys. |
 | External-system stand-ins | Test OIDC issuer and test LDAP directory carrying the declared attributes, including entries whose job title or extension is empty (CON-038). The team never works against the real Keycloak or the real AD. |
