@@ -54,6 +54,8 @@ UC010 ..> M1 : <<include>>
 UC011 ..> M1 : <<include>>
 UC012 ..> M1 : <<include>>
 
+UC003 ..> M2 : <<include>>
+UC004 ..> M2 : <<include>>
 UC011 ..> M2 : <<include>>
 UC012 ..> M2 : <<include>>
 
@@ -71,13 +73,20 @@ note bottom of M1
   client (CON-031) and an intra-network node (CON-032).
   It is not an actor and not a use case.
 end note
+
+note bottom of M2
+  Employee data has exactly one home (CON-003, CON-004).
+  Any use case that must show who an employee is reads
+  AD — the clocking report and the CSV export included,
+  because FullName is a declared export column (CON-007).
+end note
 @enduml
 ```
 
 | ID | Mechanism | Declared by | Included by | Specification |
 |---|---|---|---|---|
 | MECH-01 | OIDC login via Keycloak; roles read from token claims | CON-001, CON-031, CON-033 | All twelve use cases | The portal is an OIDC client only: register a client, redirect for login, validate the token, read roles from its claims. Nothing more. Keycloak is already running and maintained separately — not deployed, not provisioned, not designed by this project. The OIDC client is already registered and its credentials are with the development team (CON-002). |
-| MECH-02 | LDAP read of directory attributes | CON-003, CON-011 | UC-011, UC-012 | Employee directory data (name, job title, department, office, email, extension) is read from Active Directory over LDAP and is READ-ONLY. No edit form, no local copy, no write-back. Infrastructure will not modify AD; the portal works with AD as it stands. |
+| MECH-02 | LDAP read of directory attributes | CON-003, CON-011 | UC-003, UC-004, UC-011, UC-012 | Employee directory data (name, job title, department, office, email, extension) is read from Active Directory over LDAP and is READ-ONLY. No edit form, no local copy, no write-back. Infrastructure will not modify AD; the portal works with AD as it stands. The read is not confined to the directory feature: UC-003 shows the name behind each clocking and UC-004 writes the declared FullName column (CON-007), and neither can take that name from a local copy, because there is none (CON-003). An AD attribute that is empty is written blank; the row is still produced (R004). |
 | MECH-03 | Audit trail write | NFR-002 | UC-005, UC-007, UC-008, UC-009, UC-012 | Mandatory traceability, written for compliance and read directly from the database. See Reliability below. |
 | MECH-04 | Idempotency key on the clocking POST | CON-044 | UC-001 | Duplicate clocking submissions are rejected by an idempotency key. |
 | MECH-05 | Client-side retry of the clocking POST | NFR-006, CON-045 | UC-001 | The clocking page holds the press in the browser (localStorage) and retries its POST for up to 5 minutes. One action, one queue, one entity — nothing to reconcile, no conflict resolution to write. Applies to clocking only. |
