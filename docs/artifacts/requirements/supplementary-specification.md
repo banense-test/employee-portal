@@ -337,16 +337,16 @@ end note
 ```
 
 ## Performance
+| ID | Requirement | Threshold | Declared by |
+|---|---|---|---|
+| NFR-003 | The page must load in under 3 seconds on the corporate network. | < 3 s | NFR-003 |
+| NFR-004 | The clock in/out operation must respond in under 1 second. | < 1 s | NFR-004 |
+| AC-001 | The full page load as the employee experiences it — from the browser's request to the page displayed and usable, including the clocking page's script. Server response time is the engineering target that makes it achievable, not a substitute for it. | < 3 s, measured end to end | AC-001 |
+| NFR-001 | The stakeholder addressed volume only in the context of news: 200 employees is small enough that news need no archive screen — newest-first listing plus the category filter is enough. No general scalability target was declared for the portal. | 200 employees, 3 offices | NFR-001 |
 
-| ID | Requirement | Declared by |
-|---|---|---|
-| NFR-003 | The page must load in under 3 seconds on the corporate network. | NFR-003 |
-| NFR-004 | The clock in/out operation must respond in under 1 second. | NFR-004 |
-| AC-001 | The full page load as the employee experiences it — from the browser's request to the page displayed and usable, including the clocking page's script. Server response time is the engineering target that makes it achievable, not a substitute for it. | AC-001 |
-| NFR-001 | The stakeholder addressed volume only in the context of news: 200 employees is small enough that news need no archive screen — newest-first listing plus the category filter is enough. No general scalability target was declared for the portal. | NFR-001 |
+**Thresholds are declared, not deferred.** NFR-003 and NFR-004 carry their numeric thresholds in the declared scope, and AC-001 fixes the measurement boundary for the page-load figure: the full page load as the employee experiences it, including the clocking page's script — server response time is the engineering target that makes it achievable, not a substitute for it. The RequirementsSpecifier fixes the measurement conditions in Elaboration: the load profile, the data volume at which the figures are measured, and the instrumentation. No throughput, concurrency or resource-usage target was declared, and none is invented here.
 
-The RequirementsSpecifier quantifies the thresholds and the measurement conditions in Elaboration. No throughput, concurrency or resource-usage target was declared, and none is invented here.
-
+**Scale.** NFR-001 is the only declared statement about volume and it is scoped to news navigation. No general scalability target exists for the portal; the declared population is 200 employees across 3 offices (STK-004).
 ## Supportability
 
 | Concern | Requirement | Declared by |
