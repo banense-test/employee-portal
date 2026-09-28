@@ -161,9 +161,12 @@ internal record-keeping flow (clocking, news, directory) rather than a business 
 Business Use Case or Business Rule was declared. The ten declared items are system use cases
 (FR-001..FR-010) with actors Employee and HR Administrator.
 
-**Consequence:** Business Modeling is INACTIVE. No Business Use-Case Model, no Business Object
-Model and no Business Rules artifact is produced. BusinessProcessAnalyst and BusinessReviewer are
-not invoked. The 25-role roster itself is unchanged.
+**Consequence:** Business Modeling is INACTIVE as a discipline. No Business Use-Case Model, no
+Business Object Model and no Business Rules artifact is produced, and no Business Modeling
+workflow runs. BusinessReviewer is not invoked, since no business-model artifact exists for it to
+review. This removes no CORE artifact and changes no primary ownership: the Vision remains CORE
+and is produced by its fixed primary owner, BusinessProcessAnalyst, whose role in this project is
+confined to that artifact. The 25-role roster is unchanged.
 
 ### DC §10 classification — real-time system
 
