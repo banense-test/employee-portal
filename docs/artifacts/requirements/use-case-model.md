@@ -8,7 +8,6 @@
 - Last updated: 2026-09-28
 
 ## Use-Case Diagram
-
 Actors sit ON the boundary line. Everything inside the rectangle is the portal's responsibility; everything outside is consumed or excluded. Twelve use cases, two human actors and one external system actor.
 
 ```plantuml
@@ -50,6 +49,8 @@ HR --> UC009
 HR --> UC010
 HR --> UC011
 HR --> UC012
+UC003 --> AD
+UC004 --> AD
 UC011 --> AD
 UC012 --> AD
 
@@ -58,6 +59,12 @@ note bottom of AD
   cross-cutting mechanism (CON-001, CON-031), never a
   use case. It is specified in the Supplementary
   Specification and included by every UC that needs it.
+end note
+
+note right of UC004
+  FullName is a declared export column (CON-007) and
+  employee data lives only in AD, never copied locally
+  (CON-003) — the export reads AD too.
 end note
 @enduml
 ```
@@ -95,6 +102,41 @@ package "Directory" {
 UC004 ..> UC005 : Corrected = Y is set by UC-005
 UC010 ..> UC006 : the banner UC-006 renders
 UC012 ..> UC011 : the category column UC-011 shows
+UC003 ..> UC011 : both read employee identity from AD
+UC004 ..> UC011 : both read employee identity from AD
+@enduml
+```
+
+### Employee identity is read from Active Directory, never stored
+
+CON-003 makes employee data read-only from AD with no local copy, and CON-004 limits the local table to AD user id → category. Any use case that must show *who* an employee is therefore reads AD — not only the directory feature. This is a boundary fact the Software Architect needs: the LDAP read is not confined to UC-011.
+
+```plantuml
+@startuml
+title Employee identity — one home (AD), four consumers
+skinparam componentStyle rectangle
+
+component "Active Directory\n<<external system>>\nCON-003, CON-011" as AD
+component "Local table: AD user id -> category\n(two columns, nothing else)\nCON-004" as LINK
+
+usecase "UC-003 View All Employee Clockings\nneeds the name behind each clocking" as UC003
+usecase "UC-004 Export Monthly Clocking Report\nFullName is a declared column (CON-007)" as UC004
+usecase "UC-011 Search Employee Directory\nseven declared fields" as UC011
+usecase "UC-012 Assign Worker Category\nwrites the link, reads the person" as UC012
+
+UC003 --> AD : LDAP read
+UC004 --> AD : LDAP read
+UC011 --> AD : LDAP read
+UC012 --> AD : LDAP read
+UC012 --> LINK : the only write about a person
+UC003 --> LINK : category column
+UC004 --> LINK : WorkerCategory column
+
+note bottom of AD
+  No sync job, no reconciliation screen, no conflict
+  resolution, no local copy of the employee (CON-004).
+  Employee data has exactly one home.
+end note
 @enduml
 ```
 
