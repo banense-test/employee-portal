@@ -237,16 +237,20 @@ end note
 ```
 
 ## Usability
-
 | ID | Requirement | Declared by |
 |---|---|---|
 | NFR-007 | The directory and the news require the network and show a 'no connection' message when it is unavailable. Nothing is copied locally, so there is nothing to cache and nothing to sync. | NFR-007 |
 | — | The UI visual layer is fixed: `docs/inputs/employee-portal-design.html` is mandatory and authoritative, committed to the repository with the project inputs. The portal MUST implement it. | CON-041 |
 | — | Compatible with the corporate browsers: current Chrome and Edge. | CON-035 |
 | — | The portal is responsive web only — it adapts to the browser. There is no native mobile app. | Scope statement |
+| AC-002 | An employee can clock in and out without help from HR or the development team. | AC-002 |
+| AC-003 | An HR Administrator can publish a news item without technical assistance. | AC-003 |
 | AC-004 | Any employee finds a colleague's phone/email in under 10 seconds. | AC-004 |
 | AC-005 | 80% of employees complete at least one clocking with no prior training. | AC-005 |
 
+**Usability is measured by the acceptance criteria, not by a separate target.** AC-002, AC-003, AC-004 and AC-005 are the declared, testable statements of how usable the portal must be; no additional usability metric is declared and none is invented. AC-004 and AC-005 carry a quantified threshold (10 seconds, 80% of employees) and are testable as written. AC-002 and AC-003 are stated as outcomes without a threshold — they are verified by observation, and the Test Designer owns the procedure.
+
+**Accessibility.** No accessibility standard (WCAG level, assistive-technology support) is declared. None is invented here. [RECOMMENDATION — requires CR] if the stakeholder wants one.
 ## Reliability
 | ID | Requirement | Declared by |
 |---|---|---|
