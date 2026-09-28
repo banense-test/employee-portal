@@ -8,7 +8,6 @@
 - Last updated: 2026-09-28
 
 ## Functionality
-
 ### Cross-cutting mechanisms — specified here, never as use cases
 
 These mechanisms deliver no observable value to an actor on their own. They are not use cases; each is included by the use cases that depend on it.
@@ -94,7 +93,7 @@ Two levels only, from Active Directory group membership (CON-033). Members of th
 | CON-012 | All three offices are in the same timezone (Europe/Madrid). There is no multi-timezone case and no normalisation to design. |
 | CON-013 | Only HR corrects or inserts a clocking. There is no self-service correction screen for the employee; an employee who forgets to clock out asks HR. |
 | CON-014 | Clocking records are immutable: the original record is never overwritten in place and never deleted. |
-| CON-015 | A day whose clock-out is missing exports with ClockOut and HoursWorked empty — a zero would falsely state the employee worked no hours; empty states the value is unknown. The row is still exported, because dropping it would hide the incident from the people who fix it. Resolving it is HR's manual task, outside the portal. |
+| CON-015 | A day whose clock-out is missing exports with ClockOut and HoursWorked empty — a zero would falsely state the employee worked no hours; empty states the value is unknown. The row is still exported, because dropping it would hide the incident from the people who fix it. |
 | CON-016 | A clocking pair never crosses midnight. A pair belongs to one calendar date and every export row is keyed by that date. A clocking still open at midnight is an incomplete day. |
 | CON-017 | At most one clocking pair per employee per calendar day. |
 | CON-018 | One export row per employee per day that has at least one clocking. A day with no clocking — weekend, holiday, sick day, day before joining — produces no row: the portal records clockings, not absences. |
@@ -110,6 +109,8 @@ Two levels only, from Active Directory group membership (CON-033). Members of th
 | CON-043 | The recorded clocking time is the moment the employee pressed the button, not the time the server received it — otherwise the audit trail records something that did not happen. The server accepts the timestamp the client sends. |
 | CON-045 | The clocking retry is one action, one queue, one entity: two clocking presses by the same employee cannot conflict with anything, so there is nothing to reconcile and no conflict resolution to write. This is not the synchronisation the scope excludes — that forbids synchronising copies of employee data, not retrying one POST. |
 | CON-046 | Beyond 5 minutes of network outage the employee reports the clocking to HR. |
+
+**CON-015 scope of "outside the portal" — stakeholder decision, 2026-09-28.** HR corrects or inserts a clocking **inside** the portal, as an HR-only use case (UC-005). That is what the `Corrected` column (CON-008) and the audit entry (who, when, previous value, reason — NFR-002) record, and the original record is never overwritten or deleted (CON-014). "Outside the portal" in CON-015 refers only to HR chasing the employee about the missing clock-out, not to entering the correction. Without this decision CON-008 and NFR-002 would have no in-portal source.
 
 ### Licensing
 
