@@ -117,12 +117,11 @@ UC012 ..> UC011 : the category column UC-011 shows
 | Payroll system | Integration with the payroll system is explicitly out of scope. |
 
 ## Use-Case Survey
-
 Twelve use cases. Priority is MoSCoW. Volatility is assessed on two axes — will this change for this customer over time, and does it differ across customers now. High volatility feeds the Software Architect's decomposition: volatile behaviour must be encapsulated in a dedicated component, not spread across the codebase.
 
 | UC | Source | Name | Primary actor | Trigger | Measurable outcome | Priority | Volatility |
 |---|---|---|---|---|---|---|---|
-| UC-001 | AC-002, AC-005, AC-006, NFR-004, NFR-006 (declared Vision statement: clock-in/out) | Record Clocking | Employee | Employee presses the clock in or clock out button | A clocking record exists in UTC for the employee's current calendar day, and the employee sees the recorded time in Europe/Madrid | Must | Low |
+| UC-001 | AC-002, AC-005, AC-006, NFR-004, NFR-006, CON-043, CON-044, CON-045, CON-046; declared Vision statement ("centralises clock-in/out") | Record Clocking | Employee | Employee presses the clock in or clock out button | A clocking record exists in UTC for the employee's current calendar day, and the employee sees the recorded time in Europe/Madrid | Must | Low |
 | UC-002 | FR-001 | View Own Clocking History | Employee | Employee opens their clocking history | The employee sees their own clockings for the current month, and nobody else's | Must | Low |
 | UC-003 | FR-002 | View All Employee Clockings | HR Administrator | HR opens the clocking report | HR sees every employee's clockings; an employee cannot reach this view | Must | Low |
 | UC-004 | FR-003 | Export Monthly Clocking Report (CSV) | HR Administrator | HR selects a calendar month and requests the export | A CSV file covering exactly one calendar month, with the eight declared columns in the declared order and the declared value formats | Must | High |
@@ -132,8 +131,12 @@ Twelve use cases. Priority is MoSCoW. Volatility is assessed on two axes — wil
 | UC-008 | FR-007 | Edit Published News Item | HR Administrator | HR opens a published item and changes it | The item changes in place without a republish, and an audit entry names who edited it and when | Must | Low |
 | UC-009 | FR-008 | Unpublish News Item | HR Administrator | HR unpublishes an item | The item disappears from every employee view and the record remains in the database | Must | Low |
 | UC-010 | FR-006 | Feature News Item | HR Administrator | HR flags an item as featured, when publishing or when editing | At most one item is featured at any moment regardless of which path changed it; with none featured the banner does not appear | Must | Medium |
-| UC-011 | FR-009 | Search Employee Directory | Employee, HR Administrator | Actor searches by name, department or office | The actor finds a colleague's phone and email in under 10 seconds, with the seven declared fields shown | Must | High |
+| UC-011 | FR-009, CON-024 | Search Employee Directory | Employee, HR Administrator | Actor searches by name, department or office, or filters by worker category | The actor finds a colleague's phone and email in under 10 seconds, with the seven declared fields shown | Must | High |
 | UC-012 | FR-010 | Assign Worker Category | HR Administrator | HR assigns or clears a category from the directory screen | The category is stored as AD user id → category, the change is audited, and no employee field is written | Must | High |
+
+**UC-001 source note.** No FR-NNN enumerates the act of clocking. The stakeholder declared it in the Vision statement ("centralises clock-in/out") and as acceptance criteria AC-002, AC-005 and AC-006, with NFR-004 and NFR-006 constraining it and CON-043, CON-044, CON-045 and CON-046 fixing its behaviour. UC-001 is the realization of those declared items, not an inference.
+
+**UC-011 filter note.** CON-024 places worker category in exactly two places: as a column of the directory that also filters it, and as a column of the CSV export. The directory therefore filters by worker category in addition to the name, department and office search of FR-009.
 
 ### Volatility notes feeding the architecture
 
