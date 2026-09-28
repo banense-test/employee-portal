@@ -8,7 +8,6 @@
 - Last updated: 2026-09-28
 
 ## Tailoring Overview
-
 This document is a **delta over the IARI Development Case baseline**. It declares only
 project-specific deviations. The baseline — the 25-role roster, the 16 CORE artifacts, the
 6 OPTIONAL artifacts with their §5.2 triggers, the canonical intensity matrix and the fixed
@@ -25,7 +24,7 @@ primary ownership — is not restated here and is not redefined by this document
 | External-system stand-ins | Test OIDC issuer and test LDAP directory carrying the declared attributes, including entries whose job title or extension is empty (CON-038). The team never works against the real Keycloak or the real AD. |
 | Database | PostgreSQL 18 on the internal Windows Server estate (CON-030). |
 | UI reference | `docs/inputs/employee-portal-design.html` — committed, verified present at sha `715d4f73d6ef4de18c46242258bc17a67f51ba6f`. Mandatory and authoritative for the visual layer (CON-041). |
-| Guideline gap | `CONTRIBUTING.md` and the lint configuration do not exist yet. Discipline experts author them during Elaboration; this Development Case references them and does not duplicate their content. |
+| Guideline gap | `CONTRIBUTING.md`, the lint configuration and the CI workflow file are absent from the repository — verified by direct read, not assumed. Discipline experts author them during Elaboration; this Development Case references them and does not duplicate their content. |
 
 ### Process configuration
 
