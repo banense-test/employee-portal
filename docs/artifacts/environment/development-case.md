@@ -276,6 +276,29 @@ portal can see it.
 | Test Plan | NOT FIRED | The §5.2 condition requires formal delivery, regulatory audit or contractual test reporting. NFR-002 states no external compliance regime applies and no retention period is mandated. The Iteration Plan defines per-iteration testing scope. |
 
 ## Roles and Ownership
+The 25-role roster and every primary ownership are unchanged. This section lists only the
+contributors this project adds to each artifact.
+
+| Artifact | Primary owner (fixed) | Project contributors |
+|---|---|---|
+| Vision | BusinessProcessAnalyst | ProjectManager, SystemAnalyst |
+| Use-Case Model | SystemAnalyst | RequirementsSpecifier, UserInterfaceDesigner |
+| Supplementary Specification | RequirementsSpecifier | SoftwareArchitect, SystemAnalyst |
+| Software Architecture Document | SoftwareArchitect | Designer, DatabaseDesigner, DeploymentManager |
+| Design Model | Designer | UserInterfaceDesigner (UI sections), DatabaseDesigner (data sections) |
+| Implementation Model | Implementer | Integrator |
+| Test Case | TestDesigner | Tester, SystemAnalyst |
+| Test Evaluation Summary | TestManager | Tester |
+| User Documentation | TechnicalWriter | UserInterfaceDesigner |
+| Release Notes | DeploymentManager | TechnicalWriter |
+| Iteration Plan | ProjectManager | ProcessEngineer |
+| Iteration Assessment | ProjectManager | ProcessEngineer, TestManager |
+| Risk List | ProjectManager | SoftwareArchitect |
+| Review Record | ConfigurationManager | Reviewer, BusinessReviewer, ManagementReviewer, ReviewCoordinator |
+| Development Case | ProcessEngineer | All discipline leads (section input) |
+| Change Request | ChangeControlManager | ProjectManager |
+| Deployment Model | DeploymentManager | SoftwareArchitect |
+
 **Not invoked this project:** BusinessReviewer — a consequence of Business Modeling being
 inactive, since no business-model artifact exists for it to review. BusinessProcessAnalyst
 remains the fixed primary owner of the CORE Vision artifact and is invoked for that artifact
@@ -286,6 +309,115 @@ members of the HR AD group publish, edit and unpublish news and manage worker ca
 everybody else is an employee with read access to the directory and the news plus their own
 clockings. There is no role matrix, no permission screen and no per-category rule. Worker
 category is descriptive and drives no access decision (CON-024).
+
+```plantuml
+@startuml
+title Employee Portal — role to artifact ownership (CORE + triggered OPTIONAL)
+
+package "Requirements" {
+  class "SystemAnalyst" as SA
+  class "RequirementsSpecifier" as RS
+  class "Use-Case Model" as UCM <<CORE>>
+  class "Supplementary Specification" as SUPP <<CORE>>
+  class "Glossary" as GLO <<OPTIONAL — NOT TRIGGERED>>
+}
+SA --> UCM : primary owner
+RS --> SUPP : primary owner
+GLO -[hidden]- SUPP
+
+package "Analysis & Design" {
+  class "SoftwareArchitect" as ARCH
+  class "Designer" as DES
+  class "UserInterfaceDesigner" as UID
+  class "DatabaseDesigner" as DBD
+  class "Software Architecture Document" as SAD <<CORE>>
+  class "Design Model" as DM <<CORE>>
+  class "Data Model" as DATAM <<OPTIONAL — NOT TRIGGERED>>
+  class "User-Interface Prototype" as UIP <<OPTIONAL — NOT TRIGGERED>>
+  class "Architectural Proof-of-Concept" as POC <<OPTIONAL — NOT TRIGGERED>>
+}
+ARCH --> SAD : primary owner
+DES --> DM : primary owner
+UID --> DM : contributes UI sections
+DBD --> DM : contributes data sections
+DATAM -[hidden]- DM
+
+package "Implementation" {
+  class "Implementer" as IMPL
+  class "Integrator" as INTG
+  class "Implementation Model" as IM <<CORE>>
+}
+IMPL --> IM : primary owner
+INTG --> IM : contributes integration
+
+package "Test" {
+  class "TestManager" as TM
+  class "TestDesigner" as TD
+  class "Tester" as TE
+  class "Test Case" as TC <<CORE>>
+  class "Test Evaluation Summary" as TES <<CORE>>
+  class "Test Plan" as TP <<OPTIONAL — NOT TRIGGERED>>
+}
+TD --> TC : primary owner
+TM --> TES : primary owner
+TE --> TC : executes
+TP -[hidden]- TES
+
+package "Deployment" {
+  class "DeploymentManager" as DEPM
+  class "Deployment Model" as DEPMOD <<OPTIONAL — TRIGGERED>>
+  class "Release Notes" as RN <<CORE>>
+}
+DEPM --> DEPMOD : primary owner
+DEPM --> RN : primary owner
+
+package "Project Management" {
+  class "ProjectManager" as PM
+  class "Iteration Plan" as IP <<CORE>>
+  class "Iteration Assessment" as IA <<CORE>>
+  class "Risk List" as RL <<CORE>>
+}
+PM --> IP : primary owner
+PM --> IA : primary owner
+PM --> RL : primary owner
+
+package "Configuration & Change Management" {
+  class "ChangeControlManager" as CCM
+  class "ConfigurationManager" as CM
+  class "Change Request" as CR <<CORE>>
+  class "Review Record" as RR <<CORE>>
+}
+CCM --> CR : primary owner
+CM --> RR : primary owner
+
+package "Environment" {
+  class "ProcessEngineer" as PE
+  class "Development Case" as DC <<CORE>>
+}
+PE --> DC : primary owner
+
+package "Cross-discipline" {
+  class "TechnicalWriter" as TW
+  class "User Documentation" as UDOC <<CORE>>
+  class "Vision" as VIS <<CORE>>
+  class "Reviewer" as REV
+  class "BusinessReviewer" as BREV
+  class "ManagementReviewer" as MREV
+  class "ReviewCoordinator" as RC
+}
+TW --> UDOC : primary owner
+REV --> RR : records findings
+BREV --> RR : records findings
+MREV --> RR : records findings
+RC --> RR : coordinates
+
+note bottom of DC
+  Ownership is fixed by the service-side allowlist.
+  This project's DC lists contributors only — it never
+  reassigns primary ownership.
+end note
+@enduml
+```
 ## Guidelines and Procedures
 ### Measurement policy
 
