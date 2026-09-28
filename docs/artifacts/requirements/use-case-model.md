@@ -8,6 +8,7 @@
 - Last updated: 2026-09-28
 
 ## Use-Case Diagram
+
 Actors sit ON the boundary line. Everything inside the rectangle is the portal's responsibility; everything outside is consumed or excluded. Twelve use cases, two human actors and one external system actor.
 
 ```plantuml
@@ -141,6 +142,7 @@ end note
 ```
 
 ## Actors
+
 | Actor | Type | ID | Description | Use cases |
 |---|---|---|---|---|
 | Employee | Human, primary | STK-004 | A Cuba Corp employee — 200 people across 3 offices. Authenticated with corporate credentials; not a member of the HR AD group. Reads the directory and the news, records and views their own clockings. | UC-001, UC-002, UC-006, UC-011 |
@@ -195,14 +197,67 @@ These are specified in the Supplementary Specification and included by every use
 
 | Mechanism | Declared by | Included by |
 |---|---|---|
-| OIDC login via Keycloak, roles read from token claims | CON-001, CON-031, CON-033 | Every use case — all require an authenticated session |
-| LDAP read of directory attributes | CON-003, CON-011 | UC-011, UC-012 |
-| Audit trail write | NFR-002 | UC-005, UC-007, UC-008, UC-009, UC-012 |
-| Idempotency key on clocking submission | CON-044 | UC-001 |
-| Client-side retry of the clocking POST | NFR-006, CON-045 | UC-001 |
+| MECH-01 OIDC login via Keycloak, roles read from token claims | CON-001, CON-031, CON-033 | Every use case — all require an authenticated session |
+| MECH-02 LDAP read of directory attributes | CON-003, CON-011 | UC-003, UC-004, UC-011, UC-012 — every use case that must show who an employee is, since employee data is never copied locally (CON-003) |
+| MECH-03 Audit trail write | NFR-002 | UC-005, UC-007, UC-008, UC-009, UC-012 |
+| MECH-04 Idempotency key on clocking submission | CON-044 | UC-001 |
+| MECH-05 Client-side retry of the clocking POST | NFR-006, CON-045 | UC-001 |
+
+```plantuml
+@startuml
+title Cross-cutting mechanisms — included by the use cases that depend on them
+skinparam componentStyle rectangle
+
+component "MECH-01 OIDC login\nCON-001, CON-031, CON-033" as M1
+component "MECH-02 LDAP read\nCON-003, CON-011" as M2
+component "MECH-03 Audit trail write\nNFR-002" as M3
+component "MECH-04 Idempotency key\nCON-044" as M4
+component "MECH-05 Client-side retry\nNFR-006, CON-045" as M5
+
+usecase "UC-001" as UC001
+usecase "UC-002" as UC002
+usecase "UC-003" as UC003
+usecase "UC-004" as UC004
+usecase "UC-005" as UC005
+usecase "UC-006" as UC006
+usecase "UC-007" as UC007
+usecase "UC-008" as UC008
+usecase "UC-009" as UC009
+usecase "UC-010" as UC010
+usecase "UC-011" as UC011
+usecase "UC-012" as UC012
+
+UC001 ..> M1
+UC002 ..> M1
+UC003 ..> M1
+UC004 ..> M1
+UC005 ..> M1
+UC006 ..> M1
+UC007 ..> M1
+UC008 ..> M1
+UC009 ..> M1
+UC010 ..> M1
+UC011 ..> M1
+UC012 ..> M1
+
+UC003 ..> M2
+UC004 ..> M2
+UC011 ..> M2
+UC012 ..> M2
+
+UC005 ..> M3
+UC007 ..> M3
+UC008 ..> M3
+UC009 ..> M3
+UC012 ..> M3
+
+UC001 ..> M4
+UC001 ..> M5
+@enduml
+```
 
 ## Use-Case Specifications
-Inception details only the architecturally significant use cases — those that force an architectural decision. Four are detailed here: UC-001 (client timestamp, idempotency, client-side retry), UC-004 (report format and timezone), UC-005 (immutability and audit), UC-010 (the at-most-one-featured invariant). The remaining eight are detailed by the RequirementsSpecifier in Elaboration.
+Inception details only the architecturally significant use cases — those that force an architectural decision. Four are detailed here: UC-001 (client timestamp, idempotency, client-side retry), UC-004 (report format, timezone and the AD read behind FullName), UC-005 (immutability and audit), UC-010 (the at-most-one-featured invariant). The remaining eight are detailed by the RequirementsSpecifier in Elaboration.
 
 ### UC-001 Record Clocking
 
@@ -316,8 +371,9 @@ endif
 1. HR opens the clocking report.
 2. HR selects one calendar month.
 3. The system collects every employee-day in that month that has at least one clocking (CON-018).
-4. The system writes one row per employee-day: EmployeeId, FullName, WorkerCategory, Date, ClockIn, ClockOut, HoursWorked, Corrected — in that order (CON-007).
-5. The system returns the CSV file.
+4. The system resolves each employee's FullName and WorkerCategory — FullName from Active Directory over LDAP, since employee data is never copied locally (CON-003), and WorkerCategory from the local AD-user-id-to-category link (CON-004).
+5. The system writes one row per employee-day: EmployeeId, FullName, WorkerCategory, Date, ClockIn, ClockOut, HoursWorked, Corrected — in that order (CON-007).
+6. The system returns the CSV file.
 
 **Alternative flows**
 
@@ -326,6 +382,7 @@ endif
 | A1 | An employee-day has no clock-out | ClockOut and HoursWorked are written empty; the row is still exported (CON-015). A zero would falsely state the employee worked no hours. |
 | A2 | The employee has no worker category | WorkerCategory is written blank; no default value is invented (CON-025). |
 | A3 | A day has no clocking at all | No row is produced — weekend, holiday, sick day and day before joining all produce nothing (CON-018). |
+| A4 | An AD attribute behind a column is empty | The column is written blank for that employee; the row is still exported. R004 records that job title and extension may not be filled consistently across the three offices. |
 
 **Special requirements**
 
@@ -492,19 +549,19 @@ Detailed by the RequirementsSpecifier in Elaboration. Each passes the ATM test: 
 ## Traceability
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
-| UC-001 Record Clocking | AC-002, AC-005, AC-006, NFR-004, NFR-006, CON-043, CON-044, CON-045, CON-046 | Refines | Supplementary Specification |
-| UC-002 View Own Clocking History | FR-001 | Refines | Supplementary Specification |
-| UC-003 View All Employee Clockings | FR-002 | Refines | Supplementary Specification |
-| UC-004 Export Monthly Clocking Report (CSV) | FR-003, CON-005, CON-007, CON-008, CON-012, CON-015, CON-018 | Refines | Supplementary Specification |
-| UC-005 Correct or Insert a Clocking | CON-008, CON-013, CON-014, NFR-002 | Refines | Supplementary Specification |
-| UC-006 Read News | FR-005, CON-023 | Refines | Supplementary Specification |
-| UC-007 Publish News Item | FR-004, NFR-002 | Refines | Supplementary Specification |
-| UC-008 Edit Published News Item | FR-007, NFR-002 | Refines | Supplementary Specification |
-| UC-009 Unpublish News Item | FR-008, CON-022 | Refines | Supplementary Specification |
-| UC-010 Feature News Item | FR-006, CON-019, CON-020, CON-021 | Refines | Supplementary Specification |
-| UC-011 Search Employee Directory | FR-009, CON-003, CON-024, CON-027 | Refines | Supplementary Specification |
-| UC-012 Assign Worker Category | FR-010, CON-004, CON-024, CON-025, CON-026 | Refines | Supplementary Specification |
+| UC-001 Record Clocking | AC-002, AC-005, AC-006, NFR-004, NFR-006, CON-043, CON-044, CON-045, CON-046 | DependsOn | Supplementary Specification |
+| UC-002 View Own Clocking History | FR-001 | DependsOn | Supplementary Specification |
+| UC-003 View All Employee Clockings | FR-002, CON-003 | DependsOn | Supplementary Specification |
+| UC-004 Export Monthly Clocking Report (CSV) | FR-003, CON-003, CON-005, CON-007, CON-008, CON-012, CON-015, CON-018 | DependsOn | Supplementary Specification, Software Architecture Document |
+| UC-005 Correct or Insert a Clocking | CON-008, CON-013, CON-014, NFR-002 | DependsOn | Supplementary Specification |
+| UC-006 Read News | FR-005, CON-023 | DependsOn | Supplementary Specification |
+| UC-007 Publish News Item | FR-004, NFR-002 | DependsOn | Supplementary Specification |
+| UC-008 Edit Published News Item | FR-007, NFR-002 | DependsOn | Supplementary Specification |
+| UC-009 Unpublish News Item | FR-008, CON-022 | DependsOn | Supplementary Specification |
+| UC-010 Feature News Item | FR-006, CON-019, CON-020, CON-021 | DependsOn | Supplementary Specification |
+| UC-011 Search Employee Directory | FR-009, CON-003, CON-024, CON-027 | DependsOn | Supplementary Specification, Software Architecture Document |
+| UC-012 Assign Worker Category | FR-010, CON-004, CON-024, CON-025, CON-026 | DependsOn | Supplementary Specification, Software Architecture Document |
 | Use-Case Model §Actors — Active Directory | CON-003, CON-011 | Refines | Supplementary Specification |
+| Use-Case Model §Use-Case Diagram — employee identity read from AD | CON-003, CON-004, CON-007 | Refines | Supplementary Specification |
 | Use-Case Model §Cross-cutting mechanisms | CON-001, CON-031, CON-033, CON-044, NFR-002, NFR-006 | Refines | Supplementary Specification |
 | Use-Case Model §Use-Case Survey — volatility notes | CON-007, CON-008, CON-019, CON-020, CON-021, CON-023, CON-026 | Refines | Software Architecture Document |
-
