@@ -390,6 +390,7 @@ first day.
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
 | DC §Tailoring Overview — Business Modeling INACTIVE | FR-001, FR-002, FR-003, FR-004, FR-005, FR-006, FR-007, FR-008, FR-009, FR-010 | Refines | Use-Case Model, Supplementary Specification |
+| DC §Artifacts and Templates — HR clocking correction use case (stakeholder-confirmed) | CON-008, CON-013, CON-014, CON-015, NFR-002 | Refines | Use-Case Model, Test Case, Test Evaluation Summary |
 | DC §Optional Artifact Triggers — Deployment Model FIRED | CON-010, CON-030, CON-032, CON-034 | Refines | Deployment Model |
 | DC §Optional Artifact Triggers — Data Model NOT FIRED | CON-004, CON-040 | Refines | Design Model |
 | DC §Optional Artifact Triggers — User-Interface Prototype NOT FIRED | CON-041 | Refines | Design Model |
