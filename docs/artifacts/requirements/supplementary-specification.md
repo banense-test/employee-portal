@@ -1,12 +1,10 @@
 ## Document Control
-
 - Phase: Inception
 - Status: Draft — under review for the end-of-Inception milestone
 - Milestone Target: end-of-Inception (NOT YET ACHIEVED)
 - Iteration: 1, Cycle 1
-- Owner: SystemAnalyst
+- Owner: RequirementsSpecifier (Development Case §Roles and Ownership — fixed primary owner); produced by SystemAnalyst this iteration per the Work Order
 - Last updated: 2026-09-28
-
 ## Functionality
 ### Cross-cutting mechanisms — specified here, never as use cases
 
