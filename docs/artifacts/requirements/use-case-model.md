@@ -570,28 +570,6 @@ Detailed by the RequirementsSpecifier in Elaboration. Each passes the ATM test: 
 
 The three `Derives` links to the Software Architecture Document carry the High-volatility use cases — UC-004, UC-011 and UC-012 — whose volatile behaviour must be encapsulated in a dedicated component rather than spread across the codebase.
 
-### Downstream — what each use case feeds
-
-| Element | Link Type | Traces To |
-|---|---|---|
-| UC-001 Record Clocking | DependsOn | Supplementary Specification |
-| UC-002 View Own Clocking History | DependsOn | Supplementary Specification |
-| UC-003 View All Employee Clockings | DependsOn | Supplementary Specification |
-| UC-004 Export Monthly Clocking Report (CSV) | DependsOn | Supplementary Specification |
-| UC-004 Export Monthly Clocking Report (CSV) | Derives | Software Architecture Document |
-| UC-005 Correct or Insert a Clocking | DependsOn | Supplementary Specification |
-| UC-006 Read News | DependsOn | Supplementary Specification |
-| UC-007 Publish News Item | DependsOn | Supplementary Specification |
-| UC-008 Edit Published News Item | DependsOn | Supplementary Specification |
-| UC-009 Unpublish News Item | DependsOn | Supplementary Specification |
-| UC-010 Feature News Item | DependsOn | Supplementary Specification |
-| UC-011 Search Employee Directory | DependsOn | Supplementary Specification |
-| UC-011 Search Employee Directory | Derives | Software Architecture Document |
-| UC-012 Assign Worker Category | DependsOn | Supplementary Specification |
-| UC-012 Assign Worker Category | Derives | Software Architecture Document |
-
-The three `Derives` links to the Software Architecture Document carry the High-volatility use cases — UC-004, UC-011 and UC-012 — whose volatile behaviour must be encapsulated in a dedicated component rather than spread across the codebase.
-
 ### Coverage
 
 | Declared item | Realized by |
