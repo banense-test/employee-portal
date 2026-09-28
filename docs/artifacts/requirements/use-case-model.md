@@ -141,12 +141,11 @@ end note
 ```
 
 ## Actors
-
 | Actor | Type | ID | Description | Use cases |
 |---|---|---|---|---|
 | Employee | Human, primary | STK-004 | A Cuba Corp employee — 200 people across 3 offices. Authenticated with corporate credentials; not a member of the HR AD group. Reads the directory and the news, records and views their own clockings. | UC-001, UC-002, UC-006, UC-011 |
 | HR Administrator | Human, primary | STK-001 | A member of the HR AD group (CON-033). Sees and corrects all clockings, exports the monthly report, and owns the news lifecycle and worker categories. | UC-003, UC-004, UC-005, UC-006, UC-007, UC-008, UC-009, UC-010, UC-011, UC-012 |
-| Active Directory | External system, supporting | STK-003 | The single home of employee data (CON-003, CON-004). Read over LDAP for the directory; never written to (CON-011). | UC-011, UC-012 |
+| Active Directory | External system, supporting | STK-003 | The single home of employee data (CON-003, CON-004). Read over LDAP wherever a use case must show who an employee is — the directory, the clocking report, the CSV export and the category assignment. Never written to (CON-011). | UC-003, UC-004, UC-011, UC-012 |
 
 ### Actors deliberately NOT modelled
 
