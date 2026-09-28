@@ -123,6 +123,119 @@ Two levels only, from Active Directory group membership (CON-033). Members of th
 
 No third-party licence is declared. The stack is .NET 10 (CON-028), Razor Pages (CON-029) and PostgreSQL 18 (CON-030), all on the internal Windows Server estate. Keycloak and Active Directory are existing corporate systems, not licensed by this project (CON-031).
 
+### Security
+
+FURPS+ Functionality includes security. The declared security posture is deliberately minimal and is fully fixed by declared constraints — nothing is added here.
+
+| Concern | Requirement | Declared by |
+|---|---|---|
+| Authentication | Corporate credentials via Active Directory, through Keycloak (OIDC). The portal is an OIDC client only: register a client, redirect for login, validate the token, read roles from its claims. Nothing more. | CON-001, CON-031 |
+| Authorization | Two levels only, from Active Directory group membership: members of the HR AD group publish, edit and unpublish news and manage worker categories; everybody else is an employee with read access to the directory and the news, plus their own clockings. | CON-033 |
+| No permission model beyond the two levels | No role matrix, no permission administration screen, no rule that reads the worker category to decide what somebody may do. Worker category is descriptive and drives no access decision. | CON-024, CON-033 |
+| Network exposure | The portal is accessible only from the internal corporate network. No access from outside the corporate network. | CON-034 |
+| Credential handling | The OIDC client and the LDAP connection are configured with placeholder values (issuer, client id, client secret, LDAP host, bind account, base DN), held in configuration and never in code; Infrastructure puts the real values in at deployment. | CON-038 |
+| Directory write protection | Employee data is read-only from AD. No write-back, no edit form, no local copy. Infrastructure will not modify AD; the portal works with AD as it stands. | CON-003, CON-011 |
+| Data minimisation | The only local data about a person is the AD-user-id-to-category link — two columns and nothing else. The directory shows corporate data only, no private personal information. | CON-004, CON-027 |
+| Audit | Mandatory traceability for news publication, edits and unpublishing, for any change to a worker's category, and for every clocking HR corrects or inserts. | NFR-002 |
+| CI credential boundary | CI never holds production data or credentials, and never deploys. | CON-036 |
+
+**Not declared, and not added here:** no encryption-at-rest requirement, no password or session policy, no session-timeout value, no penetration-test requirement, and no security logging beyond the audit trail of NFR-002. None is declared and none is invented. [RECOMMENDATION — requires CR] if the stakeholder wants any of them.
+
+### Quality attributes — declared and traced to use cases
+
+Every attribute below cites a declared identifier; none is invented. CON-034 (internal corporate network only) constrains all twelve use cases and is not drawn as twelve edges.
+
+```plantuml
+@startuml
+title Declared quality attributes and the use cases they constrain
+
+skinparam componentStyle rectangle
+
+package "Performance" {
+  component "NFR-003 page load < 3s\nAC-001 full page load" as Q1
+  component "NFR-004 clocking < 1s" as Q2
+  component "NFR-001 200 employees — no archive screen" as Q3
+}
+
+package "Reliability" {
+  component "NFR-005 Mon-Fri 07:00-19:00" as Q4
+  component "NFR-006 5-minute clocking retry\nAC-006" as Q5
+  component "NFR-002 audit trail" as Q6
+}
+
+package "Usability" {
+  component "NFR-007 no-connection message" as Q7
+  component "CON-035 Chrome and Edge" as Q8
+  component "CON-041 mandatory UI design" as Q9
+  component "AC-004 find colleague < 10s" as Q10
+  component "AC-005 clocking with no training\nAC-002" as Q11
+  component "AC-003 publish without assistance" as Q12
+}
+
+package "Functionality" {
+  component "CON-033 two-level authorization" as Q13
+  component "CON-007 / CON-008 CSV format" as Q14
+  component "CON-026 closed category list" as Q15
+}
+
+package "Use cases" {
+  usecase "UC-001 Record Clocking" as UC001
+  usecase "UC-002 View Own Clocking History" as UC002
+  usecase "UC-003 View All Employee Clockings" as UC003
+  usecase "UC-004 Export Monthly Clocking Report" as UC004
+  usecase "UC-005 Correct or Insert a Clocking" as UC005
+  usecase "UC-006 Read News" as UC006
+  usecase "UC-007 Publish News Item" as UC007
+  usecase "UC-008 Edit Published News Item" as UC008
+  usecase "UC-009 Unpublish News Item" as UC009
+  usecase "UC-010 Feature News Item" as UC010
+  usecase "UC-011 Search Employee Directory" as UC011
+  usecase "UC-012 Assign Worker Category" as UC012
+}
+
+Q1 --> UC001
+Q1 --> UC006
+Q1 --> UC011
+Q2 --> UC001
+Q3 --> UC006
+Q4 --> UC001
+Q5 --> UC001
+Q6 --> UC005
+Q6 --> UC007
+Q6 --> UC008
+Q6 --> UC009
+Q6 --> UC012
+Q7 --> UC006
+Q7 --> UC011
+Q8 --> UC001
+Q8 --> UC006
+Q8 --> UC011
+Q9 --> UC001
+Q9 --> UC006
+Q9 --> UC011
+Q10 --> UC011
+Q11 --> UC001
+Q12 --> UC007
+Q13 --> UC003
+Q13 --> UC004
+Q13 --> UC005
+Q13 --> UC007
+Q13 --> UC008
+Q13 --> UC009
+Q13 --> UC010
+Q13 --> UC012
+Q14 --> UC004
+Q15 --> UC011
+Q15 --> UC012
+
+note bottom
+  CON-034 (internal corporate network only) constrains all twelve
+  use cases and is not drawn as twelve edges.
+  Every attribute cites a declared identifier; none is invented.
+end note
+@enduml
+```
+
 ## Usability
 
 | ID | Requirement | Declared by |
