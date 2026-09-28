@@ -566,23 +566,6 @@ Detailed by the RequirementsSpecifier in Elaboration. Each passes the ATM test: 
 | Use-Case Model §Cross-cutting mechanisms | CON-001, CON-031, CON-033, CON-044, NFR-002, NFR-006 | Refines | Supplementary Specification |
 | Use-Case Model §Use-Case Survey — volatility notes | CON-007, CON-008, CON-019, CON-020, CON-021, CON-023, CON-026 | Refines | Software Architecture Document |
 
-### Upstream — what justifies each use case
-
-| Element | Traces From | Link Type |
-|---|---|---|
-| UC-001 Record Clocking | AC-002, AC-005, AC-006, NFR-004, NFR-006, CON-043, CON-044, CON-045, CON-046 | Refines |
-| UC-002 View Own Clocking History | FR-001 | Refines |
-| UC-003 View All Employee Clockings | FR-002, CON-003 | Refines |
-| UC-004 Export Monthly Clocking Report (CSV) | FR-003, CON-003, CON-005, CON-007, CON-008, CON-012, CON-015, CON-018 | Refines |
-| UC-005 Correct or Insert a Clocking | CON-008, CON-013, CON-014, NFR-002 | Refines |
-| UC-006 Read News | FR-005, CON-023 | Refines |
-| UC-007 Publish News Item | FR-004, NFR-002 | Refines |
-| UC-008 Edit Published News Item | FR-007, NFR-002 | Refines |
-| UC-009 Unpublish News Item | FR-008, CON-022 | Refines |
-| UC-010 Feature News Item | FR-006, CON-019, CON-020, CON-021 | Refines |
-| UC-011 Search Employee Directory | FR-009, CON-003, CON-024, CON-027 | Refines |
-| UC-012 Assign Worker Category | FR-010, CON-004, CON-024, CON-025, CON-026 | Refines |
-
 ### Downstream — what each use case feeds
 
 | Element | Link Type | Traces To |
