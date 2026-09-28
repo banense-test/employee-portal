@@ -227,14 +227,12 @@ No declared acceptance criterion is absent: all six are addressed by a named use
 | E5 | LCO readiness assessed | The ReviewCoordinator's verdict — not the ProjectManager's |
 
 ## Traceability
-
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
-| Iteration Plan | FR-001, FR-002, FR-003, FR-004, FR-005, FR-006, FR-007, FR-008, FR-009, FR-010 | DependsOn | Use-Case Model |
+| Iteration Plan | FR-001, FR-002, FR-003, FR-004, FR-005, FR-006, FR-007, FR-008, FR-009, FR-010, AC-001, AC-002, AC-003, AC-004, AC-005, AC-006 | DependsOn | Use-Case Model |
 | Iteration Plan | R001, R002, R003, R004, R005 | DependsOn | Risk List |
-| Iteration Plan | CON-037, CON-047 | DependsOn | Risk List |
-| Iteration Plan | AC-001, AC-002, AC-003, AC-004, AC-005, AC-006 | DependsOn | Use-Case Model |
 | Iteration Plan | CON-010, CON-038, CON-039, CON-040 | DependsOn | Deployment Model |
 | Iteration Plan | BG-001, BG-002, BG-003 | DependsOn | Iteration Assessment |
 
-The plan's scope is the twelve use cases of the Use-Case Model, cited by identifier. Its risk-driven sequencing rests on the Risk List. Its iteration count rests on the rubber profile checked against the 6±3 rule, and its human gate on CON-038. Its acceptance criteria are the six declared ones, each mapped to the use case that addresses it.
+The plan's scope is the twelve use cases of the Use-Case Model, cited by identifier, and its acceptance criteria are the six declared ones, each mapped to the use case that addresses it. Its risk-driven sequencing rests on the Risk List. Its human gate and its deployment assumptions rest on CON-038 and the deployment constraints. Its business goals are measured in the Iteration Assessment.
+
