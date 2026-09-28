@@ -263,11 +263,10 @@ The RequirementsSpecifier quantifies the thresholds and the measurement conditio
 No external compliance regime applies and no retention period is mandated (NFR-002).
 
 ## Traceability
-
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
 | Supplementary Specification §Functionality — MECH-01 OIDC login | CON-001, CON-002, CON-031, CON-032, CON-033 | Refines | UC-001, UC-002, UC-003, UC-004, UC-005, UC-006, UC-007, UC-008, UC-009, UC-010, UC-011, UC-012 |
-| Supplementary Specification §Functionality — MECH-02 LDAP read | CON-003, CON-011 | Refines | UC-011, UC-012 |
+| Supplementary Specification §Functionality — MECH-02 LDAP read | CON-003, CON-011 | Refines | UC-003, UC-004, UC-011, UC-012 |
 | Supplementary Specification §Functionality — MECH-03 Audit trail write | NFR-002 | Refines | UC-005, UC-007, UC-008, UC-009, UC-012 |
 | Supplementary Specification §Functionality — MECH-04 Idempotency key | CON-044 | Refines | UC-001 |
 | Supplementary Specification §Functionality — MECH-05 Client-side retry | NFR-006, CON-045, CON-046 | Refines | UC-001 |
@@ -279,3 +278,4 @@ No external compliance regime applies and no retention period is mandated (NFR-0
 | Supplementary Specification §Design Constraints | CON-001, CON-002, CON-003, CON-004, CON-005, CON-006, CON-007, CON-008, CON-009, CON-010, CON-011, CON-028, CON-029, CON-030, CON-031, CON-032, CON-033, CON-034, CON-035, CON-036, CON-037, CON-038, CON-039, CON-040, CON-041, CON-042, CON-044, CON-047 | Refines | Software Architecture Document |
 | Supplementary Specification §Interfaces | CON-001, CON-003, CON-005, CON-007, CON-008, CON-034, CON-035 | Refines | Software Architecture Document |
 | Supplementary Specification §Applicable Standards | CON-001, CON-003, CON-006, CON-007, CON-008, CON-012, NFR-002 | Refines | Software Architecture Document |
+
