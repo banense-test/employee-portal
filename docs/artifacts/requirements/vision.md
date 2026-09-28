@@ -38,7 +38,6 @@
 | STK-004 | Cuba Corp Employees | End users — 200 people across 3 offices | Medium | Clock in/out without help (AC-002), read news, find a colleague's phone/email in under 10 seconds (AC-004). |
 
 ## Product Overview
-
 The portal is one internal web application with three functional areas — clocking, news and directory — over a single PostgreSQL database, consuming two external systems it does not own.
 
 ```plantuml
@@ -81,7 +80,7 @@ end note
 
 ### System boundary — actors and use cases
 
-Actors sit ON the boundary line. Everything inside the rectangle is the portal's responsibility; everything outside is consumed or excluded.
+Actors sit ON the boundary line. Everything inside the rectangle is the portal's responsibility; everything outside is consumed or excluded. Active Directory reaches four use cases, not only the directory feature: employee data is never copied locally (CON-003), so any use case that must show who an employee is reads AD.
 
 ```plantuml
 @startuml
@@ -122,6 +121,8 @@ HR --> UC009
 HR --> UC010
 HR --> UC011
 HR --> UC012
+UC003 --> AD
+UC004 --> AD
 UC011 --> AD
 UC012 --> AD
 
@@ -159,10 +160,10 @@ title Employee Portal — declared scope boundary (Inception, Iteration 1)
 * Employee Portal
 ** IN SCOPE
 *** Clocking
-**** Record clock in/out (FR-001)
+**** Record clock in/out (Vision statement, AC-002, AC-006)
 **** Own history, current month (FR-001)
 **** All employees, HR (FR-002)
-**** HR correct or insert (stakeholder-confirmed)
+**** HR correct or insert (stakeholder-confirmed 2026-09-28)
 **** Monthly CSV export (FR-003)
 *** News
 **** Read, newest-first, category filter, banner (FR-005)
