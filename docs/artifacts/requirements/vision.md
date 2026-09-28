@@ -304,7 +304,6 @@ Non-functional requirements, carried by identifier. Thresholds are quantified by
 | R004 | 3 | 3 | 9 | Active Directory integration: the LDAP attributes the directory reads may not be filled consistently across the 3 offices (job title, extension). If not tested early the directory shows gaps. |
 
 ## Traceability
-
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
 | Vision §Problem Statement | BG-001, BG-002, BG-003 | Refines | Use-Case Model |
@@ -312,18 +311,19 @@ Non-functional requirements, carried by identifier. Thresholds are quantified by
 | Vision §Product Overview — Not in scope | CON-031, CON-032, CON-034, CON-040 | Refines | Supplementary Specification |
 | Vision §Features — Record clock in/out | AC-002, AC-006, NFR-006, CON-043, CON-044 | Refines | UC-001 |
 | Vision §Features — View own clocking history | FR-001 | Refines | UC-002 |
-| Vision §Features — View all employee clockings | FR-002 | Refines | UC-003 |
-| Vision §Features — Export monthly clocking report (CSV) | FR-003, CON-007, CON-008 | Refines | UC-004 |
+| Vision §Features — View all employee clockings | FR-002, CON-003 | Refines | UC-003 |
+| Vision §Features — Export monthly clocking report (CSV) | FR-003, CON-003, CON-007, CON-008 | Refines | UC-004 |
 | Vision §Features — Correct or insert a clocking | CON-008, CON-013, CON-014, NFR-002 | Refines | UC-005 |
 | Vision §Features — Read news | FR-005, CON-023 | Refines | UC-006 |
 | Vision §Features — Publish news item | FR-004, AC-003 | Refines | UC-007 |
 | Vision §Features — Edit published news item | FR-007, NFR-002 | Refines | UC-008 |
 | Vision §Features — Unpublish news item | FR-008, CON-022 | Refines | UC-009 |
 | Vision §Features — Feature news item | FR-006, CON-019, CON-020, CON-021 | Refines | UC-010 |
-| Vision §Features — Search employee directory | FR-009, CON-003, CON-027, AC-004 | Refines | UC-011 |
+| Vision §Features — Search employee directory | FR-009, CON-003, CON-024, CON-027, AC-004 | Refines | UC-011 |
 | Vision §Features — Assign worker category | FR-010, CON-004, CON-024, CON-025, CON-026 | Refines | UC-012 |
 | Vision §Assumptions and Dependencies | CON-002, CON-012, CON-016, CON-017, CON-038, CON-039, CON-040, CON-041, CON-042, CON-047 | Refines | Supplementary Specification |
 | Vision §Constraints | CON-001, CON-003, CON-004, CON-005, CON-006, CON-009, CON-010, CON-011, CON-028, CON-029, CON-030, CON-031, CON-032, CON-033, CON-034, CON-035, CON-036, CON-037, CON-039, CON-040, CON-041, CON-042, CON-047 | Refines | Supplementary Specification |
 | Vision §Other Product Requirements | NFR-001, NFR-002, NFR-003, NFR-004, NFR-005, NFR-006, NFR-007 | Refines | Supplementary Specification |
 | Vision §Other Product Requirements — acceptance criteria | AC-001, AC-002, AC-003, AC-004, AC-005, AC-006 | Refines | Test Case |
 | Vision §Other Product Requirements — risks | R001, R002, R003, R004 | Refines | Risk List |
+
