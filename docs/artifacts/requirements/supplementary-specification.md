@@ -417,17 +417,33 @@ No external compliance regime applies and no retention period is mandated (NFR-0
 ## Traceability
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
-| Supplementary Specification §Functionality — MECH-01 OIDC login | CON-001, CON-002, CON-031, CON-032, CON-033 | Refines | UC-001, UC-002, UC-003, UC-004, UC-005, UC-006, UC-007, UC-008, UC-009, UC-010, UC-011, UC-012 |
-| Supplementary Specification §Functionality — MECH-02 LDAP read | CON-003, CON-011 | Refines | UC-003, UC-004, UC-011, UC-012 |
-| Supplementary Specification §Functionality — MECH-03 Audit trail write | NFR-002 | Refines | UC-005, UC-007, UC-008, UC-009, UC-012 |
-| Supplementary Specification §Functionality — MECH-04 Idempotency key | CON-044 | Refines | UC-001 |
-| Supplementary Specification §Functionality — MECH-05 Client-side retry | NFR-006, CON-045, CON-046 | Refines | UC-001 |
+| MECH-01 OIDC login via Keycloak | CON-001, CON-002, CON-031, CON-032, CON-033 | Refines | UC-001, UC-002, UC-003, UC-004, UC-005, UC-006, UC-007, UC-008, UC-009, UC-010, UC-011, UC-012 |
+| MECH-02 LDAP read of directory attributes | CON-003, CON-011 | Refines | UC-003, UC-004, UC-011, UC-012 |
+| MECH-03 Audit trail write | NFR-002 | Refines | UC-005, UC-007, UC-008, UC-009, UC-012 |
+| MECH-04 Idempotency key on the clocking POST | CON-044 | Refines | UC-001 |
+| MECH-05 Client-side retry of the clocking POST | NFR-006, CON-045, CON-046 | Refines | UC-001 |
+| Supplementary Specification §Functionality — Security | CON-001, CON-003, CON-004, CON-011, CON-024, CON-027, CON-031, CON-033, CON-034, CON-036, CON-038, NFR-002 | Refines | UC-001, UC-003, UC-004, UC-005, UC-007, UC-008, UC-009, UC-010, UC-011, UC-012 |
 | Supplementary Specification §Functionality — business rules | CON-012, CON-013, CON-014, CON-015, CON-016, CON-017, CON-018, CON-019, CON-020, CON-021, CON-022, CON-023, CON-024, CON-025, CON-026, CON-027, CON-043, CON-045, CON-046 | Refines | Use-Case Model |
-| Supplementary Specification §Usability | NFR-007, CON-035, CON-041, AC-004, AC-005 | Refines | UC-006, UC-011 |
-| Supplementary Specification §Reliability | NFR-002, NFR-005, NFR-006, CON-042 | Refines | UC-001, UC-005, UC-007, UC-008, UC-009, UC-012 |
-| Supplementary Specification §Performance | NFR-001, NFR-003, NFR-004, AC-001 | Refines | UC-001, UC-006 |
+| Supplementary Specification §Functionality — quality attributes | NFR-001, NFR-002, NFR-003, NFR-004, NFR-005, NFR-006, NFR-007, AC-001, AC-002, AC-003, AC-004, AC-005, AC-006, CON-007, CON-008, CON-026, CON-033, CON-034, CON-035, CON-041 | Refines | UC-001, UC-004, UC-006, UC-007, UC-011, UC-012 |
+| Supplementary Specification §Usability | NFR-007, CON-035, CON-041, AC-002, AC-003, AC-004, AC-005 | Refines | UC-001, UC-006, UC-007, UC-011 |
+| Supplementary Specification §Reliability | NFR-002, NFR-005, NFR-006, CON-042, CON-045, CON-046 | Refines | UC-001, UC-005, UC-007, UC-008, UC-009, UC-012 |
+| Supplementary Specification §Performance | NFR-001, NFR-003, NFR-004, AC-001 | Refines | UC-001, UC-006, UC-011 |
 | Supplementary Specification §Supportability | CON-010, CON-026, CON-036, CON-037, CON-038, CON-039, CON-040 | Refines | Software Architecture Document |
 | Supplementary Specification §Design Constraints | CON-001, CON-002, CON-003, CON-004, CON-005, CON-006, CON-007, CON-008, CON-009, CON-010, CON-011, CON-028, CON-029, CON-030, CON-031, CON-032, CON-033, CON-034, CON-035, CON-036, CON-037, CON-038, CON-039, CON-040, CON-041, CON-042, CON-044, CON-047 | Refines | Software Architecture Document |
 | Supplementary Specification §Interfaces | CON-001, CON-003, CON-005, CON-007, CON-008, CON-034, CON-035 | Refines | Software Architecture Document |
 | Supplementary Specification §Applicable Standards | CON-001, CON-003, CON-006, CON-007, CON-008, CON-012, NFR-002 | Refines | Software Architecture Document |
+
+### Coverage — declared non-functional requirements
+
+| Declared item | Addressed in |
+|---|---|
+| NFR-001 | Performance (scale), Functionality — quality attributes |
+| NFR-002 | Reliability (audit trail coverage), Functionality — Security, MECH-03 |
+| NFR-003 | Performance |
+| NFR-004 | Performance |
+| NFR-005 | Reliability (availability and resilience envelope) |
+| NFR-006 | Reliability, MECH-05 |
+| NFR-007 | Usability, Reliability (availability and resilience envelope) |
+
+All seven declared non-functional requirements are addressed. No category of FURPS+ is left blank: Functionality (security, authorization, business rules, licensing), Usability, Reliability, Performance, Supportability, plus the design, implementation, interface and physical constraints carried in Design Constraints and Interfaces.
 
