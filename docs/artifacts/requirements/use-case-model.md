@@ -552,19 +552,23 @@ Detailed by the RequirementsSpecifier in Elaboration. Each passes the ATM test: 
 | UC-001 Record Clocking | AC-002, AC-005, AC-006, NFR-004, NFR-006, CON-043, CON-044, CON-045, CON-046 | DependsOn | Supplementary Specification |
 | UC-002 View Own Clocking History | FR-001 | DependsOn | Supplementary Specification |
 | UC-003 View All Employee Clockings | FR-002, CON-003 | DependsOn | Supplementary Specification |
-| UC-004 Export Monthly Clocking Report (CSV) | FR-003, CON-003, CON-005, CON-007, CON-008, CON-012, CON-015, CON-018 | DependsOn | Supplementary Specification, Software Architecture Document |
+| UC-004 Export Monthly Clocking Report (CSV) | FR-003, CON-003, CON-005, CON-007, CON-008, CON-012, CON-015, CON-018 | DependsOn | Supplementary Specification |
+| UC-004 Export Monthly Clocking Report (CSV) | FR-003, CON-007, CON-008 | Derives | Software Architecture Document |
 | UC-005 Correct or Insert a Clocking | CON-008, CON-013, CON-014, NFR-002 | DependsOn | Supplementary Specification |
 | UC-006 Read News | FR-005, CON-023 | DependsOn | Supplementary Specification |
 | UC-007 Publish News Item | FR-004, NFR-002 | DependsOn | Supplementary Specification |
 | UC-008 Edit Published News Item | FR-007, NFR-002 | DependsOn | Supplementary Specification |
 | UC-009 Unpublish News Item | FR-008, CON-022 | DependsOn | Supplementary Specification |
 | UC-010 Feature News Item | FR-006, CON-019, CON-020, CON-021 | DependsOn | Supplementary Specification |
-| UC-011 Search Employee Directory | FR-009, CON-003, CON-024, CON-027 | DependsOn | Supplementary Specification, Software Architecture Document |
-| UC-012 Assign Worker Category | FR-010, CON-004, CON-024, CON-025, CON-026 | DependsOn | Supplementary Specification, Software Architecture Document |
-| Use-Case Model §Actors — Active Directory | CON-003, CON-011 | Refines | Supplementary Specification |
-| Use-Case Model §Use-Case Diagram — employee identity read from AD | CON-003, CON-004, CON-007 | Refines | Supplementary Specification |
-| Use-Case Model §Cross-cutting mechanisms | CON-001, CON-031, CON-033, CON-044, NFR-002, NFR-006 | Refines | Supplementary Specification |
-| Use-Case Model §Use-Case Survey — volatility notes | CON-007, CON-008, CON-019, CON-020, CON-021, CON-023, CON-026 | Refines | Software Architecture Document |
+| UC-011 Search Employee Directory | FR-009, CON-003, CON-024, CON-027 | DependsOn | Supplementary Specification |
+| UC-011 Search Employee Directory | FR-009, CON-003 | Derives | Software Architecture Document |
+| UC-012 Assign Worker Category | FR-010, CON-004, CON-024, CON-025, CON-026 | DependsOn | Supplementary Specification |
+| UC-012 Assign Worker Category | FR-010, CON-026 | Derives | Software Architecture Document |
+| STK-004 Employee | STK-004 | Refines | UC-001, UC-002, UC-006, UC-011 |
+| STK-001 HR Administrator | STK-001 | Refines | UC-003, UC-004, UC-005, UC-006, UC-007, UC-008, UC-009, UC-010, UC-011, UC-012 |
+| STK-003 Infrastructure team (Active Directory) | STK-003, CON-003, CON-011 | Refines | UC-003, UC-004, UC-011, UC-012 |
+
+The three `Derives` links to the Software Architecture Document carry the High-volatility use cases — UC-004, UC-011 and UC-012 — whose volatile behaviour must be encapsulated in a dedicated component rather than spread across the codebase.
 
 ### Downstream — what each use case feeds
 
@@ -606,4 +610,8 @@ The three `Derives` links to the Software Architecture Document carry the High-v
 | Stakeholder decision 2026-09-28 (DC §Declared use-case scope) | UC-005 |
 
 All ten declared functional requirements and the two declared processes outside the FR series are realized. No use case is orphaned and no declared item is unaddressed.
+
+### Cross-cutting mechanisms — not use cases
+
+MECH-01 to MECH-05 are specified in the Supplementary Specification and included by the use cases that depend on them. They are not user-facing processes and deliver no observable value to an actor on their own. The mechanism-to-use-case mapping is held once, in the Supplementary Specification §Functionality; it is not restated here.
 
