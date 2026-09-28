@@ -161,7 +161,6 @@ These are specified in the Supplementary Specification and included by every use
 | Client-side retry of the clocking POST | NFR-006, CON-045 | UC-001 |
 
 ## Use-Case Specifications
-
 Inception details only the architecturally significant use cases — those that force an architectural decision. Four are detailed here: UC-001 (client timestamp, idempotency, client-side retry), UC-004 (report format and timezone), UC-005 (immutability and audit), UC-010 (the at-most-one-featured invariant). The remaining eight are detailed by the RequirementsSpecifier in Elaboration.
 
 ### UC-001 Record Clocking
@@ -446,7 +445,7 @@ Detailed by the RequirementsSpecifier in Elaboration. Each passes the ATM test: 
 | UC-007 Publish News Item | HR Administrator | HR submits a new item | The item is visible to employees and an audit entry names who published it and when |
 | UC-008 Edit Published News Item | HR Administrator | HR opens a published item and changes it | The item changes in place without a republish, and an audit entry names who edited it and when |
 | UC-009 Unpublish News Item | HR Administrator | HR unpublishes an item | The item disappears from every employee view and the record remains in the database |
-| UC-011 Search Employee Directory | Employee, HR Administrator | Actor searches by name, department or office | The actor finds a colleague's phone and email in under 10 seconds, with the seven declared fields shown |
+| UC-011 Search Employee Directory | Employee, HR Administrator | Actor searches by name, department or office, or filters by worker category | The actor finds a colleague's phone and email in under 10 seconds, with the seven declared fields shown |
 | UC-012 Assign Worker Category | HR Administrator | HR assigns or clears a category from the directory screen | The category is stored as AD user id → category, the change is audited, and no employee field is written |
 
 ## Traceability
