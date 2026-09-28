@@ -449,10 +449,9 @@ Detailed by the RequirementsSpecifier in Elaboration. Each passes the ATM test: 
 | UC-012 Assign Worker Category | HR Administrator | HR assigns or clears a category from the directory screen | The category is stored as AD user id → category, the change is audited, and no employee field is written |
 
 ## Traceability
-
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
-| UC-001 Record Clocking | AC-002, AC-005, AC-006, NFR-004, NFR-006 | Refines | Supplementary Specification |
+| UC-001 Record Clocking | AC-002, AC-005, AC-006, NFR-004, NFR-006, CON-043, CON-044, CON-045, CON-046 | Refines | Supplementary Specification |
 | UC-002 View Own Clocking History | FR-001 | Refines | Supplementary Specification |
 | UC-003 View All Employee Clockings | FR-002 | Refines | Supplementary Specification |
 | UC-004 Export Monthly Clocking Report (CSV) | FR-003, CON-005, CON-007, CON-008, CON-012, CON-015, CON-018 | Refines | Supplementary Specification |
@@ -462,7 +461,9 @@ Detailed by the RequirementsSpecifier in Elaboration. Each passes the ATM test: 
 | UC-008 Edit Published News Item | FR-007, NFR-002 | Refines | Supplementary Specification |
 | UC-009 Unpublish News Item | FR-008, CON-022 | Refines | Supplementary Specification |
 | UC-010 Feature News Item | FR-006, CON-019, CON-020, CON-021 | Refines | Supplementary Specification |
-| UC-011 Search Employee Directory | FR-009, CON-003, CON-027 | Refines | Supplementary Specification |
+| UC-011 Search Employee Directory | FR-009, CON-003, CON-024, CON-027 | Refines | Supplementary Specification |
 | UC-012 Assign Worker Category | FR-010, CON-004, CON-024, CON-025, CON-026 | Refines | Supplementary Specification |
 | Use-Case Model §Actors — Active Directory | CON-003, CON-011 | Refines | Supplementary Specification |
 | Use-Case Model §Cross-cutting mechanisms | CON-001, CON-031, CON-033, CON-044, NFR-002, NFR-006 | Refines | Supplementary Specification |
+| Use-Case Model §Use-Case Survey — volatility notes | CON-007, CON-008, CON-019, CON-020, CON-021, CON-023, CON-026 | Refines | Software Architecture Document |
+
