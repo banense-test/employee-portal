@@ -142,7 +142,6 @@ end note
 ```
 
 ## Actors
-
 | Actor | Type | ID | Description | Use cases |
 |---|---|---|---|---|
 | Employee | Human, primary | STK-004 | A Cuba Corp employee — 200 people across 3 offices. Authenticated with corporate credentials; not a member of the HR AD group. Reads the directory and the news, records and views their own clockings. | UC-001, UC-002, UC-006, UC-011 |
@@ -158,6 +157,66 @@ end note
 | Hardware device | No device actor is declared. Biometric clocking is explicitly out of scope; clocking is a button press in the corporate browser. |
 | Auditor | NFR-002 declares there is no in-portal audit view screen. The audit trail is read directly from the database by HR or Infrastructure, ad hoc — not through a portal use case. |
 | Payroll system | Integration with the payroll system is explicitly out of scope. |
+
+### Business Context — As-Is Processes and Actor/Worker Classification
+
+The organization's processes as they stand before the portal, and the classification of their participants at the organization boundary. This is the business context the project replaces. It is not a business use-case model, and none is produced — DC §4 records the verdict and its reason.
+
+```plantuml
+@startuml
+title As-is business processes — Cuba Corp before the portal (declared current state)
+|Employee|
+start
+:Work a day;
+:Write clock-in and clock-out by hand into the shared Excel sheet;
+note right
+  BG-002: the practice the portal replaces
+end note
+:Read internal announcements in a mass email;
+:Look up a colleague in the printed PDF phone list;
+stop
+
+|HR|
+start
+:Collect the shared Excel sheets from the 3 offices;
+:Reconcile and correct the entries by hand;
+note right
+  BG-001: the effort the 50% target is measured against
+end note
+:Chase the employees whose clock-out is missing;
+note right
+  CON-015, CON-046: this chase stays manual after go-live
+end note
+:Compile the monthly report by hand;
+:Send announcements by mass email;
+:Maintain the PDF phone list;
+stop
+@enduml
+```
+
+| As-is process | Performed by | Where it lives today | After go-live |
+|---|---|---|---|
+| Record working hours | Employee | Shared Excel sheet, per office | Automated — UC-001 |
+| Collect, reconcile and correct clockings | HR | Shared Excel sheets, by hand | Partly automated — UC-003, UC-004, UC-005 |
+| Chase an employee about a missing clock-out | HR | By hand, outside any system | Stays manual — CON-015, CON-046 |
+| Compile the monthly report | HR | By hand, from the sheets | Automated — UC-004 |
+| Publish announcements | HR | Mass email | Automated — UC-007, UC-008, UC-009, UC-010 |
+| Look up a colleague | Employee | Printed PDF phone list | Automated — UC-011 |
+
+**Actor / worker classification at the organization boundary.** Every participant in these processes is INSIDE Cuba Corp: the employee and the HR Director are business workers, not business actors. No external business actor — no customer, no supplier, no regulator — takes part in any of them. The two external systems the portal consumes, Active Directory and Keycloak, are systems rather than business actors, and neither performs a business process. This is why DC §4 does not hold and why no Business Use-Case Model, Business Object Model or Business Rules artifact is produced: there is no organizational process larger than the software, and no business entity to model.
+
+**Process scope vs project scope.** The full process is documented above; the project covers the subset marked "Automated". The single step that stays manual — HR chasing an employee about a missing clock-out — is a declared exclusion (CON-015, CON-046), not an unaddressed gap. No process outside the declared scope is modelled and no business area the stakeholder did not declare is introduced.
+
+**Derivation bridge.** Nothing crosses it. The ten declared items FR-001..FR-010 are system use cases with actors Employee and HR Administrator, and the Use-Case Survey already traces each one to its declared source. There is no business use case to derive a system use case from, and no automation-potential annotation to carry.
+
+| As-is process step | Traces from | Covered by |
+|---|---|---|
+| Record working hours | BG-002, Vision statement | UC-001 |
+| Collect, reconcile and correct clockings | BG-001, FR-002, FR-003 | UC-003, UC-004, UC-005 |
+| Chase a missing clock-out | CON-015, CON-046 | Not automated — declared exclusion |
+| Compile the monthly report | BG-001, FR-003 | UC-004 |
+| Publish announcements | FR-004, FR-006, FR-007, FR-008 | UC-007, UC-008, UC-009, UC-010 |
+| Look up a colleague | FR-009, AC-004 | UC-011 |
 
 ## Use-Case Survey
 Twelve use cases. Priority is MoSCoW. Volatility is assessed on two axes — will this change for this customer over time, and does it differ across customers now. High volatility feeds the Software Architect's decomposition: volatile behaviour must be encapsulated in a dedicated component, not spread across the codebase.
