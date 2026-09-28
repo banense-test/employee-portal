@@ -145,11 +145,11 @@ No mitigation above cuts or defers declared scope, which is the condition CON-04
 ## Traceability
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
-| R001 | BG-003, AC-005, CON-047 | DependsOn | Iteration Plan |
-| R002 | CON-013, CON-015, NFR-002, CON-047 | DependsOn | Iteration Plan |
-| R003 | STK-002, CON-047 | DependsOn | Iteration Plan |
-| R004 | CON-003, CON-038, CON-047 | DependsOn | Iteration Plan |
-| R005 | CON-041, CON-036, CON-047 | DependsOn | Iteration Plan |
+| R001 | BG-003, AC-005 | DependsOn | Iteration Plan, CON-047 |
+| R002 | CON-013, CON-015, NFR-002 | DependsOn | Iteration Plan, CON-047 |
+| R003 | STK-002 | DependsOn | Iteration Plan, CON-047 |
+| R004 | CON-003, CON-038 | DependsOn | Iteration Plan, CON-047 |
+| R005 | CON-041, CON-036 | DependsOn | Iteration Plan, CON-047 |
 
-Every risk in the register carries a downstream link to the Iteration Plan, because the plan is where a risk is confronted: the iteration that retires or reduces a risk is named in the plan's roadmap. Every risk also carries the acceptance authority that permits its strategy — CON-047 for all five, since each one's mechanism is set by the declared constraints or lies outside the team's control, and no treatment cuts or defers declared scope.
+Every risk carries a downstream link to the Iteration Plan, because the plan is where a risk is confronted: the roadmap names the iteration that retires or reduces it. Every risk also carries the authority that permits its strategy — CON-047, the advance grant by STK-001, since each risk's mechanism is set by the declared constraints or lies outside the team's control, and no treatment cuts or defers declared scope.
 
