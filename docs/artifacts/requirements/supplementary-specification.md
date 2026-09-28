@@ -259,7 +259,7 @@ end note
 | NFR-006 | A clocking made while the corporate network is down for up to 5 minutes is not lost. The clocking page holds the press in the browser (localStorage) and retries its POST for up to 5 minutes. This applies to clocking only. | NFR-006 |
 | CON-042 | Backups: the Infrastructure team's existing server-backup practice already covers this PostgreSQL instance in restorable form, confirmed in writing with a verified restore test. No backup design, no backup tooling and no restore procedure is part of this project. | CON-042 |
 
-**Availability window — declared consequence.** NFR-005 declares the availability window as Monday to Friday 07:00-19:00 and states that 24/7 availability is not required. A clocking attempted outside that window is therefore not covered by the availability requirement; CON-046's path applies — the employee reports the clocking to HR. The window is the stakeholder's declared choice and is not widened here.
+**Availability window — declared consequence.** NFR-005 declares the availability window as Monday to Friday 07:00-19:00 and states that 24/7 availability is not required. A clocking attempted outside that window is therefore not covered by the availability requirement. The window is the stakeholder's declared choice and is not widened here. CON-046 (beyond 5 minutes of network outage the employee reports the clocking to HR) is a separate declared path and is not the remedy for an out-of-window attempt.
 
 ### Audit trail coverage
 
@@ -295,6 +295,43 @@ note bottom
   Read directly from the database by HR or Infrastructure,
   ad hoc. No in-portal audit view screen (NFR-002).
   Employee fields are read-only from AD — nothing to audit there.
+end note
+@enduml
+```
+
+### Availability and resilience envelope
+
+```plantuml
+@startuml
+title Availability and resilience envelope — what is covered, what is not
+
+skinparam componentStyle rectangle
+
+package "Covered — NFR-005" {
+  component "Monday to Friday 07:00-19:00\nportal available, fault tolerant\nwithin the corporate network" as W1
+}
+
+package "Covered — NFR-006 (clocking only)" {
+  component "Network outage up to 5 minutes\npress held in localStorage\nPOST retried, clocking not lost" as W2
+}
+
+package "Not covered — declared as such" {
+  component "Outside 07:00-19:00\nno availability required\n24/7 explicitly not required" as W3
+  component "Outage beyond 5 minutes\nno in-portal recovery\nemployee reports to HR (CON-046)" as W4
+  component "Directory and news while offline\nno-connection message only\nnothing cached, nothing synced (NFR-007)" as W5
+}
+
+W1 --> W2 : clocking during the window
+W2 --> W4 : retry exhausted
+W3 -[hidden]- W4
+
+note bottom of W2
+  One action, one queue, one entity — nothing to
+  reconcile and no conflict resolution to write (CON-045).
+end note
+note bottom of W1
+  Backups are Infrastructure's existing server-backup
+  practice (CON-042); no backup design is part of this project.
 end note
 @enduml
 ```
