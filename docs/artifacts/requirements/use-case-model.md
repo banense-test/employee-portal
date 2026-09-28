@@ -611,7 +611,3 @@ The three `Derives` links to the Software Architecture Document carry the High-v
 
 All ten declared functional requirements and the two declared processes outside the FR series are realized. No use case is orphaned and no declared item is unaddressed.
 
-### Cross-cutting mechanisms — not use cases
-
-MECH-01 to MECH-05 are specified in the Supplementary Specification and included by the use cases that depend on them. They are not user-facing processes and deliver no observable value to an actor on their own. The mechanism-to-use-case mapping is held once, in the Supplementary Specification §Functionality; it is not restated here.
-
