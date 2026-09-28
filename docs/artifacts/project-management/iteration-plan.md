@@ -235,6 +235,8 @@ The ProjectManager's assessment. It is not the milestone verdict — that is the
 | The project is viable to proceed to Elaboration | Viable. The architecture risk is concentrated in three High-volatility use cases (UC-004, UC-011, UC-012) and is confronted in Elaboration Iterations 2-3. The deployment target is an estate Infrastructure already runs (CON-010). There is no data migration (CON-040). The two external systems are consumed, not built (CON-031, CON-011). |
 | Initial risks identified | Five risks classified with probability, impact, magnitude, strategy and treatment. |
 
+**Open item at LCO: R005's acceptance.** R005 is Significant (P=3, I=4) and its mechanism is inside the team's control, so the CON-047 advance grant does not reach it. Its acceptance is STK-001's to grant and is asked this round. Until answered, R005 stays Open and unaccepted, and the risk record is not complete. This does not block the other four risks, whose acceptance CON-047 already grants.
+
 **Recommendation: proceed to Elaboration.** The condition to watch is R004 — the human validation of the real AD (CON-038) must return its feedback before LCA, and if it delays the milestone the remedy is another iteration (CON-047), never a cut to declared scope.
 
 ## Traceability
