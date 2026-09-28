@@ -516,7 +516,6 @@ check, so a missing item is caught before the iteration that needs it starts rat
 first day.
 
 ## Traceability
-
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
 | DC §Tailoring Overview — Business Modeling INACTIVE | FR-001, FR-002, FR-003, FR-004, FR-005, FR-006, FR-007, FR-008, FR-009, FR-010 | Refines | Use-Case Model, Supplementary Specification |
@@ -530,4 +529,5 @@ first day.
 | DC §Guidelines and Procedures — version policy | CON-028, CON-030 | Refines | Software Architecture Document |
 | DC §Guidelines and Procedures — stand-in tooling | CON-038 | Refines | Implementation Model |
 | DC §Guidelines and Procedures — hosted CI | CON-036 | Refines | Implementation Model |
+| DC §Guidelines and Procedures — environment readiness | CON-030, CON-036, CON-038, CON-041 | Refines | Implementation Model, Deployment Model |
 | DC §Roles and Ownership — two-level authorization | CON-033 | Refines | Use-Case Model |
