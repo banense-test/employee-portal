@@ -128,13 +128,14 @@ No third-party licence is declared. The stack is .NET 10 (CON-028), Razor Pages 
 | AC-005 | 80% of employees complete at least one clocking with no prior training. | AC-005 |
 
 ## Reliability
-
 | ID | Requirement | Declared by |
 |---|---|---|
 | NFR-002 | Mandatory audit trail, written for compliance and read directly from the database: who publishes each news item, who edits it and who unpublishes it (author + timestamp in every case); any change to a worker's category; and every clocking HR corrects or inserts (who, when, previous value, reason). Employee fields are read-only from AD, so there is nothing to audit there. No external compliance regime applies and no retention period is mandated — HR or Infrastructure read the audit ad hoc when needed. There is no in-portal audit view screen. | NFR-002 |
 | NFR-005 | The portal must be available during extended working hours, Monday to Friday 07:00-19:00, with fault tolerance within the corporate network. 24/7 availability is not required. | NFR-005 |
 | NFR-006 | A clocking made while the corporate network is down for up to 5 minutes is not lost. The clocking page holds the press in the browser (localStorage) and retries its POST for up to 5 minutes. This applies to clocking only. | NFR-006 |
 | CON-042 | Backups: the Infrastructure team's existing server-backup practice already covers this PostgreSQL instance in restorable form, confirmed in writing with a verified restore test. No backup design, no backup tooling and no restore procedure is part of this project. | CON-042 |
+
+**Availability window — declared consequence.** NFR-005 declares the availability window as Monday to Friday 07:00-19:00 and states that 24/7 availability is not required. A clocking attempted outside that window is therefore not covered by the availability requirement; CON-046's path applies — the employee reports the clocking to HR. The window is the stakeholder's declared choice and is not widened here.
 
 ### Audit trail coverage
 
