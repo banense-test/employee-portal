@@ -374,7 +374,6 @@ end note
 ```
 
 ## Guidelines and Procedures
-
 ### Measurement policy
 
 Two quantities are measured, and each one has a named decision and a named reader. A quantity
@@ -492,6 +491,29 @@ Nothing enters the process without a Change Request approved by the ChangeContro
 declared scope is the ceiling: a new functional area, a new artifact outside the CORE + OPTIONAL
 universe, or a change to a declared constraint requires a Change Request. The closed worker-category
 list (CON-026) admits no fifth value without one.
+
+### Environment readiness — Inception, Iteration 1
+
+Verified before the iteration starts, by direct inspection of the repository rather than by
+assumption.
+
+| Check | Result | Action |
+|---|---|---|
+| Hosted SCM repository reachable | Pass | — |
+| Mandatory UI design reference committed | Pass — `docs/inputs/employee-portal-design.html`, sha `715d4f73d6ef4de18c46242258bc17a67f51ba6f` | — |
+| `CONTRIBUTING.md` present | Fail — not found in the repository | SoftwareArchitect with Implementer author it during Elaboration; referenced, not duplicated, by this Development Case |
+| Lint configuration present | Fail — not found in the repository | Same as above |
+| CI workflow file present | Fail — `.github/workflows/ci.yml` not found | ConfigurationManager with Implementer create it during Elaboration; CON-036 fixes the provider, not the file |
+| Test OIDC issuer stand-in | Not yet provisioned | Implementer with Integrator, before the first login-dependent use case is implemented (CON-038) |
+| Test LDAP directory stand-in | Not yet provisioned | Implementer with Integrator, before the first directory-dependent use case is implemented (CON-038) |
+| PostgreSQL 18 instance | Not yet provisioned | Infrastructure installs it on the existing Windows Server estate (CON-030) |
+
+**Verdict: environment ready for Inception.** The three absent files are Elaboration deliverables
+owned by discipline experts, not Inception blockers — no Inception artifact depends on them. The
+stand-ins and the database instance are needed before the use cases that consume them are
+implemented, which is Elaboration and Construction work. Each is carried as a Prepare-for-Iteration
+check, so a missing item is caught before the iteration that needs it starts rather than on its
+first day.
 
 ## Traceability
 
