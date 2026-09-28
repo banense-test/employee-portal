@@ -143,16 +143,13 @@ The team could avoid R005 by adding a visual-regression check to the CI pipeline
 No mitigation above cuts or defers declared scope, which is the condition CON-047 attaches to the grant.
 
 ## Traceability
-
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
-| R001 | BG-003, AC-005 | DependsOn | Iteration Plan |
-| R002 | CON-013, CON-015, NFR-002 | DependsOn | Iteration Plan |
-| R003 | STK-002 | DependsOn | Iteration Plan |
-| R004 | CON-003, CON-038 | DependsOn | Iteration Plan |
-| R005 | CON-041, CON-036 | DependsOn | Iteration Plan |
-| R001 | CON-047 | DependsOn | — |
-| R002 | CON-047 | DependsOn | — |
-| R003 | CON-047 | DependsOn | — |
-| R004 | CON-047 | DependsOn | — |
-| R005 | CON-047 | DependsOn | — |
+| R001 | BG-003, AC-005, CON-047 | DependsOn | Iteration Plan |
+| R002 | CON-013, CON-015, NFR-002, CON-047 | DependsOn | Iteration Plan |
+| R003 | STK-002, CON-047 | DependsOn | Iteration Plan |
+| R004 | CON-003, CON-038, CON-047 | DependsOn | Iteration Plan |
+| R005 | CON-041, CON-036, CON-047 | DependsOn | Iteration Plan |
+
+Every risk in the register carries a downstream link to the Iteration Plan, because the plan is where a risk is confronted: the iteration that retires or reduces a risk is named in the plan's roadmap. Every risk also carries the acceptance authority that permits its strategy — CON-047 for all five, since each one's mechanism is set by the declared constraints or lies outside the team's control, and no treatment cuts or defers declared scope.
+
