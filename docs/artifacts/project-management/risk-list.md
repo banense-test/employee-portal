@@ -97,10 +97,17 @@ end note
 
 Acceptance of a High or Significant risk is the stakeholder's decision, not the ProjectManager's. For this project that decision is already made and recorded: **CON-047** grants acceptance in advance, by **STK-001 Laura Gómez (project sponsor)**, for R001, R002 and every risk the team identifies whose mechanism is set by the declared constraints or lies outside the team's control and that cannot be transferred — on the condition that the treatment never cuts or defers declared scope. The grant is not re-asked.
 
-Two consequences follow, and both are applied below:
+**The grant has a boundary, and it is the mechanism that draws it.** A risk is inside the grant when its mechanism is set by the declared constraints or lies outside the team's control. A risk whose mechanism is inside the team's control — one the team could avoid or transfer by its own action — is outside the grant, and if it reaches High or Significant magnitude its acceptance is the stakeholder's to grant and is asked in the round it was raised.
 
-- A risk inside that grant is classified `accept` with its mitigation and contingency, and the grant is cited as the authority. No further question is put to the stakeholder.
-- A risk **outside** the grant — one whose mechanism is inside the team's control and which the team could avoid or transfer — is not covered by CON-047. If such a risk reached High or Significant magnitude, its acceptance would be the stakeholder's to grant and would be asked in the round it was raised. No such risk was identified this iteration.
+| Risk | Mechanism | Inside the CON-047 grant? |
+|---|---|---|
+| R001 | Employee habits and HR policy — the stakeholders | Yes |
+| R002 | Employees forgetting to clock out — the stakeholders | Yes |
+| R003 | Availability of STK-002 — a stakeholder | Yes |
+| R004 | How AD attributes are filled across 3 offices — Infrastructure's data, which the portal cannot change (CON-011) | Yes |
+| R005 | The absence of an automated visual check — the team could add one | **No** |
+
+R005 is therefore **not** covered by the advance grant. It is Significant, so its acceptance is the stakeholder's to grant, and it is asked this round. Until answered, R005 stays **Open** and is not accepted.
 
 ### Risks retired as not applicable
 
@@ -118,7 +125,7 @@ The availability, configuration and ownership of Keycloak and Active Directory a
 | R002 | Data-quality risk: missing clock-outs produce incomplete days that HR must resolve manually outside the portal, consuming the very HR time the project is meant to save. | 4 | 3 | 12 (Significant) | Accept — CON-047 grant | ProjectManager | Open |
 | R003 | People risk: engineering clarification depends on a single named person, who is not building the system. | 3 | 3 | 9 (Moderate) | Accept — CON-047 grant | ProjectManager | Open |
 | R004 | Active Directory integration: the LDAP attributes the directory reads may not be filled consistently across the 3 offices (job title, extension). If not tested early the directory shows gaps. | 3 | 3 | 9 (Moderate) | Accept — CON-047 grant | SoftwareArchitect | Open |
-| R005 | The mandatory UI design reference `docs/inputs/employee-portal-design.html` (CON-041) is authoritative for the visual layer, but no automated check compares the implemented pages against it. A page can drift from the reference and pass every functional test, because no test asserts the visual layer. | 3 | 3 | 9 (Moderate) | Accept — CON-047 grant | UserInterfaceDesigner | Open |
+| R005 | The mandatory UI design reference `docs/inputs/employee-portal-design.html` (CON-041) is authoritative for the visual layer, but no automated check compares the implemented pages against it. A page can drift from the reference and pass every functional test, because no test asserts the visual layer. | 3 | 4 | 12 (Significant) | Accept — **PENDING stakeholder grant** | UserInterfaceDesigner | Open |
 
 R001, R002, R003 and R004 are carried with their declared identifiers and magnitudes, not renumbered and not reclassified. R005 is the one risk the team identified this iteration; it is numbered in the same series, in the order raised, and carries the same fields (CON-047).
 
@@ -126,9 +133,9 @@ R001, R002, R003 and R004 are carried with their declared identifiers and magnit
 
 R005's mechanism names no development organization: it is a verification gap in the team's own work, and the actor is the UserInterfaceDesigner. It is therefore classified rather than retired. It is registered rather than left implicit because the design reference is mandatory and authoritative (CON-041) while the Development Case records that no lint configuration and no CI workflow file exist yet — so at this moment nothing in the toolchain would catch a drift.
 
-### Why R005 is accepted rather than avoided
+### Why R005 is Significant
 
-The team could avoid R005 by adding a visual-regression check to the CI pipeline. That is not done, and the reason is scope: CON-036 fixes CI as build and test on the hosted provider, and no visual-regression tooling is declared anywhere in the 47 constraints. Introducing it would add a tool the stakeholder did not declare. The risk is therefore accepted with a mitigation that uses only declared means — the design reference is committed and authoritative, and the UserInterfaceDesigner reviews each page against it. The acceptance sits inside the CON-047 grant: the mechanism is set by the declared constraints, and the treatment cuts no declared scope.
+CON-041 makes the design reference a declared **MUST** — the portal MUST implement it, and it is authoritative for the visual layer, not only for its structure. A systematic drift from it is therefore a failure against a declared mandatory constraint, not a cosmetic defect: impact 4. Probability is 3, because no automated check exists and no lint configuration or CI workflow file exists yet to catch a drift. 3 x 4 = 12, Significant.
 
 ## Risk Mitigation and Contingency
 
@@ -140,16 +147,18 @@ The team could avoid R005 by adding a visual-regression check to the CI pipeline
 | R004 | The test LDAP directory stand-in carries the declared attributes including entries whose job title or extension is empty (CON-038), so the empty-attribute path is exercised from the first directory-dependent use case rather than discovered late. UC-004 alternative flow A4 and UC-011 both handle an empty attribute by writing the field blank and still returning the row. | If the real AD turns out to be less filled than the stand-in, the directory shows blanks for those employees. That is a data condition in AD, which Infrastructure will not modify (CON-011) and which the portal cannot fix; the remedy is another iteration, and the finding is reported to STK-001 and STK-003. | The human validation of the real AD (CON-038) reports attributes empty that the stand-in carries populated. |
 | R005 | The design reference is committed to the repository and authoritative (CON-041), and the UserInterfaceDesigner reviews each implemented page against it before the page is considered done. The reference is the single source for the visual layer, so a reviewer has one document to compare against rather than an opinion. | If a page is found to have drifted, the page is corrected in the next iteration against the committed reference. The remedy is another iteration, not a cut to declared scope. | A page is accepted without a recorded comparison against the design reference. |
 
+**R005's treatment is not yet authorised.** The mitigation above uses only declared means and cuts no declared scope, but the risk is Significant and its mechanism is inside the team's control, so the CON-047 grant does not reach it. The alternative treatment — adding a visual-regression check to CI — would avoid the risk but introduces tooling not declared in the 47 constraints, which is a scope decision. Both options are put to STK-001 this round; until answered, R005 stays Open and unaccepted.
+
 No mitigation above cuts or defers declared scope, which is the condition CON-047 attaches to the grant.
 
 ## Traceability
+
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
 | R001 | BG-003, AC-005 | DependsOn | Iteration Plan, CON-047 |
 | R002 | CON-013, CON-015, NFR-002 | DependsOn | Iteration Plan, CON-047 |
 | R003 | STK-002 | DependsOn | Iteration Plan, CON-047 |
 | R004 | CON-003, CON-038 | DependsOn | Iteration Plan, CON-047 |
-| R005 | CON-041, CON-036 | DependsOn | Iteration Plan, CON-047 |
+| R005 | CON-041, CON-036 | DependsOn | Iteration Plan |
 
-Every risk carries a downstream link to the Iteration Plan, because the plan is where a risk is confronted: the roadmap names the iteration that retires or reduces it. Every risk also carries the authority that permits its strategy — CON-047, the advance grant by STK-001, since each risk's mechanism is set by the declared constraints or lies outside the team's control, and no treatment cuts or defers declared scope.
-
+Every risk carries a downstream link to the Iteration Plan, because the plan is where a risk is confronted: the roadmap names the iteration that retires or reduces it. R001-R004 also carry CON-047, the advance grant by STK-001 that permits their acceptance, since each one's mechanism is set by the declared constraints or lies outside the team's control. R005 carries no such link: its mechanism is inside the team's control, the grant does not reach it, and its acceptance is the stakeholder's to grant.
