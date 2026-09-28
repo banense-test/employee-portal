@@ -306,24 +306,99 @@ Non-functional requirements, carried by identifier. Thresholds are quantified by
 ## Traceability
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
-| Vision §Problem Statement | BG-001, BG-002, BG-003 | Refines | Use-Case Model |
-| Vision §Product Overview — system boundary | FR-001, FR-002, FR-003, FR-004, FR-005, FR-006, FR-007, FR-008, FR-009, FR-010 | Refines | Use-Case Model |
-| Vision §Product Overview — Not in scope | CON-031, CON-032, CON-034, CON-040 | Refines | Supplementary Specification |
-| Vision §Features — Record clock in/out | AC-002, AC-006, NFR-006, CON-043, CON-044 | Refines | UC-001 |
-| Vision §Features — View own clocking history | FR-001 | Refines | UC-002 |
-| Vision §Features — View all employee clockings | FR-002, CON-003 | Refines | UC-003 |
-| Vision §Features — Export monthly clocking report (CSV) | FR-003, CON-003, CON-007, CON-008 | Refines | UC-004 |
-| Vision §Features — Correct or insert a clocking | CON-008, CON-013, CON-014, NFR-002 | Refines | UC-005 |
-| Vision §Features — Read news | FR-005, CON-023 | Refines | UC-006 |
-| Vision §Features — Publish news item | FR-004, AC-003 | Refines | UC-007 |
-| Vision §Features — Edit published news item | FR-007, NFR-002 | Refines | UC-008 |
-| Vision §Features — Unpublish news item | FR-008, CON-022 | Refines | UC-009 |
-| Vision §Features — Feature news item | FR-006, CON-019, CON-020, CON-021 | Refines | UC-010 |
-| Vision §Features — Search employee directory | FR-009, CON-003, CON-024, CON-027, AC-004 | Refines | UC-011 |
-| Vision §Features — Assign worker category | FR-010, CON-004, CON-024, CON-025, CON-026 | Refines | UC-012 |
-| Vision §Assumptions and Dependencies | CON-002, CON-012, CON-016, CON-017, CON-038, CON-039, CON-040, CON-041, CON-042, CON-047 | Refines | Supplementary Specification |
-| Vision §Constraints | CON-001, CON-003, CON-004, CON-005, CON-006, CON-009, CON-010, CON-011, CON-028, CON-029, CON-030, CON-031, CON-032, CON-033, CON-034, CON-035, CON-036, CON-037, CON-039, CON-040, CON-041, CON-042, CON-047 | Refines | Supplementary Specification |
-| Vision §Other Product Requirements | NFR-001, NFR-002, NFR-003, NFR-004, NFR-005, NFR-006, NFR-007 | Refines | Supplementary Specification |
-| Vision §Other Product Requirements — acceptance criteria | AC-001, AC-002, AC-003, AC-004, AC-005, AC-006 | Refines | Test Case |
-| Vision §Other Product Requirements — risks | R001, R002, R003, R004 | Refines | Risk List |
+| BG-001 | BG-001 | Refines | Use-Case Model |
+| BG-002 | BG-002 | Refines | Use-Case Model |
+| BG-003 | BG-003 | Refines | Use-Case Model |
+| FR-001 | FR-001 | Refines | UC-002 |
+| FR-002 | FR-002 | Refines | UC-003 |
+| FR-003 | FR-003 | Refines | UC-004 |
+| FR-004 | FR-004 | Refines | UC-007 |
+| FR-005 | FR-005 | Refines | UC-006 |
+| FR-006 | FR-006 | Refines | UC-010 |
+| FR-007 | FR-007 | Refines | UC-008 |
+| FR-008 | FR-008 | Refines | UC-009 |
+| FR-009 | FR-009 | Refines | UC-011 |
+| FR-010 | FR-010 | Refines | UC-012 |
+| NFR-001 | NFR-001 | Refines | Supplementary Specification |
+| NFR-002 | NFR-002 | Refines | Supplementary Specification |
+| NFR-003 | NFR-003 | Refines | Supplementary Specification |
+| NFR-004 | NFR-004 | Refines | Supplementary Specification |
+| NFR-005 | NFR-005 | Refines | Supplementary Specification |
+| NFR-006 | NFR-006 | Refines | Supplementary Specification |
+| NFR-007 | NFR-007 | Refines | Supplementary Specification |
+| AC-001 | AC-001 | Refines | Supplementary Specification |
+| AC-002 | AC-002 | Refines | UC-001 |
+| AC-003 | AC-003 | Refines | UC-007 |
+| AC-004 | AC-004 | Refines | UC-011 |
+| AC-005 | AC-005 | Refines | UC-001 |
+| AC-006 | AC-006 | Refines | UC-001 |
+| CON-001 | CON-001 | Refines | Supplementary Specification |
+| CON-002 | CON-002 | Refines | Supplementary Specification |
+| CON-003 | CON-003 | Refines | Supplementary Specification |
+| CON-004 | CON-004 | Refines | Supplementary Specification |
+| CON-005 | CON-005 | Refines | Supplementary Specification |
+| CON-006 | CON-006 | Refines | Supplementary Specification |
+| CON-007 | CON-007 | Refines | Supplementary Specification |
+| CON-008 | CON-008 | Refines | Supplementary Specification |
+| CON-009 | CON-009 | Refines | Supplementary Specification |
+| CON-010 | CON-010 | Refines | Supplementary Specification |
+| CON-011 | CON-011 | Refines | Supplementary Specification |
+| CON-012 | CON-012 | Refines | Supplementary Specification |
+| CON-013 | CON-013 | Refines | Supplementary Specification |
+| CON-014 | CON-014 | Refines | Supplementary Specification |
+| CON-015 | CON-015 | Refines | Supplementary Specification |
+| CON-016 | CON-016 | Refines | Supplementary Specification |
+| CON-017 | CON-017 | Refines | Supplementary Specification |
+| CON-018 | CON-018 | Refines | Supplementary Specification |
+| CON-019 | CON-019 | Refines | Supplementary Specification |
+| CON-020 | CON-020 | Refines | Supplementary Specification |
+| CON-021 | CON-021 | Refines | Supplementary Specification |
+| CON-022 | CON-022 | Refines | Supplementary Specification |
+| CON-023 | CON-023 | Refines | Supplementary Specification |
+| CON-024 | CON-024 | Refines | Supplementary Specification |
+| CON-025 | CON-025 | Refines | Supplementary Specification |
+| CON-026 | CON-026 | Refines | Supplementary Specification |
+| CON-027 | CON-027 | Refines | Supplementary Specification |
+| CON-028 | CON-028 | Refines | Supplementary Specification |
+| CON-029 | CON-029 | Refines | Supplementary Specification |
+| CON-030 | CON-030 | Refines | Supplementary Specification |
+| CON-031 | CON-031 | Refines | Supplementary Specification |
+| CON-032 | CON-032 | Refines | Supplementary Specification |
+| CON-033 | CON-033 | Refines | Supplementary Specification |
+| CON-034 | CON-034 | Refines | Supplementary Specification |
+| CON-035 | CON-035 | Refines | Supplementary Specification |
+| CON-036 | CON-036 | Refines | Supplementary Specification |
+| CON-037 | CON-037 | Refines | Supplementary Specification |
+| CON-038 | CON-038 | Refines | Supplementary Specification |
+| CON-039 | CON-039 | Refines | Supplementary Specification |
+| CON-040 | CON-040 | Refines | Supplementary Specification |
+| CON-041 | CON-041 | Refines | Supplementary Specification |
+| CON-042 | CON-042 | Refines | Supplementary Specification |
+| CON-043 | CON-043 | Refines | Supplementary Specification |
+| CON-044 | CON-044 | Refines | Supplementary Specification |
+| CON-045 | CON-045 | Refines | Supplementary Specification |
+| CON-046 | CON-046 | Refines | Supplementary Specification |
+| CON-047 | CON-047 | Refines | Supplementary Specification |
+| R001 | R001 | Refines | Risk List |
+| R002 | R002 | Refines | Risk List |
+| R003 | R003 | Refines | Risk List |
+| R004 | R004 | Refines | Risk List |
+| STK-001 | STK-001 | Refines | Use-Case Model |
+| STK-002 | STK-002 | Refines | Risk List |
+| STK-003 | STK-003 | Refines | Use-Case Model |
+| STK-004 | STK-004 | Refines | Use-Case Model |
+
+### Coverage
+
+| Declared family | Count | Addressed |
+|---|---|---|
+| Functional requirements FR-001..FR-010 | 10 | All realized by a use case in the Use-Case Model |
+| Non-functional requirements NFR-001..NFR-007 | 7 | All carried in the Supplementary Specification |
+| Acceptance criteria AC-001..AC-006 | 6 | All carried in the Supplementary Specification; AC-002, AC-003, AC-004, AC-005 and AC-006 also realized by a use case |
+| Constraints CON-001..CON-047 | 47 | All carried in the Supplementary Specification |
+| Business goals BG-001..BG-003 | 3 | Stated in the Problem Statement and measured by the acceptance criteria |
+| Risks R001..R004 | 4 | Carried with their declared identifiers and magnitudes; curated by the ProjectManager in the Risk List |
+| Stakeholders STK-001..STK-004 | 4 | Stated in the Stakeholder Summary; STK-001, STK-003 and STK-004 are actors in the Use-Case Model |
+
+No declared item is unaddressed and no requirement was invented. The declared exclusions are published verbatim in Product Overview under "Not in scope".
 
