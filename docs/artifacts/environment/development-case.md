@@ -220,6 +220,50 @@ All 16 CORE artifacts are produced. One OPTIONAL artifact is triggered; five are
 | Data Model | OPTIONAL — not triggered | — |
 | User-Interface Prototype | OPTIONAL — not triggered | — |
 | Test Plan | OPTIONAL — not triggered | — |
+
+### Declared use-case scope — HR clocking correction
+
+The stakeholder confirmed on 2026-09-28 that HR corrects or inserts a clocking **inside the
+portal**, as an HR-only use case. That is what the `Corrected` column and the audit entry
+(who, when, previous value, reason) record, and the original record is never overwritten or
+deleted. "Outside the portal" in CON-015 refers only to HR chasing the employee about the
+missing clock-out, not to entering the correction.
+
+**Consequence for artifact scope:** the Use-Case Model carries this as a declared use case with
+its own scenarios and its own Test Cases. It is not a cross-cutting mechanism and not a
+Supplementary Specification entry. The correction is an HR-only action, so it is not a
+self-service screen for the employee (CON-013).
+
+```plantuml
+@startuml
+title HR clocking correction — declared use case (stakeholder-confirmed 2026-09-28)
+
+start
+:HR opens the clocking report for a calendar month;
+:HR selects an employee-day with a missing or wrong clocking;
+if (clocking exists?) then (yes — correct)
+  :HR enters the corrected time and a reason;
+else (no — insert)
+  :HR inserts the clocking and a reason;
+endif
+:Portal writes a NEW audited record — who, when, previous value, reason;
+note right
+  CON-014: the original record is never
+  overwritten in place and never deleted.
+end note
+:Export sets Corrected = Y for that employee-day;
+note right
+  CON-008: Y when HR corrected or inserted
+  any clocking of that day, N otherwise.
+end note
+stop
+@enduml
+```
+
+This decision is what makes CON-008 and NFR-002 implementable: the portal can set `Corrected = Y`
+and can record who, when, previous value and reason only because the correction happens where the
+portal can see it.
+
 ## Optional Artifact Triggers
 
 | Optional Artifact | Trigger | Justification |
