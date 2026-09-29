@@ -8,7 +8,6 @@
 - Last updated: 2026-09-29
 
 ## Deployment Topology
-
 The portal is a single .NET application on the internal Windows Server estate, with PostgreSQL 18 on the same estate, consuming two internal systems it does not own. Four node roles, all inside the corporate network. No cloud node hosts any part of the portal at runtime.
 
 ```plantuml
@@ -75,6 +74,49 @@ end note
 **Keycloak is an intra-network node, not a cloud node.** CON-032 is explicit: Keycloak runs inside the corporate network, the OIDC redirect is an intra-network call, nothing about login crosses the corporate boundary, and login keeps working with no internet link. A topology that places Keycloak in a cloud node contradicts the constraint and is wrong. The same applies to Active Directory.
 
 **No cloud node hosts the portal at runtime.** CON-034 restricts access to the internal corporate network. The hosted SCM provider and its hosted CI (CON-036) are a development toolchain, not a runtime node: they build and test, never deploy, and never hold production data or credentials. They are therefore not part of this topology.
+
+### Deployment mode and strategy
+
+**Mode: custom-built.** The portal is built for one organization and deployed on the estate that organization already operates (CON-010), reachable only from the internal corporate network (CON-034) and operated by Infrastructure after handover (CON-039). There is no third party to distribute to and no download channel, so shrink-wrapped and downloadable are excluded by the declared constraints rather than by preference.
+
+| Consequence of the mode | Position |
+|---|---|
+| No installer package, no distribution channel, no licensing or activation mechanism | The deployment unit is a tagged SCM release (CON-036) handed to Infrastructure, who deploy it (CON-039). |
+| No auto-update mechanism | Infrastructure patches the application as it patches the rest of the estate (CON-039). |
+| No user-facing release distribution | The 200 employees reach the portal through the corporate browser (CON-035); nothing is installed on a workstation. |
+| No client-side footprint | No PWA, no service worker, no installable app, no client cache of the directory or the news (NFR-007). |
+
+**Target user community.**
+
+| Community | Who | What they do in the portal | Declared by |
+|---|---|---|---|
+| Employees | 200 people across 3 offices (STK-004) | Clock in and out, read news, search the directory, view their own clocking history | FR-001, FR-005, FR-009, CON-033 |
+| HR Administrators | Members of the HR AD group (CON-033) | Publish, edit, unpublish and feature news; assign or clear a worker category; view all clockings; export the monthly CSV; correct or insert a clocking | FR-002, FR-003, FR-004, FR-006, FR-007, FR-008, FR-010, CON-013, CON-033 |
+
+Every user is internal. There is no external user, no partner and no anonymous access (CON-034), and no native mobile app (declared exclusion). Authorization is the two declared levels taken from AD group membership (CON-033); worker category drives no access decision (CON-024).
+
+**Constraints that shape the deployment strategy.**
+
+| Constraint | Effect on the strategy |
+|---|---|
+| CON-031, CON-032 | Keycloak is not deployed, provisioned or designed by this project, and it is an intra-network node. The strategy plans no Keycloak work and no cloud node. |
+| CON-011 | Active Directory is never modified. The strategy plans no AD change, no schema extension and no write path. |
+| CON-038 | The application is configured with placeholder OIDC and LDAP values held in configuration, never in code. Infrastructure supplies the real values at deployment. The team builds and tests against stand-ins it controls. |
+| CON-036 | CI builds and tests only. It never deploys and never holds production data or credentials. |
+| CON-039 | Infrastructure deploys, monitors and patches the portal in production. The development team hands over at the end of Transition. |
+| CON-040 | No data migration. The portal starts empty; the historical Excel sheets stay a read-only archive. There is no cutover step and no migration environment. |
+| CON-042 | Backups are Infrastructure's existing server-backup practice, already covering the PostgreSQL instance in restorable form. No backup design, tooling or restore procedure is part of this project. |
+| NFR-005 | The availability window is Monday to Friday 07:00–19:00 with fault tolerance inside the corporate network. No load balancer, no second application node and no read replica is planned. |
+
+**Deployment-relevant risks.** No new risk is registered by this artifact. The risks that bear on deployment are already in the Risk List, and each is confronted at a named point in the rollout.
+
+| Risk | How it bears on deployment | Where it is confronted |
+|---|---|---|
+| R001 | Adoption: employees keep their Excel and mass-email habits and the 80% target is missed. | Post-launch adoption measurement (BG-003, AC-005). |
+| R004 | The LDAP attributes the directory reads may not be filled consistently across the 3 offices. | The human validation of the real AD (CON-038) and the install-site gate. |
+| R005 | A page can drift from the mandatory UI reference and pass every functional test. | The development-site gate, where each implemented page is compared against `docs/inputs/employee-portal-design.html` (CON-041). |
+
+**Not this project's to plan:** Keycloak deployment or provisioning (CON-031); any modification to Active Directory (CON-011); backup, restore or monitoring design (CON-042, CON-039); and the validation of the real Keycloak and AD, which CON-038 places with people — Infrastructure, with HR — and whose feedback reaches the team before Elaboration closes.
 
 ## Nodes and Connectors
 
