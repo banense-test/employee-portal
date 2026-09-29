@@ -1,12 +1,10 @@
 ## Document Control
-
 - Phase: Inception
-- Status: Draft — candidate topology, under review for the end-of-Inception milestone
+- Status: Draft — candidate topology, deployment strategy, rollout and acceptance gates; under review for the end-of-Inception milestone
 - Milestone Target: end-of-Inception (NOT YET ACHIEVED)
 - Iteration: 1, Cycle 1
 - Owner: DeploymentManager (Development Case §Roles and Ownership — fixed primary owner); SoftwareArchitect contributes the topology this iteration per the Work Order
 - Last updated: 2026-09-29
-
 ## Deployment Topology
 The portal is a single .NET application on the internal Windows Server estate, with PostgreSQL 18 on the same estate, consuming two internal systems it does not own. Four node roles, all inside the corporate network. No cloud node hosts any part of the portal at runtime.
 
