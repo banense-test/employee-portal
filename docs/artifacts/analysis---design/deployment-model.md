@@ -293,7 +293,6 @@ Rollback is redeployment of the previous tagged release. It is Infrastructure's 
 **No rollback of the external systems.** Keycloak and Active Directory are not deployed or modified by this project (CON-031, CON-011), so there is nothing of theirs to roll back.
 
 ## Traceability
-
 | Element | Traces From | Link Type | Traces To |
 |---|---|---|---|
 | Deployment Model | CON-010, CON-030, CON-032, CON-034 | Derives | Software Architecture Document |
@@ -309,6 +308,13 @@ Rollback is redeployment of the previous tagged release. It is Infrastructure's 
 | Environment — Internal corporate network | CON-034 | Derives | Software Architecture Document |
 | Environment — Development toolchain | CON-036 | Derives | Software Architecture Document |
 | Environment — Test stand-ins | CON-038 | Derives | Software Architecture Document |
+| Deployment mode — custom-built | CON-010, CON-034, CON-039 | Derives | Software Architecture Document |
+| Target user community — Employees, HR Administrators | STK-004, CON-033 | Derives | Use-Case Model |
+| Rollout approach — single handover, no phased user groups | CON-036, CON-038, CON-039, CON-040 | Derives | Iteration Plan |
+| Deployment unit — tagged SCM release | CON-036, CON-039 | Derives | Implementation Model |
+| Acceptance gate 1 — development site | AC-001, AC-002, AC-003, AC-004, AC-006, CON-007, CON-008, CON-020, CON-041, NFR-006 | Derives | Test Evaluation Summary |
+| Acceptance gate 2 — install site | CON-001, CON-003, CON-030, CON-034, CON-038 | Derives | Iteration Plan |
+| Rollback criteria | CON-014, CON-039, CON-040, CON-042 | Derives | Risk List |
 | NFR-005 | NFR-005 | Refines | Deployment Model |
 | NFR-006 | NFR-006 | Refines | Deployment Model |
 | NFR-007 | NFR-007 | Refines | Deployment Model |
@@ -319,14 +325,17 @@ Rollback is redeployment of the previous tagged release. It is Infrastructure's 
 
 | Constraint | Addressed in |
 |---|---|
-| CON-003, CON-011 — AD read-only, never modified | Node inventory, connector table |
-| CON-009, CON-034, CON-035 — internal network only, corporate browser | Node inventory, environment mapping |
-| CON-010, CON-028, CON-029, CON-039 — .NET application on the existing estate, operated by Infrastructure | Node inventory, availability and resilience |
-| CON-030, CON-042 — PostgreSQL 18 on the same estate, covered by existing backups | Node inventory, availability and resilience |
-| CON-031, CON-032 — Keycloak external to the project, intra-network node | Node inventory, topology note |
-| CON-036 — CI never deploys, never holds production data or credentials | Connector table, environment mapping |
-| CON-038 — placeholder configuration, stand-ins, human validation | Runtime instances, environment mapping |
-| CON-040 — no data migration | Environment mapping |
+| CON-003, CON-011 — AD read-only, never modified | Node inventory, connector table, deployment mode and strategy, rollback criteria |
+| CON-009, CON-034, CON-035 — internal network only, corporate browser | Node inventory, environment mapping, target user community |
+| CON-010, CON-028, CON-029, CON-039 — .NET application on the existing estate, operated by Infrastructure | Node inventory, availability and resilience, deployment mode and strategy, rollout approach |
+| CON-030, CON-042 — PostgreSQL 18 on the same estate, covered by existing backups | Node inventory, availability and resilience, rollback criteria |
+| CON-031, CON-032 — Keycloak external to the project, intra-network node | Node inventory, topology note, deployment mode and strategy |
+| CON-036 — CI never deploys, never holds production data or credentials | Connector table, environment mapping, rollout approach, deployment unit |
+| CON-038 — placeholder configuration, stand-ins, human validation | Runtime instances, environment mapping, rollout approach, acceptance gates |
+| CON-040 — no data migration | Environment mapping, rollout approach, rollback criteria |
+| CON-014 — clocking records immutable, never deleted | Rollback criteria |
+| CON-041 — mandatory UI design reference | Acceptance gate 1 |
+| NFR-005, NFR-006, NFR-007 — availability window, clocking retry, graceful degradation | Availability and resilience, acceptance gate 1 |
 
 ### Open items
 
@@ -334,6 +343,8 @@ Rollback is redeployment of the previous tagged release. It is Infrastructure's 
 |---|---|
 | Production node names, hostnames and ports | Not declared. Infrastructure supplies them at deployment; no value is invented here. |
 | Monitoring and patching configuration | Infrastructure's, per CON-039. Not this project's to design. |
-| Release Notes | Owned by the DeploymentManager; produced in a later phase. |
+| Release Notes | Owned by the DeploymentManager; per Development Case §5.1 it enters at Transition. |
+| User Documentation — operations section | Owned by the TechnicalWriter; per Development Case §5.1 it enters at Construction. The DeploymentManager contributes the installation, configuration and runbook content. |
 
-No `[SCOPE_QUESTION]` is open in this artifact. Every node, connector and environment traces to a declared constraint, and no node was introduced that the stakeholder did not declare.
+No `[SCOPE_QUESTION]` is open in this artifact. Every node, connector, environment, gate and rollback trigger traces to a declared constraint, and no node, environment or gate was introduced that the stakeholder did not declare.
+
