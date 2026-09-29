@@ -164,7 +164,7 @@ The organization's processes as they stand before the portal, and the classifica
 
 ```plantuml
 @startuml
-title As-is business processes — Cuba Corp before the portal (declared current state)
+title As-is business processes — Cuba Corp before the portal (declared current state, with the BG-001 baseline)
 |Employee|
 start
 :Work a day;
@@ -178,18 +178,25 @@ stop
 
 |HR|
 start
-:Collect the shared Excel sheets from the 3 offices;
-:Reconcile and correct the entries by hand;
+:Consolidate the three offices' Excel sheets at month end;
 note right
-  BG-001: the effort the 50% target is measured against
+  BG-001 baseline: 4 h/month
 end note
-:Chase the employees whose clock-out is missing;
+:Chase and correct forgotten clock-outs;
 note right
-  CON-015, CON-046: this chase stays manual after go-live
+  BG-001 baseline: 7 h/month
+  about 120 cases a month at roughly 3.5 minutes each
+  CON-015, CON-046: the chase stays manual
 end note
 :Compile the monthly report by hand;
-:Send announcements by mass email;
-:Maintain the PDF phone list;
+:Send announcements by mass email and maintain the phone-list PDF;
+note right
+  BG-001 baseline: 3 h/month
+  Total baseline: 14 h/month of HR administration, measured over
+  one full calendar month before go-live. Target: 7 h/month or less,
+  measured the same way over a full calendar month, in the third
+  month after go-live. Owner: Laura Gomez (STK-001).
+end note
 stop
 @enduml
 ```
@@ -197,11 +204,13 @@ stop
 | As-is process | Performed by | Where it lives today | After go-live |
 |---|---|---|---|
 | Record working hours | Employee | Shared Excel sheet, per office | Automated — UC-001 |
-| Collect, reconcile and correct clockings | HR | Shared Excel sheets, by hand | Partly automated — UC-003, UC-004, UC-005 |
-| Chase an employee about a missing clock-out | HR | By hand, outside any system | Stays manual — CON-015, CON-046 |
+| Consolidate the three offices' Excel sheets at month end | HR | Shared Excel sheets, by hand | Automated — UC-003, UC-004 |
+| Chase and correct forgotten clock-outs | HR | By hand, outside any system | Correction automated — UC-005; the chase stays manual (CON-015, CON-046) |
 | Compile the monthly report | HR | By hand, from the sheets | Automated — UC-004 |
 | Publish announcements | HR | Mass email | Automated — UC-007, UC-008, UC-009, UC-010 |
-| Look up a colleague | Employee | Printed PDF phone list | Automated — UC-011 |
+| Maintain the phone list | HR | Printed PDF | Automated — UC-011 |
+
+**BG-001 baseline and measurement.** The baseline is 14 hours per month of HR administration, measured over one full calendar month before go-live: 4 h consolidating the three offices' Excel sheets at month end, 7 h chasing and correcting forgotten clock-outs (about 120 cases a month at roughly 3.5 minutes each), and 3 h sending news by mass email and keeping the phone-list PDF up to date. BG-001 therefore means 7 hours per month or less, measured the same way over a full calendar month, in the third month after go-live — the same window as the 80% adoption objective. Laura Gómez (STK-001) owns the measurement.
 
 **Actor / worker classification at the organization boundary.** Every participant in these processes is INSIDE Cuba Corp: the employee and the HR Director are business workers, not business actors. No external business actor — no customer, no supplier, no regulator — takes part in any of them. The two external systems the portal consumes, Active Directory and Keycloak, are systems rather than business actors, and neither performs a business process. This is why DC §4 does not hold and why no Business Use-Case Model, Business Object Model or Business Rules artifact is produced: there is no organizational process larger than the software, and no business entity to model.
 
@@ -212,10 +221,10 @@ stop
 | As-is process step | Traces from | Covered by |
 |---|---|---|
 | Record working hours | BG-002, Vision statement | UC-001 |
-| Collect, reconcile and correct clockings | BG-001, FR-002, FR-003 | UC-003, UC-004, UC-005 |
-| Chase a missing clock-out | CON-015, CON-046 | Not automated — declared exclusion |
-| Compile the monthly report | BG-001, FR-003 | UC-004 |
-| Publish announcements | FR-004, FR-006, FR-007, FR-008 | UC-007, UC-008, UC-009, UC-010 |
+| Consolidate the three offices' Excel sheets | BG-001 (4 h/month), FR-002, FR-003 | UC-003, UC-004 |
+| Chase and correct forgotten clock-outs | BG-001 (7 h/month, ~120 cases/month), CON-013, CON-015, CON-046 | UC-005 — correction; the chase stays manual |
+| Compile the monthly report | BG-001 (3 h/month), FR-003 | UC-004 |
+| Publish announcements and maintain the phone list | BG-001 (3 h/month), FR-004, FR-006, FR-007, FR-008, FR-009 | UC-007, UC-008, UC-009, UC-010, UC-011 |
 | Look up a colleague | FR-009, AC-004 | UC-011 |
 
 ## Use-Case Survey
