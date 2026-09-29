@@ -386,7 +386,6 @@ No defect has been observed this iteration, because no test was executed. No iss
 None of these is a defect: no system under test exists yet. Each is an entry criterion for Elaboration, and each is owned by a named role in the Development Case.
 
 ## Conclusions
-
 ### Mission verdict — Inception, Iteration 1
 
 | Mission element | Verdict |
@@ -416,14 +415,19 @@ Proceed to Elaboration. The test effort's first obligation there is to close ent
 
 ### Open items
 
-| Item | Status |
-|---|---|
-| Test Cases for the architectural prototype | Authored in Elaboration by the TestDesigner |
-| Measurement conditions for NFR-003 and NFR-004 — load profile, data volume, instrumentation | Fixed in Elaboration by the RequirementsSpecifier; the thresholds themselves are declared |
-| Test procedure for AC-002 and AC-003, which are stated as outcomes without a threshold | Owned by the TestDesigner; verified by observation |
-| Test Plan | Not produced — the Development Case §5.2 trigger has not fired |
+| Item | Status | Owner |
+|---|---|---|
+| Test Cases for the architectural prototype — UC-001, UC-004, UC-011, UC-005, UC-012 | Authored in Elaboration | TestDesigner |
+| Measurement conditions for NFR-003 and NFR-004 — the load profile, the data volume at which the figures are measured, and the instrumentation | Fixed in Elaboration; the thresholds themselves are declared | RequirementsSpecifier |
+| Test procedure for AC-002 and AC-003, which are stated as outcomes without a threshold | Verified by observation; the procedure is owned by the TestDesigner | TestDesigner |
+| Test Plan | Not produced — the Development Case §5.2 trigger has not fired | ProcessEngineer (trigger record) |
 
-No `[SCOPE_QUESTION]` is open in this artifact. Every declared item is addressed by identifier, and no test, tool or environment was introduced that the stakeholder did not declare.
+**No stakeholder decision is pending on the test effort.** Every item above is a discipline-owned deliverable with a named owner and a named iteration; none is a question addressed to the stakeholder. The test effort introduces no tool, no environment and no requirement the stakeholder did not declare, so it raises no scope question and no assumption on a decision that affects scope, budget, security, an integration boundary or data residency.
+
+The two items a reader might mistake for stakeholder questions are not:
+
+- **The measurement conditions for NFR-003 and NFR-004.** The thresholds are declared — under 3 seconds and under 1 second — and AC-001 fixes the measurement boundary for the page-load figure. What is left is the load profile, the data volume and the instrumentation, which are engineering conditions the RequirementsSpecifier fixes in Elaboration. The stakeholder has already decided the number; the discipline decides how to measure it.
+- **The test procedure for AC-002 and AC-003.** Both are declared as outcomes without a threshold, and the Supplementary Specification records that they are verified by observation. Choosing the observation procedure is the TestDesigner's work, not a decision the stakeholder owes the team.
 
 ## Traceability
 
