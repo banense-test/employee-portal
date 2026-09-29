@@ -149,7 +149,6 @@ Every user is internal. There is no external user, no partner and no anonymous a
 | Post-launch operations | Infrastructure operates the portal in production — deployment, monitoring and patching — exactly as they already operate AD and Keycloak. The development team hands over at the end of Transition. | CON-039 |
 
 ## Environment Mapping
-
 One runtime environment is declared. No separate staging or production topology is declared, and none is invented.
 
 | Environment | Purpose | Nodes | Declared by |
@@ -161,6 +160,139 @@ One runtime environment is declared. No separate staging or production topology 
 **Validation against the real Keycloak and the real AD is not a deployment activity of this project.** CON-038 places it with people — Infrastructure, with HR — and its feedback reaches the team before Elaboration closes. It is not team work to plan, and it is not a node this project deploys.
 
 **No data migration.** The portal starts empty and records clockings from go-live onwards. The historical Excel sheets stay on the shared drive as a read-only archive and are not imported (CON-040). There is therefore no migration environment and no cutover step.
+
+### Rollout approach
+
+One runtime environment is declared, so the rollout is a single handover, not a staged promotion across environments. The sequence below is the whole rollout: build and test on the development site, human validation of the real external systems, then one install on the internal estate.
+
+```plantuml
+@startuml
+title Employee Portal - rollout sequence and the two acceptance gates
+
+|#E8F0F8|Development site (team stand-ins)|
+start
+:Build and tag the SCM release on hosted CI (CON-036);
+note right
+  CI builds and tests only. It never deploys
+  and never holds production data or credentials.
+end note
+:Test all 12 use cases against the test OIDC issuer
+and the test LDAP directory (CON-038);
+note right
+  Includes directory entries whose job title
+  or extension is empty.
+end note
+if (Gate 1 - development site: all 12 use cases pass?) then (no)
+  :Fix and rebuild;
+  stop
+else (yes)
+endif
+
+|#FFF6E2|Human gate (not team work)|
+:Infrastructure with HR validate the real Keycloak
+and the real AD (CON-038);
+note right
+  Feedback reaches the team before Elaboration closes.
+  If it delays a milestone the remedy is another
+  iteration (CON-047) - never a cut to declared scope.
+end note
+
+|#E4F6F3|Install site (internal estate real systems)|
+:Infrastructure deploys the tagged release to the
+internal Windows Server estate (CON-010 CON-039);
+:Infrastructure supplies the real configuration values -
+OIDC issuer client id client secret LDAP host
+bind account base DN (CON-038);
+:Infrastructure installs PostgreSQL 18 on the same
+estate (CON-030);
+if (Gate 2 - install site: real systems and real configuration verified?) then (no)
+  :Rollback - redeploy the previous tagged release;
+  note right
+    CON-042: if the database is damaged Infrastructure
+    restores the PostgreSQL instance from its existing
+    backup practice.
+  end note
+  stop
+else (yes)
+endif
+:Go-live - the portal starts empty and records
+clockings from go-live onwards (CON-040);
+note right
+  No data migration and no cutover step. Historical
+  Excel sheets stay on the shared drive as a
+  read-only archive.
+end note
+
+|#F4F7FA|Post-launch measurement|
+:Adoption measurement begins - 80% of 200 employees
+within three months (BG-003 AC-005);
+:HR effort measured over a full calendar month in the
+third month after go-live against the 14 h/month
+baseline (BG-001);
+stop
+@enduml
+```
+
+**Rollout is not phased by user group.** All 200 employees across the 3 offices get the portal at go-live. A pilot office would be a scope decision the stakeholder did not declare, and the declared adoption objective (BG-003) is measured across the whole population.
+
+**The deployment unit is a tagged SCM release.** Versioned, tagged and traceable, built by hosted CI (CON-036) and handed to Infrastructure, who deploy it (CON-039). The release carries the application, the database schema, a configuration template with placeholder values, the Release Notes and the User Documentation. It does not carry Keycloak, Active Directory, the historical Excel sheets, any local copy of employee data, or backup tooling.
+
+```plantuml
+@startuml
+title Employee Portal - the SCM release as the deployment unit (bill of materials)
+skinparam componentStyle rectangle
+
+package "SCM release - versioned, tagged, traceable (CON-036)" as REL {
+  component "Employee Portal application\n.NET 10 - Razor Pages + REST API\n(CON-028, CON-029)" as APP
+  component "Database schema\nPostgreSQL 18 - clockings, news,\nAD-user-id to category, audit\n(CON-030)" as SCHEMA
+  component "Configuration template\nplaceholder OIDC + LDAP values,\nnever real credentials in code\n(CON-038)" as CFG
+  component "Release Notes\nfeatures, install steps, known issues,\nBOM inline, acceptance verdict" as RN
+  component "User Documentation\noperations section: install,\nconfigure, runbook" as UDOC
+}
+
+component "Infrastructure\noperates the portal in production -\ndeployment, monitoring, patching\n(CON-039)" as INFRA
+
+REL --> INFRA : handed over at the end of Transition
+
+note bottom of REL
+  NOT in the release:
+  Keycloak - not deployed by this project (CON-031)
+  Active Directory - never modified (CON-011)
+  Historical Excel sheets - read-only archive, not imported (CON-040)
+  Any local copy of employee data - AD user id to category only (CON-004)
+  No backup tooling - Infrastructure's existing practice (CON-042)
+end note
+@enduml
+```
+
+### Acceptance gates
+
+Two gates, with distinct criteria and distinct owners. The development-site gate is the team's; the install-site gate is Infrastructure's. Neither substitutes for the other, and the second is a formality only if the first was done properly.
+
+| Gate | Site | Criteria | Owner | Evidence |
+|---|---|---|---|---|
+| Gate 1 — development site | The team's environment, against the test OIDC issuer and the test LDAP directory (CON-038) | All 12 use cases pass; the clocking retry survives a simulated 5-minute outage (NFR-006, AC-006); the CSV export matches the declared columns, order and value formats (CON-007, CON-008); the at-most-one-featured invariant holds (CON-020); every implemented page matches `docs/inputs/employee-portal-design.html` (CON-041, R005); the directory renders entries whose job title or extension is empty | The development team | Test Evaluation Summary; the tagged release |
+| Gate 2 — install site | The internal Windows Server estate, against the real Keycloak and the real AD | The application starts with the real configuration values Infrastructure supplies (CON-038); login succeeds through the real Keycloak and roles are read from its claims (CON-001, CON-033); the directory reads the real AD over LDAP and shows no write path (CON-003, CON-011); the database is reachable and the schema is applied (CON-030); the portal is reachable from the corporate network and from nowhere else (CON-034) | Infrastructure, with HR | The install-site verification record; the go-live decision |
+
+**Gate 2 is a formality only if Gate 1 was real.** The declared acceptance criteria are verified at the install site as the employee experiences them — the full page load including the clocking page's script (AC-001), clocking without help (AC-002), publishing without technical assistance (AC-003), finding a colleague's phone or email in under 10 seconds (AC-004), and a clocking surviving a 5-minute outage (AC-006). AC-005 (80% adoption) is measured after go-live, not at a gate.
+
+**The human validation of the real Keycloak and AD is not a gate this project owns.** CON-038 places it with people — Infrastructure, with HR — and its feedback reaches the team before Elaboration closes. It is not team work to plan. If it delays a milestone, the remedy is another iteration (CON-047), never a cut to declared scope.
+
+### Rollback criteria
+
+Rollback is redeployment of the previous tagged release. It is Infrastructure's action, on the estate they operate (CON-039).
+
+| Trigger | Action | Declared by |
+|---|---|---|
+| Gate 2 fails on configuration or connectivity — the application cannot start, login fails, or the directory or database is unreachable | Redeploy the previous tagged release; Infrastructure corrects the configuration values and the install is retried | CON-038, CON-039 |
+| The database is damaged during install | Infrastructure restores the PostgreSQL instance from its existing server-backup practice | CON-042 |
+| A defect is found after go-live that makes a use case unusable | Redeploy the previous tagged release; the fix ships in the next tagged release | CON-036, CON-039 |
+
+**Rollback is cheap and lossless at go-live, and that is a property of the declared scope, not a design choice.** The portal starts empty and records clockings from go-live onwards (CON-040), so there is no migrated data to reconcile and no cutover to reverse. The historical Excel sheets stay on the shared drive as a read-only archive and are untouched by any rollback.
+
+**What rollback cannot undo.** Clockings recorded between go-live and the rollback decision are in the database. They are immutable (CON-014) and are never deleted by a rollback; the previous release does not read them, and they are recovered with the release that reads them. This is stated rather than designed around: the declared scope provides no reconciliation mechanism, and none is invented.
+
+**No rollback of the external systems.** Keycloak and Active Directory are not deployed or modified by this project (CON-031, CON-011), so there is nothing of theirs to roll back.
 
 ## Traceability
 
