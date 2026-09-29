@@ -1,0 +1,166 @@
+name: CI
+
+# ---------------------------------------------------------------------------
+# Employee Portal — build and test pipeline.
+#
+# CON-036: CI runs on the hosted SCM provider's hosted CI. 'No cloud' and
+# 'internal network only' govern the portal at runtime — where it is hosted and
+# who can reach it — not the development toolchain. CI never holds production
+# data or credentials, and never deploys: Infrastructure deploys (CON-039).
+#
+# Integration order — subsystem dependency hierarchy (Software Architecture
+# Document, Logical View). The Integrator merges feature branches bottom-up:
+# the leaves of this graph first, then upward. A merge landing out of this
+# order produces CI failures that are wrong-order symptoms, not defects.
+#
+# @startuml
+# title Employee Portal — component dependency hierarchy (merge order, leaves first)
+# skinparam componentStyle rectangle
+#
+# component "COMP-009 Persistence" as C9
+# component "COMP-006 Audit Trail" as C6
+# component "COMP-007 Identity and Authorization" as C7
+# component "COMP-008 Active Directory Adapter" as C8
+# component "COMP-001 Clocking Capture" as C1
+# component "COMP-002 Clocking Report and CSV Export" as C2
+# component "COMP-003 News" as C3
+# component "COMP-004 Directory Search" as C4
+# component "COMP-005 Worker Category" as C5
+# component "COMP-010 Web UI" as C10
+#
+# C6 --> C9
+# C7 --> C9
+# C1 --> C6
+# C1 --> C9
+# C2 --> C5
+# C2 --> C8
+# C2 --> C9
+# C3 --> C6
+# C3 --> C9
+# C4 --> C8
+# C5 --> C6
+# C5 --> C8
+# C5 --> C9
+# C10 ..> C1
+# C10 ..> C2
+# C10 ..> C3
+# C10 ..> C4
+# C10 ..> C5
+# C10 ..> C7
+#
+# note bottom of C9
+#   Merge order: COMP-009 and COMP-006 first (leaves),
+#   then COMP-007 and COMP-008, then COMP-001..COMP-005,
+#   then COMP-010 last.
+# end note
+# @enduml
+#
+# Build cadence target: at least one integration build per day toward the
+# iteration close, one per week minimum. The iteration-close PR is the
+# aggregate record of these builds, not the first moment of integration.
+# ---------------------------------------------------------------------------
+
+on:
+  push:
+    branches:
+      - main
+      - 'iteration/**'
+      - 'chore/**'
+      - 'feature/**'
+      - 'hotfix/**'
+  pull_request:
+    branches:
+      - main
+      - 'iteration/**'
+      - 'chore/**'
+      - 'feature/**'
+      - 'hotfix/**'
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  DOTNET_NOLOGO: 'true'
+  DOTNET_CLI_TELEMETRY_OPTOUT: 'true'
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 'true'
+  SOLUTION_FILE: EmployeePortal.slnx
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up .NET 10 (CON-028)
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Sync the solution manifest with the src/ and tests/ tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -f "$SOLUTION_FILE" ]; then
+            dotnet new sln --name EmployeePortal --format slnx
+          fi
+          while IFS= read -r project; do
+            if ! grep -qF "$project" "$SOLUTION_FILE"; then
+              echo "Adding $project to $SOLUTION_FILE"
+              dotnet sln "$SOLUTION_FILE" add "$project"
+            fi
+          done < <(find src tests -type f -name '*.csproj' | sort)
+
+      - name: Restore
+        run: dotnet restore "$SOLUTION_FILE"
+
+      - name: Build
+        run: dotnet build "$SOLUTION_FILE" --no-restore --configuration Release
+
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up .NET 10 (CON-028)
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Sync the solution manifest with the src/ and tests/ tree
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ ! -f "$SOLUTION_FILE" ]; then
+            dotnet new sln --name EmployeePortal --format slnx
+          fi
+          while IFS= read -r project; do
+            if ! grep -qF "$project" "$SOLUTION_FILE"; then
+              echo "Adding $project to $SOLUTION_FILE"
+              dotnet sln "$SOLUTION_FILE" add "$project"
+            fi
+          done < <(find src tests -type f -name '*.csproj' | sort)
+
+      - name: Test
+        run: >
+          dotnet test "$SOLUTION_FILE"
+          --configuration Release
+          --logger "trx;LogFileName=test-results.trx"
+          --results-directory ./TestResults
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: ./TestResults
+          if-no-files-found: ignore
