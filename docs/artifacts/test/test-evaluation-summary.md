@@ -429,6 +429,27 @@ The two items a reader might mistake for stakeholder questions are not:
 - **The measurement conditions for NFR-003 and NFR-004.** The thresholds are declared — under 3 seconds and under 1 second — and AC-001 fixes the measurement boundary for the page-load figure. What is left is the load profile, the data volume and the instrumentation, which are engineering conditions the RequirementsSpecifier fixes in Elaboration. The stakeholder has already decided the number; the discipline decides how to measure it.
 - **The test procedure for AC-002 and AC-003.** Both are declared as outcomes without a threshold, and the Supplementary Specification records that they are verified by observation. Choosing the observation procedure is the TestDesigner's work, not a decision the stakeholder owes the team.
 
+### Verification of the declared exclusions
+
+The declared exclusions are tested as negative tests, so that a boundary the portal must not cross is verified rather than assumed. Each is a declared item, cited by identifier.
+
+| Exclusion | Negative test |
+|---|---|
+| No native mobile app — responsive web only | The portal is reached from the corporate browser; no installable client and no app manifest is served |
+| No push notifications | No notification permission is requested and no push endpoint exists |
+| No payroll integration | No outbound call to a payroll system exists |
+| No vacation or sick-leave management | No absence record is created; a day with no clocking produces no export row (CON-018) |
+| No biometric clocking | Clocking is a button press in the browser; no device integration exists |
+| No Keycloak work of any kind | The portal is an OIDC client only; no realm, client-provisioning script or Keycloak hosting is part of the deliverable (CON-031) |
+| No writing back to Active Directory | The LDAP connection is read-only; no write path to AD exists (CON-003, CON-011) |
+| No local copy of the employee | The only local data about a person is the two-column AD-user-id-to-category link (CON-004) |
+| No news archive screen | News navigation is newest-first plus the category filter; no archive route exists |
+| No hard delete of a news item | Unpublish sets a flag; the record remains (CON-022) |
+| No offline mode beyond the clocking retry | No service worker, no PWA, no client cache of the directory or the news (NFR-007) |
+| No permission model beyond the two levels | Authorization is one check — member of the HR AD group, or not (CON-033) |
+| No rule that features a news item by itself | Featuring is a manual flag; no criterion, date or rule promotes an item (CON-019) |
+| No in-portal audit view screen | The audit trail is read directly from the database (NFR-002) |
+
 ## Traceability
 
 | Element | Traces From | Link Type | Traces To |
